@@ -6,6 +6,7 @@ import {
 import { PLACES, MONTHS_TH, MONTHS_SHORT, TAROT, TOPICS, LIFE_PATH, DIGITS, SUM_MEANING } from './data.js';
 import { starMap, logoRing } from './starmap.js';
 import { EVENTS, findAuspicious } from './auspice.js';
+import { natalProfile } from './profile.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
 // ---------------- storage ----------------
@@ -532,6 +533,41 @@ const ASPECT_TEXT = {
   0: 'สองพลังหลอมรวมกัน ส่งผลชัดเจน'
 };
 
+function identityHTML(ch, p) {
+  const r = natalProfile(ch, p);
+  const symCard = (x) => {
+    let visual = '';
+    if (x.k === 'color') visual = `<span class="sym-sw"><i style="background:${x.hex}"></i>${x.hex2 ? `<i style="background:${x.hex2}"></i>` : ''}</span>`;
+    else if (x.k === 'number') visual = `<span class="sym-num mono">${x.value}</span>`;
+    else if (x.k === 'planet') visual = `<span class="sym-num sym">${x.glyph}&#xFE0E;</span>`;
+    return `<div class="sym-card">${visual}<span class="eyebrow" style="letter-spacing:.1em;font-size:10px">${x.label}</span>
+<span class="v">${x.k === 'number' ? 'เลข ' : ''}${x.value}${x.en ? ` <span class="small" style="font-size:11px">${x.en}</span>` : ''}</span>
+<span class="small" style="font-size:11px">${x.basis}</span>${x.extra ? `<span class="small" style="font-size:11px;color:var(--text-2)">${x.extra}</span>` : ''}</div>`;
+  };
+  const item = (x, tone) => `<li class="trait ${tone}"><span class="tg" aria-hidden="true">${(x.glyphs || []).map((g) => `<span class="sym">${g}&#xFE0E;</span>`).join('') || '·'}</span>
+<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="n">${x.title}</span><span class="small" style="color:var(--text-2)">${x.body}</span><span class="mono" style="font-size:10px;color:var(--muted)">${x.src}</span></span></li>`;
+  return `<p class="small" style="font-size:13px">ทุกข้อคำนวณจากดวงกำเนิดของคุณ และบอกที่มาไว้ใต้แต่ละข้อ${ch.timeKnown ? '' : ' · ไม่ทราบเวลาเกิด จึงไม่มีข้อมูลจากลัคนาและภพ'}</p>
+<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">สัญลักษณ์ประจำดวง</h2>
+<div class="sym-grid">${r.symbols.map(symCard).join('')}</div></section>
+<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">จุดเด่นของดวง</h2>
+${r.highlights.map((h, i) => `<div class="card hl"><span class="mono" style="font-size:10px;color:var(--gold)">0${i + 1}</span><p class="h2" style="font-size:16px">${h.title}</p><p class="body" style="font-size:13px">${h.body}</p></div>`).join('')}</section>
+<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">ลักษณะนิสัย</h2>
+<div class="row-list">${r.personality.map((x) => `<div class="planet-row"><span class="g" aria-hidden="true">${SIGNS[x.sign].glyph}&#xFE0E;</span><span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:13px;color:var(--gold-2)">${x.label}</span><span class="small" style="color:var(--text)">${x.text}</span></span><span></span></div>`).join('')}</div></section>
+<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">ความสามารถพิเศษจากมุมดาว</h2>
+<div class="badges">${r.talents.map((t) => `<span class="badge">${t.title}</span>`).join('')}</div>
+<ul class="trait-list">${r.talents.map((t) => item(t, 'good')).join('')}</ul></section>
+<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">อาชีพที่เหมาะ</h2>
+<div class="card" style="gap:10px"><p class="body" style="font-size:14px">${r.career.style}</p>
+<div class="tags">${r.career.list.map((c) => `<span class="tag">${c}</span>`).join('')}</div>
+<p class="mono" style="font-size:10px;color:var(--muted)">${r.career.basis}</p></div></section>
+<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">เรื่องที่ต้องระวัง</h2>
+<ul class="trait-list">${r.cautions.map((t) => item(t, 'bad')).join('')}</ul></section>
+<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">โชคลาภและสุขภาพ</h2>
+<div class="card" style="gap:8px"><p class="small" style="color:var(--text)"><span style="color:var(--gold-2)">โชคลาภ ·</span> ${r.luck}</p>
+${r.health.map((h) => `<p class="small" style="color:var(--text)"><span style="color:var(--gold-2)">จุดที่ควรดูแล ·</span> ${h}</p>`).join('')}
+<p class="small" style="font-size:11px">ข้อมูลสุขภาพตามตำราโหราศาสตร์ ไม่ใช่คำวินิจฉัยทางการแพทย์</p></div></section>`;
+}
+
 function viewChart() {
   const ch = state.chart, p = state.profile, tab = state.chartTab, now = new Date();
   const kp = keyPattern(ch);
@@ -556,6 +592,8 @@ ${[0, 1, 2, 3].map((e) => `<div class="el-row"><span>ธาตุ${ELEMENTS[e].t
 <span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:14px;font-weight:500">${pl.th} <span style="color:var(--text-2);font-weight:400">ใน${SIGNS[pl.sign].th}</span>${pl.retro ? ' <span class="mono small" style="font-size:10px;color:var(--tension)">R</span>' : ''}</span><span class="small">${planetText(pl)}</span></span>
 <span class="deg"><span>${fmtDeg(pl.lon)}</span><span class="small" style="font-size:10px">H${pl.house}</span></span></div>`).join('')}
 ${ch.asc != null ? `<div class="planet-row"><span class="g mono" style="font-size:11px;padding-top:4px">ASC</span><span style="display:flex;flex-direction:column;gap:3px"><span style="font-size:14px;font-weight:500">ลัคนา <span style="color:var(--text-2);font-weight:400">ใน${SIGNS[signOf(ch.asc)].th}</span></span><span class="small">ภาพลักษณ์ที่คนอื่นเห็น: ${SIGNS[signOf(ch.asc)].trait}</span></span><span class="deg"><span>${fmtDeg(ch.asc)}</span></span></div>` : ''}</div>`;
+  } else if (tab === 3) {
+    body = identityHTML(ch, p);
   } else {
     const tr = transits(ch, now);
     const col = (t) => t.level === 'HIGH' ? 'var(--tension)' : t.level === 'SUPPORT' ? 'var(--gold)' : 'var(--harmony)';
@@ -574,7 +612,7 @@ ${t.hits.length ? `<span class="tags">${t.hits.map((h) => `<span class="tag">${h
 <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span class="eyebrow">01 · NATAL CHART</span><h1 class="h1" style="font-size:24px">ผังดาวกำเนิด</h1></div>
 <a class="link-btn" href="#/setup" style="font-weight:500;font-size:13px">แก้ไข</a></div>
 <p class="mono small" style="font-size:11px">${esc(p.name || 'ฉัน')} · ${pad(p.day)}.${pad(p.month)}.${p.yearBE - 543} ${p.timeKnown ? pad(p.hour) + ':' + pad(p.minute) : '--:--'} · ${esc(p.place.name || 'พิกัดกำหนดเอง')}</p>
-<div class="tabs" role="tablist" aria-label="มุมมองดวง">${tabBtn(0, 'ผังดาว')}${tabBtn(1, 'ดาวในภพ')}${tabBtn(2, 'ดวงจร')}</div></div>
+<div class="tabs" role="tablist" aria-label="มุมมองดวง">${tabBtn(0, 'ผังดาว')}${tabBtn(3, 'ตัวตน')}${tabBtn(1, 'ดาวในภพ')}${tabBtn(2, 'ดวงจร')}</div></div>
 ${body}
 <a class="btn" href="#/ask">ถามผู้เชี่ยวชาญเรื่องดวงนี้</a>
 </main>`;

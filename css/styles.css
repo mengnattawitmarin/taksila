@@ -187,6 +187,23 @@ a:hover { color: var(--gold-2); }
 .yam.cur { background: color-mix(in srgb, var(--gold) 9%, transparent); border-radius: 6px; box-shadow: inset 2px 0 0 var(--gold); }
 .yam .now { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--bg); background: var(--gold); padding: 1px 6px; border-radius: 8px; vertical-align: 2px; }
 
+/* identity tab */
+.sym-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.sym-card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 12px; display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow: hidden; }
+.sym-card .v { font-family: var(--serif); font-size: 18px; font-weight: 600; color: var(--gold-2); line-height: 1.3; }
+.sym-sw { position: absolute; top: 12px; right: 12px; display: flex; }
+.sym-sw i { width: 20px; height: 20px; border-radius: 10px; box-shadow: 0 0 0 2px var(--surface), inset 0 0 0 1px rgba(255,255,255,.15); }
+.sym-sw i + i { margin-left: -6px; }
+.sym-num { position: absolute; top: 6px; right: 12px; font-size: 30px; color: color-mix(in srgb, var(--gold) 45%, transparent); }
+.hl { gap: 4px; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge { padding: 5px 12px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--line)); background: color-mix(in srgb, var(--gold) 8%, transparent); color: var(--gold-2); font-size: 13px; }
+.trait-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.trait { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.trait .tg { display: flex; gap: 2px; justify-content: center; padding-top: 2px; font-size: 14px; color: var(--harmony); }
+.trait.bad .tg { color: var(--tension); }
+.trait .n { font-size: 15px; font-weight: 600; }
+
 /* ฤกษ์ finder */
 .ev-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
 .ev { min-height: 44px; padding: 6px 4px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--text-2); font: inherit; font-size: 13px; line-height: 1.25; cursor: pointer; }

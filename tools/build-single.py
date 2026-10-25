@@ -11,7 +11,7 @@ is wrapped in one function so nothing leaks into the global scope.
 import pathlib, re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-ORDER = ['js/astro.js', 'js/thai.js', 'js/auspice.js', 'js/data.js', 'js/starmap.js', 'js/app.js']
+ORDER = ['js/astro.js', 'js/thai.js', 'js/auspice.js', 'js/profile.js', 'js/data.js', 'js/starmap.js', 'js/app.js']
 FONTS = ('https://fonts.googleapis.com/css2?family=Taviraj:wght@400;500;600'
          '&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500'
          '&family=Noto+Sans+Symbols&family=Noto+Sans+Symbols+2&display=swap')
@@ -23,7 +23,18 @@ def strip_module(src: str) -> str:
     return src
 
 
+def check_duplicates():
+    # All modules share one scope after bundling, so top-level names must be unique.
+    seen = {}
+    for p in ORDER:
+        for name in re.findall(r'^(?:export\s+)?(?:const|let|function)\s+(\w+)', (ROOT / p).read_text(encoding='utf-8'), flags=re.M):
+            if name in seen:
+                raise SystemExit(f'duplicate top-level name "{name}" in {seen[name]} and {p}')
+            seen[name] = p
+
+
 def main():
+    check_duplicates()
     js = '\n'.join(f'// ---- {p} ----\n' + strip_module((ROOT / p).read_text(encoding='utf-8')) for p in ORDER)
     js = '(function () {\n"use strict";\n' + js + '\n})();'
     css = (ROOT / 'css/styles.css').read_text(encoding='utf-8')
