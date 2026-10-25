@@ -199,23 +199,21 @@ function viewHome() {
   const tools = [
     ['chart', 'ผังดาว', 'ดวงกำเนิด', 'var(--gold)'],
     ['match', 'คู่ดวง', 'เทียบสองคน', 'var(--rose)'],
-    ['tarot', 'ไพ่ทาโรต์', 'เปิดสามใบ', 'var(--violet)'],
+    ['tarot', 'ไพ่ทาโรต์', '78 ใบ เลือกเอง', 'var(--violet)'],
     ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน', 'var(--teal)'],
     ['luck', 'โชคลาภ', 'ปิงปอง ธูป', 'var(--amber)'],
     ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)']
   ];
-  return `<main class="screen">
-<header style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-<div style="display:flex;flex-direction:column;gap:4px"><span class="eyebrow" style="letter-spacing:.28em">TAKSILA · ${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear() + 543}</span>
-<h1 class="h1">${greeting(now)} ${p.name ? 'คุณ' + esc(p.name) : ''}</h1>
-<p class="small" style="font-size:13px">ดวงอาทิตย์จรราศี${SIGNS[dl.sunSign].th} · ดวงจันทร์จรราศี${SIGNS[dl.moonSign].th}</p></div>
-<a href="#/setup" aria-label="ข้อมูลเกิดของฉัน" class="back" style="margin:0;border:1px solid var(--line-2);border-radius:22px">${icon('user', 18)}</a>
+  return `<main class="screen home">
+<header class="home-head">
+<div class="hh-text"><span class="eyebrow" style="letter-spacing:.24em">TAKSILA · ${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear() + 543}</span>
+<h1 class="hh-title">${greeting(now)}${p.name ? ' คุณ' + esc(p.name.split(' ')[0]) : ''}</h1>
+<p class="hh-big3"><span>${SIGNS[ch.planets[0].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[0].sign].th}</span><span>${SIGNS[ch.planets[1].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[1].sign].th}</span>${ch.timeKnown ? `<span>ลัคนา ${SIGNS[signOf(ch.asc)].th}</span>` : ''}</p></div>
+<a class="hh-map" href="#/chart" aria-label="เปิดผังดาวกำเนิด">${starMap(ch, { id: 'home', label: 'ผังดาวกำเนิดของคุณ', size: 92 })}</a>
 </header>
-<a class="map-link" href="#/chart" aria-label="เปิดผังดาวฉบับเต็ม">${starMap(ch, { id: 'home', hud: hudFor(p), label: 'ผังดาวกำเนิดของคุณ' })}</a>
-${bigThree(ch)}
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
-<nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
 <section id="auspice-mini" aria-label="มงคลวันนี้">${auspiceMiniHTML()}</section>
+<nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรระยะยาว</h2>
@@ -283,17 +281,30 @@ function liveDailyHTML() {
   const nextEvents = up.slice(0, 4).map((e) => `<li><span class="sym" style="color:var(--gold-2)">${PLANETS.find((p) => p.id === e.id).glyph}&#xFE0E;</span>
 <span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:14px">${pname(e.id, PLANETS.find((p) => p.id === e.id).th)}เข้าราศี${SIGNS[e.sign].th}</span><span class="small">ภพ ${e.house} · ${HOUSES[e.house - 1]}</span></span>
 <span class="mono" style="font-size:10px;color:var(--gold);white-space:nowrap">${when(e.at, now)}</span></li>`).join('');
-  return `<div class="card daily${open ? ' open' : ''}">
-<span style="display:flex;justify-content:space-between;align-items:center"><span class="eyebrow" style="letter-spacing:.2em;display:flex;align-items:center;gap:8px"><span class="live-dot" aria-hidden="true"></span>TODAY · LIVE</span><span class="mono small" style="font-size:10px">อัปเดต ${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
-<p class="h2" style="font-size:20px">${headline}</p>
-<p class="small">ที่มา · <span style="color:var(--text)">${basis}</span></p>
-<div class="score-grid">${dl.scores.map((s) => `<div><span>${s.name}</span><span class="bars" role="img" aria-label="${s.name} ${s.score} จาก 5">${[1, 2, 3, 4, 5].map((i) => `<span${i <= s.score ? ' class="on"' : ''}></span>`).join('')}</span></div>`).join('')}</div>
+  const RING_COL = ['#E58FA8', '#D4AF63', '#6FC3B2', '#A99BD9'];
+  const total = Math.round(dl.scores.reduce((x, y) => x + y.score, 0) / dl.scores.length * 20);
+  const ring = (k, sc) => {
+    const r = 57 - k * 10, C = 2 * Math.PI * r, len = (sc / 5) * C;
+    return `<circle cx="64" cy="64" r="${r}" fill="none" stroke="${RING_COL[k]}" stroke-opacity=".16" stroke-width="7"/>
+<circle class="ring-arc" cx="64" cy="64" r="${r}" fill="none" stroke="${RING_COL[k]}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${len.toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 64 64)" style="--len:${len.toFixed(1)};--c:${C.toFixed(1)}"/>`;
+  };
+  const mood = total >= 75 ? 'วันพลังดี' : total >= 55 ? 'วันกลาง ๆ ค่อนดี' : total >= 40 ? 'วันต้องใจเย็น' : 'วันพักเก็บแรง';
+  return `<div class="card daily day-hero${open ? ' open' : ''}">
+<span class="dh-top"><span class="eyebrow" style="letter-spacing:.2em;display:flex;align-items:center;gap:8px"><span class="live-dot" aria-hidden="true"></span>ดวงวันนี้ · LIVE</span><span class="mono small" style="font-size:10px">อัปเดต ${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
+<div class="dh-main">
+<svg class="dh-rings" viewBox="0 0 128 128" role="img" aria-label="คะแนนดวงวันนี้ ${total} จาก 100">${dl.scores.map((x, k) => ring(k, x.score)).join('')}
+<text x="64" y="69" text-anchor="middle" font-family="IBM Plex Mono" font-size="17" font-weight="500" fill="#F1E6CF">${total}</text></svg>
+<div class="dh-side"><span class="dh-mood">${mood}</span>
+<ul class="dh-legend">${dl.scores.map((x, k) => `<li><i style="background:${RING_COL[k]}"></i><span>${x.name}</span><b>${x.score}/5</b></li>`).join('')}</ul></div>
+</div>
+<p class="dh-head">${headline}</p>
 <button class="drawer-toggle" data-act="liveToggle" data-closed="ดูเหตุผล ${la.length} มุมดาว" aria-expanded="${open}">
 <span class="peek" aria-hidden="true">${la.slice(0, 3).map((x) => `<span class="peek-chip">${trio(x)}</span>`).join('')}</span>
 <span class="lbl">${open ? 'พับเก็บ' : `ดูเหตุผล ${la.length} มุมดาว`}</span>
 <span class="chev">${icon('down', 16, 1.6)}</span>
 </button>
 <div class="fold"><div class="fold-in"><div class="drawer-body">
+<p class="small">ที่มาของคำทำนายหลัก · <span style="color:var(--text)">${basis}</span></p>
 ${la.length ? `<ul class="asp-list">${items}</ul>` : '<p class="small">วันนี้ไม่มีดาวจรทำมุมใกล้ดาวในดวงกำเนิด เป็นวันที่ค่อนข้างสงบ</p>'}
 <p class="small legend">${G(ASPECT_GLYPH.conj)} ร่วม ${G(ASPECT_GLYPH.sext)} หกสิบ ${G(ASPECT_GLYPH.square)} ตั้งฉาก ${G(ASPECT_GLYPH.trine)} ตรีโกณ ${G(ASPECT_GLYPH.opp)} เล็ง</p>
 <h3 class="label">ถัดไป · ดาวย้ายราศี</h3>
@@ -320,14 +331,11 @@ function auspiceMiniHTML() {
   if (!state.chart) return '';
   const now = new Date(), today = dayColors(now), { me } = personalLuck(), { cur, nextGood } = currentYams(now);
   const best = today.money !== me.avoid ? today.money : today.work;
-  return `<a class="card ausp-mini" href="#/auspice">
-<span style="display:flex;justify-content:space-between;align-items:center"><span class="eyebrow" style="letter-spacing:.2em;color:var(--amber)">มงคลวันนี้ · ${TH_PLANETS[today.owner].day}</span>${icon('next', 14, 1.5)}</span>
-<div class="ausp-row">
-<div class="ausp-col"><span class="small">สีเสริมดวงคุณ</span><span class="dot-row"><i style="background:${TH_PLANETS[best].hex}"></i><b>${TH_PLANETS[best].color.split(' ')[0]}</b></span></div>
-<div class="ausp-col"><span class="small">สีที่ควรเลี่ยง</span><span class="dot-row"><i style="background:${TH_PLANETS[me.avoid].hex}"></i><b>${TH_PLANETS[me.avoid].color.split(' ')[0]}</b></span></div>
-<div class="ausp-col"><span class="small">เลขมงคล</span><b class="mono" style="font-size:16px;color:var(--gold-2)">${me.numbers.slice(0, 3).join(' ')}</b></div>
-</div>
-<span class="small" style="color:var(--text)">${cur ? `ตอนนี้ยาม${cur.pos.th} (${hm(cur.start)}–${hm(cur.end)})` : ''}${nextGood ? ` · ยามดีถัดไป <b style="color:var(--gold-2)">${hm(nextGood.start)}</b> ยาม${nextGood.pos.th}` : ''}</span>
+  return `<a class="ausp-strip" href="#/auspice" aria-label="มงคลวันนี้ ${TH_PLANETS[today.owner].day}">
+<span class="as-cell"><span class="as-l">สีเสริมดวง</span><span class="as-v"><i style="background:${TH_PLANETS[best].hex}"></i>${TH_PLANETS[best].color.split(' ')[0]}</span></span>
+<span class="as-cell"><span class="as-l">สีที่ควรเลี่ยง</span><span class="as-v"><i style="background:${TH_PLANETS[me.avoid].hex}"></i>${TH_PLANETS[me.avoid].color.split(' ')[0]}</span></span>
+<span class="as-cell"><span class="as-l">เลขมงคล</span><span class="as-v mono" style="color:var(--gold-2)">${me.numbers.slice(0, 3).join(' ')}</span></span>
+<span class="as-cell"><span class="as-l">${cur && cur.pos.tone === 2 ? 'ตอนนี้ยามดี' : 'ยามดีถัดไป'}</span><span class="as-v mono" style="color:var(--gold-2)">${cur && cur.pos.tone === 2 ? hm(cur.end).replace(/^/, 'ถึง ') : nextGood ? hm(nextGood.start) : '–'}</span></span>
 </a>`;
 }
 
