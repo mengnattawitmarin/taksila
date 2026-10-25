@@ -11,7 +11,7 @@ import { CARDS, drawCards, SPREADS, HOUSE_READ } from './tarot.js';
 import { mountGlobe, burnIncense, mountSiamsi, mountTree, askMotion, randomDigit, thaiNum } from './luck.js';
 import { SIAMSI } from './siamsi.js';
 import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
-import { NUM_TOOLS, analyzeNumber, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
+import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
 import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf, dayPlanet } from './thai.js';
@@ -1132,6 +1132,7 @@ const NUM_ICONS = {
   id: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2.2"/><path d="M5.5 16c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4M14 10h5M14 13.5h4"/>',
   house: '<path d="M3 11L12 4l9 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/>',
   bank: '<path d="M3 9.5L12 4l9 5.5M4.5 9.5v8M9.5 9.5v8M14.5 9.5v8M19.5 9.5v8M3 20h18"/>',
+  angel: '<path d="M12 6.5c-1.6-2.5-5-3-6.8-1.2-2 2-1 5.3 2 7.4L12 16l4.8-3.3c3-2.1 4-5.4 2-7.4-1.8-1.8-5.2-1.3-6.8 1.2z"/><ellipse cx="12" cy="3" rx="3.2" ry="1"/><path d="M12 16v5"/>',
   hex: '<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><path d="M9 9.5l-1.5 5M12.5 9.5L11 14.5M8 11h5M7.5 13h5"/>'
 };
 function nameResults() {
@@ -1160,6 +1161,19 @@ function numResults() {
   const n = state.num, tool = NUM_TOOLS.find((t) => t.id === n.mode), v = n.values[n.mode] || '';
   const r = analyzeNumber(n.mode, v);
   if (!r) return `<p class="small num-empty">พิมพ์${tool.th}เพื่อดูผลวิเคราะห์</p>`;
+  if (n.mode === 'angel') {
+    const a = analyzeAngel(v);
+    if (!a) return `<p class="small num-empty">พิมพ์เลขที่เห็นบ่อย ๆ เพื่อดูความหมาย</p>`;
+    return `<div class="card ang-card"><span class="eyebrow" style="color:var(--teal)">ANGEL NUMBER</span>
+<div class="ang-num mono">${a.digits.split('').map((c) => `<b>${c}</b>`).join('')}</div>
+<p class="ang-title">${a.special ? 'เลขพิเศษ ' + a.digits : a.title}</p>
+<p class="body" style="font-size:14px;margin:0">${a.message}</p>
+${a.pattern ? `<p class="small ang-pat">✦ ${a.pattern}</p>` : ''}</div>
+<div class="ang-3"><div><span>♡ ความรัก</span><p>${a.love}</p></div><div><span>◈ การงาน</span><p>${a.work}</p></div><div><span>◇ การเงิน</span><p>${a.money}</p></div></div>
+${a.parts.length > 1 ? `<h2 class="label" style="margin-top:4px">พลังของแต่ละตัวเลข</h2><div class="ang-parts">${a.parts.map((x) => `<div><b class="mono">${x.n}</b><span>${x.k}${x.times > 1 ? ` <i>×${x.times}</i>` : ''}</span></div>`).join('')}</div>` : ''}
+<div class="card ang-core"><span class="mono">${a.digits.split('').join('+')} = ${a.sum} → ${a.core}</span><span>เลขแก่น ${a.core}: ${a.coreMean}</span></div>
+<p class="small">เมื่อเห็นเลขนี้: หยุดหายใจลึก ๆ สังเกตว่ากำลังคิดเรื่องอะไรอยู่ นั่นคือเรื่องที่เลขนี้ชี้ · Angel Number เป็นความเชื่อสมัยใหม่ที่มาจากเลขศาสตร์ตะวันตก ใช้เป็นข้อคิดและกำลังใจ</p>`;
+  }
   if (n.mode === 'hex') {
     return `<div class="card num-sum"><div class="ns-top">${r.color ? `<span class="hex-sw" style="background:${r.color}"></span>` : ''}<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="eyebrow" style="color:var(--teal)">HEX ${r.hex}</span><b class="ns-title">พลังเลข ${r.red}</b><span class="small">${r.meaning}</span></span></div>
 <div class="hex-row">${r.hex.split('').map((c, i) => `<span><b>${c}</b><i>${r.vals[i]}</i></span>`).join('')}</div>
@@ -1196,7 +1210,7 @@ function viewNumbers() {
 ${pageHead('04', 'NUMEROLOGY', 'ศาสตร์ตัวเลข', 'var(--teal)', 'numbers')}
 ${lp}${hexCard}
 <section class="t-step"><h2 class="t-step-h"><span style="border-color:var(--teal);color:var(--teal)">✦</span>เลือกสิ่งที่อยากดู</h2>
-<div class="num-tools">${NUM_TOOLS.map((t) => `<button class="num-tool${t.id === 'name' ? ' wide' : ''}" data-act="numMode" data-v="${t.id}" aria-pressed="${n.mode === t.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${NUM_ICONS[t.id]}</svg>${t.th}</button>`).join('')}</div></section>
+<div class="num-tools">${NUM_TOOLS.map((t) => `<button class="num-tool${t.id === 'name' || t.id === 'angel' ? ' wide' : ''}${t.id === 'angel' ? ' angel' : ''}" data-act="numMode" data-v="${t.id}" aria-pressed="${n.mode === t.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${NUM_ICONS[t.id]}</svg>${t.th}</button>`).join('')}</div></section>
 ${tool.kind === 'name' ? `<div class="nm-form">
 <label class="field">ชื่อ<input class="input" data-in="nmFirst" value="${esc(n.first)}" placeholder="เช่น ธัญพร" autocomplete="off" maxlength="40"></label>
 <label class="field">นามสกุล<input class="input" data-in="nmLast" value="${esc(n.last)}" placeholder="ไม่บังคับ" autocomplete="off" maxlength="40"></label>
