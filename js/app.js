@@ -789,16 +789,30 @@ function wheelPos(i, r = WHEEL_R) {
   const a = houseAngle(i);
   return { x: 50 + r * Math.cos(a), y: WHEEL_H / 2 - r * Math.sin(a) };
 }
+// Picture icons for the twelve Thai houses (24-unit line drawings).
+const HOUSE_ICONS = [
+  '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 4.5-6.5 8-6.5s6.5 2 8 6.5"/>',
+  '<ellipse cx="12" cy="6" rx="7" ry="2.5"/><path d="M5 6v4c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5V6M5 10v4c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-4M5 14v4c0 1.4 3.1 2.5 7 2.5s7-1.1 7-2.5v-4"/>',
+  '<circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="8" r="3"/><path d="M2.5 20c.8-3.5 3-5.5 5.5-5.5s4.7 2 5.5 5.5M11 20c.8-3.5 3-5.5 5.5-5.5s4.7 2 5.5 5.5"/>',
+  '<path d="M3 11L12 4l9 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/>',
+  '<circle cx="12" cy="7" r="3.5"/><path d="M8 20v-4.5a4 4 0 0 1 8 0V20M5.5 12.5l3 2M18.5 12.5l-3 2"/>',
+  '<path d="M12 3l7.5 3v5.5c0 4.5-3.2 8-7.5 9.5-4.3-1.5-7.5-5-7.5-9.5V6z"/><path d="M12 8.5v6M9 11.5h6"/>',
+  '<circle cx="9" cy="14.5" r="5.5"/><circle cx="15" cy="14.5" r="5.5"/><path d="M13 6.5l2-2.5 2 2.5-2 1.6z"/>',
+  '<path d="M6 3h12M6 21h12"/><path d="M7.5 3c0 5 9 5 9 9s-9 4-9 9M16.5 3c0 5-9 5-9 9s9 4 9 9"/>',
+  '<path d="M12 20c-4 0-8-3-9-7 3 0 6 1.5 9 5 3-3.5 6-5 9-5-1 4-5 7-9 7z"/><path d="M12 18c-2.5-2.5-3-6.5 0-11 3 4.5 2.5 8.5 0 11z"/>',
+  '<rect x="3" y="7.5" width="18" height="12" rx="2"/><path d="M9 7.5v-2A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5v2M3 12.5h18"/>',
+  '<path d="M6 4h12l3 5-9 11L3 9z"/><path d="M3 9h18M9 4l3 5 3-5M12 9v11"/>',
+  '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/><circle cx="17" cy="6" r="1"/>'
+];
 function wheelRing(sel) {
   const first = state.chart.firstSign, cy = WHEEL_H / 2;
   const pt = (deg, r) => [50 + r * Math.cos(deg * Math.PI / 180), cy - r * Math.sin(deg * Math.PI / 180)];
-  const elCol = ['#E07A62', '#9FBF7A', '#E8D49A', '#8FB3E0'];
   let sectors = '';
   for (let i = 0; i < 12; i++) {
     const a0 = 180 + i * 30, a1 = a0 + 30, [x0, y0] = pt(a0, 34), [x1, y1] = pt(a1, 34), [x2, y2] = pt(a1, 19), [x3, y3] = pt(a0, 19);
-    const sg = (first + i) % 12, [gx, gy] = pt(a0 + 15, 28.6), [nx, ny] = pt(a0 + 15, 23.4);
+    const sg = (first + i) % 12, [gx, gy] = pt(a0 + 15, 28.6), [nx, ny] = pt(a0 + 15, 23);
     sectors += `<g class="w-sec${sel === i ? ' on' : ''}" data-h="${i}"><path d="M${x0.toFixed(2)} ${y0.toFixed(2)}A34 34 0 0 0 ${x1.toFixed(2)} ${y1.toFixed(2)}L${x2.toFixed(2)} ${y2.toFixed(2)}A19 19 0 0 1 ${x3.toFixed(2)} ${y3.toFixed(2)}Z"/>
-<text x="${gx.toFixed(2)}" y="${(gy + 1.3).toFixed(2)}" text-anchor="middle" font-size="4" fill="${elCol[sg % 4]}">${SIGNS[sg].glyph}&#xFE0E;</text>
+<g class="w-ic" transform="translate(${(gx - 2.7).toFixed(2)} ${(gy - 2.7).toFixed(2)}) scale(.225)">${HOUSE_ICONS[i]}</g>
 <text x="${nx.toFixed(2)}" y="${(ny + 0.8).toFixed(2)}" text-anchor="middle" font-size="2.7" font-weight="500" fill="#D9CCB0" font-family="IBM Plex Sans Thai">${HOUSE_READ[i].th}</text></g>`;
   }
   const [ax, ay] = pt(180, 38), [ax2] = pt(180, 15);
