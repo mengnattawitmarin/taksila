@@ -684,6 +684,62 @@ a:hover { color: var(--gold-2); }
   * { animation: none !important; }
 }
 
+/* ---------- chart page redesign ---------- */
+.ch-id { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 16px; background: radial-gradient(ellipse 60% 80% at 0% 50%, rgba(212,175,99,.10), transparent 70%), var(--surface); }
+.ch-id-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--muted); }
+.ch-id-t b { font-family: var(--serif); font-size: 18px; color: var(--text); font-weight: 600; }
+.ch-id-t .mono { color: var(--text-2); font-size: 12px; }
+.ch-edit { font-size: 13px; font-weight: 500; padding: 8px 12px; border: 1px solid var(--line-2); border-radius: 999px; text-decoration: none; }
+.ch-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); position: sticky; top: 8px; z-index: 5; backdrop-filter: blur(8px); }
+.ch-tabs button { min-height: 40px; border: none; border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-size: 14px; cursor: pointer; }
+.ch-tabs button[aria-selected="true"] { background: linear-gradient(180deg, #2A2316, #1E1910); color: var(--gold-2); font-weight: 600; box-shadow: inset 0 0 0 1px var(--line-2), 0 0 14px rgba(212,175,99,.15); }
+.ch-wheel { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 14px 8px 12px; border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(circle at 50% 42%, rgba(124,96,200,.14), transparent 60%), var(--surface); }
+.ch-wheel svg { max-width: 100%; height: auto; }
+.b3-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.b3 { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 14px 6px 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); text-align: center; }
+.b3 b { font-family: var(--serif); font-size: 17px; font-weight: 600; }
+.b3 > span:last-child { font-size: 11px; color: var(--muted); }
+.b3-m { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: 50%; color: var(--c); font-family: var(--symbols); font-size: 20px; border: 1px solid color-mix(in srgb, var(--c) 55%, transparent); background: radial-gradient(circle, color-mix(in srgb, var(--c) 18%, transparent), transparent 70%); box-shadow: 0 0 14px color-mix(in srgb, var(--c) 25%, transparent); margin-bottom: 4px; }
+.b3-m.sm { width: 38px; height: 38px; font-size: 18px; margin: 0; }
+.kp { display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: 18px; border: 1px solid transparent; background: linear-gradient(var(--surface), var(--surface)) padding-box, linear-gradient(135deg, rgba(240,216,154,.55), rgba(169,155,217,.35), rgba(44,38,27,.6)) border-box; }
+.ch-sec { display: flex; flex-direction: column; gap: 10px; }
+.ch-els { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.ch-el { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 2px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); text-align: center; }
+.ch-el svg { width: 56px; height: 56px; }
+.ch-el b { font-size: 13px; font-weight: 600; }
+.ch-el span { font-size: 10px; color: var(--muted); line-height: 1.3; }
+.ch-el.top { border-color: var(--line-2); box-shadow: 0 0 16px rgba(212,175,99,.12); }
+.ch-el.top span { color: var(--gold-2); }
+.ch-el.low span { color: var(--rose); }
+.asp-sum { display: flex; gap: 3px; height: 8px; border-radius: 4px; overflow: hidden; }
+.asp-sum span { display: block; border-radius: 2px; }
+.asp-leg { display: flex; gap: 14px; font-size: 12px; margin-top: -4px; }
+.asp-list, .pl-list, .tr-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.asp { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); --c: var(--gold); }
+.asp.h { --c: var(--harmony); } .asp.t { --c: var(--tension); }
+.asp-pair { display: flex; align-items: center; gap: 4px; color: var(--gold-2); font-size: 17px; }
+.asp-pair i { width: 16px; height: 2px; border-radius: 1px; background: var(--c); box-shadow: 0 0 6px var(--c); }
+.asp-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.asp-t b { font-size: 14px; font-weight: 500; }
+.asp-t span { font-size: 12px; color: var(--c); }
+.asp-o { font-size: 11px; color: var(--muted); }
+.pl-card { border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.pl-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; background: none; border: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.pl-card.asc .pl-head { grid-template-columns: auto minmax(0, 1fr) auto; cursor: default; }
+.pl-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pl-t b { font-size: 15px; font-weight: 600; }
+.pl-t > span { font-size: 12px; color: var(--muted); }
+.pl-r { font-family: var(--mono); font-size: 10px; color: var(--tension); font-weight: 400; margin-left: 4px; }
+.pl-b { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.pl-sign { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--gold-2); white-space: nowrap; }
+.pl-b .mono { font-size: 10px; color: var(--muted); white-space: nowrap; }
+.pl-head .chev { color: var(--muted); transition: transform .3s; }
+.pl-card.open .chev { transform: rotate(180deg); }
+.pl-body { padding: 0 14px 12px 60px; color: var(--text-2); }
+.tr-card { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: 14px; background: var(--surface); }
+.tr-top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.tr-lv { font-size: 11px; padding: 3px 8px; border-radius: 999px; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); white-space: nowrap; }
+
 </style>
 </head>
 <body>
@@ -4452,13 +4508,6 @@ ${d.placeIdx === -1 ? `<div style="display:grid;grid-template-columns:repeat(3,m
 </main>`;
 }
 
-function bigThree(ch) {
-  const sun = ch.planets[0], moon = ch.planets[1];
-  return `<div class="big3">
-<div><span class="label" style="font-size:9px">SUN</span><span class="v">${G(sun.glyph)} ${SIGNS[sun.sign].th}</span></div>
-<div><span class="label" style="font-size:9px">MOON</span><span class="v">${G(moon.glyph)} ${SIGNS[moon.sign].th}</span></div>
-<div><span class="label" style="font-size:9px">RISING</span><span class="v">${ch.asc != null ? SIGNS[signOf(ch.asc)].th : '<span class="small">ไม่ทราบเวลา</span>'}</span></div></div>`;
-}
 
 function hudFor(p) {
   const place = p.place;
@@ -4906,51 +4955,81 @@ ${r.health.map((h) => `<p class="small" style="color:var(--text)"><span style="c
 <p class="small" style="font-size:11px">ข้อมูลสุขภาพตามตำราโหราศาสตร์ ไม่ใช่คำวินิจฉัยทางการแพทย์</p></div></section>`;
 }
 
+const EL_COL = ['var(--amber)', 'var(--gold)', 'var(--harmony)', 'var(--teal)'];
+const EL_HINT = ['กล้าลงมือ มีไฟ', 'มั่นคง ทำจริง', 'คิดไว สื่อสารเก่ง', 'อ่อนไหว เข้าใจคน'];
+function elRing(e, n, total, tag) {
+  const R = 26, C = 2 * Math.PI * R, d = Math.max(0.02, n / total) * C;
+  return `<div class="ch-el${tag ? ' ' + tag : ''}"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${R}" fill="none" stroke="#2C261B" stroke-width="5"/>
+<circle cx="32" cy="32" r="${R}" fill="none" stroke="${EL_COL[e]}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${d.toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/>
+<text x="32" y="37" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" fill="#F1E6CF">${n}</text></svg>
+<b>ธาตุ${ELEMENTS[e].th}</b><span>${tag === 'top' ? 'เด่นที่สุด' : tag === 'low' ? 'ควรเติม' : EL_HINT[e]}</span></div>`;
+}
+function bigThree(ch) {
+  const sun = ch.planets[0], moon = ch.planets[1], asc = ch.asc != null ? signOf(ch.asc) : null;
+  const cell = (lab, th, glyph, s, note) => `<div class="b3"><span class="b3-m" style="--c:${s == null ? 'var(--faint)' : EL_COL[s % 4]}">${glyph}</span>
+<span class="label" style="font-size:9px;letter-spacing:.18em">${lab}</span><b>${s == null ? 'ไม่ทราบ' : SIGNS[s].th}</b><span>${note}</span></div>`;
+  return `<section class="b3-row">${cell('SUN · ตัวตน', 'อาทิตย์', G(sun.glyph), sun.sign, 'แก่นแท้ของคุณ')}${cell('MOON · ใจ', 'จันทร์', G(moon.glyph), moon.sign, 'อารมณ์ ความต้องการ')}${cell('RISING · ลัคนา', 'ลัคนา', asc == null ? '?' : `<span class="sym">${SIGNS[asc].glyph}&#xFE0E;</span>`, asc, asc == null ? 'ต้องมีเวลาเกิด' : 'ภาพที่คนอื่นเห็น')}</section>`;
+}
+function aspectCard(a) {
+  const tone = a.nature > 0 ? 'h' : a.nature < 0 ? 't' : 'c';
+  return `<li class="asp ${tone}"><span class="asp-pair"><span class="sym">${a.a.glyph}&#xFE0E;</span><i></i><span class="sym">${a.b.glyph}&#xFE0E;</span></span>
+<span class="asp-t"><b>${a.a.th} ${a.th} ${a.b.th}</b><span>${ASPECT_TEXT[a.nature]}</span></span><span class="asp-o mono">${a.off.toFixed(1)}°</span></li>`;
+}
+function planetCard(pl) {
+  const e = pl.sign % 4;
+  return `<li class="pl-card sense"><button class="pl-head" data-act="senseToggle" aria-expanded="false">
+<span class="b3-m sm" style="--c:${EL_COL[e]}"><span class="sym">${pl.glyph}&#xFE0E;</span></span>
+<span class="pl-t"><b>${pl.th}${pl.retro ? ' <span class="pl-r">R ถอย</span>' : ''}</b><span>${pl.kw}</span></span>
+<span class="pl-b"><span class="pl-sign"><span class="sym">${SIGNS[pl.sign].glyph}&#xFE0E;</span> ${SIGNS[pl.sign].th}</span><span class="mono">ภพ ${pl.house} · ${fmtDeg(pl.lon)}</span></span>
+<span class="chev">${icon('down', 14, 1.6)}</span></button>
+<div class="fold"><div class="fold-in"><p class="small pl-body">${planetText(pl)}</p></div></div></li>`;
+}
 function viewChart() {
   const ch = state.chart, p = state.profile, tab = state.chartTab, now = new Date();
   const kp = keyPattern(ch);
   const elOrder = [0, 1, 2, 3].sort((a, b) => ch.elementCount[b] - ch.elementCount[a]);
   const top = elOrder[0], low = elOrder[3];
+  const elTotal = ch.elementCount.reduce((a, b) => a + b, 0) || 1;
   let body = '';
   if (tab === 0) {
-    body = `<div style="display:flex;justify-content:center">${starMap(ch, { id: 'chart', houses: true, label: 'ผังดาวกำเนิดฉบับเต็ม' })}</div>
-<div class="legend"><span><i style="background:var(--harmony)"></i>HARMONY</span><span><i style="background:var(--tension)"></i>TENSION</span><span>WHOLE SIGN</span></div>
+    const asp = ch.aspects.slice(0, 8), nh = asp.filter((a) => a.nature > 0).length, nt = asp.filter((a) => a.nature < 0).length, nc = asp.length - nh - nt;
+    body = `<section class="ch-wheel">${starMap(ch, { id: 'chart', houses: true, label: 'ผังดาวกำเนิดฉบับเต็ม' })}
+<div class="legend"><span><i style="background:var(--harmony)"></i>ส่งเสริม</span><span><i style="background:var(--tension)"></i>ท้าทาย</span><span class="mono">WHOLE SIGN</span></div></section>
 ${bigThree(ch)}
-<section class="card"><span class="eyebrow" style="letter-spacing:.2em">KEY PATTERN</span><p class="h2" style="font-size:17px">${kp.title}</p><p class="body">${kp.body}</p><p class="mono small" style="font-size:10px">${kp.code}</p></section>
-<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">ELEMENTS · สมดุลธาตุ</h2>
-${[0, 1, 2, 3].map((e) => `<div class="el-row"><span>ธาตุ${ELEMENTS[e].th}</span><span class="el-bar" role="img" aria-label="ธาตุ${ELEMENTS[e].th} ${ch.elementCount[e]} ดวง"><span class="${e === top ? 'top' : ''}" style="width:${ch.elementCount[e] * 10}%"></span></span><span class="mono" style="text-align:right">${ch.elementCount[e]}</span></div>`).join('')}
-<p class="small" style="font-size:13px">ธาตุ${ELEMENTS[top].th}เด่น ส่วนธาตุ${ELEMENTS[low].th}น้อยที่สุด ลองเติมพลังด้านนี้ในชีวิตประจำวัน</p></section>
-<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">ASPECTS · มุมสำคัญ</h2>
-<div class="row-list">${ch.aspects.slice(0, 6).map((a) => `<div style="padding:10px 0;display:flex;flex-direction:column;gap:3px">
-<span style="font-size:14px;font-weight:500">${G(a.a.glyph)} ${a.a.th} ${a.th} ${G(a.b.glyph)} ${a.b.th} <span class="mono small" style="font-size:10px">${a.off.toFixed(1)}°</span></span>
-<span class="small" style="color:${a.nature > 0 ? 'var(--harmony)' : a.nature < 0 ? 'var(--tension)' : 'var(--text-2)'}">${ASPECT_TEXT[a.nature]}</span></div>`).join('')}</div></section>`;
+<section class="kp"><span class="eyebrow" style="letter-spacing:.2em">KEY PATTERN · จุดเด่นของผัง</span><p class="h2" style="font-size:18px">${kp.title}</p><p class="body" style="font-size:14px">${kp.body}</p><p class="mono" style="font-size:10px;color:var(--muted)">${kp.code}</p></section>
+<section class="ch-sec"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">◇</span>สมดุลธาตุ</h2>
+<div class="ch-els">${[0, 1, 2, 3].map((e) => elRing(e, ch.elementCount[e], elTotal, e === top ? 'top' : e === low ? 'low' : '')).join('')}</div>
+<p class="small" style="font-size:13px">ธาตุ${ELEMENTS[top].th}เด่น (${EL_HINT[top]}) ส่วนธาตุ${ELEMENTS[low].th}น้อยที่สุด ลองเติมพลังด้าน${EL_HINT[low]}ในชีวิตประจำวัน</p></section>
+<section class="ch-sec"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>มุมดาวสำคัญ</h2>
+<div class="asp-sum" role="img" aria-label="ส่งเสริม ${nh} ท้าทาย ${nt} ร่วม ${nc}"><span style="flex:${nh || 0.001};background:var(--harmony)"></span><span style="flex:${nc || 0.001};background:var(--gold)"></span><span style="flex:${nt || 0.001};background:var(--tension)"></span></div>
+<p class="asp-leg small"><span style="color:var(--harmony)">ส่งเสริม ${nh}</span><span style="color:var(--gold)">ร่วม ${nc}</span><span style="color:var(--tension)">ท้าทาย ${nt}</span></p>
+<ul class="asp-list">${asp.map(aspectCard).join('')}</ul></section>`;
   } else if (tab === 1) {
-    body = `<p class="small" style="font-size:13px">ตำแหน่งดาวทั้ง 10 ดวง ณ เวลาเกิด${ch.timeKnown ? '' : ' (ไม่ทราบเวลา: ภพนับจากราศีดวงอาทิตย์ และดวงจันทร์อาจคลาดได้ถึง ±6°)'}</p>
-<div class="row-list">${ch.planets.map((pl) => `<div class="planet-row"><span class="g" aria-hidden="true">${pl.glyph}&#xFE0E;</span>
-<span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:14px;font-weight:500">${pl.th} <span style="color:var(--text-2);font-weight:400">ใน${SIGNS[pl.sign].th}</span>${pl.retro ? ' <span class="mono small" style="font-size:10px;color:var(--tension)">R</span>' : ''}</span><span class="small">${planetText(pl)}</span></span>
-<span class="deg"><span>${fmtDeg(pl.lon)}</span><span class="small" style="font-size:10px">H${pl.house}</span></span></div>`).join('')}
-${ch.asc != null ? `<div class="planet-row"><span class="g mono" style="font-size:11px;padding-top:4px">ASC</span><span style="display:flex;flex-direction:column;gap:3px"><span style="font-size:14px;font-weight:500">ลัคนา <span style="color:var(--text-2);font-weight:400">ใน${SIGNS[signOf(ch.asc)].th}</span></span><span class="small">ภาพลักษณ์ที่คนอื่นเห็น: ${SIGNS[signOf(ch.asc)].trait}</span></span><span class="deg"><span>${fmtDeg(ch.asc)}</span></span></div>` : ''}</div>`;
+    body = `<p class="small" style="font-size:13px">ตำแหน่งดาว 10 ดวง ณ เวลาเกิด แตะการ์ดเพื่ออ่านความหมาย · สีวงบอกธาตุของราศี${ch.timeKnown ? '' : ' (ไม่ทราบเวลา: ภพนับจากราศีดวงอาทิตย์ และดวงจันทร์อาจคลาดได้ถึง ±6°)'}</p>
+<ul class="pl-list">${ch.asc != null ? `<li class="pl-card asc"><div class="pl-head"><span class="b3-m sm" style="--c:${EL_COL[signOf(ch.asc) % 4]}"><span class="mono" style="font-size:10px">ASC</span></span>
+<span class="pl-t"><b>ลัคนา</b><span>ภาพลักษณ์ที่คนอื่นเห็น: ${SIGNS[signOf(ch.asc)].trait}</span></span>
+<span class="pl-b"><span class="pl-sign"><span class="sym">${SIGNS[signOf(ch.asc)].glyph}&#xFE0E;</span> ${SIGNS[signOf(ch.asc)].th}</span><span class="mono">${fmtDeg(ch.asc)}</span></span></div></li>` : ''}
+${ch.planets.map(planetCard).join('')}</ul>`;
   } else if (tab === 3) {
     body = identityHTML(ch, p);
   } else {
     const tr = transits(ch, now);
     const col = (t) => t.level === 'HIGH' ? 'var(--tension)' : t.level === 'SUPPORT' ? 'var(--gold)' : 'var(--harmony)';
+    const lvTh = (t) => t.level === 'HIGH' ? 'มีผลมาก' : t.level === 'SUPPORT' ? 'ช่วยหนุน' : 'เปลี่ยนผ่าน';
     body = `<p class="small" style="font-size:13px">ดาวเคลื่อนช้าที่โคจรอยู่ตอนนี้ เทียบกับดวงกำเนิดของคุณ เรียงตามน้ำหนัก</p>
-<div class="timeline">${tr.map((t) => `<div class="item"><span class="dot" style="background:${col(t)};box-shadow:0 0 10px ${col(t)}"></span>
-<span class="mono small" style="font-size:11px">ตอนนี้ ${t.exit ? '→ ถึง ' + monthYear(t.exit) : ''}${t.retro ? ' · ถอยหลัง' : ''}</span>
-<span class="h2" style="font-size:17px">${G(t.glyph)} ${t.title}</span>
-<span class="body" style="font-size:13px">${t.body}</span>
-${t.hits.length ? `<span class="tags">${t.hits.map((h) => `<span class="tag">${h.th} ${h.target.th}</span>`).join('')}</span>` : ''}
-<span class="level" style="color:${col(t)}">${t.level}</span></div>`).join('')}</div>`;
+<ul class="tr-list">${tr.map((t) => `<li class="tr-card" style="--c:${col(t)}"><div class="tr-top"><span class="b3-m sm" style="--c:${col(t)}"><span class="sym">${t.glyph}&#xFE0E;</span></span>
+<span class="pl-t"><b>${t.title}</b><span class="mono" style="font-size:11px">ตอนนี้${t.exit ? ' → ถึง ' + monthYear(t.exit) : ''}${t.retro ? ' · ถอยหลัง' : ''}</span></span><span class="tr-lv">${lvTh(t)}</span></div>
+<p class="body" style="font-size:13px">${t.body}</p>
+${t.hits.length ? `<span class="tags">${t.hits.map((h) => `<span class="tag">${h.th} ${h.target.th}</span>`).join('')}</span>` : ''}</li>`).join('')}</ul>`;
   }
   const tabBtn = (i, t) => `<button role="tab" aria-selected="${tab === i}" data-act="chartTab" data-i="${i}">${t}</button>`;
+  const sun = ch.planets[0], bp = birthPlanet(p);
   return `<main class="screen">
-<div style="display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)">
-<div style="display:flex;align-items:center;gap:14px"><span class="sigil" style="color:var(--gold)">${icon('chart', 22, 1.3)}</span>
-<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span class="eyebrow">01 · NATAL CHART</span><h1 class="h1" style="font-size:24px">ผังดาวกำเนิด</h1></div>
-<a class="link-btn" href="#/setup" style="font-weight:500;font-size:13px">แก้ไข</a></div>
-<p class="mono small" style="font-size:11px">${esc(p.name || 'ฉัน')} · ${pad(p.day)}.${pad(p.month)}.${p.yearBE - 543} ${p.timeKnown ? pad(p.hour) + ':' + pad(p.minute) : '--:--'} · ${esc(p.place.name || 'พิกัดกำหนดเอง')}</p>
-<div class="tabs" role="tablist" aria-label="มุมมองดวง">${tabBtn(0, 'ผังดาว')}${tabBtn(3, 'ตัวตน')}${tabBtn(1, 'ดาวในภพ')}${tabBtn(2, 'ดวงจร')}</div></div>
+${pageHead('01', 'NATAL CHART', 'ผังดาวกำเนิด', 'var(--gold)', 'chart')}
+<section class="ch-id"><span class="b3-m" style="--c:${EL_COL[sun.sign % 4]}"><span class="sym">${SIGNS[sun.sign].glyph}&#xFE0E;</span></span>
+<span class="ch-id-t"><b>${esc(p.name || 'ฉัน')}</b><span class="mono">${pad(p.day)}.${pad(p.month)}.${p.yearBE - 543} · ${p.timeKnown ? pad(p.hour) + ':' + pad(p.minute) : '--:--'}</span><span>${esc(p.place.name || 'พิกัดกำหนดเอง')} · เกิด${TH_PLANETS[bp].day}</span></span>
+<a class="ch-edit" href="#/setup">แก้ไข</a></section>
+<div class="ch-tabs" role="tablist" aria-label="มุมมองดวง">${tabBtn(0, 'ผังดาว')}${tabBtn(3, 'ตัวตน')}${tabBtn(1, 'ดาวในภพ')}${tabBtn(2, 'ดวงจร')}</div>
 ${body}
 <a class="btn" href="#/ask">ถามผู้เชี่ยวชาญเรื่องดวงนี้</a>
 </main>`;

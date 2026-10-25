@@ -172,13 +172,6 @@ ${d.placeIdx === -1 ? `<div style="display:grid;grid-template-columns:repeat(3,m
 </main>`;
 }
 
-function bigThree(ch) {
-  const sun = ch.planets[0], moon = ch.planets[1];
-  return `<div class="big3">
-<div><span class="label" style="font-size:9px">SUN</span><span class="v">${G(sun.glyph)} ${SIGNS[sun.sign].th}</span></div>
-<div><span class="label" style="font-size:9px">MOON</span><span class="v">${G(moon.glyph)} ${SIGNS[moon.sign].th}</span></div>
-<div><span class="label" style="font-size:9px">RISING</span><span class="v">${ch.asc != null ? SIGNS[signOf(ch.asc)].th : '<span class="small">ไม่ทราบเวลา</span>'}</span></div></div>`;
-}
 
 function hudFor(p) {
   const place = p.place;
@@ -626,51 +619,81 @@ ${r.health.map((h) => `<p class="small" style="color:var(--text)"><span style="c
 <p class="small" style="font-size:11px">ข้อมูลสุขภาพตามตำราโหราศาสตร์ ไม่ใช่คำวินิจฉัยทางการแพทย์</p></div></section>`;
 }
 
+const EL_COL = ['var(--amber)', 'var(--gold)', 'var(--harmony)', 'var(--teal)'];
+const EL_HINT = ['กล้าลงมือ มีไฟ', 'มั่นคง ทำจริง', 'คิดไว สื่อสารเก่ง', 'อ่อนไหว เข้าใจคน'];
+function elRing(e, n, total, tag) {
+  const R = 26, C = 2 * Math.PI * R, d = Math.max(0.02, n / total) * C;
+  return `<div class="ch-el${tag ? ' ' + tag : ''}"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="${R}" fill="none" stroke="#2C261B" stroke-width="5"/>
+<circle cx="32" cy="32" r="${R}" fill="none" stroke="${EL_COL[e]}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${d.toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 32 32)"/>
+<text x="32" y="37" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" fill="#F1E6CF">${n}</text></svg>
+<b>ธาตุ${ELEMENTS[e].th}</b><span>${tag === 'top' ? 'เด่นที่สุด' : tag === 'low' ? 'ควรเติม' : EL_HINT[e]}</span></div>`;
+}
+function bigThree(ch) {
+  const sun = ch.planets[0], moon = ch.planets[1], asc = ch.asc != null ? signOf(ch.asc) : null;
+  const cell = (lab, th, glyph, s, note) => `<div class="b3"><span class="b3-m" style="--c:${s == null ? 'var(--faint)' : EL_COL[s % 4]}">${glyph}</span>
+<span class="label" style="font-size:9px;letter-spacing:.18em">${lab}</span><b>${s == null ? 'ไม่ทราบ' : SIGNS[s].th}</b><span>${note}</span></div>`;
+  return `<section class="b3-row">${cell('SUN · ตัวตน', 'อาทิตย์', G(sun.glyph), sun.sign, 'แก่นแท้ของคุณ')}${cell('MOON · ใจ', 'จันทร์', G(moon.glyph), moon.sign, 'อารมณ์ ความต้องการ')}${cell('RISING · ลัคนา', 'ลัคนา', asc == null ? '?' : `<span class="sym">${SIGNS[asc].glyph}&#xFE0E;</span>`, asc, asc == null ? 'ต้องมีเวลาเกิด' : 'ภาพที่คนอื่นเห็น')}</section>`;
+}
+function aspectCard(a) {
+  const tone = a.nature > 0 ? 'h' : a.nature < 0 ? 't' : 'c';
+  return `<li class="asp ${tone}"><span class="asp-pair"><span class="sym">${a.a.glyph}&#xFE0E;</span><i></i><span class="sym">${a.b.glyph}&#xFE0E;</span></span>
+<span class="asp-t"><b>${a.a.th} ${a.th} ${a.b.th}</b><span>${ASPECT_TEXT[a.nature]}</span></span><span class="asp-o mono">${a.off.toFixed(1)}°</span></li>`;
+}
+function planetCard(pl) {
+  const e = pl.sign % 4;
+  return `<li class="pl-card sense"><button class="pl-head" data-act="senseToggle" aria-expanded="false">
+<span class="b3-m sm" style="--c:${EL_COL[e]}"><span class="sym">${pl.glyph}&#xFE0E;</span></span>
+<span class="pl-t"><b>${pl.th}${pl.retro ? ' <span class="pl-r">R ถอย</span>' : ''}</b><span>${pl.kw}</span></span>
+<span class="pl-b"><span class="pl-sign"><span class="sym">${SIGNS[pl.sign].glyph}&#xFE0E;</span> ${SIGNS[pl.sign].th}</span><span class="mono">ภพ ${pl.house} · ${fmtDeg(pl.lon)}</span></span>
+<span class="chev">${icon('down', 14, 1.6)}</span></button>
+<div class="fold"><div class="fold-in"><p class="small pl-body">${planetText(pl)}</p></div></div></li>`;
+}
 function viewChart() {
   const ch = state.chart, p = state.profile, tab = state.chartTab, now = new Date();
   const kp = keyPattern(ch);
   const elOrder = [0, 1, 2, 3].sort((a, b) => ch.elementCount[b] - ch.elementCount[a]);
   const top = elOrder[0], low = elOrder[3];
+  const elTotal = ch.elementCount.reduce((a, b) => a + b, 0) || 1;
   let body = '';
   if (tab === 0) {
-    body = `<div style="display:flex;justify-content:center">${starMap(ch, { id: 'chart', houses: true, label: 'ผังดาวกำเนิดฉบับเต็ม' })}</div>
-<div class="legend"><span><i style="background:var(--harmony)"></i>HARMONY</span><span><i style="background:var(--tension)"></i>TENSION</span><span>WHOLE SIGN</span></div>
+    const asp = ch.aspects.slice(0, 8), nh = asp.filter((a) => a.nature > 0).length, nt = asp.filter((a) => a.nature < 0).length, nc = asp.length - nh - nt;
+    body = `<section class="ch-wheel">${starMap(ch, { id: 'chart', houses: true, label: 'ผังดาวกำเนิดฉบับเต็ม' })}
+<div class="legend"><span><i style="background:var(--harmony)"></i>ส่งเสริม</span><span><i style="background:var(--tension)"></i>ท้าทาย</span><span class="mono">WHOLE SIGN</span></div></section>
 ${bigThree(ch)}
-<section class="card"><span class="eyebrow" style="letter-spacing:.2em">KEY PATTERN</span><p class="h2" style="font-size:17px">${kp.title}</p><p class="body">${kp.body}</p><p class="mono small" style="font-size:10px">${kp.code}</p></section>
-<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">ELEMENTS · สมดุลธาตุ</h2>
-${[0, 1, 2, 3].map((e) => `<div class="el-row"><span>ธาตุ${ELEMENTS[e].th}</span><span class="el-bar" role="img" aria-label="ธาตุ${ELEMENTS[e].th} ${ch.elementCount[e]} ดวง"><span class="${e === top ? 'top' : ''}" style="width:${ch.elementCount[e] * 10}%"></span></span><span class="mono" style="text-align:right">${ch.elementCount[e]}</span></div>`).join('')}
-<p class="small" style="font-size:13px">ธาตุ${ELEMENTS[top].th}เด่น ส่วนธาตุ${ELEMENTS[low].th}น้อยที่สุด ลองเติมพลังด้านนี้ในชีวิตประจำวัน</p></section>
-<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">ASPECTS · มุมสำคัญ</h2>
-<div class="row-list">${ch.aspects.slice(0, 6).map((a) => `<div style="padding:10px 0;display:flex;flex-direction:column;gap:3px">
-<span style="font-size:14px;font-weight:500">${G(a.a.glyph)} ${a.a.th} ${a.th} ${G(a.b.glyph)} ${a.b.th} <span class="mono small" style="font-size:10px">${a.off.toFixed(1)}°</span></span>
-<span class="small" style="color:${a.nature > 0 ? 'var(--harmony)' : a.nature < 0 ? 'var(--tension)' : 'var(--text-2)'}">${ASPECT_TEXT[a.nature]}</span></div>`).join('')}</div></section>`;
+<section class="kp"><span class="eyebrow" style="letter-spacing:.2em">KEY PATTERN · จุดเด่นของผัง</span><p class="h2" style="font-size:18px">${kp.title}</p><p class="body" style="font-size:14px">${kp.body}</p><p class="mono" style="font-size:10px;color:var(--muted)">${kp.code}</p></section>
+<section class="ch-sec"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">◇</span>สมดุลธาตุ</h2>
+<div class="ch-els">${[0, 1, 2, 3].map((e) => elRing(e, ch.elementCount[e], elTotal, e === top ? 'top' : e === low ? 'low' : '')).join('')}</div>
+<p class="small" style="font-size:13px">ธาตุ${ELEMENTS[top].th}เด่น (${EL_HINT[top]}) ส่วนธาตุ${ELEMENTS[low].th}น้อยที่สุด ลองเติมพลังด้าน${EL_HINT[low]}ในชีวิตประจำวัน</p></section>
+<section class="ch-sec"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>มุมดาวสำคัญ</h2>
+<div class="asp-sum" role="img" aria-label="ส่งเสริม ${nh} ท้าทาย ${nt} ร่วม ${nc}"><span style="flex:${nh || 0.001};background:var(--harmony)"></span><span style="flex:${nc || 0.001};background:var(--gold)"></span><span style="flex:${nt || 0.001};background:var(--tension)"></span></div>
+<p class="asp-leg small"><span style="color:var(--harmony)">ส่งเสริม ${nh}</span><span style="color:var(--gold)">ร่วม ${nc}</span><span style="color:var(--tension)">ท้าทาย ${nt}</span></p>
+<ul class="asp-list">${asp.map(aspectCard).join('')}</ul></section>`;
   } else if (tab === 1) {
-    body = `<p class="small" style="font-size:13px">ตำแหน่งดาวทั้ง 10 ดวง ณ เวลาเกิด${ch.timeKnown ? '' : ' (ไม่ทราบเวลา: ภพนับจากราศีดวงอาทิตย์ และดวงจันทร์อาจคลาดได้ถึง ±6°)'}</p>
-<div class="row-list">${ch.planets.map((pl) => `<div class="planet-row"><span class="g" aria-hidden="true">${pl.glyph}&#xFE0E;</span>
-<span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-size:14px;font-weight:500">${pl.th} <span style="color:var(--text-2);font-weight:400">ใน${SIGNS[pl.sign].th}</span>${pl.retro ? ' <span class="mono small" style="font-size:10px;color:var(--tension)">R</span>' : ''}</span><span class="small">${planetText(pl)}</span></span>
-<span class="deg"><span>${fmtDeg(pl.lon)}</span><span class="small" style="font-size:10px">H${pl.house}</span></span></div>`).join('')}
-${ch.asc != null ? `<div class="planet-row"><span class="g mono" style="font-size:11px;padding-top:4px">ASC</span><span style="display:flex;flex-direction:column;gap:3px"><span style="font-size:14px;font-weight:500">ลัคนา <span style="color:var(--text-2);font-weight:400">ใน${SIGNS[signOf(ch.asc)].th}</span></span><span class="small">ภาพลักษณ์ที่คนอื่นเห็น: ${SIGNS[signOf(ch.asc)].trait}</span></span><span class="deg"><span>${fmtDeg(ch.asc)}</span></span></div>` : ''}</div>`;
+    body = `<p class="small" style="font-size:13px">ตำแหน่งดาว 10 ดวง ณ เวลาเกิด แตะการ์ดเพื่ออ่านความหมาย · สีวงบอกธาตุของราศี${ch.timeKnown ? '' : ' (ไม่ทราบเวลา: ภพนับจากราศีดวงอาทิตย์ และดวงจันทร์อาจคลาดได้ถึง ±6°)'}</p>
+<ul class="pl-list">${ch.asc != null ? `<li class="pl-card asc"><div class="pl-head"><span class="b3-m sm" style="--c:${EL_COL[signOf(ch.asc) % 4]}"><span class="mono" style="font-size:10px">ASC</span></span>
+<span class="pl-t"><b>ลัคนา</b><span>ภาพลักษณ์ที่คนอื่นเห็น: ${SIGNS[signOf(ch.asc)].trait}</span></span>
+<span class="pl-b"><span class="pl-sign"><span class="sym">${SIGNS[signOf(ch.asc)].glyph}&#xFE0E;</span> ${SIGNS[signOf(ch.asc)].th}</span><span class="mono">${fmtDeg(ch.asc)}</span></span></div></li>` : ''}
+${ch.planets.map(planetCard).join('')}</ul>`;
   } else if (tab === 3) {
     body = identityHTML(ch, p);
   } else {
     const tr = transits(ch, now);
     const col = (t) => t.level === 'HIGH' ? 'var(--tension)' : t.level === 'SUPPORT' ? 'var(--gold)' : 'var(--harmony)';
+    const lvTh = (t) => t.level === 'HIGH' ? 'มีผลมาก' : t.level === 'SUPPORT' ? 'ช่วยหนุน' : 'เปลี่ยนผ่าน';
     body = `<p class="small" style="font-size:13px">ดาวเคลื่อนช้าที่โคจรอยู่ตอนนี้ เทียบกับดวงกำเนิดของคุณ เรียงตามน้ำหนัก</p>
-<div class="timeline">${tr.map((t) => `<div class="item"><span class="dot" style="background:${col(t)};box-shadow:0 0 10px ${col(t)}"></span>
-<span class="mono small" style="font-size:11px">ตอนนี้ ${t.exit ? '→ ถึง ' + monthYear(t.exit) : ''}${t.retro ? ' · ถอยหลัง' : ''}</span>
-<span class="h2" style="font-size:17px">${G(t.glyph)} ${t.title}</span>
-<span class="body" style="font-size:13px">${t.body}</span>
-${t.hits.length ? `<span class="tags">${t.hits.map((h) => `<span class="tag">${h.th} ${h.target.th}</span>`).join('')}</span>` : ''}
-<span class="level" style="color:${col(t)}">${t.level}</span></div>`).join('')}</div>`;
+<ul class="tr-list">${tr.map((t) => `<li class="tr-card" style="--c:${col(t)}"><div class="tr-top"><span class="b3-m sm" style="--c:${col(t)}"><span class="sym">${t.glyph}&#xFE0E;</span></span>
+<span class="pl-t"><b>${t.title}</b><span class="mono" style="font-size:11px">ตอนนี้${t.exit ? ' → ถึง ' + monthYear(t.exit) : ''}${t.retro ? ' · ถอยหลัง' : ''}</span></span><span class="tr-lv">${lvTh(t)}</span></div>
+<p class="body" style="font-size:13px">${t.body}</p>
+${t.hits.length ? `<span class="tags">${t.hits.map((h) => `<span class="tag">${h.th} ${h.target.th}</span>`).join('')}</span>` : ''}</li>`).join('')}</ul>`;
   }
   const tabBtn = (i, t) => `<button role="tab" aria-selected="${tab === i}" data-act="chartTab" data-i="${i}">${t}</button>`;
+  const sun = ch.planets[0], bp = birthPlanet(p);
   return `<main class="screen">
-<div style="display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)">
-<div style="display:flex;align-items:center;gap:14px"><span class="sigil" style="color:var(--gold)">${icon('chart', 22, 1.3)}</span>
-<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span class="eyebrow">01 · NATAL CHART</span><h1 class="h1" style="font-size:24px">ผังดาวกำเนิด</h1></div>
-<a class="link-btn" href="#/setup" style="font-weight:500;font-size:13px">แก้ไข</a></div>
-<p class="mono small" style="font-size:11px">${esc(p.name || 'ฉัน')} · ${pad(p.day)}.${pad(p.month)}.${p.yearBE - 543} ${p.timeKnown ? pad(p.hour) + ':' + pad(p.minute) : '--:--'} · ${esc(p.place.name || 'พิกัดกำหนดเอง')}</p>
-<div class="tabs" role="tablist" aria-label="มุมมองดวง">${tabBtn(0, 'ผังดาว')}${tabBtn(3, 'ตัวตน')}${tabBtn(1, 'ดาวในภพ')}${tabBtn(2, 'ดวงจร')}</div></div>
+${pageHead('01', 'NATAL CHART', 'ผังดาวกำเนิด', 'var(--gold)', 'chart')}
+<section class="ch-id"><span class="b3-m" style="--c:${EL_COL[sun.sign % 4]}"><span class="sym">${SIGNS[sun.sign].glyph}&#xFE0E;</span></span>
+<span class="ch-id-t"><b>${esc(p.name || 'ฉัน')}</b><span class="mono">${pad(p.day)}.${pad(p.month)}.${p.yearBE - 543} · ${p.timeKnown ? pad(p.hour) + ':' + pad(p.minute) : '--:--'}</span><span>${esc(p.place.name || 'พิกัดกำหนดเอง')} · เกิด${TH_PLANETS[bp].day}</span></span>
+<a class="ch-edit" href="#/setup">แก้ไข</a></section>
+<div class="ch-tabs" role="tablist" aria-label="มุมมองดวง">${tabBtn(0, 'ผังดาว')}${tabBtn(3, 'ตัวตน')}${tabBtn(1, 'ดาวในภพ')}${tabBtn(2, 'ดวงจร')}</div>
 ${body}
 <a class="btn" href="#/ask">ถามผู้เชี่ยวชาญเรื่องดวงนี้</a>
 </main>`;
