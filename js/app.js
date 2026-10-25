@@ -877,20 +877,43 @@ function viewTarot() {
 <div style="display:flex;gap:8px"><button class="btn btn-line" data-act="tarotDraw" style="flex:1">สับใหม่</button><button class="btn btn-line" data-act="tarotReset" style="flex:1">เปลี่ยนแบบเปิดไพ่</button></div>`;
   } else if (!t.cards) {
     const o = t.other;
-    const whoUI = `<div class="seg" role="group" aria-label="ดูให้ใคร"><button aria-pressed="${t.who === 'me'}" data-act="tarotWho" data-v="me">ดูให้ตัวเอง</button><button aria-pressed="${t.who === 'other'}" data-act="tarotWho" data-v="other">ดูให้คนอื่น</button></div>
-${t.who === 'other' ? `<div class="card who-card">
+    const step = (n, title, inner) => `<section class="t-step"><h2 class="t-step-h"><span>${n}</span>${title}</h2>${inner}</section>`;
+    const who = `<div class="who-pick">
+<button class="who-opt" data-act="tarotWho" data-v="me" aria-pressed="${t.who === 'me'}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 4.5-6.5 8-6.5s6.5 2 8 6.5"/></svg><b>ตัวเอง</b><span>${state.profile.name ? esc(state.profile.name) + ' · ' : ''}ราศี${SIGNS[state.chart.planets[0].sign].th}</span></button>
+<button class="who-opt" data-act="tarotWho" data-v="other" aria-pressed="${t.who === 'other'}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="8" r="3"/><path d="M2.5 20c.8-3.5 3-5.5 5.5-5.5s4.7 2 5.5 5.5M11 20c.8-3.5 3-5.5 5.5-5.5s4.7 2 5.5 5.5"/></svg><b>คนอื่น</b><span>เพื่อน คนรัก ครอบครัว</span></button></div>
+${t.who === 'other' ? `<div class="who-card">
 <label class="field">ชื่อหรือชื่อเล่น (ไม่บังคับ)<input class="input" data-in="tarotOtherName" value="${esc(o.name)}" placeholder="เช่น น้องมิ้น" maxlength="40"></label>
 <button type="button" class="check" data-act="tarotOtherKnown" aria-pressed="${o.known}"><span class="box">${o.known ? '✓' : ''}</span>รู้วันเกิดของเขา (ไพ่จะโยงกับราศีของเขา)</button>
 ${o.known ? `<div class="dob-row"><label class="field">วัน<select class="select mono" data-in="t.day">${opts(range(1, 31).map((n) => [n, n]), o.day)}</select></label>
 <label class="field">เดือน<select class="select" data-in="t.month">${opts(MONTHS_TH.map((m, i) => [i + 1, m]), o.month)}</select></label>
 <label class="field">ปี พ.ศ.<select class="select mono" data-in="t.yearBE">${opts(range(2443, 2643).reverse().map((n) => [n, n]), o.yearBE)}</select></label></div>` : '<p class="small">ไม่ใส่วันเกิดก็เปิดไพ่ได้ แต่จะไม่มีส่วนที่โยงกับดวง</p>'}
 </div>` : ''}`;
-    body = `${whoUI}<div class="t-pick">${SPREADS.map((x, i) => `<button class="t-sp" data-act="tarotSpread" data-i="${i}" aria-pressed="${i === t.spread}"><b>${x.th}</b><span>${x.sub}</span></button>`).join('')}</div>
-${spread.house ? `<p class="small">เปิดไพ่ 12 ใบลงบนภพทั้ง 12 ตามหลักโหราศาสตร์ไทย เริ่มจากภพตนุ (ตัวเรา)${tFirst() != null ? ` ที่ราศี${SIGNS[tFirst()].th}${t.who === 'me' ? ' ซึ่งเป็นลัคนาของคุณ' : ` (ราศีเกิดของ${tSubj()})`}` : ''} ไปจนถึงภพวินาศ</p>` : `<div class="seg" role="group" aria-label="หัวข้อ">${TAROT_TOPICS.map((x, i) => `<button aria-pressed="${i === t.topic}" data-act="tarotTopic" data-i="${i}">${x.th}</button>`).join('')}</div>
-<label class="field">คำถามในใจ (ไม่บังคับ)<input class="input" data-in="tarotQ" value="${esc(t.q)}" placeholder="${spread.id === 'two' ? 'เช่น ควรเลือกงานที่ A หรือ B' : 'เช่น เดือนนี้งานจะเป็นยังไง'}" maxlength="120"></label>`}
-<div class="deck-stack" aria-hidden="true">${[0, 1, 2, 3, 4].map((k) => `<span style="--k:${k}">${CARD_BACK}</span>`).join('')}</div>
-<button class="btn" data-act="tarotDraw">สับไพ่ แล้วเลือกเอง ${spread.pos.length} ใบ</button>
-<p class="small" style="text-align:center">ตั้งจิตถึงคำถามให้ชัด แล้วค่อยกด</p>`;
+    const MINI = [
+      '<rect x="15" y="6" width="14" height="24" rx="2"/>',
+      '<rect x="6" y="6" width="14" height="24" rx="2"/><rect x="24" y="6" width="14" height="24" rx="2"/>',
+      '<rect x="1.5" y="8" width="12" height="20" rx="2"/><rect x="16" y="6" width="12" height="20" rx="2" transform="translate(0 2)"/><rect x="30.5" y="8" width="12" height="20" rx="2"/>',
+      `<circle cx="22" cy="18" r="9" opacity=".5"/>${Array.from({ length: 12 }, (_, k) => { const a = (195 + k * 30) * Math.PI / 180; return `<rect x="${(22 + 14.5 * Math.cos(a) - 1.6).toFixed(1)}" y="${(18 - 14.5 * Math.sin(a) - 2.6).toFixed(1)}" width="3.2" height="5.2" rx=".6"/>`; }).join('')}`
+    ];
+    const spreads = `<div class="t-pick">${SPREADS.map((x, i) => `<button class="t-sp" data-act="tarotSpread" data-i="${i}" aria-pressed="${i === t.spread}">
+<svg class="sp-mini" viewBox="0 0 44 36" aria-hidden="true">${MINI[i]}</svg><b>${x.th}</b><span>${x.sub}</span></button>`).join('')}</div>`;
+    const TOPIC_IC = [
+      '<path d="M12 3l2.2 6.8H21l-5.5 4 2.1 6.7L12 16.4l-5.6 4.1 2.1-6.7L3 9.8h6.8z"/>',
+      '<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7a4.3 4.3 0 0 1 7.5 2.8C19.5 15.4 12 20 12 20z"/>',
+      '<rect x="3" y="7.5" width="18" height="12" rx="2"/><path d="M9 7.5v-2A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5v2M3 12.5h18"/>',
+      '<circle cx="12" cy="12" r="8"/><path d="M14.5 9.2c-.6-.8-1.5-1.2-2.5-1.2-1.4 0-2.5.8-2.5 2s1.1 1.6 2.5 2 2.5.8 2.5 2-1.1 2-2.5 2c-1 0-1.9-.4-2.5-1.2M12 6.5V8M12 16v1.5"/>'
+    ];
+    const topics = `<div class="topic-pick">${TAROT_TOPICS.map((x, i) => `<button class="topic-opt" data-act="tarotTopic" data-i="${i}" aria-pressed="${i === t.topic}"><svg viewBox="0 0 24 24" aria-hidden="true">${TOPIC_IC[i]}</svg>${x.th}</button>`).join('')}</div>`;
+    const question = `<label class="q-box"><span class="q-mark" aria-hidden="true">“</span><textarea class="q-input" data-in="tarotQ" rows="2" maxlength="120" placeholder="${spread.id === 'two' ? 'เช่น ควรเลือกงานที่ A หรือ B' : 'เช่น เดือนนี้งานจะเป็นยังไง'}" aria-label="คำถามในใจ">${esc(t.q)}</textarea></label>`;
+    const n = 7;
+    body = `<div class="t-hero">
+<div class="t-stars" aria-hidden="true">${Array.from({ length: 26 }, (_, k) => `<i style="left:${(k * 37) % 100}%;top:${(k * 53) % 100}%;animation-delay:${(k % 7) * 0.4}s"></i>`).join('')}</div>
+<div class="deck-stack" aria-hidden="true">${Array.from({ length: n }, (_, k) => `<span style="--k:${k};--m:${(n - 1) / 2}">${CARD_BACK}</span>`).join('')}</div>
+<p class="t-hero-cap">ตั้งจิตให้นิ่ง แล้วเลือกวิธีเปิดไพ่</p></div>
+${step(1, 'ดูให้ใคร', who)}
+${step(2, 'วิธีเปิดไพ่', spreads)}
+${spread.house ? `<p class="small t-note">เปิดไพ่ 12 ใบลงบนภพทั้ง 12 ตามหลักโหราศาสตร์ไทย เริ่มจากภพตนุ (ตัวเรา)${tFirst() != null ? ` ที่ราศี${SIGNS[tFirst()].th}${t.who === 'me' ? ' ซึ่งเป็นลัคนาของคุณ' : ` (ราศีเกิดของ${tSubj()})`}` : ''} ไปจนถึงภพวินาศ</p>`
+    : step(3, 'เรื่องที่อยากรู้', topics) + step(4, 'คำถามในใจ <small>ไม่บังคับ</small>', question)}
+<button class="btn t-cta" data-act="tarotDraw"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>สับไพ่ แล้วเลือกเอง ${spread.pos.length} ใบ</button>`;
   } else {
     const all = t.flipped.length === t.cards.length;
     const grid = spread.house
