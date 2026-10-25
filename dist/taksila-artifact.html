@@ -854,6 +854,55 @@ a:hover { color: var(--gold-2); }
 .pl-dg.up { color: #C4DA8C; border: 1px solid rgba(168,194,106,.5); } .pl-dg.dn { color: #F0A08C; border: 1px solid rgba(224,122,98,.5); }
 .t-syn { gap: 6px; }
 
+/* ---------- โชคลาภ redesign ---------- */
+.lk-today { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.lk-today > div { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 10px 4px; border-radius: 14px; border: 1px solid var(--line); background: radial-gradient(ellipse 80% 70% at 50% 0%, rgba(224,164,88,.12), transparent 75%), var(--surface); text-align: center; }
+.lk-today span { font-size: 10px; color: var(--muted); }
+.lk-today b { font-size: 16px; color: var(--gold-2); font-family: var(--serif); }
+.lk-today b.mono { font-family: var(--mono); letter-spacing: .08em; }
+.lk-today i { font-style: normal; font-size: 10px; color: var(--text-2); line-height: 1.3; }
+.lk-modes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.lk-modes button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 2px 9px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
+.lk-modes b { font-size: 13px; } .lk-modes button > span:last-child { font-size: 9.5px; color: var(--muted); }
+.lk-ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: var(--amber); border: 1px solid rgba(224,164,88,.45); margin-bottom: 3px; }
+.lk-modes button[aria-pressed="true"] { border-color: rgba(224,164,88,.7); background: radial-gradient(ellipse 80% 70% at 50% 0%, rgba(224,164,88,.22), transparent 75%), var(--surface); box-shadow: 0 0 18px rgba(224,164,88,.18); }
+.lk-modes button[aria-pressed="true"] .lk-ic { background: rgba(224,164,88,.15); box-shadow: 0 0 12px rgba(224,164,88,.35); }
+.lk-stage { display: flex; flex-direction: column; gap: 12px; padding: 14px; border-radius: 22px; border: 1px solid rgba(224,164,88,.28); background: radial-gradient(ellipse 70% 50% at 50% 20%, rgba(224,164,88,.10), transparent 70%), radial-gradient(ellipse 60% 40% at 50% 100%, rgba(124,96,200,.08), transparent 70%), var(--surface); }
+.lk-hist { display: flex; flex-direction: column; gap: 6px; }
+.lk-hist > div { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.lk-hist > div > span { flex: none; display: flex; flex-direction: column; align-items: center; padding: 6px 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
+.lk-hist i { font-style: normal; font-size: 10px; color: var(--muted); } .lk-hist b { font-size: 15px; color: var(--gold-2); }
+/* tree */
+.tr-stage { position: relative; width: 100%; max-width: 320px; aspect-ratio: 320 / 384; margin: 0 auto; }
+.tr-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tr-bark { position: absolute; left: 36.5%; width: 26%; top: 50.3%; height: 31.8%; border-radius: 10px; overflow: hidden; touch-action: none;
+  background: repeating-linear-gradient(92deg, rgba(0,0,0,.28) 0 2px, transparent 2px 9px), repeating-linear-gradient(86deg, rgba(255,230,190,.07) 0 1px, transparent 1px 13px), linear-gradient(90deg, #4A3523, #7A5A3B 45%, #654A30 70%, #3E2C1D);
+  box-shadow: inset 0 0 14px rgba(0,0,0,.55); }
+.tr-bark canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; }
+.tr-stage:not(.tied) .tr-bark canvas { pointer-events: none; }
+.tr-stage.tied:not(.revealed) .tr-bark { outline: 1.5px dashed rgba(255,248,230,.5); outline-offset: 3px; animation: trp 1.8s ease-in-out infinite; }
+@keyframes trp { 50% { outline-color: rgba(255,248,230,.12); } }
+.tr-stage.revealed .tr-bark { box-shadow: inset 0 0 14px rgba(0,0,0,.55), 0 0 28px rgba(240,216,154,.55); }
+.tr-cloth { position: absolute; left: 35.5%; width: 28%; top: 43.7%; height: 6.6%; display: flex; flex-direction: column; pointer-events: none; }
+.tr-cloth i { flex: 1; background: var(--c); transform: scaleX(0); transform-origin: left; transition: transform .5s cubic-bezier(.3,1.4,.5,1); box-shadow: inset 0 -1px 0 rgba(0,0,0,.25); border-radius: 2px; }
+.tr-cloth i:nth-child(2) { transition-delay: .15s; } .tr-cloth i:nth-child(3) { transition-delay: .3s; }
+.tr-cloth.on i { transform: scaleX(1); }
+.tr-tail { position: absolute; right: -14%; top: 40%; display: flex; gap: 2px; opacity: 0; transition: opacity .3s .6s; }
+.tr-tail b { width: 6px; height: 34px; background: var(--c); border-radius: 0 0 3px 3px; transform-origin: top; animation: trw 2.6s ease-in-out infinite; }
+.tr-tail b:nth-child(2) { animation-delay: .3s; height: 40px; } .tr-tail b:nth-child(3) { animation-delay: .6s; height: 30px; }
+@keyframes trw { 50% { transform: rotate(12deg); } }
+.tr-cloth.on .tr-tail { opacity: 1; }
+.tr-name { position: absolute; left: 50%; bottom: 1%; transform: translateX(-50%); font-family: var(--serif); font-size: 13px; color: var(--gold-2); background: rgba(13,11,8,.7); padding: 2px 10px; border-radius: 999px; border: 1px solid var(--line-2); white-space: nowrap; }
+.tr-slots { display: flex; justify-content: center; gap: 10px; }
+.tr-slot { width: 50px; height: 58px; display: grid; place-items: center; border-radius: 12px; border: 1px dashed var(--line-2); font-family: var(--mono); font-size: 26px; color: var(--muted); }
+.tr-slot.on { border: 1px solid rgba(240,216,154,.6); color: var(--gold-2); background: radial-gradient(circle, rgba(240,216,154,.18), transparent 70%); box-shadow: 0 0 14px rgba(240,216,154,.25); animation: trpop .5s ease both; }
+.tr-slot.on:nth-child(2) { animation-delay: .12s; } .tr-slot.on:nth-child(3) { animation-delay: .24s; }
+@keyframes trpop { from { transform: scale(.6); opacity: 0; } }
+.tr-meter { height: 5px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.tr-meter i { display: block; height: 100%; background: linear-gradient(90deg, #E0457B, #F2C230, #3FA35B); transition: width .2s; }
+
+.tr-num { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--mono); font-weight: 700; font-size: 24px; letter-spacing: .04em; white-space: nowrap; color: rgba(255,250,238,.92); text-shadow: 0 0 10px rgba(255,248,230,.7), 0 1px 0 rgba(0,0,0,.4); background: radial-gradient(ellipse at center, rgba(255,252,244,.22), transparent 70%); }
+
 </style>
 <div id="app" class="app"></div>
 <noscript>กรุณาเปิด JavaScript เพื่อใช้งานตักศิลา</noscript>
@@ -2365,6 +2414,74 @@ async function askMotion() {
   } catch { return false; }
 }
 const thaiNum = (n) => String(n).replace(/[0-9]/g, (d) => '๐๑๒๓๔๕๖๗๘๙'[d]);
+
+// ---------- ขูดเลขต้นไม้: rub powder on the bark until the numbers in the grooves show ----------
+// Powder lands where the finger rubs; the grooves that form the digits hold much more of it,
+// so the numbers appear gradually, like the real practice of rubbing แป้ง on a sacred tree.
+function mountTree(el, { digits, onReveal, onProgress } = {}) {
+  const cv = el.querySelector('canvas');
+  const W = cv.clientWidth, H = cv.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
+  const mk = () => { const c = document.createElement('canvas'); c.width = W * dpr; c.height = H * dpr; const x = c.getContext('2d'); x.scale(dpr, dpr); return [c, x]; };
+  const [rub, rx] = mk(), [mask, mx] = mk(), [tmp, tx] = mk();
+  // digits written into the bark as wobbly grooves
+  mx.fillStyle = '#fff'; mx.strokeStyle = '#fff'; mx.lineJoin = 'round'; mx.lineCap = 'round';
+  const n = digits.length, fs = Math.min(H * 0.42, (W / n) * 1.1);
+  mx.font = `700 ${fs}px "IBM Plex Mono", ui-monospace, monospace`; mx.textAlign = 'center'; mx.textBaseline = 'middle';
+  digits.forEach((d, i) => {
+    const x = (W / (n + 1)) * (i + 1) + (rnd(9) - 4), y = H * 0.5 + (rnd(13) - 6);
+    mx.save(); mx.translate(x, y); mx.rotate((rnd(21) - 10) * Math.PI / 180);
+    mx.lineWidth = 3; mx.strokeText(String(d), 0, 0); mx.globalAlpha = 0.85; mx.fillText(String(d), 0, 0); mx.restore();
+  });
+  // a few random grooves so the bark does not give the digits away
+  mx.globalAlpha = 0.35; mx.lineWidth = 2;
+  for (let i = 0; i < 9; i++) { mx.beginPath(); const x = rnd(W), y = rnd(H); mx.moveTo(x, y); mx.quadraticCurveTo(x + rnd(40) - 20, y + 20, x + rnd(30) - 15, y + 40 + rnd(30)); mx.stroke(); }
+  mx.globalAlpha = 1;
+  // sample points inside the digits to measure progress
+  const md = mx.getImageData(0, 0, mask.width, mask.height).data, pts = [];
+  for (let y = 0; y < mask.height; y += 6 * dpr) for (let x = 0; x < mask.width; x += 6 * dpr) if (md[(y * mask.width + x) * 4 + 3] > 200) pts.push([x, y]);
+  let alive = true, done = false, last = null, lastBuzz = 0;
+  const draw = () => {
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalAlpha = 0.28; ctx.drawImage(rub, 0, 0, W, H); ctx.globalAlpha = 1;
+    tx.globalCompositeOperation = 'source-over'; tx.clearRect(0, 0, W, H); tx.drawImage(mask, 0, 0, W, H);
+    tx.globalCompositeOperation = 'destination-in'; tx.drawImage(rub, 0, 0, W, H);
+    ctx.drawImage(tmp, 0, 0, W, H);
+  };
+  const progress = () => {
+    if (!pts.length) return 1;
+    const rd = rx.getImageData(0, 0, rub.width, rub.height).data;
+    let hit = 0; for (const [x, y] of pts) if (rd[(y * rub.width + x) * 4 + 3] > 90) hit++;
+    return hit / pts.length;
+  };
+  const dab = (x, y) => {
+    const g = rx.createRadialGradient(x, y, 0, x, y, 20);
+    g.addColorStop(0, 'rgba(255,252,244,0.55)'); g.addColorStop(1, 'rgba(255,252,244,0)');
+    rx.fillStyle = g; rx.beginPath(); rx.arc(x, y, 20, 0, Math.PI * 2); rx.fill();
+  };
+  const at = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  let ticks = 0;
+  const move = (e) => {
+    if (!last || done) return;
+    e.preventDefault();
+    const [x, y] = at(e), [lx, ly] = last, dist = Math.hypot(x - lx, y - ly), steps = Math.max(1, Math.round(dist / 6));
+    for (let i = 1; i <= steps; i++) dab(lx + ((x - lx) * i) / steps, ly + ((y - ly) * i) / steps);
+    last = [x, y]; draw();
+    const now = performance.now();
+    if (navigator.vibrate && now - lastBuzz > 120 && dist > 4) { navigator.vibrate(4); lastBuzz = now; }
+    if (++ticks % 6 === 0) {
+      const p = progress(); if (onProgress) onProgress(p);
+      if (p > 0.62 && !done) { done = true; for (let i = 0; i < 6; i++) { rx.globalAlpha = 0.5; rx.drawImage(mask, 0, 0, W, H); } rx.globalAlpha = 1; draw(); el.classList.add('revealed'); if (navigator.vibrate) navigator.vibrate([30, 40, 60]); if (onReveal) onReveal(); }
+    }
+  };
+  const down = (e) => { if (done) return; last = at(e); dab(...last); draw(); cv.setPointerCapture && cv.setPointerCapture(e.pointerId); };
+  const up = () => { last = null; };
+  cv.addEventListener('pointerdown', down); cv.addEventListener('pointermove', move);
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up); cv.addEventListener('pointerleave', up);
+  draw();
+  return { destroy() { alive = false; cv.removeEventListener('pointerdown', down); cv.removeEventListener('pointermove', move); } };
+}
 
 // ---- js/siamsi.js ----
 // เซียมซี 28 ใบ: original verses written for ตักศิลา (not copied from any temple's set).
@@ -4767,7 +4884,7 @@ const state = {
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
-  luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
+  luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null, tree: { tied: false, digits: null, done: false, kind: null }, hist: [] },
   ask: { messages: [], persona: 'thai', ctx: null, pending: false }
 };
 if (state.profile) state.chart = safeChart(state.profile);
@@ -5938,7 +6055,6 @@ ${tool.kind === 'name' ? `<div class="nm-form">
 </main>`;
 }
 
-const LUCK_MODES = [['ball', 'ลูกปิงปอง'], ['incense', 'ธูปเลข'], ['siamsi', 'เซียมซี']];
 const ballSlots = (vals) => `<div class="b-slots">${[0, 1, 2].map((k) => vals[k] ? `<span class="b-slot on h${vals[k].hue}"><b>${vals[k].d}</b></span>` : `<span class="b-slot">${k + 1}</span>`).join('')}</div>`;
 const incSlots = (vals) => `<div class="b-slots inc">${[0, 1, 2].map((k) => vals[k] != null ? `<span class="n-slot on">${vals[k]}</span>` : `<span class="n-slot">–</span>`).join('')}</div>`;
 const INCENSE_POT = `<svg class="i-pot" viewBox="0 0 220 110" aria-hidden="true"><defs><linearGradient id="potg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C9A24E"/><stop offset=".5" stop-color="#8A6A2C"/><stop offset="1" stop-color="#4A3815"/></linearGradient><radialGradient id="sand" cx="50%" cy="40%"><stop offset="0" stop-color="#9A8C74"/><stop offset="1" stop-color="#5E5446"/></radialGradient></defs>
@@ -5969,6 +6085,42 @@ function siamsiSlip(no) {
 </article>${remedyChip(siamsiRemedy(f.level))}${f.level <= 1 ? remedyCard(remedyPlan({ planetNo: troubleNow().planetNo, topic: 'bad', level: 2, reason: 'ใบเซียมซีเตือนให้ระวัง ทำบุญเสริมให้หนักเป็นเบา' })) : ''}`;
 }
 
+const LUCK_MODES = [
+  ['ball', 'ลูกปิงปอง', 'จับลูกจากโถ', '<circle cx="12" cy="13" r="7"/><path d="M12 6V3M9 3h6"/><text x="12" y="16" text-anchor="middle" font-size="7" fill="currentColor" stroke="none">8</text>'],
+  ['incense', 'ธูปเลข', 'ขี้ธูปเผยเลข', '<path d="M12 21V9"/><path d="M12 7c-2-2 2-3 0-5"/><path d="M7 21h10"/>'],
+  ['tree', 'ขูดต้นไม้', 'ถูแป้งหาเลข', '<path d="M12 21v-7M9 21h6"/><path d="M12 14c-5 0-7-3-6-6 1-3 4-4 6-4s5 1 6 4c1 3-1 6-6 6z"/><path d="M10 15.5h4" stroke-width="2.4"/>'],
+  ['siamsi', 'เซียมซี', 'เขย่าเสี่ยงทาย', '<path d="M8 21h8l1-12H7z"/><path d="M10 9V3M12 9V2M14 9V4"/>']
+];
+const TREE_KINDS = [['ต้นตะเคียน', 'นางตะเคียน'], ['ต้นโพธิ์', 'รุกขเทวดา'], ['ต้นไทร', 'เจ้าแม่ต้นไทร'], ['ต้นมะขาม', 'รุกขเทวดา']];
+// The tree scene: canopy, trunk, roots, garlands and offerings. The bark panel with the canvas sits on top.
+const TREE_SVG = `<svg class="tr-svg" viewBox="0 -24 320 384" aria-hidden="true">
+<defs><radialGradient id="trc" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#3E5A2E"/><stop offset="1" stop-color="#1C2A16"/></radialGradient>
+<linearGradient id="trt" x1="0" x2="1"><stop offset="0" stop-color="#3A2A1C"/><stop offset=".45" stop-color="#6B4E33"/><stop offset=".7" stop-color="#5A4129"/><stop offset="1" stop-color="#2E2116"/></linearGradient>
+<radialGradient id="trg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#F0D89A" stop-opacity=".35"/><stop offset="1" stop-color="#F0D89A" stop-opacity="0"/></radialGradient></defs>
+<circle cx="160" cy="150" r="150" fill="url(#trg)"/>
+<g fill="url(#trc)"><circle cx="90" cy="80" r="62"/><circle cx="230" cy="78" r="64"/><circle cx="160" cy="52" r="70"/><circle cx="60" cy="130" r="44"/><circle cx="262" cy="128" r="46"/></g>
+<g fill="#4F7239" opacity=".55"><circle cx="120" cy="40" r="22"/><circle cx="205" cy="34" r="20"/><circle cx="250" cy="96" r="16"/><circle cx="75" cy="95" r="18"/></g>
+<path d="M112 360c10-30 14-70 14-110 0-50-6-80-26-110l24 6c10 18 18 30 22 46 6-22 4-40-4-60l26 4c4 20 4 40 0 56 10-16 22-28 38-36l14 12c-18 12-28 28-32 50-4 30-2 90 14 142z" fill="url(#trt)"/>
+<path d="M126 360c-12-8-34-10-52-6M190 360c12-10 34-12 54-6" stroke="#4A3524" stroke-width="10" fill="none" stroke-linecap="round"/>
+<g fill="#8A6A46" opacity=".9"><circle cx="70" cy="190" r="0"/></g>
+<g class="tr-garland" fill="none" stroke-width="5" stroke-linecap="round"><path d="M128 120q32 22 64 0" stroke="#F2E6C8" stroke-dasharray="1 7"/><path d="M130 124q30 20 60 0" stroke="#E8A93A" stroke-dasharray="1 7" stroke-dashoffset="4"/></g>
+<g class="tr-offer"><rect x="40" y="330" width="44" height="14" rx="4" fill="#B5541E"/><circle cx="52" cy="326" r="7" fill="#E8C14E"/><circle cx="66" cy="324" r="8" fill="#9BC25A"/><circle cx="78" cy="327" r="6" fill="#E8A93A"/>
+<rect x="238" y="326" width="40" height="18" rx="3" fill="#F2E6C8"/><path d="M244 326v-14M252 326v-18M260 326v-14" stroke="#C93A2E" stroke-width="2"/><circle cx="252" cy="306" r="2" fill="#FFB54A"/></g>
+</svg>`;
+const CLOTH = (on) => `<div class="tr-cloth${on ? ' on' : ''}" aria-hidden="true"><i style="--c:#E0457B"></i><i style="--c:#F2C230"></i><i style="--c:#3FA35B"></i><span class="tr-tail"><b style="--c:#E0457B"></b><b style="--c:#F2C230"></b><b style="--c:#3FA35B"></b></span></div>`;
+function treeSlots(t) {
+  return `<div class="tr-slots">${(t.digits || [null, null, null]).map((d) => `<span class="tr-slot${t.done ? ' on' : ''}">${t.done ? d : '?'}</span>`).join('')}</div>`;
+}
+function luckTodayHTML() {
+  const bp = birthPlanet(state.profile), L = luckOf(bp), now = new Date();
+  const dp = dayPlanet(now.getFullYear(), now.getMonth() + 1, now.getDate(), now.getHours());
+  const pos = posOf(bp, dp);
+  const w = luckWindows(state.chart, now).find((x) => x.kind !== 'care');
+  return `<section class="lk-today">
+<div><span>เลขมงคลประจำตัว</span><b class="mono">${L.numbers.join(' ')}</b><i>ทักษาคนเกิด${TH_PLANETS[bp].day}</i></div>
+<div><span>วันนี้เป็นวัน</span><b>${pos.th}</b><i>${pos.tone >= 2 ? 'วันดีเสี่ยงโชค' : pos.tone < 0 ? 'วันควรงดเสี่ยง' : 'วันกลาง ๆ'}</i></div>
+<div><span>ช่วงโชคถัดไป</span><b>${w ? windowRange(w).split(' – ')[0] : '—'}</b><i>${w ? w.area : 'สร้างฐานก่อน'}</i></div></section>`;
+}
 function viewLuck() {
   const l = state.luck, mode = l.mode;
   let body = '';
@@ -5985,6 +6137,16 @@ function viewLuck() {
 <div id="inc-slots">${incSlots(l.incShown)}</div>
 <p class="p-hint" id="inc-hint">${l.inc === 'done' ? `ธูปเผยเลข <b>${l.incDigits.join(' ')}</b>` : l.inc === 'burning' ? 'ธูปกำลังไหม้ ขี้ธูปจะค่อย ๆ หล่นเผยเลขทีละตัว' : 'ตั้งจิตอธิษฐาน แล้วจุดธูปเลข'}</p>
 <button class="btn" data-act="lightUp"${l.inc === 'burning' ? ' disabled' : ''}>${l.inc === 'done' ? 'จุดธูปดอกใหม่' : 'จุดธูป'}</button>`;
+  } else if (mode === 'tree') {
+    const t = l.tree;
+    if (!t.digits) { t.digits = [randomDigit(), randomDigit(), randomDigit()]; t.kind = TREE_KINDS[Math.floor(Math.random() * TREE_KINDS.length)]; }
+    body = `<div class="tr-stage${t.tied ? ' tied' : ''}${t.done ? ' revealed' : ''}" id="tree">${TREE_SVG}
+<div class="tr-bark"><canvas aria-label="เปลือกไม้ ใช้นิ้วถูเพื่อหาเลข"></canvas>${t.done ? `<span class="tr-num">${t.digits.join(' ')}</span>` : ''}</div>${CLOTH(t.tied)}
+<span class="tr-name">${t.kind[0]}</span></div>
+${treeSlots(t)}
+<div class="tr-meter" aria-hidden="true"><i id="tr-meter" style="width:${t.done ? 100 : 0}%"></i></div>
+<p class="p-hint" id="tree-hint">${t.done ? `${t.kind[1]}ให้เลข <b>${t.digits.join(' ')}</b> · สองตัวท้าย <b>${t.digits.slice(1).join('')}</b>` : t.tied ? '<b>ใช้นิ้วถูแป้งบนเปลือกไม้</b> ถูไปมาจนร่องเปลือกเผยตัวเลข' : `ขั้นแรก ผูกผ้าสามสีที่${t.kind[0]} ตั้งจิตขอพร${t.kind[1]}`}</p>
+${t.done ? '<button class="btn btn-line" data-act="treeNew">ไปขอต้นใหม่</button>' : t.tied ? '' : '<button class="btn" data-act="treeTie">ผูกผ้าสามสี</button>'}`;
   } else {
     body = `<div class="ss-stage${l.ss ? ' fallen' : ''}" id="ss"><div class="ss-cyl"><span class="ss-rise"><b>${l.ss ? thaiNum(l.ss) : ''}</b></span>${SS_CYL}</div><div class="ss-out"><b>${l.ss ? thaiNum(l.ss) : ''}</b></div><div class="ss-floor"></div></div>
 ${l.ss ? siamsiSlip(l.ss) + '<button class="btn btn-line" data-act="ssReset">เสี่ยงเซียมซีใหม่</button>'
@@ -5995,11 +6157,14 @@ ${l.ss ? siamsiSlip(l.ss) + '<button class="btn btn-line" data-act="ssReset">เ
   }
   return `<main class="screen" style="--accent:var(--amber)">
 ${pageHead('05', 'FORTUNE', 'โชคลาภ', 'var(--amber)', 'luck')}
-<div class="seg" role="group" aria-label="วิธีเสี่ยงโชค">${LUCK_MODES.map(([id, th]) => `<button aria-pressed="${mode === id}" data-act="luckMode" data-v="${id}">${th}</button>`).join('')}</div>
-${body}
-<p class="small" style="text-align:center;font-size:11px">${mode === 'siamsi' ? 'คำทำนายแต่งขึ้นใหม่โดยตักศิลา ใช้เป็นข้อคิดและกำลังใจ' : 'เพื่อความบันเทิง ตัวเลขสุ่มจากเครื่องของคุณ ไม่ใช่การรับประกันผลใด ๆ · โปรดเล่นอย่างพอประมาณ'}</p>
+${luckTodayHTML()}
+<div class="lk-modes" role="group" aria-label="วิธีเสี่ยงโชค">${LUCK_MODES.map(([id, th, sub, ic]) => `<button aria-pressed="${mode === id}" data-act="luckMode" data-v="${id}"><span class="lk-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${ic}</svg></span><b>${th}</b><span>${sub}</span></button>`).join('')}</div>
+<section class="lk-stage lk-${mode}">${body}</section>
+${l.hist.length ? `<section class="lk-hist"><span class="eyebrow">ผลล่าสุด</span><div>${l.hist.slice(-6).reverse().map((h) => `<span><i>${h.m}</i><b class="mono">${h.v}</b></span>`).join('')}</div></section>` : ''}
+<p class="small" style="text-align:center;font-size:11px">${mode === 'siamsi' ? 'คำทำนายแต่งขึ้นใหม่โดยตักศิลา ใช้เป็นข้อคิดและกำลังใจ' : mode === 'tree' ? 'จำลองความเชื่อการขอเลขจากต้นไม้ใหญ่ · ตัวเลขสุ่มจากเครื่องของคุณ เพื่อความบันเทิง โปรดเล่นอย่างพอประมาณ' : 'เพื่อความบันเทิง ตัวเลขสุ่มจากเครื่องของคุณ ไม่ใช่การรับประกันผลใด ๆ · โปรดเล่นอย่างพอประมาณ'}</p>
 </main>`;
 }
+const luckHist = (m, v) => { const h = state.luck.hist; if (!h.length || h[h.length - 1].v !== v) h.push({ m, v }); };
 
 function syncWheel() {
   const t = state.tarot, c = document.getElementById('wheel-center');
@@ -6024,13 +6189,20 @@ function mountLuck() {
         l.balls.push({ d, hue });
         if (navigator.vibrate) navigator.vibrate(20);
         document.getElementById('ball-slots').innerHTML = ballSlots(l.balls);
-        if (l.balls.length >= 3) setTimeout(render, 700);
+        if (l.balls.length >= 3) { luckHist('ปิงปอง', l.balls.map((b) => b.d).join('')); setTimeout(render, 700); }
         else { const h = document.getElementById('ball-hint'); if (h) h.textContent = `ได้ลูกที่ ${l.balls.length} แล้ว จับต่ออีก ${3 - l.balls.length} ลูก`; }
       }
     });
+  } else if (l.mode === 'tree' && l.tree.tied && !l.tree.done) {
+    const el = document.getElementById('tree');
+    if (el) luckCtl = mountTree(el.querySelector('.tr-bark'), {
+      digits: l.tree.digits,
+      onProgress(p) { const m = document.getElementById('tr-meter'); if (m) m.style.width = Math.min(100, Math.round(p / 0.62 * 100)) + '%'; },
+      onReveal() { l.tree.done = true; luckHist('ต้นไม้', l.tree.digits.join('')); setTimeout(() => { if (route() === 'luck' && l.mode === 'tree') render(); }, 900); }
+    });
   } else if (l.mode === 'siamsi' && !l.ss) {
     const el = document.getElementById('ss');
-    if (el) luckCtl = mountSiamsi(el, { total: SIAMSI.length, onFall(no) { l.ss = no; render(); const sl = document.querySelector('.slip'); if (sl) sl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
+    if (el) luckCtl = mountSiamsi(el, { total: SIAMSI.length, onFall(no) { l.ss = no; luckHist('เซียมซี', 'ใบ ' + no); render(); const sl = document.querySelector('.slip'); if (sl) sl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
   }
 }
 
@@ -6592,6 +6764,8 @@ document.addEventListener('click', (e) => {
     case 'luckMode': state.luck.mode = el.dataset.v; if (state.luck.inc === 'burning') state.luck.inc = 'idle'; break;
     case 'stirGlobe': if (luckCtl && luckCtl.stir) luckCtl.stir(); return;
     case 'ballReset': state.luck.balls = []; break;
+    case 'treeTie': state.luck.tree.tied = true; if (navigator.vibrate) navigator.vibrate(15); break;
+    case 'treeNew': state.luck.tree = { tied: false, digits: null, done: false, kind: null }; break;
     case 'lightUp': {
       const l = state.luck;
       l.inc = 'burning'; l.incDigits = [randomDigit(), randomDigit(), randomDigit()]; l.incShown = [];
@@ -6599,7 +6773,7 @@ document.addEventListener('click', (e) => {
       const el = document.getElementById('inc');
       luckCtl = burnIncense(el, l.incDigits, {
         onDigit(k, d) { l.incShown[k] = d; const s2 = document.getElementById('inc-slots'); if (s2) s2.innerHTML = incSlots(l.incShown); },
-        onDone() { l.inc = 'done'; if (route() === 'luck' && l.mode === 'incense') render(); }
+        onDone() { l.inc = 'done'; luckHist('ธูป', l.incDigits.join('')); if (route() === 'luck' && l.mode === 'incense') render(); }
       });
       return;
     }

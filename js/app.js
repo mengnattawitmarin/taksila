@@ -8,13 +8,13 @@ import { starMap, logoRing, EL_HEX } from './starmap.js';
 import { EVENTS, findAuspicious } from './auspice.js';
 import { natalProfile, sixthSense } from './profile.js';
 import { CARDS, drawCards, SPREADS, HOUSE_READ } from './tarot.js';
-import { mountGlobe, burnIncense, mountSiamsi, askMotion, randomDigit, thaiNum } from './luck.js';
+import { mountGlobe, burnIncense, mountSiamsi, mountTree, askMotion, randomDigit, thaiNum } from './luck.js';
 import { SIAMSI } from './siamsi.js';
 import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
 import { NUM_TOOLS, analyzeNumber, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
 import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
-import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
+import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf, dayPlanet } from './thai.js';
 
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
@@ -38,7 +38,7 @@ const state = {
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
-  luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
+  luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null, tree: { tied: false, digits: null, done: false, kind: null }, hist: [] },
   ask: { messages: [], persona: 'thai', ctx: null, pending: false }
 };
 if (state.profile) state.chart = safeChart(state.profile);
@@ -1209,7 +1209,6 @@ ${tool.kind === 'name' ? `<div class="nm-form">
 </main>`;
 }
 
-const LUCK_MODES = [['ball', 'ลูกปิงปอง'], ['incense', 'ธูปเลข'], ['siamsi', 'เซียมซี']];
 const ballSlots = (vals) => `<div class="b-slots">${[0, 1, 2].map((k) => vals[k] ? `<span class="b-slot on h${vals[k].hue}"><b>${vals[k].d}</b></span>` : `<span class="b-slot">${k + 1}</span>`).join('')}</div>`;
 const incSlots = (vals) => `<div class="b-slots inc">${[0, 1, 2].map((k) => vals[k] != null ? `<span class="n-slot on">${vals[k]}</span>` : `<span class="n-slot">–</span>`).join('')}</div>`;
 const INCENSE_POT = `<svg class="i-pot" viewBox="0 0 220 110" aria-hidden="true"><defs><linearGradient id="potg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C9A24E"/><stop offset=".5" stop-color="#8A6A2C"/><stop offset="1" stop-color="#4A3815"/></linearGradient><radialGradient id="sand" cx="50%" cy="40%"><stop offset="0" stop-color="#9A8C74"/><stop offset="1" stop-color="#5E5446"/></radialGradient></defs>
@@ -1240,6 +1239,42 @@ function siamsiSlip(no) {
 </article>${remedyChip(siamsiRemedy(f.level))}${f.level <= 1 ? remedyCard(remedyPlan({ planetNo: troubleNow().planetNo, topic: 'bad', level: 2, reason: 'ใบเซียมซีเตือนให้ระวัง ทำบุญเสริมให้หนักเป็นเบา' })) : ''}`;
 }
 
+const LUCK_MODES = [
+  ['ball', 'ลูกปิงปอง', 'จับลูกจากโถ', '<circle cx="12" cy="13" r="7"/><path d="M12 6V3M9 3h6"/><text x="12" y="16" text-anchor="middle" font-size="7" fill="currentColor" stroke="none">8</text>'],
+  ['incense', 'ธูปเลข', 'ขี้ธูปเผยเลข', '<path d="M12 21V9"/><path d="M12 7c-2-2 2-3 0-5"/><path d="M7 21h10"/>'],
+  ['tree', 'ขูดต้นไม้', 'ถูแป้งหาเลข', '<path d="M12 21v-7M9 21h6"/><path d="M12 14c-5 0-7-3-6-6 1-3 4-4 6-4s5 1 6 4c1 3-1 6-6 6z"/><path d="M10 15.5h4" stroke-width="2.4"/>'],
+  ['siamsi', 'เซียมซี', 'เขย่าเสี่ยงทาย', '<path d="M8 21h8l1-12H7z"/><path d="M10 9V3M12 9V2M14 9V4"/>']
+];
+const TREE_KINDS = [['ต้นตะเคียน', 'นางตะเคียน'], ['ต้นโพธิ์', 'รุกขเทวดา'], ['ต้นไทร', 'เจ้าแม่ต้นไทร'], ['ต้นมะขาม', 'รุกขเทวดา']];
+// The tree scene: canopy, trunk, roots, garlands and offerings. The bark panel with the canvas sits on top.
+const TREE_SVG = `<svg class="tr-svg" viewBox="0 -24 320 384" aria-hidden="true">
+<defs><radialGradient id="trc" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#3E5A2E"/><stop offset="1" stop-color="#1C2A16"/></radialGradient>
+<linearGradient id="trt" x1="0" x2="1"><stop offset="0" stop-color="#3A2A1C"/><stop offset=".45" stop-color="#6B4E33"/><stop offset=".7" stop-color="#5A4129"/><stop offset="1" stop-color="#2E2116"/></linearGradient>
+<radialGradient id="trg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#F0D89A" stop-opacity=".35"/><stop offset="1" stop-color="#F0D89A" stop-opacity="0"/></radialGradient></defs>
+<circle cx="160" cy="150" r="150" fill="url(#trg)"/>
+<g fill="url(#trc)"><circle cx="90" cy="80" r="62"/><circle cx="230" cy="78" r="64"/><circle cx="160" cy="52" r="70"/><circle cx="60" cy="130" r="44"/><circle cx="262" cy="128" r="46"/></g>
+<g fill="#4F7239" opacity=".55"><circle cx="120" cy="40" r="22"/><circle cx="205" cy="34" r="20"/><circle cx="250" cy="96" r="16"/><circle cx="75" cy="95" r="18"/></g>
+<path d="M112 360c10-30 14-70 14-110 0-50-6-80-26-110l24 6c10 18 18 30 22 46 6-22 4-40-4-60l26 4c4 20 4 40 0 56 10-16 22-28 38-36l14 12c-18 12-28 28-32 50-4 30-2 90 14 142z" fill="url(#trt)"/>
+<path d="M126 360c-12-8-34-10-52-6M190 360c12-10 34-12 54-6" stroke="#4A3524" stroke-width="10" fill="none" stroke-linecap="round"/>
+<g fill="#8A6A46" opacity=".9"><circle cx="70" cy="190" r="0"/></g>
+<g class="tr-garland" fill="none" stroke-width="5" stroke-linecap="round"><path d="M128 120q32 22 64 0" stroke="#F2E6C8" stroke-dasharray="1 7"/><path d="M130 124q30 20 60 0" stroke="#E8A93A" stroke-dasharray="1 7" stroke-dashoffset="4"/></g>
+<g class="tr-offer"><rect x="40" y="330" width="44" height="14" rx="4" fill="#B5541E"/><circle cx="52" cy="326" r="7" fill="#E8C14E"/><circle cx="66" cy="324" r="8" fill="#9BC25A"/><circle cx="78" cy="327" r="6" fill="#E8A93A"/>
+<rect x="238" y="326" width="40" height="18" rx="3" fill="#F2E6C8"/><path d="M244 326v-14M252 326v-18M260 326v-14" stroke="#C93A2E" stroke-width="2"/><circle cx="252" cy="306" r="2" fill="#FFB54A"/></g>
+</svg>`;
+const CLOTH = (on) => `<div class="tr-cloth${on ? ' on' : ''}" aria-hidden="true"><i style="--c:#E0457B"></i><i style="--c:#F2C230"></i><i style="--c:#3FA35B"></i><span class="tr-tail"><b style="--c:#E0457B"></b><b style="--c:#F2C230"></b><b style="--c:#3FA35B"></b></span></div>`;
+function treeSlots(t) {
+  return `<div class="tr-slots">${(t.digits || [null, null, null]).map((d) => `<span class="tr-slot${t.done ? ' on' : ''}">${t.done ? d : '?'}</span>`).join('')}</div>`;
+}
+function luckTodayHTML() {
+  const bp = birthPlanet(state.profile), L = luckOf(bp), now = new Date();
+  const dp = dayPlanet(now.getFullYear(), now.getMonth() + 1, now.getDate(), now.getHours());
+  const pos = posOf(bp, dp);
+  const w = luckWindows(state.chart, now).find((x) => x.kind !== 'care');
+  return `<section class="lk-today">
+<div><span>เลขมงคลประจำตัว</span><b class="mono">${L.numbers.join(' ')}</b><i>ทักษาคนเกิด${TH_PLANETS[bp].day}</i></div>
+<div><span>วันนี้เป็นวัน</span><b>${pos.th}</b><i>${pos.tone >= 2 ? 'วันดีเสี่ยงโชค' : pos.tone < 0 ? 'วันควรงดเสี่ยง' : 'วันกลาง ๆ'}</i></div>
+<div><span>ช่วงโชคถัดไป</span><b>${w ? windowRange(w).split(' – ')[0] : '—'}</b><i>${w ? w.area : 'สร้างฐานก่อน'}</i></div></section>`;
+}
 function viewLuck() {
   const l = state.luck, mode = l.mode;
   let body = '';
@@ -1256,6 +1291,16 @@ function viewLuck() {
 <div id="inc-slots">${incSlots(l.incShown)}</div>
 <p class="p-hint" id="inc-hint">${l.inc === 'done' ? `ธูปเผยเลข <b>${l.incDigits.join(' ')}</b>` : l.inc === 'burning' ? 'ธูปกำลังไหม้ ขี้ธูปจะค่อย ๆ หล่นเผยเลขทีละตัว' : 'ตั้งจิตอธิษฐาน แล้วจุดธูปเลข'}</p>
 <button class="btn" data-act="lightUp"${l.inc === 'burning' ? ' disabled' : ''}>${l.inc === 'done' ? 'จุดธูปดอกใหม่' : 'จุดธูป'}</button>`;
+  } else if (mode === 'tree') {
+    const t = l.tree;
+    if (!t.digits) { t.digits = [randomDigit(), randomDigit(), randomDigit()]; t.kind = TREE_KINDS[Math.floor(Math.random() * TREE_KINDS.length)]; }
+    body = `<div class="tr-stage${t.tied ? ' tied' : ''}${t.done ? ' revealed' : ''}" id="tree">${TREE_SVG}
+<div class="tr-bark"><canvas aria-label="เปลือกไม้ ใช้นิ้วถูเพื่อหาเลข"></canvas>${t.done ? `<span class="tr-num">${t.digits.join(' ')}</span>` : ''}</div>${CLOTH(t.tied)}
+<span class="tr-name">${t.kind[0]}</span></div>
+${treeSlots(t)}
+<div class="tr-meter" aria-hidden="true"><i id="tr-meter" style="width:${t.done ? 100 : 0}%"></i></div>
+<p class="p-hint" id="tree-hint">${t.done ? `${t.kind[1]}ให้เลข <b>${t.digits.join(' ')}</b> · สองตัวท้าย <b>${t.digits.slice(1).join('')}</b>` : t.tied ? '<b>ใช้นิ้วถูแป้งบนเปลือกไม้</b> ถูไปมาจนร่องเปลือกเผยตัวเลข' : `ขั้นแรก ผูกผ้าสามสีที่${t.kind[0]} ตั้งจิตขอพร${t.kind[1]}`}</p>
+${t.done ? '<button class="btn btn-line" data-act="treeNew">ไปขอต้นใหม่</button>' : t.tied ? '' : '<button class="btn" data-act="treeTie">ผูกผ้าสามสี</button>'}`;
   } else {
     body = `<div class="ss-stage${l.ss ? ' fallen' : ''}" id="ss"><div class="ss-cyl"><span class="ss-rise"><b>${l.ss ? thaiNum(l.ss) : ''}</b></span>${SS_CYL}</div><div class="ss-out"><b>${l.ss ? thaiNum(l.ss) : ''}</b></div><div class="ss-floor"></div></div>
 ${l.ss ? siamsiSlip(l.ss) + '<button class="btn btn-line" data-act="ssReset">เสี่ยงเซียมซีใหม่</button>'
@@ -1266,11 +1311,14 @@ ${l.ss ? siamsiSlip(l.ss) + '<button class="btn btn-line" data-act="ssReset">เ
   }
   return `<main class="screen" style="--accent:var(--amber)">
 ${pageHead('05', 'FORTUNE', 'โชคลาภ', 'var(--amber)', 'luck')}
-<div class="seg" role="group" aria-label="วิธีเสี่ยงโชค">${LUCK_MODES.map(([id, th]) => `<button aria-pressed="${mode === id}" data-act="luckMode" data-v="${id}">${th}</button>`).join('')}</div>
-${body}
-<p class="small" style="text-align:center;font-size:11px">${mode === 'siamsi' ? 'คำทำนายแต่งขึ้นใหม่โดยตักศิลา ใช้เป็นข้อคิดและกำลังใจ' : 'เพื่อความบันเทิง ตัวเลขสุ่มจากเครื่องของคุณ ไม่ใช่การรับประกันผลใด ๆ · โปรดเล่นอย่างพอประมาณ'}</p>
+${luckTodayHTML()}
+<div class="lk-modes" role="group" aria-label="วิธีเสี่ยงโชค">${LUCK_MODES.map(([id, th, sub, ic]) => `<button aria-pressed="${mode === id}" data-act="luckMode" data-v="${id}"><span class="lk-ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${ic}</svg></span><b>${th}</b><span>${sub}</span></button>`).join('')}</div>
+<section class="lk-stage lk-${mode}">${body}</section>
+${l.hist.length ? `<section class="lk-hist"><span class="eyebrow">ผลล่าสุด</span><div>${l.hist.slice(-6).reverse().map((h) => `<span><i>${h.m}</i><b class="mono">${h.v}</b></span>`).join('')}</div></section>` : ''}
+<p class="small" style="text-align:center;font-size:11px">${mode === 'siamsi' ? 'คำทำนายแต่งขึ้นใหม่โดยตักศิลา ใช้เป็นข้อคิดและกำลังใจ' : mode === 'tree' ? 'จำลองความเชื่อการขอเลขจากต้นไม้ใหญ่ · ตัวเลขสุ่มจากเครื่องของคุณ เพื่อความบันเทิง โปรดเล่นอย่างพอประมาณ' : 'เพื่อความบันเทิง ตัวเลขสุ่มจากเครื่องของคุณ ไม่ใช่การรับประกันผลใด ๆ · โปรดเล่นอย่างพอประมาณ'}</p>
 </main>`;
 }
+const luckHist = (m, v) => { const h = state.luck.hist; if (!h.length || h[h.length - 1].v !== v) h.push({ m, v }); };
 
 function syncWheel() {
   const t = state.tarot, c = document.getElementById('wheel-center');
@@ -1295,13 +1343,20 @@ function mountLuck() {
         l.balls.push({ d, hue });
         if (navigator.vibrate) navigator.vibrate(20);
         document.getElementById('ball-slots').innerHTML = ballSlots(l.balls);
-        if (l.balls.length >= 3) setTimeout(render, 700);
+        if (l.balls.length >= 3) { luckHist('ปิงปอง', l.balls.map((b) => b.d).join('')); setTimeout(render, 700); }
         else { const h = document.getElementById('ball-hint'); if (h) h.textContent = `ได้ลูกที่ ${l.balls.length} แล้ว จับต่ออีก ${3 - l.balls.length} ลูก`; }
       }
     });
+  } else if (l.mode === 'tree' && l.tree.tied && !l.tree.done) {
+    const el = document.getElementById('tree');
+    if (el) luckCtl = mountTree(el.querySelector('.tr-bark'), {
+      digits: l.tree.digits,
+      onProgress(p) { const m = document.getElementById('tr-meter'); if (m) m.style.width = Math.min(100, Math.round(p / 0.62 * 100)) + '%'; },
+      onReveal() { l.tree.done = true; luckHist('ต้นไม้', l.tree.digits.join('')); setTimeout(() => { if (route() === 'luck' && l.mode === 'tree') render(); }, 900); }
+    });
   } else if (l.mode === 'siamsi' && !l.ss) {
     const el = document.getElementById('ss');
-    if (el) luckCtl = mountSiamsi(el, { total: SIAMSI.length, onFall(no) { l.ss = no; render(); const sl = document.querySelector('.slip'); if (sl) sl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
+    if (el) luckCtl = mountSiamsi(el, { total: SIAMSI.length, onFall(no) { l.ss = no; luckHist('เซียมซี', 'ใบ ' + no); render(); const sl = document.querySelector('.slip'); if (sl) sl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
   }
 }
 
@@ -1863,6 +1918,8 @@ document.addEventListener('click', (e) => {
     case 'luckMode': state.luck.mode = el.dataset.v; if (state.luck.inc === 'burning') state.luck.inc = 'idle'; break;
     case 'stirGlobe': if (luckCtl && luckCtl.stir) luckCtl.stir(); return;
     case 'ballReset': state.luck.balls = []; break;
+    case 'treeTie': state.luck.tree.tied = true; if (navigator.vibrate) navigator.vibrate(15); break;
+    case 'treeNew': state.luck.tree = { tied: false, digits: null, done: false, kind: null }; break;
     case 'lightUp': {
       const l = state.luck;
       l.inc = 'burning'; l.incDigits = [randomDigit(), randomDigit(), randomDigit()]; l.incShown = [];
@@ -1870,7 +1927,7 @@ document.addEventListener('click', (e) => {
       const el = document.getElementById('inc');
       luckCtl = burnIncense(el, l.incDigits, {
         onDigit(k, d) { l.incShown[k] = d; const s2 = document.getElementById('inc-slots'); if (s2) s2.innerHTML = incSlots(l.incShown); },
-        onDone() { l.inc = 'done'; if (route() === 'luck' && l.mode === 'incense') render(); }
+        onDone() { l.inc = 'done'; luckHist('ธูป', l.incDigits.join('')); if (route() === 'luck' && l.mode === 'incense') render(); }
       });
       return;
     }

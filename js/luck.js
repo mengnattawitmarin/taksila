@@ -239,3 +239,71 @@ export async function askMotion() {
   } catch { return false; }
 }
 export const thaiNum = (n) => String(n).replace(/[0-9]/g, (d) => '๐๑๒๓๔๕๖๗๘๙'[d]);
+
+// ---------- ขูดเลขต้นไม้: rub powder on the bark until the numbers in the grooves show ----------
+// Powder lands where the finger rubs; the grooves that form the digits hold much more of it,
+// so the numbers appear gradually, like the real practice of rubbing แป้ง on a sacred tree.
+export function mountTree(el, { digits, onReveal, onProgress } = {}) {
+  const cv = el.querySelector('canvas');
+  const W = cv.clientWidth, H = cv.clientHeight, dpr = Math.min(2, window.devicePixelRatio || 1);
+  cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
+  const mk = () => { const c = document.createElement('canvas'); c.width = W * dpr; c.height = H * dpr; const x = c.getContext('2d'); x.scale(dpr, dpr); return [c, x]; };
+  const [rub, rx] = mk(), [mask, mx] = mk(), [tmp, tx] = mk();
+  // digits written into the bark as wobbly grooves
+  mx.fillStyle = '#fff'; mx.strokeStyle = '#fff'; mx.lineJoin = 'round'; mx.lineCap = 'round';
+  const n = digits.length, fs = Math.min(H * 0.42, (W / n) * 1.1);
+  mx.font = `700 ${fs}px "IBM Plex Mono", ui-monospace, monospace`; mx.textAlign = 'center'; mx.textBaseline = 'middle';
+  digits.forEach((d, i) => {
+    const x = (W / (n + 1)) * (i + 1) + (rnd(9) - 4), y = H * 0.5 + (rnd(13) - 6);
+    mx.save(); mx.translate(x, y); mx.rotate((rnd(21) - 10) * Math.PI / 180);
+    mx.lineWidth = 3; mx.strokeText(String(d), 0, 0); mx.globalAlpha = 0.85; mx.fillText(String(d), 0, 0); mx.restore();
+  });
+  // a few random grooves so the bark does not give the digits away
+  mx.globalAlpha = 0.35; mx.lineWidth = 2;
+  for (let i = 0; i < 9; i++) { mx.beginPath(); const x = rnd(W), y = rnd(H); mx.moveTo(x, y); mx.quadraticCurveTo(x + rnd(40) - 20, y + 20, x + rnd(30) - 15, y + 40 + rnd(30)); mx.stroke(); }
+  mx.globalAlpha = 1;
+  // sample points inside the digits to measure progress
+  const md = mx.getImageData(0, 0, mask.width, mask.height).data, pts = [];
+  for (let y = 0; y < mask.height; y += 6 * dpr) for (let x = 0; x < mask.width; x += 6 * dpr) if (md[(y * mask.width + x) * 4 + 3] > 200) pts.push([x, y]);
+  let alive = true, done = false, last = null, lastBuzz = 0;
+  const draw = () => {
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalAlpha = 0.28; ctx.drawImage(rub, 0, 0, W, H); ctx.globalAlpha = 1;
+    tx.globalCompositeOperation = 'source-over'; tx.clearRect(0, 0, W, H); tx.drawImage(mask, 0, 0, W, H);
+    tx.globalCompositeOperation = 'destination-in'; tx.drawImage(rub, 0, 0, W, H);
+    ctx.drawImage(tmp, 0, 0, W, H);
+  };
+  const progress = () => {
+    if (!pts.length) return 1;
+    const rd = rx.getImageData(0, 0, rub.width, rub.height).data;
+    let hit = 0; for (const [x, y] of pts) if (rd[(y * rub.width + x) * 4 + 3] > 90) hit++;
+    return hit / pts.length;
+  };
+  const dab = (x, y) => {
+    const g = rx.createRadialGradient(x, y, 0, x, y, 20);
+    g.addColorStop(0, 'rgba(255,252,244,0.55)'); g.addColorStop(1, 'rgba(255,252,244,0)');
+    rx.fillStyle = g; rx.beginPath(); rx.arc(x, y, 20, 0, Math.PI * 2); rx.fill();
+  };
+  const at = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  let ticks = 0;
+  const move = (e) => {
+    if (!last || done) return;
+    e.preventDefault();
+    const [x, y] = at(e), [lx, ly] = last, dist = Math.hypot(x - lx, y - ly), steps = Math.max(1, Math.round(dist / 6));
+    for (let i = 1; i <= steps; i++) dab(lx + ((x - lx) * i) / steps, ly + ((y - ly) * i) / steps);
+    last = [x, y]; draw();
+    const now = performance.now();
+    if (navigator.vibrate && now - lastBuzz > 120 && dist > 4) { navigator.vibrate(4); lastBuzz = now; }
+    if (++ticks % 6 === 0) {
+      const p = progress(); if (onProgress) onProgress(p);
+      if (p > 0.62 && !done) { done = true; for (let i = 0; i < 6; i++) { rx.globalAlpha = 0.5; rx.drawImage(mask, 0, 0, W, H); } rx.globalAlpha = 1; draw(); el.classList.add('revealed'); if (navigator.vibrate) navigator.vibrate([30, 40, 60]); if (onReveal) onReveal(); }
+    }
+  };
+  const down = (e) => { if (done) return; last = at(e); dab(...last); draw(); cv.setPointerCapture && cv.setPointerCapture(e.pointerId); };
+  const up = () => { last = null; };
+  cv.addEventListener('pointerdown', down); cv.addEventListener('pointermove', move);
+  cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up); cv.addEventListener('pointerleave', up);
+  draw();
+  return { destroy() { alive = false; cv.removeEventListener('pointerdown', down); cv.removeEventListener('pointermove', move); } };
+}
