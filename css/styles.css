@@ -349,7 +349,7 @@ a:hover { color: var(--gold-2); }
 .w-slot .tc { box-shadow: none; }
 .w-slot .p-slot { font-size: 11px; }
 .w-slot .p-slot b { font-weight: 500; }
-.w-center { position: absolute; left: 50%; top: 50%; width: 36%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; pointer-events: none; }
+.w-center { position: absolute; left: 50%; top: 50%; width: 32%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; pointer-events: none; }
 .w-center .eyebrow { font-size: 9px; letter-spacing: .12em; }
 .w-center b { font-family: var(--serif); font-size: 15px; line-height: 1.25; color: var(--text); }
 .w-center span:last-child { font-size: 10px; color: var(--muted); }
