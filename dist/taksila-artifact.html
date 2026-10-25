@@ -6112,7 +6112,15 @@ ${ws.some((w) => w.kind === 'care') ? remedyCard(remedyPlan({ planetNo: 7, topic
 // Routes live in memory (and are mirrored to the URL hash when the host allows it),
 // so the app also works inside sandboxed frames that ignore hash changes.
 const NEEDS_PROFILE = ['home', 'chart', 'match', 'ask'];
-let current = location.hash.replace(/^#\/?/, '');
+// Opening the app always starts at home. Home-screen shortcuts pass ?go=<room> to open a room directly.
+let current = (() => { try { return new URLSearchParams(location.search).get('go') || ''; } catch (e) { return ''; } })();
+try { history.replaceState(null, '', location.pathname); } catch (e) { /* not allowed in some frames */ }
+// Coming back to the app after a while also returns to home.
+let hiddenAt = 0;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { hiddenAt = Date.now(); return; }
+  if (hiddenAt && Date.now() - hiddenAt > 10 * 60000 && state.chart && !['home', 'setup', 'welcome'].includes(route())) go('home');
+});
 function route() {
   let r = current || (state.profile ? 'home' : 'welcome');
   if (NEEDS_PROFILE.includes(r) && !state.chart) r = 'welcome';
