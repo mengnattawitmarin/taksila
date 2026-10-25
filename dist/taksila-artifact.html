@@ -126,6 +126,17 @@ a:hover { color: var(--gold-2); }
 .tool .n { font-family: var(--serif); font-size: 16px; font-weight: 600; }
 .ask-link { text-decoration: none; color: var(--text); border: 1px solid var(--line-2); border-radius: 8px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
 
+/* live daily */
+.live-dot { width: 7px; height: 7px; border-radius: 4px; background: var(--gold-2); box-shadow: 0 0 8px var(--gold-2); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.tr-list, .next-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.tr-item { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.tr-glyphs { display: flex; flex-direction: column; align-items: center; gap: 2px; padding-top: 2px; font-size: 17px; line-height: 1.15; color: var(--gold-2); text-shadow: 0 0 10px rgba(240, 216, 154, 0.4); }
+.tr-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tr-bar { width: 64px; height: 3px; border-radius: 2px; background: var(--line); display: block; }
+.tr-bar span { display: block; height: 100%; border-radius: 2px; }
+.next-list li { display: flex; flex-direction: column; gap: 2px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+
 /* chart */
 .legend { display: flex; gap: 16px; justify-content: center; font-family: var(--mono); font-size: 10px; color: var(--muted); }
 .legend i { display: inline-block; width: 14px; height: 1.5px; vertical-align: middle; margin-right: 6px; }
@@ -605,6 +616,109 @@ function daily(chart, now = new Date()) {
     basis = 'ดวงอาทิตย์จรภพ ' + h;
   }
   return { scores, headline, basis, sunSign: signOf(pos.sun.lon), moonSign: signOf(pos.moon.lon), pos };
+}
+
+// ---------- live daily transits (recomputed every minute by the app) ----------
+const lonOf = (id, date) => lonAt(id, dayNumber(date));
+
+const MOVER_ORB = { moon: 6, sun: 4, mercury: 3.5, venus: 3.5, mars: 3.5, jupiter: 3, saturn: 3, uranus: 2, neptune: 2, pluto: 2 };
+const MOVER_W = { moon: 1, sun: 1.2, mercury: 0.9, venus: 1, mars: 1.1, jupiter: 1.3, saturn: 1.4, uranus: 1.2, neptune: 1, pluto: 1.2 };
+const TARGET_W = { sun: 1.3, moon: 1.3, asc: 1.2, venus: 1.1, mars: 1, mercury: 1, jupiter: 0.9, saturn: 0.9, uranus: 0.7, neptune: 0.7, pluto: 0.7 };
+const MOVER_ACT = {
+  moon: 'กระตุ้นอารมณ์และความรู้สึกเรื่อง', sun: 'ส่องสว่างและเติมพลังให้เรื่อง', mercury: 'นำความคิด ข่าวสาร และการพูดคุยมาสู่เรื่อง',
+  venus: 'เติมเสน่ห์และความราบรื่นให้เรื่อง', mars: 'เร่งพลังและความใจร้อนในเรื่อง', jupiter: 'ขยายโอกาสและโชคให้เรื่อง',
+  saturn: 'ทดสอบความอดทนและวางโครงสร้างให้เรื่อง', uranus: 'สร้างความเปลี่ยนแปลงไม่คาดคิดต่อเรื่อง',
+  neptune: 'เพิ่มแรงบันดาลใจแต่ทำให้คลุมเครือในเรื่อง', pluto: 'เปลี่ยนแปลงอย่างลึกซึ้งต่อเรื่อง'
+};
+const TARGET_AREA = {
+  sun: 'ตัวตนและเป้าหมาย', moon: 'อารมณ์และครอบครัว', mercury: 'ความคิดและการสื่อสาร', venus: 'ความรักและการเงิน',
+  mars: 'แรงขับและการลงมือ', jupiter: 'โอกาสและการเติบโต', saturn: 'ความรับผิดชอบและงานระยะยาว', uranus: 'ความต้องการอิสระ',
+  neptune: 'ความฝันและจินตนาการ', pluto: 'พลังเปลี่ยนแปลงภายใน', asc: 'ภาพลักษณ์และสุขภาพ'
+};
+const ASPECT_ADVICE = {
+  conj: 'มุมร่วม พลังสองดวงรวมกันเข้มข้น ส่งผลชัดเจน',
+  sext: 'มุมส่งเสริม เปิดโอกาสถ้าลงมือเอง',
+  trine: 'มุมกลมกลืน เรื่องนี้ไหลลื่น ใช้จังหวะนี้ได้เต็มที่',
+  square: 'มุมตั้งฉาก มีแรงเสียดทาน อย่าตัดสินใจตอนอารมณ์ร้อน',
+  opp: 'มุมเล็งกัน ต้องประนีประนอมและฟังอีกฝ่าย'
+};
+const ASPECT_GLYPH = { conj: '☌', sext: '⚹', square: '□', trine: '△', opp: '☍' };
+
+function offAt(id, target, angle, ms) {
+  return Math.abs(angDist(lonAt(id, dayNumber(new Date(ms))), target) - angle);
+}
+// When will this aspect be exact? Returns { applying, at } (at = Date or null).
+function exactness(id, target, angle, now) {
+  const t0 = now.getTime();
+  const o0 = offAt(id, target, angle, t0);
+  const probe = id === 'moon' ? 60e3 : 3600e3;
+  if (offAt(id, target, angle, t0 + probe) > o0) return { applying: false, at: null };
+  if (['jupiter', 'saturn', 'uranus', 'neptune', 'pluto'].includes(id)) return { applying: true, at: null };
+  const step = id === 'moon' ? 600e3 : 3 * 3600e3;
+  const span = id === 'moon' ? 36 * 3600e3 : 12 * 86400e3;
+  let prev = o0;
+  for (let k = step; k <= span; k += step) {
+    const o = offAt(id, target, angle, t0 + k);
+    if (o > prev) {
+      let a = Math.max(t0, t0 + k - 2 * step), b = t0 + k;
+      for (let i = 0; i < 40; i++) {
+        const m1 = a + (b - a) / 3, m2 = b - (b - a) / 3;
+        if (offAt(id, target, angle, m1) < offAt(id, target, angle, m2)) b = m2; else a = m1;
+      }
+      return { applying: true, at: new Date((a + b) / 2) };
+    }
+    prev = o;
+  }
+  return { applying: true, at: null };
+}
+
+// All transit-to-natal aspects active right now, strongest first, with reasons.
+function liveAspects(chart, now = new Date()) {
+  const d = dayNumber(now);
+  const targets = chart.planets.map((p) => ({ id: p.id, th: p.th, glyph: p.glyph, lon: p.lon, sign: p.sign }));
+  if (chart.asc != null) targets.push({ id: 'asc', th: 'ลัคนา', glyph: 'ASC', lon: chart.asc, sign: signOf(chart.asc) });
+  const out = [];
+  for (const m of PLANETS) {
+    const lon = lonAt(m.id, d);
+    for (const t of targets) {
+      const dist = angDist(lon, t.lon);
+      for (const asp of ASPECTS) {
+        const off = Math.abs(dist - asp.angle);
+        const orb = MOVER_ORB[m.id];
+        if (off > orb) continue;
+        const strength = MOVER_W[m.id] * TARGET_W[t.id] * (1 - off / orb);
+        out.push({ mover: { ...m, lon, sign: signOf(lon), house: chart.houseOf(lon) }, target: t, asp, off, strength });
+      }
+    }
+  }
+  out.sort((a, b) => b.strength - a.strength);
+  const top = out.slice(0, 6);
+  for (const x of top) {
+    const ex = exactness(x.mover.id, x.target.lon, x.asp.angle, now);
+    x.applying = ex.applying; x.exactAt = ex.at;
+    x.reason = MOVER_ACT[x.mover.id] + TARGET_AREA[x.target.id];
+    x.advice = ASPECT_ADVICE[x.asp.id];
+  }
+  return top;
+}
+
+function nextIngress(id, now, span, step) {
+  const t0 = now.getTime();
+  const s0 = signOf(lonOf(id, now));
+  for (let k = step; k <= span; k += step) {
+    if (signOf(lonOf(id, new Date(t0 + k))) !== s0) {
+      let a = t0 + k - step, b = t0 + k;
+      while (b - a > 30e3) { const m = (a + b) / 2; if (signOf(lonOf(id, new Date(m))) === s0) a = m; else b = m; }
+      return { kind: 'ingress', id, at: new Date(b), sign: signOf(lonOf(id, new Date(b + 60e3))) };
+    }
+  }
+  return null;
+}
+// Upcoming sign changes of the fast planets.
+function upcomingIngresses(chart, now = new Date()) {
+  const ev = [nextIngress('moon', now, 3 * 86400e3, 15 * 60e3)];
+  for (const id of ['sun', 'mercury', 'venus', 'mars']) ev.push(nextIngress(id, now, 45 * 86400e3, 6 * 3600e3));
+  return ev.filter(Boolean).map((e) => ({ ...e, house: chart.houseOf(e.sign * 30 + 1) })).sort((a, b) => a.at - b.at);
 }
 
 // ---------- compatibility ----------
@@ -1160,12 +1274,7 @@ function viewHome() {
 </header>
 <a class="map-link" href="#/chart" aria-label="เปิดผังดาวฉบับเต็ม">${starMap(ch, { id: 'home', hud: hudFor(p), label: 'ผังดาวกำเนิดของคุณ' })}</a>
 ${bigThree(ch)}
-<section class="card" aria-label="ดวงของคุณวันนี้">
-<span style="display:flex;justify-content:space-between"><span class="eyebrow" style="letter-spacing:.2em">TODAY</span><span class="mono small" style="font-size:10px">${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
-<p class="h2" style="font-size:20px">${dl.headline}</p>
-<p class="small">ที่มา · <span style="color:var(--text)">${dl.basis}</span></p>
-<div class="score-grid">${dl.scores.map((s) => `<div><span>${s.name}</span><span class="bars" role="img" aria-label="${s.name} ${s.score} จาก 5">${[1, 2, 3, 4, 5].map((i) => `<span${i <= s.score ? ' class="on"' : ''}></span>`).join('')}</span></div>`).join('')}</div>
-</section>
+<section id="live-daily" style="display:flex;flex-direction:column;gap:14px" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรที่มีผลกับคุณ</h2>
 <div class="hscroll edge">${tr.map((t) => `<a class="mini" href="#/chart" data-act="chartTab" data-i="2">
@@ -1182,6 +1291,86 @@ ${bigThree(ch)}
 <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span class="h2" style="font-size:16px">ปรึกษาผู้เชี่ยวชาญ</span><span class="small">ถามเรื่องเฉพาะ คำตอบอ้างอิงผังดาวของคุณ</span></span>${icon('next', 16, 1.5)}</a>
 </main>`;
 }
+
+// ---------------- live daily reading ----------------
+const pname = (id, th) => id === 'sun' ? 'ดวงอาทิตย์' : id === 'moon' ? 'ดวงจันทร์' : id === 'asc' ? 'ลัคนา' : 'ดาว' + th;
+function when(d, now = new Date()) {
+  const day = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(d) - day(now)) / 86400000);
+  const hm = pad(d.getHours()) + ':' + pad(d.getMinutes());
+  return diff === 0 ? 'วันนี้ ' + hm : diff === 1 ? 'พรุ่งนี้ ' + hm : `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${hm}`;
+}
+const natureColor = (n) => n > 0 ? 'var(--harmony)' : n < 0 ? 'var(--tension)' : 'var(--gold-2)';
+
+function liveDailyHTML() {
+  const ch = state.chart, now = new Date();
+  const dl = daily(ch, now);
+  const la = liveAspects(ch, now);
+  const up = upcomingIngresses(ch, now);
+  const top = la[0];
+  const headline = top ? top.reason : dl.headline;
+  const basis = top ? `${pname(top.mover.id, top.mover.th)}จร${top.asp.th}${pname(top.target.id, top.target.th)}ในดวงกำเนิด` : dl.basis;
+  const timing = (x) => x.applying
+    ? (x.exactAt ? `กำลังเข้าใกล้ · แม่นยำสุด ${when(x.exactAt, now)}` : 'กำลังเข้าใกล้ · ส่งผลต่อเนื่องหลายสัปดาห์')
+    : 'ผ่านจุดแม่นยำแล้ว · กำลังคลายตัว';
+  const items = la.map((x) => {
+    const m = x.mover, t = x.target, col = natureColor(x.asp.nature);
+    const pct = Math.round(Math.min(1, x.strength / 1.6) * 100);
+    return `<li class="tr-item">
+<div class="tr-glyphs" aria-hidden="true"><span class="sym">${m.glyph}&#xFE0E;</span><span class="sym" style="color:${col}">${ASPECT_GLYPH[x.asp.id]}&#xFE0E;</span><span class="${t.id === 'asc' ? 'mono' : 'sym'}" style="${t.id === 'asc' ? 'font-size:10px' : ''}">${t.id === 'asc' ? 'ASC' : t.glyph + '&#xFE0E;'}</span></div>
+<div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+<span style="font-size:15px;font-weight:600">${pname(m.id, m.th)} ${x.asp.th} ${pname(t.id, t.th)}ของคุณ</span>
+<span class="mono small" style="font-size:10px">${SIGNS[m.sign].th} ${fmtDeg(m.lon)}${m.retro ? ' R' : ''} · ภพ ${m.house} → ${SIGNS[t.sign].th} ${fmtDeg(t.lon)} · ห่าง ${x.off.toFixed(1)}°</span>
+<span class="body" style="font-size:13px">${x.reason}</span>
+<span class="small" style="color:${col}">${x.advice}</span>
+<span class="tr-meta"><span class="tr-bar" role="img" aria-label="น้ำหนัก ${pct}%"><span style="width:${pct}%;background:${col}"></span></span><span class="mono small" style="font-size:10px">${timing(x)}</span></span>
+</div></li>`;
+  }).join('');
+  const nextEvents = up.slice(0, 4).map((e) => `<li><span class="mono" style="font-size:11px;color:var(--gold)">${when(e.at, now)}</span>
+<span style="font-size:14px">${pname(e.id, PLANETS.find((p) => p.id === e.id).th)}ย้ายเข้าราศี${SIGNS[e.sign].th}</span>
+<span class="small">เข้าสู่ภพ ${e.house} ของคุณ · ${HOUSES[e.house - 1]}</span></li>`).join('');
+  return `<div class="card">
+<span style="display:flex;justify-content:space-between;align-items:center"><span class="eyebrow" style="letter-spacing:.2em;display:flex;align-items:center;gap:8px"><span class="live-dot" aria-hidden="true"></span>TODAY · LIVE</span><span class="mono small" style="font-size:10px">อัปเดต ${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
+<p class="h2" style="font-size:20px">${headline}</p>
+<p class="small">ที่มา · <span style="color:var(--text)">${basis}</span></p>
+<div class="score-grid">${dl.scores.map((s) => `<div><span>${s.name}</span><span class="bars" role="img" aria-label="${s.name} ${s.score} จาก 5">${[1, 2, 3, 4, 5].map((i) => `<span${i <= s.score ? ' class="on"' : ''}></span>`).join('')}</span></div>`).join('')}</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<h2 class="label">ดาวที่ส่งผลกับคุณวันนี้ · ${la.length} มุม</h2>
+${la.length ? `<ul class="tr-list">${items}</ul>` : '<p class="small">วันนี้ไม่มีดาวจรทำมุมใกล้ดาวในดวงกำเนิด เป็นวันที่ค่อนข้างสงบ</p>'}
+<p class="small" style="font-size:11px">${G(ASPECT_GLYPH.conj)} ร่วม · ${G(ASPECT_GLYPH.sext)} หกสิบองศา · ${G(ASPECT_GLYPH.square)} ตั้งฉาก · ${G(ASPECT_GLYPH.trine)} ตรีโกณ · ${G(ASPECT_GLYPH.opp)} เล็งกัน</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<h2 class="label">ถัดไป · ดาวย้ายราศี</h2>
+<ul class="next-list">${nextEvents}</ul>
+</div>`;
+}
+
+// Real-time refresh: recompute the live section every 30 seconds and announce sign changes.
+let liveTimer = null;
+let lastSigns = null;
+function signSnapshot() {
+  const now = new Date();
+  return Object.fromEntries(['moon', 'sun', 'mercury', 'venus', 'mars'].map((id) => [id, signOf(lonOf(id, now))]));
+}
+function tickLive() {
+  const box = document.getElementById('live-daily');
+  if (!box || !state.chart) return;
+  const snap = signSnapshot();
+  if (lastSigns) {
+    for (const id of Object.keys(snap)) {
+      if (snap[id] !== lastSigns[id]) toast(`${pname(id, PLANETS.find((p) => p.id === id).th)}ย้ายเข้าราศี${SIGNS[snap[id]].th}แล้ว ดวงของคุณอัปเดตแล้ว`);
+    }
+  }
+  lastSigns = snap;
+  box.innerHTML = liveDailyHTML();
+}
+function startLive() {
+  clearInterval(liveTimer);
+  lastSigns = state.chart ? signSnapshot() : null;
+  liveTimer = setInterval(tickLive, 30000);
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) tickLive(); });
 
 function keyPattern(ch) {
   const max = Math.max(...ch.signCount);
@@ -1515,6 +1704,7 @@ function render() {
   const view = VIEWS[r] || viewWelcome;
   const showNav = !['welcome', 'setup'].includes(r);
   root.innerHTML = view() + (showNav ? nav(r) : '');
+  if (r === 'home') startLive(); else clearInterval(liveTimer);
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
   document.title = 'ตักศิลา · ' + ({ home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด' }[r] || 'อ่านดวงจากดาวจริง');
 }

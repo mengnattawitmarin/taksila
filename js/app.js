@@ -1,7 +1,7 @@
 // Taksila app — screens, state and routing (hash routes, no framework).
 import {
   SIGNS, ELEMENTS, PLANETS, HOUSES, planetById, computeChart, transits, daily, compatibility,
-  planetPositions, signOf, fmtDeg, elementOf, localToUtc
+  planetPositions, signOf, fmtDeg, localToUtc, liveAspects, upcomingIngresses, ASPECT_GLYPH, lonOf
 } from './astro.js';
 import { PLACES, MONTHS_TH, MONTHS_SHORT, TAROT, TOPICS, LIFE_PATH, DIGITS, SUM_MEANING } from './data.js';
 import { starMap, logoRing } from './starmap.js';
@@ -198,12 +198,7 @@ function viewHome() {
 </header>
 <a class="map-link" href="#/chart" aria-label="เปิดผังดาวฉบับเต็ม">${starMap(ch, { id: 'home', hud: hudFor(p), label: 'ผังดาวกำเนิดของคุณ' })}</a>
 ${bigThree(ch)}
-<section class="card" aria-label="ดวงของคุณวันนี้">
-<span style="display:flex;justify-content:space-between"><span class="eyebrow" style="letter-spacing:.2em">TODAY</span><span class="mono small" style="font-size:10px">${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
-<p class="h2" style="font-size:20px">${dl.headline}</p>
-<p class="small">ที่มา · <span style="color:var(--text)">${dl.basis}</span></p>
-<div class="score-grid">${dl.scores.map((s) => `<div><span>${s.name}</span><span class="bars" role="img" aria-label="${s.name} ${s.score} จาก 5">${[1, 2, 3, 4, 5].map((i) => `<span${i <= s.score ? ' class="on"' : ''}></span>`).join('')}</span></div>`).join('')}</div>
-</section>
+<section id="live-daily" style="display:flex;flex-direction:column;gap:14px" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรที่มีผลกับคุณ</h2>
 <div class="hscroll edge">${tr.map((t) => `<a class="mini" href="#/chart" data-act="chartTab" data-i="2">
@@ -220,6 +215,86 @@ ${bigThree(ch)}
 <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span class="h2" style="font-size:16px">ปรึกษาผู้เชี่ยวชาญ</span><span class="small">ถามเรื่องเฉพาะ คำตอบอ้างอิงผังดาวของคุณ</span></span>${icon('next', 16, 1.5)}</a>
 </main>`;
 }
+
+// ---------------- live daily reading ----------------
+const pname = (id, th) => id === 'sun' ? 'ดวงอาทิตย์' : id === 'moon' ? 'ดวงจันทร์' : id === 'asc' ? 'ลัคนา' : 'ดาว' + th;
+function when(d, now = new Date()) {
+  const day = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const diff = Math.round((day(d) - day(now)) / 86400000);
+  const hm = pad(d.getHours()) + ':' + pad(d.getMinutes());
+  return diff === 0 ? 'วันนี้ ' + hm : diff === 1 ? 'พรุ่งนี้ ' + hm : `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${hm}`;
+}
+const natureColor = (n) => n > 0 ? 'var(--harmony)' : n < 0 ? 'var(--tension)' : 'var(--gold-2)';
+
+function liveDailyHTML() {
+  const ch = state.chart, now = new Date();
+  const dl = daily(ch, now);
+  const la = liveAspects(ch, now);
+  const up = upcomingIngresses(ch, now);
+  const top = la[0];
+  const headline = top ? top.reason : dl.headline;
+  const basis = top ? `${pname(top.mover.id, top.mover.th)}จร${top.asp.th}${pname(top.target.id, top.target.th)}ในดวงกำเนิด` : dl.basis;
+  const timing = (x) => x.applying
+    ? (x.exactAt ? `กำลังเข้าใกล้ · แม่นยำสุด ${when(x.exactAt, now)}` : 'กำลังเข้าใกล้ · ส่งผลต่อเนื่องหลายสัปดาห์')
+    : 'ผ่านจุดแม่นยำแล้ว · กำลังคลายตัว';
+  const items = la.map((x) => {
+    const m = x.mover, t = x.target, col = natureColor(x.asp.nature);
+    const pct = Math.round(Math.min(1, x.strength / 1.6) * 100);
+    return `<li class="tr-item">
+<div class="tr-glyphs" aria-hidden="true"><span class="sym">${m.glyph}&#xFE0E;</span><span class="sym" style="color:${col}">${ASPECT_GLYPH[x.asp.id]}&#xFE0E;</span><span class="${t.id === 'asc' ? 'mono' : 'sym'}" style="${t.id === 'asc' ? 'font-size:10px' : ''}">${t.id === 'asc' ? 'ASC' : t.glyph + '&#xFE0E;'}</span></div>
+<div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+<span style="font-size:15px;font-weight:600">${pname(m.id, m.th)} ${x.asp.th} ${pname(t.id, t.th)}ของคุณ</span>
+<span class="mono small" style="font-size:10px">${SIGNS[m.sign].th} ${fmtDeg(m.lon)}${m.retro ? ' R' : ''} · ภพ ${m.house} → ${SIGNS[t.sign].th} ${fmtDeg(t.lon)} · ห่าง ${x.off.toFixed(1)}°</span>
+<span class="body" style="font-size:13px">${x.reason}</span>
+<span class="small" style="color:${col}">${x.advice}</span>
+<span class="tr-meta"><span class="tr-bar" role="img" aria-label="น้ำหนัก ${pct}%"><span style="width:${pct}%;background:${col}"></span></span><span class="mono small" style="font-size:10px">${timing(x)}</span></span>
+</div></li>`;
+  }).join('');
+  const nextEvents = up.slice(0, 4).map((e) => `<li><span class="mono" style="font-size:11px;color:var(--gold)">${when(e.at, now)}</span>
+<span style="font-size:14px">${pname(e.id, PLANETS.find((p) => p.id === e.id).th)}ย้ายเข้าราศี${SIGNS[e.sign].th}</span>
+<span class="small">เข้าสู่ภพ ${e.house} ของคุณ · ${HOUSES[e.house - 1]}</span></li>`).join('');
+  return `<div class="card">
+<span style="display:flex;justify-content:space-between;align-items:center"><span class="eyebrow" style="letter-spacing:.2em;display:flex;align-items:center;gap:8px"><span class="live-dot" aria-hidden="true"></span>TODAY · LIVE</span><span class="mono small" style="font-size:10px">อัปเดต ${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
+<p class="h2" style="font-size:20px">${headline}</p>
+<p class="small">ที่มา · <span style="color:var(--text)">${basis}</span></p>
+<div class="score-grid">${dl.scores.map((s) => `<div><span>${s.name}</span><span class="bars" role="img" aria-label="${s.name} ${s.score} จาก 5">${[1, 2, 3, 4, 5].map((i) => `<span${i <= s.score ? ' class="on"' : ''}></span>`).join('')}</span></div>`).join('')}</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<h2 class="label">ดาวที่ส่งผลกับคุณวันนี้ · ${la.length} มุม</h2>
+${la.length ? `<ul class="tr-list">${items}</ul>` : '<p class="small">วันนี้ไม่มีดาวจรทำมุมใกล้ดาวในดวงกำเนิด เป็นวันที่ค่อนข้างสงบ</p>'}
+<p class="small" style="font-size:11px">${G(ASPECT_GLYPH.conj)} ร่วม · ${G(ASPECT_GLYPH.sext)} หกสิบองศา · ${G(ASPECT_GLYPH.square)} ตั้งฉาก · ${G(ASPECT_GLYPH.trine)} ตรีโกณ · ${G(ASPECT_GLYPH.opp)} เล็งกัน</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<h2 class="label">ถัดไป · ดาวย้ายราศี</h2>
+<ul class="next-list">${nextEvents}</ul>
+</div>`;
+}
+
+// Real-time refresh: recompute the live section every 30 seconds and announce sign changes.
+let liveTimer = null;
+let lastSigns = null;
+function signSnapshot() {
+  const now = new Date();
+  return Object.fromEntries(['moon', 'sun', 'mercury', 'venus', 'mars'].map((id) => [id, signOf(lonOf(id, now))]));
+}
+function tickLive() {
+  const box = document.getElementById('live-daily');
+  if (!box || !state.chart) return;
+  const snap = signSnapshot();
+  if (lastSigns) {
+    for (const id of Object.keys(snap)) {
+      if (snap[id] !== lastSigns[id]) toast(`${pname(id, PLANETS.find((p) => p.id === id).th)}ย้ายเข้าราศี${SIGNS[snap[id]].th}แล้ว ดวงของคุณอัปเดตแล้ว`);
+    }
+  }
+  lastSigns = snap;
+  box.innerHTML = liveDailyHTML();
+}
+function startLive() {
+  clearInterval(liveTimer);
+  lastSigns = state.chart ? signSnapshot() : null;
+  liveTimer = setInterval(tickLive, 30000);
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) tickLive(); });
 
 function keyPattern(ch) {
   const max = Math.max(...ch.signCount);
@@ -553,6 +628,7 @@ function render() {
   const view = VIEWS[r] || viewWelcome;
   const showNav = !['welcome', 'setup'].includes(r);
   root.innerHTML = view() + (showNav ? nav(r) : '');
+  if (r === 'home') startLive(); else clearInterval(liveTimer);
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
   document.title = 'ตักศิลา · ' + ({ home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด' }[r] || 'อ่านดวงจากดาวจริง');
 }

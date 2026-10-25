@@ -398,6 +398,109 @@ export function daily(chart, now = new Date()) {
   return { scores, headline, basis, sunSign: signOf(pos.sun.lon), moonSign: signOf(pos.moon.lon), pos };
 }
 
+// ---------- live daily transits (recomputed every minute by the app) ----------
+export const lonOf = (id, date) => lonAt(id, dayNumber(date));
+
+const MOVER_ORB = { moon: 6, sun: 4, mercury: 3.5, venus: 3.5, mars: 3.5, jupiter: 3, saturn: 3, uranus: 2, neptune: 2, pluto: 2 };
+const MOVER_W = { moon: 1, sun: 1.2, mercury: 0.9, venus: 1, mars: 1.1, jupiter: 1.3, saturn: 1.4, uranus: 1.2, neptune: 1, pluto: 1.2 };
+const TARGET_W = { sun: 1.3, moon: 1.3, asc: 1.2, venus: 1.1, mars: 1, mercury: 1, jupiter: 0.9, saturn: 0.9, uranus: 0.7, neptune: 0.7, pluto: 0.7 };
+export const MOVER_ACT = {
+  moon: 'กระตุ้นอารมณ์และความรู้สึกเรื่อง', sun: 'ส่องสว่างและเติมพลังให้เรื่อง', mercury: 'นำความคิด ข่าวสาร และการพูดคุยมาสู่เรื่อง',
+  venus: 'เติมเสน่ห์และความราบรื่นให้เรื่อง', mars: 'เร่งพลังและความใจร้อนในเรื่อง', jupiter: 'ขยายโอกาสและโชคให้เรื่อง',
+  saturn: 'ทดสอบความอดทนและวางโครงสร้างให้เรื่อง', uranus: 'สร้างความเปลี่ยนแปลงไม่คาดคิดต่อเรื่อง',
+  neptune: 'เพิ่มแรงบันดาลใจแต่ทำให้คลุมเครือในเรื่อง', pluto: 'เปลี่ยนแปลงอย่างลึกซึ้งต่อเรื่อง'
+};
+export const TARGET_AREA = {
+  sun: 'ตัวตนและเป้าหมาย', moon: 'อารมณ์และครอบครัว', mercury: 'ความคิดและการสื่อสาร', venus: 'ความรักและการเงิน',
+  mars: 'แรงขับและการลงมือ', jupiter: 'โอกาสและการเติบโต', saturn: 'ความรับผิดชอบและงานระยะยาว', uranus: 'ความต้องการอิสระ',
+  neptune: 'ความฝันและจินตนาการ', pluto: 'พลังเปลี่ยนแปลงภายใน', asc: 'ภาพลักษณ์และสุขภาพ'
+};
+export const ASPECT_ADVICE = {
+  conj: 'มุมร่วม พลังสองดวงรวมกันเข้มข้น ส่งผลชัดเจน',
+  sext: 'มุมส่งเสริม เปิดโอกาสถ้าลงมือเอง',
+  trine: 'มุมกลมกลืน เรื่องนี้ไหลลื่น ใช้จังหวะนี้ได้เต็มที่',
+  square: 'มุมตั้งฉาก มีแรงเสียดทาน อย่าตัดสินใจตอนอารมณ์ร้อน',
+  opp: 'มุมเล็งกัน ต้องประนีประนอมและฟังอีกฝ่าย'
+};
+export const ASPECT_GLYPH = { conj: '☌', sext: '⚹', square: '□', trine: '△', opp: '☍' };
+
+function offAt(id, target, angle, ms) {
+  return Math.abs(angDist(lonAt(id, dayNumber(new Date(ms))), target) - angle);
+}
+// When will this aspect be exact? Returns { applying, at } (at = Date or null).
+function exactness(id, target, angle, now) {
+  const t0 = now.getTime();
+  const o0 = offAt(id, target, angle, t0);
+  const probe = id === 'moon' ? 60e3 : 3600e3;
+  if (offAt(id, target, angle, t0 + probe) > o0) return { applying: false, at: null };
+  if (['jupiter', 'saturn', 'uranus', 'neptune', 'pluto'].includes(id)) return { applying: true, at: null };
+  const step = id === 'moon' ? 600e3 : 3 * 3600e3;
+  const span = id === 'moon' ? 36 * 3600e3 : 12 * 86400e3;
+  let prev = o0;
+  for (let k = step; k <= span; k += step) {
+    const o = offAt(id, target, angle, t0 + k);
+    if (o > prev) {
+      let a = Math.max(t0, t0 + k - 2 * step), b = t0 + k;
+      for (let i = 0; i < 40; i++) {
+        const m1 = a + (b - a) / 3, m2 = b - (b - a) / 3;
+        if (offAt(id, target, angle, m1) < offAt(id, target, angle, m2)) b = m2; else a = m1;
+      }
+      return { applying: true, at: new Date((a + b) / 2) };
+    }
+    prev = o;
+  }
+  return { applying: true, at: null };
+}
+
+// All transit-to-natal aspects active right now, strongest first, with reasons.
+export function liveAspects(chart, now = new Date()) {
+  const d = dayNumber(now);
+  const targets = chart.planets.map((p) => ({ id: p.id, th: p.th, glyph: p.glyph, lon: p.lon, sign: p.sign }));
+  if (chart.asc != null) targets.push({ id: 'asc', th: 'ลัคนา', glyph: 'ASC', lon: chart.asc, sign: signOf(chart.asc) });
+  const out = [];
+  for (const m of PLANETS) {
+    const lon = lonAt(m.id, d);
+    for (const t of targets) {
+      const dist = angDist(lon, t.lon);
+      for (const asp of ASPECTS) {
+        const off = Math.abs(dist - asp.angle);
+        const orb = MOVER_ORB[m.id];
+        if (off > orb) continue;
+        const strength = MOVER_W[m.id] * TARGET_W[t.id] * (1 - off / orb);
+        out.push({ mover: { ...m, lon, sign: signOf(lon), house: chart.houseOf(lon) }, target: t, asp, off, strength });
+      }
+    }
+  }
+  out.sort((a, b) => b.strength - a.strength);
+  const top = out.slice(0, 6);
+  for (const x of top) {
+    const ex = exactness(x.mover.id, x.target.lon, x.asp.angle, now);
+    x.applying = ex.applying; x.exactAt = ex.at;
+    x.reason = MOVER_ACT[x.mover.id] + TARGET_AREA[x.target.id];
+    x.advice = ASPECT_ADVICE[x.asp.id];
+  }
+  return top;
+}
+
+function nextIngress(id, now, span, step) {
+  const t0 = now.getTime();
+  const s0 = signOf(lonOf(id, now));
+  for (let k = step; k <= span; k += step) {
+    if (signOf(lonOf(id, new Date(t0 + k))) !== s0) {
+      let a = t0 + k - step, b = t0 + k;
+      while (b - a > 30e3) { const m = (a + b) / 2; if (signOf(lonOf(id, new Date(m))) === s0) a = m; else b = m; }
+      return { kind: 'ingress', id, at: new Date(b), sign: signOf(lonOf(id, new Date(b + 60e3))) };
+    }
+  }
+  return null;
+}
+// Upcoming sign changes of the fast planets.
+export function upcomingIngresses(chart, now = new Date()) {
+  const ev = [nextIngress('moon', now, 3 * 86400e3, 15 * 60e3)];
+  for (const id of ['sun', 'mercury', 'venus', 'mars']) ev.push(nextIngress(id, now, 45 * 86400e3, 6 * 3600e3));
+  return ev.filter(Boolean).map((e) => ({ ...e, house: chart.houseOf(e.sign * 30 + 1) })).sort((a, b) => a.at - b.at);
+}
+
 // ---------- compatibility ----------
 const PAIR_TABLE = [
   ['0° ร่วมราศี', 76, 'นิสัยคล้ายกันมาก เข้าใจกันง่าย แต่ระวังมองข้ามจุดอ่อนเดียวกัน'],
