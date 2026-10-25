@@ -13,6 +13,7 @@ import { SIAMSI } from './siamsi.js';
 import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
 import { NUM_TOOLS, analyzeNumber, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
+import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
 // ---------------- storage ----------------
@@ -38,7 +39,7 @@ const state = {
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
-  ask: { messages: [] }
+  ask: { messages: [], persona: 'thai', ctx: null, pending: false }
 };
 if (state.profile) state.chart = safeChart(state.profile);
 
@@ -59,6 +60,7 @@ const IC = {
   numbers: '<rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16"/>',
   luck: '<circle cx="12" cy="12" r="8"/><rect x="10" y="10" width="4" height="4"/>',
   ask: '<path d="M4 5h16v11H10l-5 4v-4H4z"/>',
+  mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
   prayer: '<path d="M12 20c-4 0-8-3-9-7 3 0 6 1.5 9 5 3-3.5 6-5 9-5-1 4-5 7-9 7z"/><path d="M12 18c-2.5-2.5-3-6.5 0-11 3 4.5 2.5 8.5 0 11z"/>',
   back: '<path d="M15 5l-7 7 7 7"/>',
   next: '<path d="M9 5l7 7-7 7"/>',
@@ -645,10 +647,10 @@ function planetCard(pl) {
   const e = pl.sign % 4;
   return `<li class="pl-card sense"><button class="pl-head" data-act="senseToggle" aria-expanded="false">
 <span class="b3-m sm" style="--c:${EL_COL[e]}"><span class="sym">${pl.glyph}&#xFE0E;</span></span>
-<span class="pl-t"><b>${pl.th}${pl.retro ? ' <span class="pl-r">R ถอย</span>' : ''}</b><span>${pl.kw}</span></span>
+<span class="pl-t"><b>${pl.th}${pl.retro ? ' <span class="pl-r">R ถอย</span>' : ''}${(() => { const dg = dignityOf(pl.id, pl.sign); return dg ? ` <span class="pl-dg ${dg.score > 0 ? 'up' : 'dn'}">${dg.th}</span>` : ''; })()}</b><span>${pl.kw}</span></span>
 <span class="pl-b"><span class="pl-sign"><span class="sym">${SIGNS[pl.sign].glyph}&#xFE0E;</span> ${SIGNS[pl.sign].th}</span><span class="mono">ภพ ${pl.house} · ${fmtDeg(pl.lon)}</span></span>
 <span class="chev">${icon('down', 14, 1.6)}</span></button>
-<div class="fold"><div class="fold-in"><p class="small pl-body">${planetText(pl)}</p></div></div></li>`;
+<div class="fold"><div class="fold-in"><p class="small pl-body">${planetText(pl)}${(() => { const dg = dignityOf(pl.id, pl.sign); return dg ? ` · ดาว${pl.th}${dg.th}: ${dg.d}` : ''; })()}</p></div></div></li>`;
 }
 function viewChart() {
   const ch = state.chart, p = state.profile, tab = state.chartTab, now = new Date();
@@ -1108,7 +1110,7 @@ ${body}
 function tarotReadingArea() {
   const t = state.tarot, spread = SPREADS[t.spread];
   if (!t.cards) return '';
-  const sum = tarotSummary(spread, t.cards) + tarotFix(t);
+  const sum = tarotSummary(spread, t.cards) + tarotSynthHTML(t) + tarotFix(t);
   if (spread.house) {
     const all = t.flipped.length === t.cards.length;
     if (!all) return `<p class="small" style="text-align:center">แตะไพ่เพื่อเปิดทีละภพ หรือกด "เปิดทั้งหมด"</p>`;
@@ -1327,7 +1329,7 @@ function troubleNow() {
 }
 const AREAS = [
   { re: /งาน|อาชีพ|ธุรกิจ|เลื่อนตำแหน่ง|ลาออก|สมัครงาน|ค้าขาย|ร้าน/, th: 'การงาน', houses: [10, 6], cat: 1, topic: 'work' },
-  { re: /รัก|แฟน|คู่ครอง|โสด|แต่งงาน|คืนดี|เนื้อคู่|สามี|ภรรยา|จีบ/, th: 'ความรัก', houses: [5, 7], cat: 0, topic: 'love' },
+  { re: /รัก|แฟน|คู่ครอง|โสด|แต่งงาน|คืนดี|เนื้อคู่|สามี|ภรรยา|จีบ|เขาคิด|เธอคิด|คิดยังไงกับ|คนคุย/, th: 'ความรัก', houses: [5, 7], cat: 0, topic: 'love' },
   { re: /เงิน|ลงทุน|หนี้|รวย|มั่งคั่ง|ทรัพย์|หุ้น|รายได้|คริปโต/, th: 'การเงิน', houses: [2, 8], cat: 2, topic: 'money' },
   { re: /สุขภาพ|ป่วย|เจ็บ|ร่างกาย|ผ่าตัด|โรค/, th: 'สุขภาพ', houses: [6, 1], cat: 3, topic: 'health' },
   { re: /ย้าย|บ้าน|ครอบครัว|คอนโด|พ่อแม่|ลูก/, th: 'บ้านและครอบครัว', houses: [4], cat: 0, topic: 'home' },
@@ -1345,8 +1347,68 @@ function answer(text) {
   const q = text.trim(), out = [], basis = [];
   let html = '';
   const has = (re) => re.test(q);
-  const area = AREAS.find((a) => a.re.test(q));
+  const ctx = state.ask.ctx || {}, persona = state.ask.persona;
+  let area = AREAS.find((a) => a.re.test(q));
+  let followUp = false;
+  if (!area && ctx.area && has(/แล้ว|ล่ะ|ต่อ|ยังไง|อย่างไร|เมื่อไ|ช่วงไหน|แก้|ดีไหม|ควร|เพิ่ม|เสริม|ทำไม/)) { area = ctx.area; followUp = true; basis.push('ต่อจากเรื่อง' + area.th); }
+  if (area) state.ask.ctx = { area };
   const T = troubleNow();
+  // dreams
+  if (has(/ฝัน/)) {
+    const d = dreamLookup(q);
+    if (d) {
+      out.push(`ฝันเห็น${d.th}: ${d.d}`);
+      if (d.n.length) out.push(`เลขตามตำราทำนายฝัน: ${d.n.join(' · ')}`);
+      const L = luckOf(bp);
+      out.push(`ถ้าจะใช้เลขคู่กับดวงคุณ ตามทักษาคนเกิด${TH_PLANETS[bp].day} เลขมงคลคือ ${L.numbers.join(' ')}`);
+      if (/ระวัง|เคราะห์|อุบัติเหตุ|ขัดแย้ง/.test(d.d)) html += remedyCard(remedyPlan({ planetNo: T.planetNo, topic: 'bad', level: 1, reason: 'ฝันเตือนให้ระวัง ทำบุญตักบาตรเช้าวันรุ่งขึ้นแล้วกรวดน้ำ ตามความเชื่อช่วยให้ร้ายกลายเป็นดี' }));
+      basis.push(d.src);
+    } else out.push('ผมยังไม่มีคำทำนายของฝันนี้ในตำรา ลองบอกสิ่งที่เห็นในฝันเป็นคำสั้น ๆ เช่น "ฝันเห็นงู" "ฝันฟันหลุด" "ฝันเห็นคนตาย" "ฝันน้ำท่วม"');
+    out.push('ความฝันเป็นความเชื่อ ใช้เป็นกำลังใจหรือความบันเทิง');
+    return { text: out.join('\n'), basis, html };
+  }
+  // saved people: "ฉันกับฝน"
+  const person = state.match.people.find((x) => x.name && q.includes(x.name));
+  if (person) {
+    const keep = { ...state.match };
+    Object.assign(state.match, person, { useDate: true });
+    const r = matchResult();
+    Object.assign(state.match, keep);
+    const top = Object.entries(r.syn.dims).sort((a, b) => b[1] - a[1]);
+    const dimTh = (k) => DIMS.find((d) => d.id === k).th;
+    out.push(`คุณกับ${person.name} เข้ากัน ${r.score}% (${MATCH_LABEL(r.score)}) ในฐานะ${r.rel.th}`);
+    out.push(`ด้านที่ดีที่สุดคือ${dimTh(top[0][0])} (${top[0][1]}) ด้านที่ต้องดูแลคือ${dimTh(top[top.length - 1][0])} (${top[top.length - 1][1]})`);
+    out.push(`คู่วันเกิดไทย ${r.td.score} คะแนน · ปีนักษัตรจีน ${r.cn.th}`);
+    html += roomLink('match', 'ดูคู่ดวงละเอียด');
+    basis.push('คู่ดวง · ' + person.name);
+    return { text: out.join('\n'), basis, html };
+  }
+  // auspicious days inline
+  const EV_RE = [[/แต่งงาน|สมรส|ขันหมาก|จดทะเบียน/, 'wedding'], [/บวช/, 'ordain'], [/ขึ้นบ้าน|ย้ายบ้าน|ย้ายเข้า/, 'house'], [/เปิดร้าน|เปิดบริษัท|เปิดกิจการ|ธุรกิจใหม่/, 'business'], [/ออกรถ|รถใหม่/, 'car'], [/เซ็นสัญญา|ทำสัญญา|ซื้อที่ดิน/, 'contract'], [/เริ่มงาน|สัมภาษณ์|สมัครงาน/, 'job'], [/เดินทาง|บินไป|ต่างประเทศ/, 'travel']];
+  const evHit = has(/ฤกษ์|วันไหนดี|วันดี|วันไหน/) && EV_RE.find(([re]) => re.test(q));
+  if (evHit) {
+    const res = findAuspicious(ch, bp, evHit[1], { days: 60 });
+    const DOWN = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+    out.push(`ฤกษ์${res.event.th}ที่ดีที่สุดสำหรับคุณใน 60 วันข้างหน้า:`);
+    res.results.slice(0, 3).forEach((x, k) => out.push(`${k + 1}. วัน${DOWN[x.date.getDay()]}ที่ ${x.date.getDate()} ${MONTHS_SHORT[x.date.getMonth()]} ${x.date.getFullYear() + 543} · คะแนน ${x.score}${x.good[0] ? ' · ' + x.good[0] : ''}`));
+    html += remedyChip({ id: EVENT_CHANT[evHit[1]], kind: 'เสริม', reason: `สวดก่อนเริ่มงาน${res.event.th}` }) + roomLink('auspice', 'ดูฤกษ์ละเอียดและเวลา');
+    basis.push('ฤกษ์ยาม · ทักษา + ดาวจร');
+    return { text: out.join('\n'), basis, html };
+  }
+  // the tarot reader answers every question with three cards
+  if (persona === 'tarot' && !has(/[0-9]{6,}|หวย|ชง|วัด|ทำบุญ|สวด|คาถา/)) {
+    const ds = drawCards(3), C = ds.map((d) => ({ c: CARDS[d.i], rev: d.rev }));
+    const POS = ['ที่มาของเรื่อง', 'สถานการณ์ตอนนี้', 'คำแนะนำ'];
+    out.push(`แม่หมอสับไพ่แล้วเปิด 3 ใบ${area ? 'เรื่อง' + area.th : 'ให้'}`);
+    C.forEach((x, k) => out.push(`${k + 1}. ${POS[k]}: "${x.c.th}"${x.rev ? ' (กลับหัว)' : ''} ${x.rev ? x.c.rev : (area && area.cat === 0 && x.c.love ? x.c.love : area && area.cat !== 0 && x.c.work ? x.c.work : x.c.up)}`));
+    tarotSynthesis(C).forEach((l) => out.push('✦ ' + l));
+    const l = lean(C[2].c, C[2].rev) + lean(C[1].c, C[1].rev) * 0.5 - C.filter((x) => x.rev).length * 0.25;
+    out.push(`คำตอบโดยรวม: ${l > 0.4 ? 'ไปได้ดี เดินหน้าได้' : l < -0.4 ? 'ยังไม่ใช่จังหวะ ใช้คำแนะนำในใบที่ 3 ก่อน' : 'ยังก้ำกึ่ง ขึ้นกับการตัดสินใจของคุณ'}`);
+    html += `<div class="ask-cards">${C.map((x) => `<img src="${x.c.img}" alt="${x.c.th}" class="${x.rev ? 'rev' : ''}" loading="lazy">`).join('')}</div>`;
+    if (C.filter((x) => x.rev).length >= 2) html += remedyCard(remedyPlan({ planetNo: T.planetNo, topic: area ? area.topic : 'bad', level: 1, reason: 'ไพ่กลับหัวหลายใบ ทำบุญเสริมก่อนตัดสินใจ' }));
+    basis.push('TAROT 3 ใบ', ...C.map((x) => x.c.en));
+    return { text: out.join('\n'), basis: basis.slice(0, 5), html };
+  }
   // tarot
   if (has(/ไพ่|ทาโร/)) {
     const c = drawCards(1)[0], card = CARDS[c.i];
@@ -1376,11 +1438,25 @@ function answer(text) {
   }
   if (has(/สวัสดี|หวัดดี|ดีครับ|ดีค่ะ/) && q.length < 12) out.push(`สวัสดีครับคุณ${p.name || ''} ถามได้ทุกเรื่อง เช่น งาน เงิน ความรัก ดวงตกทำอย่างไร ทำบุญอะไรดี ไหว้พระที่ไหน หรือช่วงไหนมีโชค`);
   // area reading from the chart
-  if (area) {
+  if (area && followUp && has(/แก้|เสริม|ทำบุญ|สวด|ไหว้/)) {
+    out.push(`ทางแก้เรื่อง${area.th}ของคุณตามดวงตอนนี้ครับ`);
+    html += remedyCard(remedyPlan({ planetNo: T.planetNo, topic: area.topic, level: Math.max(1, T.level), reason: T.reason }), true);
+  } else if (area) {
     const tr = transits(ch, now), dl = daily(ch, now);
     for (const t of tr) if (area.houses.includes(t.house)) { out.push(`${t.title.replace(/ · ภพ \d+/, '')} อยู่ในภพที่ ${t.house} ของคุณ${t.exit ? ' ถึง ' + monthYear(t.exit) : ''}: ${t.body}`); basis.push(`${t.glyph} H${t.house}`); }
     const natal = ch.planets.filter((x) => area.houses.includes(x.house));
     if (natal.length) { out.push(`ในดวงกำเนิดมีดาว${natal.map((x) => x.th).join(' ')} อยู่ในภพเรื่อง${area.th} เรื่องนี้จึงสำคัญในชีวิตคุณ`); natal.slice(0, 2).forEach((x) => basis.push(`${x.glyph} ${SIGNS[x.sign].th} H${x.house}`)); }
+    if (persona === 'astro' && ch.timeKnown) {
+      const hl = houseLord(ch, area.houses[0]);
+      out.push(hl.text + (hl.tone >= 1.5 ? ' ดาวเจ้าเรือนแข็งแรง เรื่องนี้มีพื้นฐานดีในดวง' : hl.tone <= -1 ? ' ดาวเจ้าเรือนอ่อนกำลัง เรื่องนี้ต้องใช้ความพยายามมากกว่าคนอื่น' : ''));
+      natal.forEach((x) => { const dg = dignityOf(x.id, x.sign); if (dg) out.push(`ดาว${x.th}ในราศี${SIGNS[x.sign].th}เป็น${dg.th}: ${dg.d}`); });
+      basis.push('เจ้าเรือน H' + area.houses[0]);
+    }
+    if (persona === 'thai') {
+      const L = luckOf(bp), POSK = { work: 'work', boss: 'patron', money: 'money', love: 'people', home: 'people', health: 'health', study: 'patron' };
+      const k = POSK[area.topic];
+      if (k) out.push(`ตามทักษาคนเกิด${TH_PLANETS[bp].day} เรื่อง${area.th}ให้ใช้พลังดาว${TH_PLANETS[L[k]].th} ใส่สี${TH_PLANETS[L[k]].color}ในวันสำคัญ และเลี่ยงสี${TH_PLANETS[L.avoid].color}`);
+    }
     const sc = dl.scores[area.cat];
     out.push(`พลังวันนี้ด้าน${sc.name} ${sc.score}/5 ${sc.score >= 4 ? 'จังหวะดี ลงมือได้' : sc.score <= 2 ? 'ควรรอจังหวะ หรือเตรียมตัวให้พร้อมก่อน' : 'ทำได้แต่ไม่ควรรีบ'}`);
     basis.push('TODAY ' + sc.name + ' ' + sc.score + '/5');
@@ -1460,24 +1536,49 @@ function answer(text) {
   }
   return { text: out.join('\n'), basis: [...new Set(basis)].slice(0, 5), html };
 }
-const ASK_CHIPS = ['ดวงตกแก้ยังไง', 'ช่วงไหนมีโชคลาภ', 'ทำบุญอะไรดี', 'ไหว้พระวัดไหนเรื่องเงิน', 'งานช่วงนี้เป็นอย่างไร', 'ความรักช่วงนี้', 'ปีนี้ชงไหม', 'ทำบุญโลงศพช่วยอะไร', 'ขอไพ่ 1 ใบ', 'สวดคาถาอะไรให้เจ้านายรัก'];
+const PERSONAS = [
+  { id: 'thai', th: 'หมอดูไทย', ic: '☸', col: 'var(--gold)', d: 'ทักษา ทำบุญ ไหว้พระ บทสวด ฤกษ์', greet: 'สวัสดีครับ หมอดูไทยประจำตักศิลา ดูตามทักษา ดาวจร และตำราไทย ถามเรื่องไหนมา จะบอกทั้งดวงและวิธีแก้ครบชุด' },
+  { id: 'astro', th: 'โหราศาสตร์สากล', ic: '✦', col: 'var(--harmony)', d: 'เจ้าเรือน มุมดาว เกษตร อุจ นิจ', greet: 'สวัสดีครับ ผมจะอ่านจากผังดาวกำเนิดแบบละเอียด ทั้งดาวเจ้าเรือน กำลังดาว และดาวจร ถามเรื่องงาน เงิน ความรัก ได้เลย' },
+  { id: 'tarot', th: 'แม่หมอไพ่', ic: '✧', col: 'var(--violet)', d: 'เปิดไพ่ 3 ใบตอบทุกคำถาม', greet: 'สวัสดีจ้ะ ตั้งใจนึกถึงเรื่องที่อยากรู้ แล้วพิมพ์คำถามมา แม่หมอจะเปิดไพ่ 3 ใบ อ่านที่มา ตอนนี้ และคำแนะนำให้' }
+];
+const ASK_CHIPS = {
+  thai: ['ดวงตกแก้ยังไง', 'ช่วงไหนมีโชคลาภ', 'ทำบุญอะไรดี', 'ไหว้พระวัดไหนเรื่องเงิน', 'ปีนี้ชงไหม', 'ฝันเห็นงู', 'วันไหนดีออกรถ', 'สวดคาถาอะไรให้เจ้านายรัก'],
+  astro: ['งานช่วงนี้เป็นอย่างไร', 'การเงินปีนี้', 'ความรักของฉัน', 'สุขภาพต้องระวังอะไร', 'ช่วงไหนมีโชคลาภ', 'ควรย้ายบ้านไหม', 'ฝันฟันหลุด'],
+  tarot: ['เขาคิดยังไงกับเรา', 'งานใหม่จะไปได้ดีไหม', 'ควรลงทุนตอนนี้ไหม', 'ความรักเดือนนี้', 'จะสอบผ่านไหม', 'เรื่องที่ต้องระวังช่วงนี้']
+};
+const SpeechRec = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null;
+let recog = null;
 function viewAsk() {
-  const a = state.ask, T = troubleNow(), c = chongOf(state.profile);
-  return `<main class="screen" style="padding-bottom:20px">
-${pageHead('08', 'CONSULT', 'ปรึกษาดวง', 'var(--rose)', 'ask', `<button class="back" data-act="go" data-to="home" aria-label="กลับหน้าหลัก" style="margin:0">${icon('back', 20, 1.5)}</button>`)}
-<section class="ask-hero"><span class="eyebrow" style="color:var(--rose);letter-spacing:.16em">ถามได้ทุกเรื่อง</span>
-<p class="small" style="color:var(--text-2)">พิมพ์คำถามแบบอิสระ ระบบอ่านจากผังดาว ดาวจร ทักษา และปีนักษัตรของคุณ แล้วบอกทางแก้ ทำบุญ ไหว้พระ บทสวด และช่วงเวลาที่ดี</p>
-<div class="ask-stat"><span><b>${T.total}</b>ดวงวันนี้</span><span><b>${TH_PLANETS[T.planetNo].th}</b>${T.planetNo !== birthPlanet(state.profile) || T.level >= 2 ? 'ดาวที่ต้องแก้' : 'ดาวที่ควรเสริม'}</span><span><b>${c.level ? 'ชง' : 'ไม่ชง'}</b>ปี${NAKSHAT[c.year]}</span></div></section>
+  const a = state.ask, T = troubleNow(), c = chongOf(state.profile), P = PERSONAS.find((x) => x.id === a.persona) || PERSONAS[0];
+  const chips = [...ASK_CHIPS[P.id], ...state.match.people.slice(0, 2).map((x) => `ฉันกับ${x.name}`)];
+  return `<main class="screen" style="padding-bottom:20px;--pc:${P.col}">
+${pageHead('08', 'CONSULT', 'ปรึกษาดวง', 'var(--rose)', 'ask', a.messages.length ? `<button class="link-btn" data-act="askClear" style="font-size:13px">เริ่มใหม่</button>` : '')}
+<div class="ask-ps" role="tablist" aria-label="เลือกผู้ทำนาย">${PERSONAS.map((x) => `<button role="tab" aria-selected="${x.id === P.id}" data-act="askPersona" data-v="${x.id}" style="--pc:${x.col}"><span class="ask-pi">${x.ic}</span><b>${x.th}</b><span>${x.d}</span></button>`).join('')}</div>
+<div class="ask-stat"><span><b>${T.total}</b>ดวงวันนี้</span><span><b>${TH_PLANETS[T.planetNo].th}</b>${T.planetNo !== birthPlanet(state.profile) || T.level >= 2 ? 'ดาวที่ต้องแก้' : 'ดาวที่ควรเสริม'}</span><span><b>${c.level ? 'ชง' : 'ไม่ชง'}</b>ปี${NAKSHAT[c.year]}</span></div>
 <div class="chat" id="chat">
-${a.messages.length ? '' : `<div class="msg bot">สวัสดีครับคุณ${esc(state.profile.name || '')} ผมเห็นผังดาวของคุณแล้ว อยากรู้เรื่องไหนพิมพ์มาได้เลย หรือแตะคำถามตัวอย่างด้านล่าง</div>`}
+<div class="msg bot"><span class="ask-who" style="color:${P.col}">${P.ic} ${P.th}</span><p>${P.greet}</p></div>
 ${a.messages.map((m) => m.me ? `<div class="msg me">${esc(m.text)}</div>` : `<div class="msg bot">${m.text.split('\n').map((l) => `<p>${esc(l)}</p>`).join('')}${m.html || ''}${m.basis && m.basis.length ? `<div class="basis"><span class="eyebrow" style="letter-spacing:.18em">อ่านจาก</span><div class="tags">${m.basis.map((b) => `<span class="tag">${esc(b)}</span>`).join('')}</div></div>` : ''}</div>`).join('')}
+${a.pending ? `<div class="msg bot typing" aria-label="กำลังดูดวง"><span class="ask-who" style="color:${P.col}">${P.ic} ${P.id === 'tarot' ? 'กำลังสับไพ่' : 'กำลังดูดวง'}</span><span class="dots"><i></i><i></i><i></i></span></div>` : ''}
 </div>
 <div class="composer">
-<div class="chips ask-chips">${ASK_CHIPS.map((c) => `<button class="chip" data-act="askChip" data-q="${esc(c)}">${esc(c)}</button>`).join('')}</div>
-<form data-act="askSend"><label class="sr-only" for="askIn">คำถามของคุณ</label><input id="askIn" class="input" style="border-radius:24px;padding:0 18px" placeholder="พิมพ์คำถาม เช่น ดวงตกแก้ยังไง" autocomplete="off">
+<div class="chips ask-chips">${chips.map((x) => `<button class="chip" data-act="askChip" data-q="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+<form data-act="askSend"><label class="sr-only" for="askIn">คำถามของคุณ</label><input id="askIn" class="input" style="border-radius:24px;padding:0 18px" placeholder="พิมพ์คำถาม หรือเล่าความฝัน" autocomplete="off">
+${SpeechRec ? `<button type="button" class="send mic" data-act="askMic" aria-label="พูดคำถาม">${icon('mic', 18, 1.8)}</button>` : ''}
 <button class="send" aria-label="ส่งคำถาม">${icon('arrow', 18, 1.8)}</button></form></div>
 <p class="small" style="text-align:center;font-size:11px">ตอบอัตโนมัติจากดวงของคุณตามตำราโหราศาสตร์และความเชื่อไทย เพื่อเป็นแนวทางและกำลังใจ</p>
 </main>`;
+}
+function startMic(btn) {
+  if (!SpeechRec) return;
+  if (recog) { try { recog.stop(); } catch (e) {} recog = null; btn.classList.remove('on'); return; }
+  recog = new SpeechRec();
+  recog.lang = 'th-TH'; recog.interimResults = true; recog.maxAlternatives = 1;
+  const input = document.getElementById('askIn');
+  btn.classList.add('on');
+  recog.onresult = (e) => { const t = Array.from(e.results).map((r) => r[0].transcript).join(''); if (input) input.value = t; if (e.results[e.results.length - 1].isFinal) { recog.stop(); ask(t); if (input) input.value = ''; } };
+  recog.onerror = () => { toast('ไมค์ใช้งานไม่ได้ ลองพิมพ์แทนนะครับ'); };
+  recog.onend = () => { recog = null; btn.classList.remove('on'); };
+  try { recog.start(); } catch (e) { recog = null; btn.classList.remove('on'); }
 }
 
 
@@ -1494,6 +1595,11 @@ function identityRemedy(p) {
   plan.steps.splice(4, 0, { ic: '⛰', k: 'พระธาตุประจำปีเกิด', t: PAGODA[nk], d: `คุณเกิดปี${NAKSHAT[nk]} (นับปีนักษัตรจากวันตรุษจีน) ควรไปนมัสการสักครั้งในชีวิต` });
   if (c.level) plan.steps.splice(5, 0, { ic: '⚠', k: 'ปีชง', t: `ปี${NAKSHAT[c.year]}นี้คุณ${c.level}`, d: CHONG_FIX });
   return remedyCard(plan);
+}
+function tarotSynthHTML(t) {
+  if (!t.cards || t.cards.length < 2 || t.flipped.length < t.cards.length) return '';
+  const lines = tarotSynthesis(t.cards.map((d) => ({ c: CARDS[d.i], rev: d.rev })));
+  return lines.length ? `<div class="card t-syn"><span class="eyebrow" style="color:var(--violet);letter-spacing:.16em">อ่านภาพรวมทั้งสำรับ</span>${lines.map((l) => `<p class="small" style="color:var(--text)">✦ ${l}</p>`).join('')}</div>` : '';
 }
 function tarotFix(t) {
   if (!t.cards || t.flipped.length < t.cards.length) return '';
@@ -1771,6 +1877,9 @@ document.addEventListener('click', (e) => {
     case 'ssReset': state.luck.ss = null; break;
     case 'ssMotion': askMotion().then((ok) => toast(ok ? 'พร้อมแล้ว เขย่ามือถือได้เลย' : 'เครื่องนี้ไม่รองรับการเขย่า ใช้วิธีกดค้างแทน')); return;
     case 'askChip': ask(el.dataset.q); return;
+    case 'askPersona': state.ask.persona = el.dataset.v; break;
+    case 'askClear': state.ask.messages = []; state.ask.ctx = null; break;
+    case 'askMic': startMic(el); return;
     default: return;
   }
   render();
@@ -1778,11 +1887,20 @@ document.addEventListener('click', (e) => {
 
 function ask(q) {
   if (!q || !q.trim()) return;
+  if (state.ask.pending) return;
   state.ask.messages.push({ me: true, text: q.trim() });
-  state.ask.messages.push({ me: false, ...answer(q) });
+  state.ask.pending = true;
   render();
-  const chat = document.getElementById('chat');
-  if (chat) chat.lastElementChild.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  const scroll = () => { const chat = document.getElementById('chat'); if (chat && chat.lastElementChild) chat.lastElementChild.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+  scroll();
+  setTimeout(() => {
+    let a;
+    try { a = answer(q); } catch (err) { console.error(err); a = { text: 'ขอโทษครับ ผมอ่านคำถามนี้ไม่ออก ลองถามใหม่อีกแบบได้ไหม', basis: [] }; }
+    state.ask.pending = false;
+    state.ask.messages.push({ me: false, ...a });
+    if (route() === 'ask') render();
+    scroll();
+  }, 600 + Math.min(900, q.length * 25));
 }
 document.addEventListener('submit', (e) => {
   if (e.target.dataset.act !== 'askSend') return;
