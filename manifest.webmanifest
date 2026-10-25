@@ -1,0 +1,17 @@
+{
+  "name": "ตักศิลา — อ่านดวงจากตำแหน่งดาวจริง",
+  "short_name": "ตักศิลา",
+  "description": "ผังดาวกำเนิด ดวงรายวันแบบสด คู่ดวง ไพ่ทาโรต์ และศาสตร์ตัวเลข",
+  "lang": "th",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D0B08",
+  "theme_color": "#0D0B08",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

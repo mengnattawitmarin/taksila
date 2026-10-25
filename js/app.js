@@ -13,6 +13,7 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify({ profile: stat
 
 // ---------------- state ----------------
 const saved = load();
+let installEvt = null; // saved install prompt (Android/desktop Chrome)
 const state = {
   profile: saved.profile || null,
   chart: null,
@@ -212,7 +213,14 @@ ${bigThree(ch)}
 <span class="t">${t.isReturn ? (t.id === 'saturn' ? 'เสาร์คืนเรือน' : 'พฤหัสคืนเรือน') : planetById(t.id).th + 'จร' + SIGNS[t.sign].th}</span>
 <span class="small">${HOUSES[t.house - 1]}</span></a>`).join('')}</div>
 </section>
+<div id="install-slot">${installHTML()}</div>
 </main>`;
+}
+
+function installHTML() {
+  if (!installEvt) return '';
+  return `<button class="ask-link" data-act="install" style="width:100%;background:none;font:inherit;text-align:left;cursor:pointer"><span class="sigil" style="color:var(--gold);width:40px;height:40px">${icon('down', 18, 1.6)}</span>
+<span style="flex:1;display:flex;flex-direction:column;gap:2px"><span class="h2" style="font-size:16px">ติดตั้งเป็นแอป</span><span class="small">เปิดดูดวงรายวันจากหน้าจอโทรศัพท์ได้ทันที</span></span></button>`;
 }
 
 // ---------------- live daily reading ----------------
@@ -664,6 +672,7 @@ document.addEventListener('click', (e) => {
   const act = el.dataset.act, i = el.dataset.i != null ? +el.dataset.i : null;
   switch (act) {
     case 'go': go(el.dataset.to); return;
+    case 'install': if (installEvt) { installEvt.prompt(); installEvt.userChoice.finally(() => { installEvt = null; el.remove(); }); } return;
     case 'liveToggle': {
       state.liveOpen = !state.liveOpen;
       const card = el.closest('.daily');
@@ -770,3 +779,15 @@ window.addEventListener('hashchange', () => {
   if (r && r !== current) go(r);
 });
 render();
+
+// Installable app (PWA): only on the real website, which links a manifest.
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost') && document.querySelector('link[rel="manifest"]')) {
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); installEvt = e;
+  const slot = document.getElementById('install-slot');
+  if (slot) slot.innerHTML = installHTML();
+});
+window.addEventListener('appinstalled', () => { installEvt = null; const slot = document.getElementById('install-slot'); if (slot) slot.innerHTML = ''; toast('ติดตั้งตักศิลาบนหน้าจอเรียบร้อย'); });
