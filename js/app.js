@@ -4,7 +4,7 @@ import {
   planetPositions, signOf, fmtDeg, localToUtc, liveAspects, upcomingIngresses, ASPECT_GLYPH, lonOf, weekAhead, lunarPhase
 } from './astro.js';
 import { PLACES, MONTHS_TH, MONTHS_SHORT, TOPICS, LIFE_PATH, DIGITS, SUM_MEANING } from './data.js';
-import { starMap, logoRing } from './starmap.js';
+import { starMap, logoRing, EL_HEX } from './starmap.js';
 import { EVENTS, findAuspicious } from './auspice.js';
 import { natalProfile, sixthSense } from './profile.js';
 import { CARDS, drawCards, SPREADS, HOUSE_READ } from './tarot.js';
@@ -619,7 +619,7 @@ ${r.health.map((h) => `<p class="small" style="color:var(--text)"><span style="c
 <p class="small" style="font-size:11px">ข้อมูลสุขภาพตามตำราโหราศาสตร์ ไม่ใช่คำวินิจฉัยทางการแพทย์</p></div></section>`;
 }
 
-const EL_COL = ['var(--amber)', 'var(--gold)', 'var(--harmony)', 'var(--teal)'];
+const EL_COL = EL_HEX;
 const EL_HINT = ['กล้าลงมือ มีไฟ', 'มั่นคง ทำจริง', 'คิดไว สื่อสารเก่ง', 'อ่อนไหว เข้าใจคน'];
 function elRing(e, n, total, tag) {
   const R = 26, C = 2 * Math.PI * R, d = Math.max(0.02, n / total) * C;

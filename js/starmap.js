@@ -14,6 +14,14 @@ function pt(r, a) {
   return [C + r * Math.cos(t), C + r * Math.sin(t)];
 }
 const f = (n) => n.toFixed(1);
+// Element colours for the zodiac band (fire, earth, air, water) and a colour per planet.
+export const EL_HEX = ['#E8845A', '#A8C26A', '#8FB3E0', '#6FC3D0'];
+const PL_HEX = { sun: '#FFC861', moon: '#DCE6F5', mercury: '#7FD6C2', venus: '#F2A0C0', mars: '#F06A4E', jupiter: '#C79CF0', saturn: '#D9B26A', uranus: '#6FE0F0', neptune: '#6F9CF0', pluto: '#E0607A' };
+function sector(r1, r2, a1, a2) {
+  const [x1, y1] = pt(r2, a1), [x2, y2] = pt(r2, a2), [x3, y3] = pt(r1, a2), [x4, y4] = pt(r1, a1);
+  const sw = ((a2 - a1 + 360) % 360) > 180 ? 1 : 0;
+  return `M${f(x1)} ${f(y1)}A${r2} ${r2} 0 0 ${sw ? 0 : 1} ${f(x2)} ${f(y2)}L${f(x3)} ${f(y3)}A${r1} ${r1} 0 0 ${sw ? 1 : 0} ${f(x4)} ${f(y4)}Z`;
+}
 
 export function starMap(chart, opts = {}) {
   const id = opts.id || 'm';
@@ -22,8 +30,13 @@ export function starMap(chart, opts = {}) {
   const parts = [];
 
   parts.push(`<defs>
-<radialGradient id="${id}Sky" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#3D2E15"/><stop offset="1" stop-color="#120D06"/></radialGradient>
+<radialGradient id="${id}Sky" cx="50%" cy="45%" r="55%"><stop offset="0" stop-color="#241A3A"/><stop offset="0.6" stop-color="#16112A"/><stop offset="1" stop-color="#0B0814"/></radialGradient>
+<radialGradient id="${id}NebA" cx="30%" cy="35%" r="45%"><stop offset="0" stop-color="#7C5CD0" stop-opacity="0.38"/><stop offset="1" stop-color="#7C5CD0" stop-opacity="0"/></radialGradient>
+<radialGradient id="${id}NebB" cx="72%" cy="68%" r="42%"><stop offset="0" stop-color="#2FA0A8" stop-opacity="0.28"/><stop offset="1" stop-color="#2FA0A8" stop-opacity="0"/></radialGradient>
+<radialGradient id="${id}NebC" cx="70%" cy="25%" r="30%"><stop offset="0" stop-color="#E0607A" stop-opacity="0.18"/><stop offset="1" stop-color="#E0607A" stop-opacity="0"/></radialGradient>
+${Object.entries(PL_HEX).map(([k, c]) => `<radialGradient id="${id}G${k}"><stop offset="0" stop-color="${c}" stop-opacity="0.95"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></radialGradient>`).join('')}
 <radialGradient id="${id}Glow"><stop offset="0" stop-color="#FFE7A8" stop-opacity="0.9"/><stop offset="1" stop-color="#FFE7A8" stop-opacity="0"/></radialGradient>
+<filter id="${id}Blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
 <radialGradient id="${id}Halo"><stop offset="0.86" stop-color="#D4AF63" stop-opacity="0"/><stop offset="0.94" stop-color="#D4AF63" stop-opacity="0.22"/><stop offset="1" stop-color="#D4AF63" stop-opacity="0"/></radialGradient>
 </defs>`);
   parts.push(`<circle cx="${C}" cy="${C}" r="170" fill="url(#${id}Halo)"/>`);
@@ -33,6 +46,7 @@ export function starMap(chart, opts = {}) {
 <text x="2" y="334">${hud.bl}</text><text x="338" y="334" text-anchor="end">${hud.br}</text></g>`);
   }
   parts.push(`<circle cx="${C}" cy="${C}" r="166" fill="url(#${id}Sky)" stroke="#C9A14A" stroke-width="0.8"/>`);
+  parts.push(`<circle cx="${C}" cy="${C}" r="146" fill="url(#${id}NebA)"/><circle cx="${C}" cy="${C}" r="146" fill="url(#${id}NebB)"/><circle cx="${C}" cy="${C}" r="146" fill="url(#${id}NebC)"/>`);
   parts.push(`<g><circle cx="${C}" cy="${C}" r="160" fill="none" stroke="#C9A14A" stroke-width="1.2" stroke-dasharray="70 6 3 6 3 6" opacity="0.85"/><animateTransform attributeName="transform" type="rotate" from="0 ${C} ${C}" to="360 ${C} ${C}" dur="90s" repeatCount="indefinite"/></g>`);
   parts.push(`<g fill="none">
 <circle cx="${C}" cy="${C}" r="153" stroke="#8A7040" stroke-width="4" stroke-dasharray="0.6 4.74"/>
@@ -46,15 +60,16 @@ export function starMap(chart, opts = {}) {
 </g>`);
 
   // major ticks every 30° aligned with sign boundaries, plus dividers and glyphs
-  const div = [], ticks = [], glyphs = [], houses = [];
+  const div = [], ticks = [], glyphs = [], houses = [], band = [];
   for (let s = 0; s < 12; s++) {
     const a = screenAngle(chart, s * 30);
     const [x1, y1] = pt(126, a), [x2, y2] = pt(150, a), [t1x, t1y] = pt(149.5, a), [t2x, t2y] = pt(156.5, a);
     div.push(`M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}`);
     ticks.push(`M${f(t1x)} ${f(t1y)}L${f(t2x)} ${f(t2y)}`);
     const [gx, gy] = pt(136, screenAngle(chart, s * 30 + 15));
-    const mine = chart.planets[0].sign === s;
-    glyphs.push(`<text x="${f(gx)}" y="${f(gy)}"${mine ? ' fill="#FFE7A8" font-size="17"' : ''}>${SIGNS[s].glyph}&#xFE0E;</text>`);
+    const mine = chart.planets[0].sign === s, col = EL_HEX[s % 4];
+    band.push(`<path d="${sector(126, 146, screenAngle(chart, s * 30 + 30), a)}" fill="${col}" opacity="${mine ? 0.34 : 0.13}"/>`);
+    glyphs.push(`<text x="${f(gx)}" y="${f(gy)}" fill="${col}"${mine ? ' font-size="17" filter="url(#' + id + 'Blur)"' : ''}>${SIGNS[s].glyph}&#xFE0E;</text>`);
   }
   if (showHouses) {
     for (let h = 1; h <= 12; h++) {
@@ -63,6 +78,7 @@ export function starMap(chart, opts = {}) {
       houses.push(`<text x="${f(hx)}" y="${f(hy)}">H${h}</text>`);
     }
   }
+  parts.push(band.join(''));
   parts.push(`<path d="${ticks.join('')}" stroke="#F0D89A" stroke-width="1.2"/>`);
   parts.push(`<path d="${div.join('')}" stroke="#C9A14A" stroke-width="0.8"/>`);
   if (showHouses) {
@@ -83,7 +99,7 @@ export function starMap(chart, opts = {}) {
     const r = 58 + rnd() * 64, a = rnd() * 360;
     const [x, y] = pt(r, a);
     const tw = i % 6 === 0 ? `<animate attributeName="opacity" values="0.2;1;0.2" dur="${(2.5 + rnd() * 2).toFixed(1)}s" repeatCount="indefinite"/>` : '';
-    stars.push(`<circle cx="${f(x)}" cy="${f(y)}" r="${(0.6 + rnd() * 0.8).toFixed(1)}" opacity="${(0.5 + rnd() * 0.5).toFixed(2)}">${tw}</circle>`);
+    stars.push(`<circle fill="${['#F0D89A', '#BFD4FF', '#FFFFFF', '#E9C8FF', '#F0D89A'][i % 5]}" cx="${f(x)}" cy="${f(y)}" r="${(0.6 + rnd() * 0.8).toFixed(1)}" opacity="${(0.5 + rnd() * 0.5).toFixed(2)}">${tw}</circle>`);
   }
   parts.push(`<g fill="#F0D89A">${stars.join('')}</g>`);
   parts.push(`<g font-family="'Noto Sans Symbols 2','Noto Sans Symbols',serif" font-size="15" fill="#E8D2A0" text-anchor="middle" dominant-baseline="central">${glyphs.join('')}</g>`);
@@ -116,7 +132,7 @@ export function starMap(chart, opts = {}) {
     const [x1, y1] = pt(54, screenAngle(chart, asp.a.lon));
     const [x2, y2] = pt(54, screenAngle(chart, asp.b.lon));
     const col = asp.nature > 0 ? '#8FB3E0' : '#E07A62';
-    lines.push(`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" stroke="${col}" stroke-width="0.8" opacity="0.85"/><circle cx="${f(x1)}" cy="${f(y1)}" r="1.5" fill="#F0D89A"/><circle cx="${f(x2)}" cy="${f(y2)}" r="1.5" fill="#F0D89A"/>`);
+    lines.push(`<path d="M${f(x1)} ${f(y1)}L${f(x2)} ${f(y2)}" stroke="${col}" stroke-width="1.1" opacity="0.95" filter="url(#${id}Blur)"/><circle cx="${f(x1)}" cy="${f(y1)}" r="1.5" fill="#F0D89A"/><circle cx="${f(x2)}" cy="${f(y2)}" r="1.5" fill="#F0D89A"/>`);
   });
   parts.push(lines.join(''));
   parts.push(`<path d="M170 164L172 168L176 170L172 172L170 176L168 172L164 170L168 168Z" fill="#FFE7A8"/>`);
@@ -125,12 +141,12 @@ export function starMap(chart, opts = {}) {
   for (const q of placed) {
     const lum = q.p.id === 'sun' || q.p.id === 'moon';
     if (lum) {
-      glowEls.push(`<circle cx="${f(q.x)}" cy="${f(q.y)}" r="14" fill="url(#${id}Glow)"><animate attributeName="r" values="12;18;12" dur="${q.p.id === 'sun' ? 4 : 5}s" repeatCount="indefinite"/></circle>`);
+      glowEls.push(`<circle cx="${f(q.x)}" cy="${f(q.y)}" r="14" fill="url(#${id}G${q.p.id})"><animate attributeName="r" values="12;18;12" dur="${q.p.id === 'sun' ? 4 : 5}s" repeatCount="indefinite"/></circle>`);
       degEls.push(`<text x="${f(q.x)}" y="${f(q.y + 18)}">${Math.floor(q.p.lon % 30)}°</text>`);
     } else {
-      glowEls.push(`<circle cx="${f(q.x)}" cy="${f(q.y)}" r="9" fill="url(#${id}Glow)" opacity="0.55"/>`);
+      glowEls.push(`<circle cx="${f(q.x)}" cy="${f(q.y)}" r="10" fill="url(#${id}G${q.p.id})" opacity="0.7"/>`);
     }
-    glyphEls.push(`<text x="${f(q.x)}" y="${f(q.y)}"${lum ? ' font-size="16"' : ''}>${q.p.glyph}&#xFE0E;</text>`);
+    glyphEls.push(`<text x="${f(q.x)}" y="${f(q.y)}" fill="${PL_HEX[q.p.id] || '#FFF3CF'}"${lum ? ' font-size="16"' : ''}>${q.p.glyph}&#xFE0E;</text>`);
   }
   parts.push(glowEls.join(''));
   parts.push(`<g font-family="'Noto Sans Symbols','Noto Sans Symbols 2',serif" font-size="12" fill="#FFF3CF" text-anchor="middle" dominant-baseline="central">${glyphEls.join('')}</g>`);
