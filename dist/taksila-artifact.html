@@ -735,6 +735,51 @@ a:hover { color: var(--gold-2); }
 .tr-top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; }
 .tr-lv { font-size: 11px; padding: 3px 8px; border-radius: 999px; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); white-space: nowrap; }
 
+/* ---------- ทางแก้ดวง (remedy card) ---------- */
+.rm-card { border-radius: 16px; border: 1px solid rgba(212,175,99,.35); background: linear-gradient(160deg, rgba(212,175,99,.10), rgba(124,96,200,.06) 60%, transparent), var(--surface); }
+.rm-card.lv3 { border-color: rgba(224,122,98,.5); background: linear-gradient(160deg, rgba(224,122,98,.12), rgba(124,96,200,.06) 60%, transparent), var(--surface); }
+.rm-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 10px; align-items: center; width: 100%; padding: 12px 14px; background: none; border: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.rm-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: var(--gold-2); border: 1px solid rgba(212,175,99,.5); font-size: 16px; }
+.rm-card.lv3 .rm-ic { color: var(--tension); border-color: rgba(224,122,98,.6); }
+.rm-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rm-t b { font-size: 15px; color: var(--gold-2); }
+.rm-card.lv3 .rm-t b { color: #F0A08C; }
+.rm-t span { font-size: 12px; color: var(--text-2); line-height: 1.45; }
+.rm-n { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.rm-card .chev { color: var(--muted); transition: transform .3s; }
+.rm-card.open .chev { transform: rotate(180deg); }
+.rm-steps { list-style: none; margin: 0; padding: 0 14px 4px; display: flex; flex-direction: column; gap: 10px; }
+.rm-steps li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.rm-si { font-family: var(--symbols); color: var(--gold); text-align: center; font-size: 16px; padding-top: 2px; }
+.rm-sb { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rm-k { font-size: 10px; letter-spacing: .12em; color: var(--gold); }
+.rm-sb b { font-size: 14px; font-weight: 600; }
+.rm-sb > span:not(.rm-k) { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+.rm-sb i { font-size: 10px; color: var(--muted); font-style: normal; }
+.rm-go { font-size: 12px; font-weight: 500; text-decoration: none; margin-top: 2px; }
+.rm-foot { font-size: 11px; color: var(--muted); padding: 8px 14px 14px; margin: 0; }
+/* lucky windows */
+.lw-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.lw { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); border-left: 3px solid var(--gold); background: var(--surface); }
+.lw.money { border-left-color: #A8C26A; } .lw.care { border-left-color: var(--tension); }
+.lw-d { font-family: var(--mono); font-size: 11px; color: var(--text-2); line-height: 1.5; }
+.lw-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lw-t b { font-size: 13px; font-weight: 600; }
+.lw.care .lw-t b { color: #F0A08C; } .lw.luck .lw-t b { color: var(--gold-2); } .lw.money .lw-t b { color: #C4DA8C; }
+.lw-t span { font-size: 11px; color: var(--muted); }
+/* consult */
+.ask-hero { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 18px; border: 1px solid var(--line); background: radial-gradient(ellipse 70% 80% at 0% 0%, rgba(217,140,134,.12), transparent 70%), var(--surface); }
+.ask-stat { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.ask-stat span { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 4px; border-radius: 12px; background: var(--surface-2); font-size: 10px; color: var(--muted); text-align: center; }
+.ask-stat b { font-size: 16px; color: var(--text); font-family: var(--serif); }
+.msg.bot { max-width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.msg.bot p { margin: 0; }
+.msg .rm-card, .msg .lw-list { margin-top: 2px; }
+.ask-links { display: flex; flex-wrap: wrap; gap: 6px; }
+.ask-link { display: inline-flex; align-items: center; min-height: 34px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line-2); font-size: 12px; text-decoration: none; color: var(--gold-2); }
+.ask-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.ask-chips .chip { white-space: nowrap; flex: none; }
+
 </style>
 <div id="app" class="app"></div>
 <noscript>กรุณาเปิด JavaScript เพื่อใช้งานตักศิลา</noscript>
@@ -4169,6 +4214,161 @@ function siamsiRemedy(level) {
 }
 const EVENT_CHANT = { wedding: 'bahung', ordain: 'itipiso', house: 'bahung', business: 'ganesha', car: 'chinabanchon', contract: 'bahung', job: 'bahung', travel: 'chinabanchon' };
 
+// ---- js/remedy.js ----
+// ทางแก้ดวง: merit, temples, rites and lucky windows that every reading in the app can point to.
+// Sources are listed in docs/remedy-research.md. Everything here is tradition and belief, presented as such.
+
+
+// ---------- ทำบุญตามดาว (Thai planet number 1..8 = Sun..Sat, 8 = Rahu) ----------
+// Source: GotoKnow ทำบุญตามวันเกิด (items, charity, Buddha posture); counts are the planet strengths used for chanting.
+const DAY_MERIT = {
+  1: { day: 'อาทิตย์', give: 'ของให้แสงสว่าง เช่น ไฟฉาย เทียน หลอดไฟ', charity: 'ช่วยคนตาบอด หรือโรงพยาบาลโรคตาและหัวใจ', buddha: 'ปางถวายเนตร', count: 6, chant: 'day-sun' },
+  2: { day: 'จันทร์', give: 'แก้วน้ำ แจกัน หรือของใส', charity: 'มูลนิธิช่วยเหลือสตรี', buddha: 'ปางห้ามญาติ', count: 15, chant: 'day-mon' },
+  3: { day: 'อังคาร', give: 'ของใช้ทำจากเหล็ก กรรไกร แปรงสีฟัน พัดลม', charity: 'ผู้พิการทางการพูด หรือผู้ป่วยโรคลมชัก', buddha: 'ปางไสยาสน์', count: 8, chant: 'day-tue' },
+  4: { day: 'พุธ', give: 'สมุด ปากกา ดินสอ', charity: 'ผู้พิการทางการได้ยิน โรงเรียนคนหูหนวก', buddha: 'ปางอุ้มบาตร', count: 17, chant: 'day-wed' },
+  5: { day: 'พฤหัสบดี', give: 'ผ้าไตรจีวร หนังสือธรรมะ ตู้ยา', charity: 'โรงพยาบาลสงฆ์ บริจาคข้าวสาร เสื้อผ้า ผ้าห่ม', buddha: 'ปางสมาธิ', count: 19, chant: 'day-thu' },
+  6: { day: 'ศุกร์', give: 'นาฬิกา ระฆัง ย่าม ดอกไม้หอม', charity: 'เด็กด้อยโอกาส', buddha: 'ปางรำพึง', count: 21, chant: 'day-fri' },
+  7: { day: 'เสาร์', give: 'ร่ม ไม้กวาด กระเบื้องมุงหลังคา', charity: 'โรงพยาบาลจิตเวช', buddha: 'ปางนาคปรก', count: 10, chant: 'day-sat' },
+  8: { day: 'พุธกลางคืน (ราหู)', give: 'พัดลม สื่อธรรมะ ยาหอม และทำบุญค่าไฟหรือหลอดไฟให้วัด', charity: 'มูลนิธิด้านบำบัดยาเสพติด', buddha: 'ปางป่าเลไลย์', count: 12, chant: 'day-rahu' }
+};
+const PLANET_NO = { sun: 1, moon: 2, mars: 3, mercury: 4, jupiter: 5, venus: 6, saturn: 7, uranus: 8, neptune: 8, pluto: 8 };
+
+// ---------- extra rites for heavy periods ----------
+const RITES = {
+  rahu: { ic: '☊', th: 'ไหว้พระราหู สะเดาะเคราะห์', d: 'คืนวันพุธ ไหว้นอกบ้าน หันทิศตะวันตกเฉียงเหนือ ของดำ 8 อย่าง (ไก่ดำ กาแฟดำ เฉาก๊วย งาดำ ถั่วดำ ข้าวเหนียวดำ ปลาดุก ไข่เยี่ยวม้า) ธูป 8 ดอก แล้วทำบุญค่าไฟหรือหลอดไฟให้วัด', src: 'Wongnai: ไหว้พระราหู' },
+  coffin: { ic: '⚱', th: 'ทำบุญโลงศพ', d: 'บริจาคโลงศพให้ผู้เสียชีวิตไร้ญาติ เชื่อว่าช่วยให้หนักเป็นเบา ต้านเคราะห์ใหญ่ ทำได้ที่มูลนิธิร่วมกตัญญู หน้าวัดหัวลำโพง ถ.พระราม 4 (เปิด 24 ชม. ใกล้ MRT สามย่าน) เขียนชื่อลงกระดาษสีชมพู บริจาคตามศรัทธา', src: 'TrueID: ทำบุญโลงศพ วัดหัวลำโพง' },
+  release: { ic: '≋', th: 'ปล่อยปลา ปล่อยสัตว์', d: 'อภัยทานคือให้ชีวิต สวดคาถาปล่อยปลาแล้วปล่อยในแหล่งน้ำที่เหมาะกับชนิดสัตว์ ไม่ปล่อยสัตว์ต่างถิ่น', chant: 'release' },
+  blood: { ic: '♥', th: 'บริจาคโลหิต', d: 'ทานที่ช่วยชีวิตคนได้จริง ตามความเชื่อถือเป็นการต่ออายุให้ทั้งผู้รับและผู้ให้ ทำได้ที่สภากาชาดไทยหรือโรงพยาบาลใกล้บ้าน' },
+  suebchata: { ic: '✺', th: 'สืบชะตา', d: 'พิธีล้านนาเพื่อต่ออายุ เสริมบารมี ปัดเคราะห์และโรคภัย ใช้ต้นกล้วย ต้นอ้อย สายสิญจน์ ทำโดยพระ นิยมทำตอนวันเกิด หลังป่วยหนัก หรือดวงตก ติดต่อวัดใกล้บ้านได้ โดยเฉพาะวัดทางภาคเหนือ', src: 'GotoKnow: พิธีสืบชะตา' },
+  sangkhathan: { ic: '◇', th: 'ถวายสังฆทาน', d: 'ถวายของใช้จำเป็นแด่พระสงฆ์ไม่เจาะจงรูป แล้วกรวดน้ำอุทิศบุญให้เจ้ากรรมนายเวร', chant: 'kruadnam' },
+  khama: { ic: '☸', th: 'ขอขมาพระรัตนตรัย', d: 'ขอขมาสิ่งที่อาจล่วงเกินทั้งตั้งใจและไม่ตั้งใจ ทำได้ทุกวันก่อนนอน', chant: 'khama' }
+};
+
+// ---------- temples ----------
+// ไหว้พระ 9 วัด กรุงเทพฯ and what each is known for (Wongnai, 2026).
+const TEMPLES = [
+  { th: 'วัดพระแก้ว', full: 'วัดพระศรีรัตนศาสดาราม', for: ['work', 'any'], wish: 'ทุกเรื่อง โดยเฉพาะการงานและความมั่นคง' },
+  { th: 'วัดบวรนิเวศ', full: 'วัดบวรนิเวศวิหาร', for: ['work', 'win'], wish: 'ความสำเร็จในชีวิต' },
+  { th: 'วัดภูเขาทอง', full: 'วัดสระเกศ', for: ['study', 'work'], wish: 'การเรียน การงาน สติปัญญา' },
+  { th: 'วัดกัลยาณมิตร', full: 'วัดกัลยาณมิตรวรมหาวิหาร (หลวงพ่อโต ซำปอฮุดกง)', for: ['money', 'luck'], wish: 'โชคลาภ การค้าขาย ธุรกิจ' },
+  { th: 'วัดโพธิ์', full: 'วัดพระเชตุพนวิมลมังคลาราม', for: ['love', 'bad', 'health'], wish: 'ความรัก สะเดาะเคราะห์' },
+  { th: 'วัดชนะสงคราม', full: 'วัดชนะสงครามราชวรมหาวิหาร', for: ['win', 'bad', 'travel'], wish: 'ชนะอุปสรรค ความปลอดภัย' },
+  { th: 'วัดสุทัศน์', full: 'วัดสุทัศนเทพวราราม', for: ['study', 'work', 'win'], wish: 'การเรียน การงาน ขจัดอุปสรรค' },
+  { th: 'วัดระฆัง', full: 'วัดระฆังโฆสิตาราม (สมเด็จพระพุฒาจารย์โต)', for: ['love', 'boss', 'fame'], wish: 'ชื่อเสียง ความรัก เมตตามหานิยม' },
+  { th: 'ศาลหลักเมือง', full: 'ศาลหลักเมืองกรุงเทพฯ', for: ['luck', 'home', 'travel', 'money'], wish: 'เริ่มงานใหม่ ความเจริญ ความปลอดภัย โชคลาภ' }
+];
+const templesFor = (topic) => TEMPLES.filter((t) => t.for.includes(topic)).slice(0, 3);
+
+// พระธาตุประจำปีเกิด (KTC), index 0 = ชวด
+const NAKSHAT = ['ชวด', 'ฉลู', 'ขาล', 'เถาะ', 'มะโรง', 'มะเส็ง', 'มะเมีย', 'มะแม', 'วอก', 'ระกา', 'จอ', 'กุน'];
+const NAKSHAT_ANIMAL = ['หนู', 'วัว', 'เสือ', 'กระต่าย', 'งูใหญ่', 'งูเล็ก', 'ม้า', 'แพะ', 'ลิง', 'ไก่', 'สุนัข', 'หมู'];
+const PAGODA = [
+  'พระธาตุศรีจอมทอง (เชียงใหม่)', 'พระธาตุลำปางหลวง (ลำปาง)', 'พระธาตุช่อแฮ (แพร่)', 'พระธาตุแช่แห้ง (น่าน)',
+  'พระธาตุวัดพระสิงห์ (เชียงใหม่)', 'พระเจดีย์พุทธคยา หรือองค์จำลองที่วัดอนาลโยทิพยาราม (พะเยา)', 'พระธาตุชเวดากอง หรือพระบรมธาตุเมืองตาก (ตาก)', 'พระธาตุดอยสุเทพ (เชียงใหม่)',
+  'พระธาตุพนม (นครพนม)', 'พระธาตุหริภุญชัย (ลำพูน)', 'พระธาตุเกตุแก้วจุฬามณี วัดเกตการาม (เชียงใหม่)', 'พระธาตุดอยตุง (เชียงราย)'
+];
+
+// ---------- Chinese New Year and ปีชง ----------
+// Chinese New Year = the second new moon after the December solstice, in China time (UTC+8).
+const elong = (t) => { const p = planetPositions(t); return rev(p.moon.lon - p.sun.lon); };
+function nextNewMoon(t) {
+  let a = new Date(t.getTime()), e0 = elong(a);
+  for (let i = 0; i < 40; i++) {
+    const b = new Date(a.getTime() + 86400000), e1 = elong(b);
+    if (e1 < e0) { // wrapped past 360 → new moon between a and b
+      let lo = a.getTime(), hi = b.getTime();
+      for (let k = 0; k < 30; k++) { const m = (lo + hi) / 2; if (elong(new Date(m)) > 180) lo = m; else hi = m; }
+      return new Date(hi);
+    }
+    a = b; e0 = e1;
+  }
+  return null;
+}
+const cnyCache = {};
+function chineseNewYear(yCE) {
+  if (cnyCache[yCE]) return cnyCache[yCE];
+  const t = new Date(Date.UTC(yCE - 1, 11, 21, 12)); // December solstice (±1 day)
+  const nm1 = nextNewMoon(t), nm2 = nextNewMoon(new Date(nm1.getTime() + 2 * 86400000));
+  const local = new Date(nm2.getTime() + 8 * 3600000); // China date
+  return (cnyCache[yCE] = { y: local.getUTCFullYear(), m: local.getUTCMonth() + 1, d: local.getUTCDate() });
+}
+const nakIdx = (yCE) => ((yCE - 4) % 12 + 12) % 12;
+// Year animal counted from Chinese New Year (the convention used for ปีชง).
+function nakshatOf(profile) {
+  const y = profile.yearBE - 543, c = chineseNewYear(y);
+  const before = profile.month < c.m || (profile.month === c.m && profile.day < c.d);
+  return nakIdx(before ? y - 1 : y);
+}
+function currentNakshat(now = new Date()) {
+  const y = now.getFullYear(), c = chineseNewYear(y);
+  const before = now.getMonth() + 1 < c.m || (now.getMonth() + 1 === c.m && now.getDate() < c.d);
+  return { idx: nakIdx(before ? y - 1 : y), yCE: before ? y - 1 : y };
+}
+// Shared clashes as published for ปีมะเมีย 2569 (กรุงศรี Plearn Plearn); other years use direct clash and self-clash only.
+const SHARED = { 2026: { 3: 'ชงร่วม เรื่องเคราะห์กรรม', 9: 'ชงร่วม เรื่องสุขภาพ' } };
+function chongOf(profile, now = new Date()) {
+  const me = nakshatOf(profile), cur = currentNakshat(now);
+  const opp = (cur.idx + 6) % 12;
+  let level = null;
+  if (me === opp) level = 'ชงตรง (หนักที่สุด)';
+  else if (me === cur.idx) level = 'ชงตัวเอง (ปีเกิดตรงกับปีนักษัตร)';
+  else if (SHARED[cur.yCE] && SHARED[cur.yCE][me]) level = SHARED[cur.yCE][me];
+  return { me, year: cur.idx, yCE: cur.yCE, level };
+}
+const CHONG_FIX = 'ไหว้องค์ไท้ส่วยเอี๊ยแก้ชงที่วัดมังกรกมลาวาส (เล่งเน่ยยี่) วัดเล่งเน่ยยี่ 2 (นนทบุรี) วัดทิพยวารีวิหาร หรือศาลเจ้าพ่อเสือ เขียนใบฝากดวงแล้วปัดตัว 12 ครั้ง หรือทำบุญบริจาคโลหิต ปล่อยปลา แทนได้';
+
+// ---------- ช่วงโชคลาภ / ช่วงระวัง (next 12 months) ----------
+// Jupiter trine, sextile or conjunct natal Sun, Moon, Venus, Jupiter or the Ascendant → luck window.
+// Jupiter entering houses 2, 5 or 11 → money window. Saturn square/opposite Sun, Moon or ASC → caution window.
+const GOOD = [{ a: 0, th: 'ร่วม' }, { a: 60, th: 'หกสิบองศา' }, { a: 120, th: 'ตรีโกณ' }];
+const HARD = [{ a: 90, th: 'ตั้งฉาก' }, { a: 180, th: 'เล็งกัน' }];
+const winCache = {};
+function luckWindows(chart, from = new Date(), days = 365) {
+  const key = chart.utc.getTime() + ':' + from.toDateString();
+  if (winCache[key]) return winCache[key];
+  const targets = chart.planets.filter((p) => ['sun', 'moon', 'venus', 'jupiter'].includes(p.id)).map((p) => ({ id: p.id, th: p.th, lon: p.lon }));
+  if (chart.asc != null) targets.push({ id: 'asc', th: 'ลัคนา', lon: chart.asc });
+  const open = {}, all = [];
+  const mark = (k, t, info) => { const r = open[k]; if (r && t - r.end <= 4 * 86400000) r.end = t; else { const w = { ...info, start: t, end: t }; open[k] = w; all.push(w); } };
+  for (let i = 0; i <= days; i += 3) {
+    const t = from.getTime() + i * 86400000, pos = planetPositions(new Date(t));
+    const ju = pos.jupiter.lon, sa = pos.saturn.lon;
+    for (const tg of targets) {
+      for (const g of GOOD) if (Math.abs(angDist(ju, tg.lon) - g.a) <= 3) mark('j' + tg.id + g.a, t, { kind: 'luck', planet: 'jupiter', target: tg.th, asp: g.th, area: { sun: 'งานและชื่อเสียง', moon: 'ครอบครัว ใจสบาย', venus: 'เงินทองและความรัก', jupiter: 'โอกาสใหญ่ รอบ 12 ปี', asc: 'ตัวเอง ภาพลักษณ์ โอกาสใหม่' }[tg.id] });
+      if (['sun', 'moon', 'asc'].includes(tg.id)) for (const h of HARD) if (Math.abs(angDist(sa, tg.lon) - h.a) <= 2.5) mark('s' + tg.id + h.a, t, { kind: 'care', planet: 'saturn', target: tg.th, asp: h.th, area: { sun: 'งานและสุขภาพ', moon: 'อารมณ์และครอบครัว', asc: 'ตัวเองและสุขภาพ' }[tg.id] });
+    }
+    const hj = chart.houseOf(ju);
+    if ([2, 5, 11].includes(hj)) mark('jh' + hj, t, { kind: 'money', planet: 'jupiter', target: 'ภพ ' + hj, asp: 'โคจรผ่าน', area: { 2: 'เงินได้ ทรัพย์สิน', 5: 'โชคลาภ ความรัก การลงทุน', 11: 'ลาภจากเพื่อนและเครือข่าย' }[hj] });
+  }
+  all.sort((a, b) => a.start - b.start);
+  return (winCache[key] = all.map((w) => ({ ...w, start: new Date(w.start), end: new Date(w.end) })));
+}
+const dm = (d) => `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${String(d.getFullYear() + 543).slice(2)}`;
+const windowRange = (w) => (w.start.getTime() === w.end.getTime() ? dm(w.start) : `${dm(w.start)} – ${dm(w.end)}`);
+
+// ---------- one remedy plan for any bad reading ----------
+// planetNo: the Thai planet causing trouble (or the person's birth planet when nothing specific);
+// topic: work | money | love | health | study | travel | home | bad | luck | win; level: 1 light, 2 medium, 3 heavy.
+const TOPIC_TH = { work: 'การงาน', money: 'การเงิน', love: 'ความรัก', health: 'สุขภาพ', study: 'การเรียน', travel: 'การเดินทาง', home: 'บ้านและครอบครัว', bad: 'เคราะห์', luck: 'โชคลาภ', win: 'อุปสรรค', boss: 'ผู้ใหญ่' };
+function remedyPlan({ planetNo = 1, topic = 'bad', level = 2, reason = '' } = {}) {
+  const m = DAY_MERIT[planetNo] || DAY_MERIT[1];
+  const steps = [
+    { ic: '☸', k: 'สวด', t: `สวดบทประจำวัน${m.day} ${m.count} จบ`, d: 'สวดทุกวันจนกว่าช่วงนี้จะผ่าน จำนวนจบตามกำลังดาว', chant: m.chant },
+    { ic: '◇', k: 'ทำบุญ', t: `ถวาย${m.give}`, d: `ของถวายประจำดาววัน${m.day} ตามตำราทำบุญตามวันเกิด` },
+    { ic: '♡', k: 'ทำทาน', t: m.charity, d: 'ทานที่ตรงกับดาว ช่วยผ่อนเรื่องหนักให้เบาลง' },
+    { ic: '⌂', k: 'ไหว้พระ', t: `พระพุทธรูป${m.buddha}`, d: `พระประจำวัน${m.day} ไหว้ได้ที่วัดใกล้บ้านที่มีพระประจำวันครบ 8 ปาง` }
+  ];
+  const tp = templesFor(topic).length ? templesFor(topic) : templesFor('any');
+  steps.push({ ic: '⛩', k: 'วัดแนะนำ', t: tp.map((x) => x.th).join(' · '), d: tp.map((x) => `${x.th}: ${x.wish}`).join(' / ') });
+  if (level >= 2) steps.push({ ...RITES.release, k: 'เสริม', t: RITES.release.th });
+  if (planetNo === 8 || planetNo === 7) steps.push({ ...RITES.rahu, k: 'สะเดาะเคราะห์', t: RITES.rahu.th });
+  if (level >= 3) { steps.push({ ...RITES.coffin, k: 'เคราะห์หนัก', t: RITES.coffin.th }); steps.push({ ...RITES.suebchata, k: 'ต่ออายุ', t: RITES.suebchata.th }); }
+  if (topic === 'health') steps.push({ ...RITES.blood, k: 'สุขภาพ', t: RITES.blood.th });
+  steps.push({ ...RITES.khama, k: 'ทุกวัน', t: RITES.khama.th });
+  return { title: `ทางแก้${TOPIC_TH[topic] ? 'เรื่อง' + TOPIC_TH[topic] : 'ดวง'}`, reason, level, steps };
+}
+const topicTh = (k) => TOPIC_TH[k] || k;
+
 // ---- js/starmap.js ----
 // Builds the animated star-map SVG from a computed natal chart.
 
@@ -4359,6 +4559,7 @@ function logoRing() {
 
 
 
+
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
@@ -4382,7 +4583,7 @@ const state = {
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
-  ask: { topic: 0, messages: [] }
+  ask: { messages: [] }
 };
 if (state.profile) state.chart = safeChart(state.profile);
 
@@ -4653,6 +4854,7 @@ function liveDailyHTML() {
 </div>
 <p class="dh-head">${headline}</p>
 ${remedyChip(dailyRemedy(la, birthPlanet(state.profile), total))}
+${heroRemedy()}
 <button class="drawer-toggle" data-act="liveToggle" data-closed="ดูเหตุผล ${la.length} มุมดาว" aria-expanded="${open}">
 <span class="peek" aria-hidden="true">${la.slice(0, 3).map((x) => `<span class="peek-chip">${trio(x)}</span>`).join('')}</span>
 <span class="lbl">${open ? 'พับเก็บ' : `ดูเหตุผล ${la.length} มุมดาว`}</span>
@@ -4957,7 +5159,7 @@ ${senseHTML(ch)}
 <p class="mono" style="font-size:10px;color:var(--muted)">${r.career.basis}</p></div></section>
 <section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">เรื่องที่ต้องระวัง</h2>
 <ul class="trait-list">${r.cautions.map((t) => item(t, 'bad')).join('')}</ul></section>
-${remedyChip({ id: birthChant(birthPlanet(p)), kind: 'เสริม', reason: 'บทสวดประจำวันเกิด ใช้เสริมจุดเด่นและแก้เรื่องที่ต้องระวังในดวง' })}
+${identityRemedy(p)}
 <section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">โชคลาภและสุขภาพ</h2>
 <div class="card" style="gap:8px"><p class="small" style="color:var(--text)"><span style="color:var(--gold-2)">โชคลาภ ·</span> ${r.luck}</p>
 ${r.health.map((h) => `<p class="small" style="color:var(--text)"><span style="color:var(--gold-2)">จุดที่ควรดูแล ·</span> ${h}</p>`).join('')}
@@ -5025,11 +5227,12 @@ ${ch.planets.map(planetCard).join('')}</ul>`;
     const tr = transits(ch, now);
     const col = (t) => t.level === 'HIGH' ? 'var(--tension)' : t.level === 'SUPPORT' ? 'var(--gold)' : 'var(--harmony)';
     const lvTh = (t) => t.level === 'HIGH' ? 'มีผลมาก' : t.level === 'SUPPORT' ? 'ช่วยหนุน' : 'เปลี่ยนผ่าน';
-    body = `<p class="small" style="font-size:13px">ดาวเคลื่อนช้าที่โคจรอยู่ตอนนี้ เทียบกับดวงกำเนิดของคุณ เรียงตามน้ำหนัก</p>
+    body = `${luckCalendarHTML(ch)}<h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">◎</span>ดาวจรตอนนี้</h2><p class="small" style="font-size:13px">ดาวเคลื่อนช้าที่โคจรอยู่ตอนนี้ เทียบกับดวงกำเนิดของคุณ เรียงตามน้ำหนัก</p>
 <ul class="tr-list">${tr.map((t) => `<li class="tr-card" style="--c:${col(t)}"><div class="tr-top"><span class="b3-m sm" style="--c:${col(t)}"><span class="sym">${t.glyph}&#xFE0E;</span></span>
 <span class="pl-t"><b>${t.title}</b><span class="mono" style="font-size:11px">ตอนนี้${t.exit ? ' → ถึง ' + monthYear(t.exit) : ''}${t.retro ? ' · ถอยหลัง' : ''}</span></span><span class="tr-lv">${lvTh(t)}</span></div>
 <p class="body" style="font-size:13px">${t.body}</p>
-${t.hits.length ? `<span class="tags">${t.hits.map((h) => `<span class="tag">${h.th} ${h.target.th}</span>`).join('')}</span>` : ''}</li>`).join('')}</ul>`;
+${t.hits.length ? `<span class="tags">${t.hits.map((h) => `<span class="tag">${h.th} ${h.target.th}</span>`).join('')}</span>` : ''}
+${t.level === 'HIGH' && t.id !== 'jupiter' ? remedyCard(remedyPlan({ planetNo: PLANET_NO[t.id], topic: t.id === 'saturn' ? 'work' : 'bad', level: t.isReturn ? 3 : 2, reason: `บูชาดาว${TH_PLANETS[PLANET_NO[t.id]].th}ตลอดช่วงที่ดาวนี้จรผ่าน${t.exit ? ' (ถึง ' + monthYear(t.exit) + ')' : ''}` })) : ''}</li>`).join('')}</ul>`;
   }
   const tabBtn = (i, t) => `<button role="tab" aria-selected="${tab === i}" data-act="chartTab" data-i="${i}">${t}</button>`;
   const sun = ch.planets[0], bp = birthPlanet(p);
@@ -5071,6 +5274,7 @@ ${pageHead('02', 'COMPATIBILITY', 'คู่ดวง', 'var(--rose)', 'match')}
 <p class="h2" style="font-size:17px">${res.reading}</p>
 <div class="tags">${res.tags.concat(res.links).map((t) => `<span class="tag">${t}</span>`).join('')}</div>
 ${m.useDate ? '<p class="small">เทียบดาวอาทิตย์ จันทร์ ศุกร์ และอังคารของทั้งสองคน</p>' : ''}</section>
+${res.score < 55 ? remedyCard(remedyPlan({ planetNo: 6, topic: 'love', level: res.score < 40 ? 2 : 1, reason: `ดวงเข้ากัน ${res.score}% เสริมด้วยบุญของดาวศุกร์ ดาวแห่งความรัก` })) : ''}
 <section style="display:flex;flex-direction:column;gap:10px">
 <button type="button" class="check" aria-pressed="${m.useDate}" data-act="matchDate"><span class="box">${m.useDate ? '✓' : ''}</span>ใส่วันเกิดของอีกฝ่าย (แม่นกว่า)</button>
 ${m.useDate ? `<div class="date-row">
@@ -5330,7 +5534,7 @@ ${body}
 function tarotReadingArea() {
   const t = state.tarot, spread = SPREADS[t.spread];
   if (!t.cards) return '';
-  const sum = tarotSummary(spread, t.cards);
+  const sum = tarotSummary(spread, t.cards) + tarotFix(t);
   if (spread.house) {
     const all = t.flipped.length === t.cards.length;
     if (!all) return `<p class="small" style="text-align:center">แตะไพ่เพื่อเปิดทีละภพ หรือกด "เปิดทั้งหมด"</p>`;
@@ -5457,7 +5661,7 @@ function siamsiSlip(no) {
 <dl class="slip-topics">${f.topics.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
 <p class="slip-tip"><b>ข้อคิด</b> ${f.advice}</p>
 <p class="slip-foot">เซียมซีตักศิลา · คำทำนายเป็นกำลังใจ ผลจริงขึ้นอยู่กับการลงมือของคุณ</p>
-</article>${remedyChip(siamsiRemedy(f.level))}`;
+</article>${remedyChip(siamsiRemedy(f.level))}${f.level <= 1 ? remedyCard(remedyPlan({ planetNo: troubleNow().planetNo, topic: 'bad', level: 2, reason: 'ใบเซียมซีเตือนให้ระวัง ทำบุญเสริมให้หนักเป็นเบา' })) : ''}`;
 }
 
 function viewLuck() {
@@ -5526,84 +5730,210 @@ function mountLuck() {
 }
 
 
-// ---------------- consult (rule-based, grounded in the chart) ----------------
-const ASK_TOPICS = [
-  { th: 'โหราศาสตร์', color: 'var(--gold)', code: '01 · NATAL & TRANSITS', greet: 'ผมเห็นผังดาวของคุณแล้ว ถามได้ทั้งเรื่องงาน ความรัก การเงิน สุขภาพ ย้ายบ้าน หรือการเดินทาง ทุกคำตอบจะบอกว่ามาจากดาวดวงใด', chips: ['ช่วงนี้ควรเปลี่ยนงานไหม', 'การเงินปีนี้เป็นอย่างไร', 'ควรย้ายที่อยู่หรือไม่'] },
-  { th: 'ความรัก', color: 'var(--rose)', code: '02 · LOVE', greet: 'เรื่องความรักใช่ไหม ถามได้เลย หรือไปที่หน้าคู่ดวงเพื่อเทียบดวงกับอีกฝ่าย', chips: ['ความรักช่วงนี้เป็นอย่างไร', 'จะเจอคนที่ใช่เมื่อไร', 'ควรคืนดีไหม'] },
-  { th: 'ไพ่', color: 'var(--violet)', code: '03 · TAROT', greet: 'ตั้งคำถามให้ชัดเจน แล้วพิมพ์มา จะเปิดไพ่หนึ่งใบตอบให้', chips: ['งานใหม่จะไปได้ดีไหม', 'เขาคิดอย่างไรกับเรา', 'ขอไพ่ประจำวัน'] },
-  { th: 'ตัวเลข', color: 'var(--teal)', code: '04 · NUMEROLOGY', greet: 'พิมพ์เบอร์โทรหรือทะเบียนรถมาได้ จะคำนวณผลรวมและคู่เลขให้', chips: ['0812345678', 'เลขชีวิตของฉันคืออะไร'] },
-  { th: 'โชคลาภ', color: 'var(--amber)', code: '05 · FORTUNE', greet: 'อยากได้เลขเสี่ยงโชคพอเป็นสีสันใช่ไหม พิมพ์อะไรมาก็ได้ จะสุ่มเลขให้ เพื่อความบันเทิงเท่านั้น', chips: ['ขอเลขประจำวัน', 'ขอเลขจากวันเกิด'] }
-];
-const AREAS = [
-  { re: /งาน|อาชีพ|ธุรกิจ|เลื่อน|หัวหน้า|ลาออก/, th: 'การงาน', houses: [10, 6], cat: 1 },
-  { re: /รัก|แฟน|คู่|โสด|แต่งงาน|คืนดี|เขา/, th: 'ความรัก', houses: [5, 7], cat: 0 },
-  { re: /เงิน|ลงทุน|หนี้|รวย|มั่งคั่ง|ทรัพย์|หุ้น/, th: 'การเงิน', houses: [2, 8], cat: 2 },
-  { re: /สุขภาพ|ป่วย|เจ็บ|ร่างกาย/, th: 'สุขภาพ', houses: [6, 1], cat: 3 },
-  { re: /ย้าย|บ้าน|ครอบครัว|คอนโด/, th: 'บ้านและครอบครัว', houses: [4], cat: 0 },
-  { re: /เดินทาง|ต่างประเทศ|เรียน|สอบ/, th: 'การเดินทางและการเรียน', houses: [9, 3], cat: 1 }
-];
-function answer(topicIdx, text) {
-  const ch = state.chart, now = new Date();
-  if (topicIdx === 2) {
-    const c = drawCards(1)[0], card = CARDS[c.i];
-    return { text: `ไพ่ที่ได้คือ "${card.th}" (${card.en}${c.rev ? ', กลับหัว' : ''}) — ${c.rev ? card.rev : card.up}`, basis: ['TAROT · ' + card.en] };
-  }
-  if (topicIdx === 3) {
-    const v = text.replace(/[^0-9]/g, '');
-    if (/เลขชีวิต/.test(text) || !v) {
-      const p = state.profile, d = `${p.day}${p.month}${p.yearBE - 543}`.split('').map(Number);
-      const n = reduceNum(d.reduce((a, b) => a + b, 0), true);
-      return { text: `เลขชีวิตของคุณคือ ${n} — ${(LIFE_PATH[n] || LIFE_PATH[reduceNum(n, false)]).join(': ')}`, basis: [d.join('+')] };
-    }
-    const sum = v.split('').reduce((a, b) => a + +b, 0), r = reduceNum(sum, false);
-    const risky = (v.slice(-7).match(/[78]/g) || []).length;
-    return { text: `ผลรวม ${sum} ลดเหลือ ${r}: ${SUM_MEANING[r]} ${risky ? `มีเลข 7 หรือ 8 อยู่ ${risky} ตัวใน 7 หลักท้าย ควรระวังเรื่องความแปรปรวน` : 'คู่เลขส่วนใหญ่ส่งเสริมกันดี'}`, basis: ['SUM ' + sum, 'LAST7 ' + v.slice(-7)] };
-  }
-  if (topicIdx === 4) {
-    const n = () => Math.floor(Math.random() * 10);
-    return { text: `เลขเสี่ยงโชคสำหรับวันนี้: ${n()}${n()}${n()} และ ${n()}${n()} ขอให้เล่นพอประมาณนะครับ`, basis: ['RANDOM · เพื่อความบันเทิง'] };
-  }
-  let area = AREAS.find((a) => a.re.test(text));
-  if (!area) area = topicIdx === 1 ? AREAS[1] : AREAS[0];
-  const tr = transits(ch, now);
-  const dl = daily(ch, now);
-  const lines = [], basis = [];
-  for (const t of tr) {
-    if (area.houses.includes(t.house)) {
-      lines.push(`${t.title.replace(/ · ภพ \d+/, '')} อยู่ในภพที่ ${t.house} ของคุณ${t.exit ? ' ถึง ' + monthYear(t.exit) : ''}: ${t.body}`);
-      basis.push(`${t.glyph} H${t.house}`);
-    }
-  }
-  const natal = ch.planets.filter((p) => area.houses.includes(p.house));
-  if (natal.length) {
-    lines.push(`ในดวงกำเนิดมีดาว${natal.map((p) => p.th).join(' ')} อยู่ในภพเรื่อง${area.th} ทำให้เรื่องนี้เป็นเรื่องสำคัญในชีวิตคุณ`);
-    natal.slice(0, 2).forEach((p) => basis.push(`${p.glyph} ${SIGNS[p.sign].th} H${p.house}`));
-  }
-  const sc = dl.scores[area.cat];
-  lines.push(`พลังวันนี้ด้าน${sc.name} อยู่ที่ ${sc.score}/5 ${sc.score >= 4 ? 'จังหวะดี ลงมือได้' : sc.score <= 2 ? 'ควรรอจังหวะ หรือเตรียมตัวให้พร้อมก่อน' : 'ทำได้แต่ไม่ควรรีบ'}`);
-  basis.push('TODAY ' + sc.name + ' ' + sc.score + '/5');
-  if (lines.length === 1) lines.unshift(`ช่วงนี้ไม่มีดาวเคลื่อนช้าผ่านภพเรื่อง${area.th}ของคุณ สถานการณ์จึงค่อนข้างคงที่ ขึ้นอยู่กับการตัดสินใจของคุณเองเป็นหลัก`);
-  return { text: lines.join(' '), basis };
+// ---------------- consult: free questions, answered from the chart, with remedies ----------------
+const CHANT_PLANET = { 'day-sun': 1, 'day-mon': 2, 'day-tue': 3, 'day-wed': 4, 'day-thu': 5, 'day-fri': 6, 'day-sat': 7, 'day-rahu': 8 };
+const CAT_TOPIC = ['love', 'work', 'money', 'health'];
+function remedyCard(plan, open = false) {
+  return `<section class="rm-card sense${open ? ' open' : ''} lv${plan.level}">
+<button class="rm-head" data-act="senseToggle" aria-expanded="${open}"><span class="rm-ic">☸</span><span class="rm-t"><b>${plan.title}</b><span>${plan.reason}</span></span><span class="rm-n">${plan.steps.length} วิธี</span><span class="chev">${icon('down', 14, 1.6)}</span></button>
+<div class="fold"><div class="fold-in"><ol class="rm-steps">${plan.steps.map((s) => `<li><span class="rm-si">${s.ic}</span><span class="rm-sb"><span class="rm-k">${s.k}</span><b>${s.t}</b>${s.d && s.d !== s.t ? `<span>${s.d}</span>` : ''}${s.chant ? `<a href="#/prayer" data-act="openPrayer" data-v="${s.chant}" class="rm-go">เปิดบทสวด ›</a>` : ''}${s.src ? `<i>ที่มา: ${s.src}</i>` : ''}</span></li>`).join('')}</ol>
+<p class="rm-foot">ทำเท่าที่สะดวกและตามกำลังทรัพย์ ทุกข้อเป็นความเชื่อตามประเพณีไทย ที่ได้ผลแน่นอนคือใจที่สงบลงและความดีที่ได้ทำ</p></div></div></section>`;
 }
+// What troubles the person right now: a hard transit from a heavy planet, or a low day score.
+function troubleNow() {
+  const ch = state.chart, now = new Date(), bp = birthPlanet(state.profile);
+  const dl = daily(ch, now), total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
+  const r = dailyRemedy(liveAspects(ch, now, { n: 6, exact: false }), bp, total);
+  const tr = transits(ch, now), heavy = tr.find((t) => t.level === 'HIGH' && t.id !== 'jupiter');
+  let planetNo = r.kind === 'แก้' ? CHANT_PLANET[r.id] : heavy ? PLANET_NO[heavy.id] : bp;
+  const worst = dl.scores.reduce((m, x, i) => (x.score < dl.scores[m].score ? i : m), 0);
+  const level = total < 40 || (heavy && r.kind === 'แก้') ? 3 : total < 55 || heavy || r.kind === 'แก้' ? 2 : 1;
+  const reason = r.kind === 'แก้' ? r.reason : heavy ? `${heavy.title.replace(/ · ภพ \d+/, '')} ทำมุมกับดวงเดิม (${heavy.hits.map((h) => h.th + ' ' + h.target.th).join(', ')})` : `ดวงวันนี้ ${total}/100 ด้าน${dl.scores[worst].name}อ่อนที่สุด`;
+  return { planetNo, level, total, worstTopic: CAT_TOPIC[worst], worstName: dl.scores[worst].name, reason, heavy, r };
+}
+const AREAS = [
+  { re: /งาน|อาชีพ|ธุรกิจ|เลื่อนตำแหน่ง|ลาออก|สมัครงาน|ค้าขาย|ร้าน/, th: 'การงาน', houses: [10, 6], cat: 1, topic: 'work' },
+  { re: /รัก|แฟน|คู่ครอง|โสด|แต่งงาน|คืนดี|เนื้อคู่|สามี|ภรรยา|จีบ/, th: 'ความรัก', houses: [5, 7], cat: 0, topic: 'love' },
+  { re: /เงิน|ลงทุน|หนี้|รวย|มั่งคั่ง|ทรัพย์|หุ้น|รายได้|คริปโต/, th: 'การเงิน', houses: [2, 8], cat: 2, topic: 'money' },
+  { re: /สุขภาพ|ป่วย|เจ็บ|ร่างกาย|ผ่าตัด|โรค/, th: 'สุขภาพ', houses: [6, 1], cat: 3, topic: 'health' },
+  { re: /ย้าย|บ้าน|ครอบครัว|คอนโด|พ่อแม่|ลูก/, th: 'บ้านและครอบครัว', houses: [4], cat: 0, topic: 'home' },
+  { re: /เดินทาง|ต่างประเทศ|เรียน|สอบ|ทุน/, th: 'การเดินทางและการเรียน', houses: [9, 3], cat: 1, topic: 'study' },
+  { re: /เจ้านาย|หัวหน้า|ผู้ใหญ่/, th: 'ผู้ใหญ่และเจ้านาย', houses: [10, 11], cat: 1, topic: 'boss' }
+];
+const CHANT_RE = [[/ผี|วิญญาณ|ไล่|ของไม่ดี/, 'ghost'], [/หนี้/, 'debt'], [/เจ้านาย|หัวหน้า|ผู้ใหญ่/, 'boss'], [/สอบ/, 'exam'], [/ฉลาด|ความจำ|เรียน/, 'smart'], [/ป่วย|สุขภาพ|หายป่วย/, 'health'], [/รัก|เสน่ห์|แฟน/, 'love'], [/นอน|ฝันร้าย/, 'sleep'], [/เดินทาง|ขับรถ|บิน/, 'travel'], [/คดี|ชนะ|คู่แข่ง|อุปสรรค/, 'win'], [/ปล่อยปลา|ปล่อยสัตว์/, 'release'], [/เทพ|พิฆเนศ|ลักษมี|พรหม|ศิวะ/, 'deva'], [/กรรม|ดวงตก|เคราะห์/, 'karma'], [/เงิน|รวย|ทรัพย์|ค้าขาย|โชค/, 'wealth']];
+const chipsOf = (ids) => `<div class="ask-links">${ids.map((id) => { const p = prayerById(id); return p ? `<a href="#/prayer" data-act="openPrayer" data-v="${id}" class="ask-link">☸ ${p.th} · ${p.count} จบ</a>` : ''; }).join('')}</div>`;
+const roomLink = (to, th) => `<a href="#/${to}" class="ask-link">${th} ›</a>`;
+function windowsHTML(ws, n = 5) {
+  return `<ul class="lw-list">${ws.slice(0, n).map((w) => `<li class="lw ${w.kind}"><span class="lw-d">${windowRange(w)}</span><span class="lw-t"><b>${w.kind === 'care' ? 'ช่วงระวัง' : w.kind === 'money' ? 'ช่วงการเงินดี' : 'ช่วงโชคดี'} · ${w.area}</b><span>${w.planet === 'jupiter' ? 'ดาวพฤหัส' : 'ดาวเสาร์'}จร${w.asp}${w.kind === 'money' ? ' ' + w.target : 'กับ' + w.target + 'เดิม'}</span></span></li>`).join('')}</ul>`;
+}
+function answer(text) {
+  const ch = state.chart, now = new Date(), p = state.profile, bp = birthPlanet(p);
+  const q = text.trim(), out = [], basis = [];
+  let html = '';
+  const has = (re) => re.test(q);
+  const area = AREAS.find((a) => a.re.test(q));
+  const T = troubleNow();
+  // tarot
+  if (has(/ไพ่|ทาโร/)) {
+    const c = drawCards(1)[0], card = CARDS[c.i];
+    out.push(`เปิดไพ่ให้หนึ่งใบ ได้ "${card.th}" (${card.en}${c.rev ? ' กลับหัว' : ''}) ${c.rev ? card.rev : card.up}`);
+    basis.push('TAROT · ' + card.en);
+    html += remedyChip(tarotRemedy(card, c.rev)) + roomLink('tarot', 'เปิดไพ่แบบเต็มในห้องไพ่');
+    return { text: out.join('\n'), basis, html };
+  }
+  // numbers
+  const digits = q.replace(/[^0-9]/g, '');
+  if (digits.length >= 6 || has(/เบอร์|ทะเบียน|เลขที่บ้าน/)) {
+    const tool = has(/ทะเบียน/) ? 'plate' : has(/บ้าน/) ? 'house' : digits.length === 13 ? 'id' : 'phone';
+    const r = analyzeNumber(tool, digits);
+    if (r) {
+      out.push(`ผลรวม ${r.sum} ลดเหลือ ${r.red}: ${r.meaning}${r.score != null ? ` · คะแนนคู่เลข ${r.score}/100` : ''}`);
+      basis.push('SUM ' + r.sum);
+      html += roomLink('numbers', 'ดูคู่เลขละเอียดในห้องตัวเลข');
+      return { text: out.join('\n'), basis, html };
+    }
+  }
+  if (has(/หวย|เลขเด็ด|เลขเสี่ยง|ลอตเตอรี่|สลาก/)) {
+    const n = () => randomDigit();
+    out.push(`เลขเสี่ยงโชคพอเป็นสีสัน: ${n()}${n()}${n()} และ ${n()}${n()} เล่นพอประมาณนะครับ`);
+    out.push(`เลขมงคลประจำตัวคุณตามทักษา (คนเกิด${TH_PLANETS[bp].day}): ${luckOf(bp).numbers.join(' ')}`);
+    html += roomLink('luck', 'ไปเสี่ยงเลขในห้องโชคลาภ');
+    basis.push('ทักษา · ' + TH_PLANETS[bp].day);
+  }
+  if (has(/สวัสดี|หวัดดี|ดีครับ|ดีค่ะ/) && q.length < 12) out.push(`สวัสดีครับคุณ${p.name || ''} ถามได้ทุกเรื่อง เช่น งาน เงิน ความรัก ดวงตกทำอย่างไร ทำบุญอะไรดี ไหว้พระที่ไหน หรือช่วงไหนมีโชค`);
+  // area reading from the chart
+  if (area) {
+    const tr = transits(ch, now), dl = daily(ch, now);
+    for (const t of tr) if (area.houses.includes(t.house)) { out.push(`${t.title.replace(/ · ภพ \d+/, '')} อยู่ในภพที่ ${t.house} ของคุณ${t.exit ? ' ถึง ' + monthYear(t.exit) : ''}: ${t.body}`); basis.push(`${t.glyph} H${t.house}`); }
+    const natal = ch.planets.filter((x) => area.houses.includes(x.house));
+    if (natal.length) { out.push(`ในดวงกำเนิดมีดาว${natal.map((x) => x.th).join(' ')} อยู่ในภพเรื่อง${area.th} เรื่องนี้จึงสำคัญในชีวิตคุณ`); natal.slice(0, 2).forEach((x) => basis.push(`${x.glyph} ${SIGNS[x.sign].th} H${x.house}`)); }
+    const sc = dl.scores[area.cat];
+    out.push(`พลังวันนี้ด้าน${sc.name} ${sc.score}/5 ${sc.score >= 4 ? 'จังหวะดี ลงมือได้' : sc.score <= 2 ? 'ควรรอจังหวะ หรือเตรียมตัวให้พร้อมก่อน' : 'ทำได้แต่ไม่ควรรีบ'}`);
+    basis.push('TODAY ' + sc.name + ' ' + sc.score + '/5');
+    if (has(/เปลี่ยน|ลาออก|ย้าย|ลงทุน|ซื้อ|ควร|ดีไหม|ได้ไหม/)) {
+      const ws = luckWindows(ch, now).filter((w) => w.kind !== 'care').slice(0, 2);
+      if (ws.length) out.push(`ถ้ายังไม่รีบ ช่วงที่ดาวหนุนคือ ${ws.map((w) => windowRange(w) + ' (' + w.area + ')').join(' และ ')}`);
+    }
+    if (sc.score <= 2 || T.level >= 2) html += remedyCard(remedyPlan({ planetNo: T.planetNo, topic: area.topic, level: Math.max(1, T.level - (sc.score >= 3 ? 1 : 0)), reason: T.reason }));
+  }
+  // timing and luck
+  if (has(/เมื่อไ|ช่วงไหน|เดือนไหน|โชค|ลาภ|ปีหน้า|ปีนี้|ช่วงนี้ดี|ดวงดี/) && !has(/หวย|เลขเด็ด|ชง/)) {
+    let ws = luckWindows(ch, now);
+    if (area && area.topic === 'money') ws = ws.filter((w) => w.kind === 'money' || /เงิน/.test(w.area) || w.kind === 'care');
+    if (area && area.topic === 'love') ws = ws.filter((w) => /รัก|ครอบครัว/.test(w.area) || w.kind === 'care');
+    const L = luckOf(bp);
+    out.push(ws.length ? `ช่วงโชคถัดไปของคุณคือ ${windowRange(ws.find((w) => w.kind !== 'care') || ws[0])} ดูปฏิทินดวง 12 เดือนจากดาวพฤหัสและดาวเสาร์จรด้านล่าง` : 'ใน 12 เดือนข้างหน้าไม่มีดาวพฤหัสทำมุมเด่นกับดวงเดิม เป็นช่วงสร้างฐาน ค่อย ๆ สะสม');
+    out.push(`เสริมโชคตามทักษา: สีของศรี (เงินทอง) คือ${TH_PLANETS[L.money].color} เลขมงคล ${L.numbers.join(' ')}`);
+    if (ws.length) html += windowsHTML(ws, 6);
+    html += remedyCard(remedyPlan({ planetNo: L.money, topic: 'luck', level: 1, reason: `เสริมดาวศรี (ดาว${TH_PLANETS[L.money].th}) ของคนเกิด${TH_PLANETS[bp].day}` }));
+    basis.push('♃ TRANSIT', 'ทักษา');
+  }
+  // bad luck / fixing
+  if (has(/ดวงตก|ซวย|เคราะห์|แก้ดวง|แก้กรรม|ไม่ดี|แย่|เจ้ากรรม|อุปสรรค|ไม่ราบรื่น|แก้ยังไง|แก้อย่างไร|แก้ไง/)) {
+    out.push(T.planetNo !== bp || T.level >= 2 ? `ตอนนี้สิ่งที่กดดวงคุณคือ: ${T.reason} ตำราไทยแก้ด้วยการบูชาดาวที่ให้โทษ คือดาว${TH_PLANETS[T.planetNo].th} (วัน${DAY_MERIT[T.planetNo].day}) ตามด้านล่าง` : `ช่วงนี้ไม่มีดาวร้ายกดดวงคุณหนัก (${T.reason}) ถ้ารู้สึกติดขัด ตำราให้เสริมดาวประจำวันเกิดของคุณ คือดาว${TH_PLANETS[bp].th} ตามด้านล่าง`);
+    html += remedyCard(remedyPlan({ planetNo: T.planetNo, topic: area ? area.topic : T.worstTopic, level: Math.max(2, T.level), reason: T.reason }), true);
+    basis.push((T.planetNo !== bp || T.level >= 2 ? 'ดาวให้โทษ · ' : 'ดาวประจำวันเกิด · ') + TH_PLANETS[T.planetNo].th);
+  }
+  // merit
+  if (has(/ทำบุญ|บุญอะไร|ถวายอะไร|สังฆทาน|บริจาค/)) {
+    const m = DAY_MERIT[bp];
+    out.push(`ทำบุญตามวันเกิด (คนเกิดวัน${m.day}): ถวาย${m.give} ทำทานให้${m.charity} และไหว้พระ${m.buddha}`);
+    if (T.planetNo !== bp) { const t = DAY_MERIT[T.planetNo]; out.push(`ช่วงนี้ดาว${TH_PLANETS[T.planetNo].th}กดดวงอยู่ จึงควรทำบุญของวัน${t.day}ด้วย คือถวาย${t.give}`); }
+    if (has(/โลง/)) out.push(RITES.coffin.d);
+    if (has(/เลือด|โลหิต/)) out.push(RITES.blood.d);
+    basis.push('ทำบุญตามวันเกิด');
+  } else {
+    if (has(/โลง/)) { out.push(RITES.coffin.d); basis.push(RITES.coffin.src); }
+    if (has(/เลือด|โลหิต/)) out.push(RITES.blood.d);
+  }
+  if (has(/ปล่อยปลา|ปล่อยสัตว์|ฝอย/)) { out.push(RITES.release.d); html += chipsOf(['release']); }
+  if (has(/สืบชะตา|ต่ออายุ|ต่อชะตา/)) { out.push(RITES.suebchata.d); basis.push(RITES.suebchata.src); }
+  if (has(/ราหู/)) { out.push(RITES.rahu.d); html += chipsOf(['day-rahu']); }
+  // temples
+  if (has(/วัด|ไหว้พระ|ไหว้ที่ไหน|พระธาตุ|ไหว้อะไร/)) {
+    const topic = area ? area.topic : has(/โชค|ลาภ|รวย/) ? 'luck' : has(/เคราะห์|ดวงตก/) ? 'bad' : 'any';
+    const tp = templesFor(topic).length ? templesFor(topic) : templesFor('any');
+    const nk = nakshatOf(p);
+    out.push(`วัดที่เหมาะกับเรื่อง${area ? area.th : 'ที่ถาม'}: ${tp.map((t) => `${t.th} (${t.wish})`).join(' · ')}`);
+    out.push(`พระประจำวันเกิดของคุณคือ${DAY_MERIT[bp].buddha} และพระธาตุประจำปีเกิด (ปี${NAKSHAT[nk]}) คือ${PAGODA[nk]}`);
+    basis.push('ไหว้พระ 9 วัด', 'พระธาตุปี' + NAKSHAT[nk]);
+  }
+  // ปีชง
+  if (has(/ชง/)) {
+    const c = chongOf(p, now);
+    out.push(c.level ? `ปีนี้ (ปี${NAKSHAT[c.year]}) คุณเกิดปี${NAKSHAT[c.me]} อยู่ในกลุ่ม${c.level} ${CHONG_FIX}` : `ปีนี้ (ปี${NAKSHAT[c.year]}) คนเกิดปี${NAKSHAT[c.me]}อย่างคุณไม่ชง ทำบุญเสริมตามปกติได้เลย`);
+    basis.push('ปีนักษัตรนับจากตรุษจีน');
+  }
+  // chants
+  if (has(/สวด|คาถา|บทสวด|ท่อง/)) {
+    const hit = CHANT_RE.find(([re]) => re.test(q));
+    const pu = hit ? purposeById(hit[1]) : null;
+    if (pu) { out.push(`บทสวดเพื่อ${pu.th}: ${pu.note}`); html += chipsOf(pu.items.slice(0, 4)); }
+    else { out.push(`บทหลักของคุณคือบทประจำวัน${DAY_MERIT[bp].day} ${DAY_MERIT[bp].count} จบ`); html += chipsOf([birthChant(bp), 'chinabanchon', 'itipiso']); }
+  }
+  if (has(/ฤกษ์|ขึ้นบ้านใหม่|ออกรถ|เปิดร้าน|บวช/)) { out.push('ฤกษ์ดีสำหรับงานมงคลหาได้ในห้องฤกษ์ยาม เลือกประเภทงานแล้วระบบจะหาวันที่ดีที่สุดตามดวงคุณ'); html += roomLink('auspice', 'ไปหาฤกษ์'); }
+  if (has(/สีอะไร|สีมงคล|ใส่สี|เลขมงคล/)) {
+    const L = luckOf(bp);
+    out.push(`ตามทักษาของคนเกิด${TH_PLANETS[bp].day}: สีเงินทอง${TH_PLANETS[L.money].color} สีการงาน${TH_PLANETS[L.work].color} สีผู้ใหญ่อุปถัมภ์${TH_PLANETS[L.patron].color} สีที่ควรเลี่ยง${TH_PLANETS[L.avoid].color} เลขมงคล ${L.numbers.join(' ')}`);
+    basis.push('ทักษา');
+  }
+  if (!out.length && !html) {
+    out.push(`ผมขออ่านจากภาพรวมดวงของคุณนะครับ วันนี้ได้ ${T.total}/100 ด้านที่อ่อนที่สุดคือ${T.worstName}`);
+    const ws = luckWindows(ch, now).filter((w) => w.kind !== 'care');
+    if (ws.length) out.push(`ช่วงโชคถัดไป: ${windowRange(ws[0])} (${ws[0].area})`);
+    out.push('ลองถามให้เจาะจงขึ้น เช่น "งานช่วงนี้เป็นอย่างไร" "ดวงตกแก้ยังไง" "ทำบุญอะไรดี" "ไหว้พระวัดไหนเรื่องเงิน" หรือ "ปีนี้ชงไหม"');
+    if (T.level >= 2) html += remedyCard(remedyPlan({ planetNo: T.planetNo, topic: T.worstTopic, level: T.level, reason: T.reason }));
+  }
+  return { text: out.join('\n'), basis: [...new Set(basis)].slice(0, 5), html };
+}
+const ASK_CHIPS = ['ดวงตกแก้ยังไง', 'ช่วงไหนมีโชคลาภ', 'ทำบุญอะไรดี', 'ไหว้พระวัดไหนเรื่องเงิน', 'งานช่วงนี้เป็นอย่างไร', 'ความรักช่วงนี้', 'ปีนี้ชงไหม', 'ทำบุญโลงศพช่วยอะไร', 'ขอไพ่ 1 ใบ', 'สวดคาถาอะไรให้เจ้านายรัก'];
 function viewAsk() {
-  const a = state.ask, t = ASK_TOPICS[a.topic];
-  return `<main class="screen" style="--accent:${t.color};padding-bottom:20px">
-<header class="page-head" style="flex-direction:column;align-items:stretch;gap:10px">
-<div style="display:flex;align-items:center;gap:8px"><button class="back" data-act="go" data-to="home" aria-label="กลับหน้าหลัก">${icon('back', 20, 1.5)}</button>
-<span class="sigil" style="color:${t.color};width:40px;height:40px"><span style="width:8px;height:8px;border-radius:4px;background:currentColor;box-shadow:0 0 10px currentColor"></span></span>
-<div style="display:flex;flex-direction:column"><span class="h2" style="font-size:19px">ผู้เชี่ยวชาญด้าน${t.th}</span><span class="label" style="font-size:10px">${t.code}</span></div></div>
-<div class="chips" role="group" aria-label="เลือกด้านที่จะปรึกษา">${ASK_TOPICS.map((x, i) => `<button class="chip" aria-pressed="${i === a.topic}" style="--accent:${x.color}" data-act="askTopic" data-i="${i}">${x.th}</button>`).join('')}</div>
-</header>
-<p class="mono small" style="font-size:10px;text-align:center">ตอบอัตโนมัติจากผังดาวของคุณ · เพื่อเป็นแนวทางและความบันเทิง</p>
+  const a = state.ask, T = troubleNow(), c = chongOf(state.profile);
+  return `<main class="screen" style="padding-bottom:20px">
+${pageHead('08', 'CONSULT', 'ปรึกษาดวง', 'var(--rose)', 'ask', `<button class="back" data-act="go" data-to="home" aria-label="กลับหน้าหลัก" style="margin:0">${icon('back', 20, 1.5)}</button>`)}
+<section class="ask-hero"><span class="eyebrow" style="color:var(--rose);letter-spacing:.16em">ถามได้ทุกเรื่อง</span>
+<p class="small" style="color:var(--text-2)">พิมพ์คำถามแบบอิสระ ระบบอ่านจากผังดาว ดาวจร ทักษา และปีนักษัตรของคุณ แล้วบอกทางแก้ ทำบุญ ไหว้พระ บทสวด และช่วงเวลาที่ดี</p>
+<div class="ask-stat"><span><b>${T.total}</b>ดวงวันนี้</span><span><b>${TH_PLANETS[T.planetNo].th}</b>${T.planetNo !== birthPlanet(state.profile) || T.level >= 2 ? 'ดาวที่ต้องแก้' : 'ดาวที่ควรเสริม'}</span><span><b>${c.level ? 'ชง' : 'ไม่ชง'}</b>ปี${NAKSHAT[c.year]}</span></div></section>
 <div class="chat" id="chat">
-<div class="msg bot">${t.greet}</div>
-${a.messages.map((m) => m.me ? `<div class="msg me">${esc(m.text)}</div>` : `<div class="msg bot">${esc(m.text)}${m.basis && m.basis.length ? `<div class="basis"><span class="eyebrow" style="letter-spacing:.18em">BASED ON</span><div class="tags">${m.basis.map((b) => `<span class="tag">${esc(b)}</span>`).join('')}</div></div>` : ''}</div>`).join('')}
+${a.messages.length ? '' : `<div class="msg bot">สวัสดีครับคุณ${esc(state.profile.name || '')} ผมเห็นผังดาวของคุณแล้ว อยากรู้เรื่องไหนพิมพ์มาได้เลย หรือแตะคำถามตัวอย่างด้านล่าง</div>`}
+${a.messages.map((m) => m.me ? `<div class="msg me">${esc(m.text)}</div>` : `<div class="msg bot">${m.text.split('\n').map((l) => `<p>${esc(l)}</p>`).join('')}${m.html || ''}${m.basis && m.basis.length ? `<div class="basis"><span class="eyebrow" style="letter-spacing:.18em">อ่านจาก</span><div class="tags">${m.basis.map((b) => `<span class="tag">${esc(b)}</span>`).join('')}</div></div>` : ''}</div>`).join('')}
 </div>
 <div class="composer">
-<div class="chips">${t.chips.map((c) => `<button class="chip" data-act="askChip" data-q="${esc(c)}">${esc(c)}</button>`).join('')}</div>
-<form data-act="askSend"><label class="sr-only" for="askIn">คำถามของคุณ</label><input id="askIn" class="input" style="border-radius:24px;padding:0 18px" placeholder="พิมพ์คำถามของคุณ" autocomplete="off">
+<div class="chips ask-chips">${ASK_CHIPS.map((c) => `<button class="chip" data-act="askChip" data-q="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+<form data-act="askSend"><label class="sr-only" for="askIn">คำถามของคุณ</label><input id="askIn" class="input" style="border-radius:24px;padding:0 18px" placeholder="พิมพ์คำถาม เช่น ดวงตกแก้ยังไง" autocomplete="off">
 <button class="send" aria-label="ส่งคำถาม">${icon('arrow', 18, 1.8)}</button></form></div>
+<p class="small" style="text-align:center;font-size:11px">ตอบอัตโนมัติจากดวงของคุณตามตำราโหราศาสตร์และความเชื่อไทย เพื่อเป็นแนวทางและกำลังใจ</p>
 </main>`;
+}
+
+
+// ---------- ทางแก้ที่ผูกกับทุกห้อง ----------
+function heroRemedy() {
+  const T = troubleNow();
+  if (T.level < 2) return '';
+  return remedyCard(remedyPlan({ planetNo: T.planetNo, topic: T.worstTopic, level: T.level, reason: `ครบชุดตามตำรา: สวด ทำบุญ ทำทาน ไหว้พระ ของดาว${TH_PLANETS[T.planetNo].th}${T.level >= 3 ? ' และพิธีสำหรับเคราะห์หนัก' : ''}` }));
+}
+function identityRemedy(p) {
+  const bp = birthPlanet(p), m = DAY_MERIT[bp], nk = nakshatOf(p), c = chongOf(p);
+  const plan = remedyPlan({ planetNo: bp, topic: 'any', level: 1, reason: `ทำบุญประจำดาววันเกิด ${m.day} ใช้เสริมจุดเด่นและแก้เรื่องที่ต้องระวังในดวง` });
+  plan.title = 'เสริมดวงประจำตัว';
+  plan.steps.splice(4, 0, { ic: '⛰', k: 'พระธาตุประจำปีเกิด', t: PAGODA[nk], d: `คุณเกิดปี${NAKSHAT[nk]} (นับปีนักษัตรจากวันตรุษจีน) ควรไปนมัสการสักครั้งในชีวิต` });
+  if (c.level) plan.steps.splice(5, 0, { ic: '⚠', k: 'ปีชง', t: `ปี${NAKSHAT[c.year]}นี้คุณ${c.level}`, d: CHONG_FIX });
+  return remedyCard(plan);
+}
+function tarotFix(t) {
+  if (!t.cards || t.flipped.length < t.cards.length) return '';
+  const rev = t.cards.filter((d) => d.rev).length;
+  if (rev * 2 < t.cards.length || rev === 0) return '';
+  const T = troubleNow();
+  return remedyCard(remedyPlan({ planetNo: T.planetNo, topic: 'bad', level: rev === t.cards.length ? 2 : 1, reason: `ไพ่กลับหัว ${rev} จาก ${t.cards.length} ใบ พลังติดขัด ทำบุญเสริมก่อนตัดสินใจเรื่องสำคัญ` }));
+}
+function luckCalendarHTML(ch) {
+  const ws = luckWindows(ch, new Date());
+  return `<section class="ch-sec"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>ปฏิทินโชค 12 เดือน</h2>
+<p class="small" style="font-size:12px">คำนวณจากดาวพฤหัสจร (โชค การเงิน) และดาวเสาร์จร (ช่วงระวัง) เทียบกับดวงเดิมของคุณ</p>
+${ws.length ? windowsHTML(ws, 10) : '<p class="small">12 เดือนนี้ไม่มีดาวใหญ่ทำมุมเด่น เป็นช่วงสร้างฐานอย่างมั่นคง</p>'}
+${ws.some((w) => w.kind === 'care') ? remedyCard(remedyPlan({ planetNo: 7, topic: 'bad', level: 2, reason: 'สำหรับช่วงที่ดาวเสาร์ทำมุมร้าย: บูชาดาวเสาร์ ทำบุญของวันเสาร์ล่วงหน้า' })) : ''}</section>`;
 }
 
 // ---------------- router ----------------
@@ -5852,7 +6182,6 @@ document.addEventListener('click', (e) => {
     }
     case 'ssReset': state.luck.ss = null; break;
     case 'ssMotion': askMotion().then((ok) => toast(ok ? 'พร้อมแล้ว เขย่ามือถือได้เลย' : 'เครื่องนี้ไม่รองรับการเขย่า ใช้วิธีกดค้างแทน')); return;
-    case 'askTopic': state.ask.topic = i; state.ask.messages = []; break;
     case 'askChip': ask(el.dataset.q); return;
     default: return;
   }
@@ -5862,7 +6191,7 @@ document.addEventListener('click', (e) => {
 function ask(q) {
   if (!q || !q.trim()) return;
   state.ask.messages.push({ me: true, text: q.trim() });
-  state.ask.messages.push({ me: false, ...answer(state.ask.topic, q) });
+  state.ask.messages.push({ me: false, ...answer(q) });
   render();
   const chat = document.getElementById('chat');
   if (chat) chat.lastElementChild.scrollIntoView({ block: 'nearest', behavior: 'smooth' });

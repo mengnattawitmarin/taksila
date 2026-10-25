@@ -729,3 +729,48 @@ a:hover { color: var(--gold-2); }
 .tr-card { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border: 1px solid var(--line); border-left: 3px solid var(--c); border-radius: 14px; background: var(--surface); }
 .tr-top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px; align-items: center; }
 .tr-lv { font-size: 11px; padding: 3px 8px; border-radius: 999px; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); white-space: nowrap; }
+
+/* ---------- ทางแก้ดวง (remedy card) ---------- */
+.rm-card { border-radius: 16px; border: 1px solid rgba(212,175,99,.35); background: linear-gradient(160deg, rgba(212,175,99,.10), rgba(124,96,200,.06) 60%, transparent), var(--surface); }
+.rm-card.lv3 { border-color: rgba(224,122,98,.5); background: linear-gradient(160deg, rgba(224,122,98,.12), rgba(124,96,200,.06) 60%, transparent), var(--surface); }
+.rm-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 10px; align-items: center; width: 100%; padding: 12px 14px; background: none; border: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.rm-ic { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; color: var(--gold-2); border: 1px solid rgba(212,175,99,.5); font-size: 16px; }
+.rm-card.lv3 .rm-ic { color: var(--tension); border-color: rgba(224,122,98,.6); }
+.rm-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rm-t b { font-size: 15px; color: var(--gold-2); }
+.rm-card.lv3 .rm-t b { color: #F0A08C; }
+.rm-t span { font-size: 12px; color: var(--text-2); line-height: 1.45; }
+.rm-n { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.rm-card .chev { color: var(--muted); transition: transform .3s; }
+.rm-card.open .chev { transform: rotate(180deg); }
+.rm-steps { list-style: none; margin: 0; padding: 0 14px 4px; display: flex; flex-direction: column; gap: 10px; }
+.rm-steps li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+.rm-si { font-family: var(--symbols); color: var(--gold); text-align: center; font-size: 16px; padding-top: 2px; }
+.rm-sb { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.rm-k { font-size: 10px; letter-spacing: .12em; color: var(--gold); }
+.rm-sb b { font-size: 14px; font-weight: 600; }
+.rm-sb > span:not(.rm-k) { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+.rm-sb i { font-size: 10px; color: var(--muted); font-style: normal; }
+.rm-go { font-size: 12px; font-weight: 500; text-decoration: none; margin-top: 2px; }
+.rm-foot { font-size: 11px; color: var(--muted); padding: 8px 14px 14px; margin: 0; }
+/* lucky windows */
+.lw-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.lw { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--line); border-left: 3px solid var(--gold); background: var(--surface); }
+.lw.money { border-left-color: #A8C26A; } .lw.care { border-left-color: var(--tension); }
+.lw-d { font-family: var(--mono); font-size: 11px; color: var(--text-2); line-height: 1.5; }
+.lw-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.lw-t b { font-size: 13px; font-weight: 600; }
+.lw.care .lw-t b { color: #F0A08C; } .lw.luck .lw-t b { color: var(--gold-2); } .lw.money .lw-t b { color: #C4DA8C; }
+.lw-t span { font-size: 11px; color: var(--muted); }
+/* consult */
+.ask-hero { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 18px; border: 1px solid var(--line); background: radial-gradient(ellipse 70% 80% at 0% 0%, rgba(217,140,134,.12), transparent 70%), var(--surface); }
+.ask-stat { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.ask-stat span { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 4px; border-radius: 12px; background: var(--surface-2); font-size: 10px; color: var(--muted); text-align: center; }
+.ask-stat b { font-size: 16px; color: var(--text); font-family: var(--serif); }
+.msg.bot { max-width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.msg.bot p { margin: 0; }
+.msg .rm-card, .msg .lw-list { margin-top: 2px; }
+.ask-links { display: flex; flex-wrap: wrap; gap: 6px; }
+.ask-link { display: inline-flex; align-items: center; min-height: 34px; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line-2); font-size: 12px; text-decoration: none; color: var(--gold-2); }
+.ask-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.ask-chips .chip { white-space: nowrap; flex: none; }
