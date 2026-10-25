@@ -168,6 +168,15 @@ a:hover { color: var(--gold-2); }
 .rem-t { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .rem-k { font-size: 13px; font-weight: 600; }
 .rem-r { font-size: 11px; color: var(--text-2); line-height: 1.4; }
+.pr-purpose { display: flex; flex-direction: column; gap: 10px; }
+.pu-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pu { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 12px 4px 10px; border-radius: 12px; border: 1px solid var(--line); background: linear-gradient(180deg, rgba(212,175,99,.06), var(--surface)); color: var(--text); font: inherit; cursor: pointer; text-align: center; }
+.pu-ic { font-size: 20px; line-height: 1.2; color: var(--gold-2); }
+.pu b { font-size: 13px; font-weight: 600; }
+.pu span:last-child { font-size: 10px; color: var(--muted); line-height: 1.3; }
+.pu[aria-pressed="true"] { border-color: var(--gold); background: rgba(212,175,99,.12); box-shadow: 0 0 16px rgba(212,175,99,.2); }
+.pu-note { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(212,175,99,.3); background: rgba(212,175,99,.06); font-size: 13px; line-height: 1.6; color: var(--text-2); }
+.pu-note b { color: var(--gold-2); }
 .pr-recs { display: flex; flex-direction: column; gap: 8px; }
 .pr-cats { flex-wrap: nowrap; }
 .pr-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -2547,7 +2556,7 @@ function analyzeName(first, last, { gender = '', avoidPlanet = null, goodPlanets
 // The weekday chants were checked against two published sources. Meanings are short summaries written for ตักศิลา.
 const PRAYER_CATS = [
   { id: 'start', th: 'เริ่มต้นสวด' }, { id: 'day', th: 'ประจำวันเกิด · บูชาดาว' }, { id: 'guard', th: 'คุ้มครอง · พุทธคุณ' },
-  { id: 'win', th: 'ชัยชนะ · มงคล' }, { id: 'metta', th: 'เมตตา · อุทิศ' }, { id: 'heart', th: 'หัวใจคาถา (หัวใจ 108)' }, { id: 'deva', th: 'บูชาเทพ' }
+  { id: 'win', th: 'ชัยชนะ · มงคล' }, { id: 'metta', th: 'เมตตา · อุทิศ' }, { id: 'heart', th: 'หัวใจคาถา (หัวใจ 108)' }, { id: 'folk', th: 'คาถาเกจิ · ความเชื่อ' }, { id: 'deva', th: 'บูชาเทพ' }
 ];
 const PRAYERS = [
  {
@@ -3323,12 +3332,314 @@ const PRAYERS = [
   "blocks": [
    {
     "lines": [
-     "โอม ศรี คเณศายะ นะมะห์"
+     "โอม ศรี คเณศายะ นะมะฮา"
+    ]
+   },
+   {
+    "note": "บทขอพร (1 หรือ 3 จบ)"
+   },
+   {
+    "lines": [
+     "โอม พระพิฆเณศวร สิทธิประสิทธิเม มหาลาโภ",
+     "ทุติยัมปิ พระพิฆเณศวร สิทธิประสิทธิเม มหาลาโภ",
+     "ตะติยัมปิ พระพิฆเณศวร สิทธิประสิทธิเม มหาลาโภ"
+    ]
+   }
+  ],
+  "src": "Shopee Blog: คาถาสอบผ่าน"
+ },
+ {
+  "id": "siwali",
+  "cat": "folk",
+  "th": "คาถาบูชาพระสีวลี",
+  "count": 9,
+  "use": "พระสีวลีเป็นพระอรหันต์ผู้เลิศทางลาภ นิยมบูชาเพื่อโชคลาภ ค้าขายดี ไม่ขาดแคลน",
+  "src": "Shopee Blog: บูชาพระสีวลี",
+  "blocks": [
+   {
+    "lines": [
+     "สีวะลี จะ มะหาเถโร เทวะตานะระปูชิโต",
+     "โสระโห ปัจจะยาทิมหิ อะหัง วันทามิ ตัง สะทา"
+    ]
+   },
+   {
+    "lines": [
+     "สีวะลี จะ มะหาเถโร ยักขะเทวาภิปูโต",
+     "โสระโห ปัจจะยาทิมหิ อะหัง วันทามิ ตัง สะทา",
+     "สีวะลีเถระคุณัง เอตัง โสตถิลาภัง ภะวันตุ เม"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "ngoenlan",
+  "cat": "folk",
+  "th": "คาถาเงินล้าน",
+  "sub": "หลวงพ่อฤๅษีลิงดำ",
+  "count": 9,
+  "use": "คาถาเรียกทรัพย์ยอดนิยม สวดวันละ 9 จบ เพื่อความคล่องตัวเรื่องเงิน",
+  "src": "กรุงศรี Plearn Plearn: คาถาเงินล้าน",
+  "blocks": [
+   {
+    "lines": [
+     "สัมปะจิตฉามิ นาสังสิโม",
+     "พรหมา จะ มหาเทวา สัพเพยักขา ปะรายันติ",
+     "พรหมา จะ มหาเทวา อภิลาภา ภะวันตุ เม",
+     "มหาปุญโญ มหาลาโภ ภะวันตุ เม",
+     "มิเตภาหุหะติ",
+     "พุทธะมะอะอุ นะโมพุทธายะ วิระทะโย วิระโคนายัง วิระหิงสา",
+     "วิระทาสี วิระทาสา วิระอิทถิโย พุทธัสสะ มานีมามะ พุทธัสสะ สวาโหม",
+     "สัมปะติจฉามิ",
+     "เพ็ง ๆ พา ๆ หา ๆ ฤา ๆ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "lpngoen",
+  "cat": "folk",
+  "th": "คาถาเรียกทรัพย์ หลวงพ่อเงิน",
+  "sub": "วัดบางคลาน",
+  "count": 9,
+  "use": "สวดก่อนเปิดร้านหรือเริ่มงาน 9 จบ (พ่อค้าแม่ค้านิยม 19 จบ) เรียกลูกค้า ข้าวของ เงินทอง",
+  "src": "กรุงศรี Plearn Plearn: คาถาเงินล้าน",
+  "blocks": [
+   {
+    "lines": [
+     "สิทธิพุทธัง กิจจังมะมะ",
+     "ผู้คนไหลมา นะชาลีติ",
+     "สิทธิธัมมัง จิตตังมะมะ",
+     "ข้าวของไหลมา นะชาลีติ",
+     "สิทธิสังฆัง จิตตังมะมะ",
+     "เงินทองไหลมา นะชาลีติ",
+     "ฉิมพลี มหาลาภัง ภะวันตุเม"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "sakkatva",
+  "cat": "guard",
+  "th": "พระคาถาสักกัตวา (โอสถปริตร)",
+  "count": 3,
+  "use": "ยาวิเศษคือพระรัตนตรัย สวดเพื่อให้หายจากโรคภัย อุปัทวะ และความกลัว นิยมสวดให้ผู้ป่วย",
+  "src": "TruePlookpanya: พระคาถาสักกัตวา",
+  "blocks": [
+   {
+    "lines": [
+     "สักกัตวา พุทธะระตะนัง โอสะถัง อุตตะมัง วะรัง",
+     "หิตัง เทวะมะนุสสานัง พุทธะเตเชนะ โสตถินา",
+     "นัสสันตุปัททะวา สัพเพ ทุกขา วูปะสะเมนตุ เม"
+    ]
+   },
+   {
+    "lines": [
+     "สักกัตวา ธัมมะระตะนัง โอสะถัง อุตตะมัง วะรัง",
+     "ปะริฬาหูปะสะมะนัง ธัมมะเตเชนะ โสตถินา",
+     "นัสสันตุปัททะวา สัพเพ ภะยา วูปะสะเมนตุ เม"
+    ]
+   },
+   {
+    "lines": [
+     "สักกัตวา สังฆะระตะนัง โอสะถัง อุตตะมัง วะรัง",
+     "อาหุเนยยัง ปาหุเนยยัง สังฆะเตเชนะ โสตถินา",
+     "นัสสันตุปัททะวา สัพเพ โรคา วูปะสะเมนตุ เม"
+    ]
+   },
+   {
+    "note": "บทสัจจกิริยา"
+   },
+   {
+    "lines": [
+     "นัตถิ เม สะระณัง อัญญัง พุทโธ เม สะระณัง วะรัง",
+     "เอเตนะ สัจจะวัชเชนะ โหตุ เต ชะยะมังคะลัง"
+    ]
+   },
+   {
+    "lines": [
+     "นัตถิ เม สะระณัง อัญญัง ธัมโม เม สะระณัง วะรัง",
+     "เอเตนะ สัจจะวัชเชนะ โหตุ เต ชะยะมังคะลัง"
+    ]
+   },
+   {
+    "lines": [
+     "นัตถิ เม สะระณัง อัญญัง สังโฆ เม สะระณัง วะรัง",
+     "เอเตนะ สัจจะวัชเชนะ โหตุ เต ชะยะมังคะลัง"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "indra",
+  "cat": "folk",
+  "th": "คาถาพระอินทร์ (ความจำดี)",
+  "count": 1,
+  "use": "เชื่อกันว่าช่วยให้จำแม่น สวดก่อนและหลังอ่านหนังสือ ใช้ช่วงเลือกคำตอบในห้องสอบ",
+  "src": "Shopee Blog: คาถาสอบผ่าน",
+  "blocks": [
+   {
+    "lines": [
+     "สหัสสเนตโต เทวินโต ทิพพจักขุง วิโสทายิ",
+     "อิกะวิติ พุทธะสังมิ โลกะวิทู"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "wani",
+  "cat": "folk",
+  "th": "คาถาพระสุนทรีวาณี (ปัญญา)",
+  "sub": "พระอาจารย์วัดสุทัศน์",
+  "count": 7,
+  "use": "พระสุนทรีวาณีเป็นสัญลักษณ์แห่งปัญญาและวาจา สวด 3, 5 หรือ 7 จบ ก่อนเรียน สอบ หรือพูดในที่ประชุม",
+  "src": "Shopee Blog: คาถาสอบผ่าน",
+  "blocks": [
+   {
+    "lines": [
+     "มุนินทะ วะทะนัมพุชะ คัพภะสัมภะวะ",
+     "สุนทะรีปาณีนัง สะระณัง วาณี",
+     "มัยหัง ปิณะยะตัง มะนัง ฯ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "exam-calm",
+  "cat": "folk",
+  "th": "คาถาเรียกความมั่นใจในห้องสอบ",
+  "count": 7,
+  "use": "ตั้งนะโม 3 จบ แล้วสวด 7 จบก่อนเริ่มทำข้อสอบ ช่วยให้ใจนิ่ง",
+  "src": "Shopee Blog: คาถาสอบผ่าน",
+  "blocks": [
+   {
+    "lines": [
+     "พานังทา โส สัตถานัง มิโคมัง มิโคม"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "chin-short",
+  "cat": "heart",
+  "th": "หัวใจชินบัญชร (ชนะมวลมาร)",
+  "count": 9,
+  "use": "บทย่อของพระคาถาชินบัญชร สำหรับภาวนาเมื่อมีเวลาน้อย ก่อนสอบ เดินทาง หรือเจอเรื่องยาก",
+  "src": "Shopee Blog: คาถาสอบผ่าน",
+  "heart": "ชิ นะ ปัญ ชะ ระ",
+  "origin": "ย่อจากพระคาถาชินบัญชร: ชินะปัญชะระปะริตตัง มัง รักขะตุ สัพพะทา (ขอพระชินบัญชรปริตรรักษาข้าพเจ้าทุกเมื่อ)",
+  "blocks": [
+   {
+    "lines": [
+     "ชิ นะ ปัญ ชะ ระ ปะ ริต ตัง",
+     "มัง รัก ขะ ตุ สัพ พะ ทา"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "metta-maha",
+  "cat": "folk",
+  "th": "คาถาเมตตามหานิยม",
+  "count": 9,
+  "use": "ให้คนรอบตัวรักใคร่ เอ็นดู เหมาะทั้งเรื่องงาน ความรัก และการค้าขาย",
+  "src": "Shopee Blog: คาถาเมตตามหานิยม",
+  "blocks": [
+   {
+    "lines": [
+     "นะเมตตา โมกรุณา พุทธปราณี ธายินดี",
+     "ยะเอ็นดู นะโมพุทธายะ นะมะอะอุ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "metta-urgent",
+  "cat": "folk",
+  "th": "คาถาเมตตาเร่งด่วน (ใจอ่อน เมตตา)",
+  "count": 9,
+  "use": "นึกถึงชื่อคนที่อยากให้เมตตา เช่น ผู้ใหญ่ หัวหน้า ลูกค้า หรือคนที่ติดค้างเงิน แล้วสวด 9 จบ",
+  "src": "Shopee Blog: คาถาเมตตามหานิยม",
+  "blocks": [
+   {
+    "lines": [
+     "พุทธังมัดจิต ธัมมังมัดใจ สังฆังรักใคร่",
+     "ขอให้ (ชื่อคนที่อยากให้เมตตา)",
+     "จงเมตตาเอ็นดูตัวแห่งข้าพเจ้า (ชื่อของคุณ) ด้วย",
+     "นะโมพุทธายะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "boss",
+  "cat": "folk",
+  "th": "คาถาเจ้านายเมตตา",
+  "count": 3,
+  "use": "สวด 3 จบก่อนออกจากบ้าน เชื่อว่าช่วยให้หัวหน้าและผู้ใหญ่เอ็นดู",
+  "src": "Shopee Blog: คาถาเมตตามหานิยม",
+  "blocks": [
+   {
+    "lines": [
+     "ปัญจะมังสิระสังขาตัง นาหาย นะกาโร",
+     "โหติ สัมภะโว อิสวาสุ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "upatham",
+  "cat": "folk",
+  "th": "คาถาผู้ใหญ่อุปถัมภ์",
+  "count": 3,
+  "use": "สวดก่อนออกจากบ้าน ขอให้มีผู้ใหญ่ช่วยเหลือ สนับสนุนงาน",
+  "src": "Shopee Blog: คาถาเมตตามหานิยม",
+  "blocks": [
+   {
+    "lines": [
+     "อิติปาระมิตาติงสา อิติสัพพัญมาคะตา",
+     "อิติโพธิ มนุปปัตโต อิติปิโส จะตมะโน",
+     "นะเมตตา โมกรุณา พุทปรานี ธายินดี ยะเอ็นดู",
+     "ยะหันตวา ธามัวเมา พุทพาเอา นะโมพุทธายะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "popular",
+  "cat": "folk",
+  "th": "คาถาคนนิยม (เจรจา ค้าขาย)",
+  "count": 3,
+  "use": "สวดก่อนเจรจาสำคัญ นำเสนองาน หรือขายของ ให้คนฟังคล้อยตาม",
+  "src": "Shopee Blog: คาถาเมตตามหานิยม",
+  "blocks": [
+   {
+    "lines": [
+     "เอหิสาลิกา ยังยัง พุทธัง อาคัจฉาหิ",
+     "สาลิกาถิง กะระณัง ตาวังคาวา",
+     "เอหิมะมะ สุวะโปตะโก อะยัง ราชา",
+     "สุวัณณะวัณณา สาลิกานัง มะโหสะโต ปิยังมะมะ"
     ]
    }
   ]
  }
 ];
+// Modern "สวดเพื่อ…" shelves: each lists chants in the order to try, with a short why.
+const PURPOSES = [
+  { id: 'ghost', th: 'ไล่สิ่งไม่ดี', sub: 'ผีรบกวน บ้านไม่สงบ', ic: '☾', items: ['day-fri', 'chinabanchon', 'itipiso', 'metta-all', 'kruadnam'], note: 'ตามคติพุทธ ใช้เมตตาและบุญแผ่ให้ ไม่ใช่การขับไล่ บทวันศุกร์ (เมตตปริตร) กล่าวว่าอมนุษย์จะไม่แสดงสิ่งน่ากลัวแก่ผู้สวด' },
+  { id: 'wealth', th: 'เรียกทรัพย์', sub: 'ค้าขาย โชคลาภ', ic: '◈', items: ['siwali', 'lpngoen', 'ngoenlan', 'heart-setthi', 'ganesha'], note: 'สวดแล้วทำตามหลักหัวใจเศรษฐีควบคู่: ขยันหา รู้จักเก็บ คบคนดี ใช้จ่ายพอดี' },
+  { id: 'debt', th: 'ทวงหนี้', sub: 'ได้เงินคืน', ic: '⇄', items: ['metta-urgent', 'metta-all', 'heart-setthi'], note: 'ไม่มีบทสวดเฉพาะเรื่องทวงหนี้ที่ยอมรับกันทั่วไป ตำรานิยมใช้เมตตาให้อีกฝ่ายใจอ่อน นึกชื่อลูกหนี้ขณะสวด และควรเก็บหลักฐานการยืมให้ครบ' },
+  { id: 'boss', th: 'เจ้านายรัก', sub: 'ผู้ใหญ่เมตตา', ic: '♔', items: ['boss', 'upatham', 'metta-maha', 'heart-brahma'], note: 'สวดก่อนออกจากบ้านหรือก่อนเข้าพบ' },
+  { id: 'exam', th: 'สอบผ่าน', sub: 'สอบ สัมภาษณ์', ic: '✎', items: ['exam-calm', 'indra', 'chin-short', 'bahung', 'heart-iddhi'], note: 'คาถาช่วยให้ใจนิ่ง ส่วนผลสอบมาจากการเตรียมตัว หัวใจอิทธิบาทคือหลักทำงานให้สำเร็จ' },
+  { id: 'smart', th: 'ฉลาด ความจำดี', sub: 'เรียน ทำงานความคิด', ic: '✦', items: ['wani', 'indra', 'ganesha', 'heart-sati'], note: 'สวดก่อนเริ่มอ่านหนังสือหรือทำงานที่ต้องใช้สมาธิ' },
+  { id: 'health', th: 'หายป่วย', sub: 'สุขภาพ ใจสงบ', ic: '✚', items: ['sakkatva', 'metta-self', 'itipiso'], note: 'บทสวดช่วยให้ใจสงบ ควบคู่กับการรักษาตามคำแนะนำแพทย์' },
+  { id: 'love', th: 'ความรัก เสน่ห์', sub: 'คนรัก คนรอบตัว', ic: '♡', items: ['metta-maha', 'popular', 'day-fri', 'metta-all'], note: 'เมตตาเป็นเสน่ห์ที่ยั่งยืนที่สุด' },
+  { id: 'sleep', th: 'หลับสบาย', sub: 'ไม่ฝันร้าย', ic: '☽', items: ['day-fri', 'day-mon', 'metta-self'], note: 'บทวันศุกร์กล่าวว่าผู้สวดหลับเป็นสุข ตื่นเป็นสุข ไม่ฝันร้าย บทวันจันทร์ขับฝันร้ายและลางร้าย' },
+  { id: 'travel', th: 'เดินทางปลอดภัย', sub: 'ขับรถ บิน', ic: '➶', items: ['chinabanchon', 'chin-short', 'day-sun', 'heart-5buddha'], note: 'สวดก่อนออกเดินทาง บทวันอาทิตย์ (โมรปริตร) คุ้มครองทั้งกลางวันและกลางคืน' },
+  { id: 'win', th: 'ชนะอุปสรรค', sub: 'คดีความ คู่แข่ง', ic: '⚑', items: ['bahung', 'chin-short', 'day-tue', 'itipiso'], note: 'พาหุงฯ คือบทแห่งชัยชนะ 8 ครั้งของพระพุทธเจ้า' },
+  { id: 'karma', th: 'แก้กรรม ดวงตก', sub: 'เคราะห์ ราหูเล่นงาน', ic: '☯', items: ['day-rahu', 'kruadnam', 'metta-all', 'itipiso'], note: 'นิยมสวดอิติปิโสเท่าอายุบวกหนึ่ง และอุทิศส่วนกุศลให้เจ้ากรรมนายเวร' }
+];
+const purposeById = (id) => PURPOSES.find((p) => p.id === id);
+
 const prayerById = (id) => PRAYERS.find((p) => p.id === id);
 
 // ---------- remedies: which chant fits a reading ----------
@@ -3556,7 +3867,7 @@ const state = {
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
-  prayer: { cat: 'all', open: null, counts: {} },
+  prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
   ask: { topic: 0, messages: [] }
@@ -4804,6 +5115,7 @@ ${head}
 <h2 class="pr-title">${pr.th}</h2>
 <p class="small" style="color:var(--text-2)">${pr.use}</p>
 ${pr.origin ? `<p class="pr-origin"><b>ที่มา</b> ${pr.origin}</p>` : ''}
+${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตัวบท: ${pr.src}${pr.cat === 'folk' ? ' · เป็นคาถาตามความเชื่อ ถ้อยคำอาจต่างกันในแต่ละสำนัก' : ''}</p>` : ''}
 <span class="pr-count">สวด ${pr.count} จบ${pr.cat === 'day' ? ' · ตามกำลังดาวประจำวัน' : ''}</span></section>
 <section class="pr-text${pr.heart ? ' heart' : ''}">${prayerText(pr)}</section>
 <section class="pr-counter" id="pr-counter">${counterHTML(pr)}</section>
@@ -4815,12 +5127,17 @@ ${pr.origin ? `<p class="pr-origin"><b>ที่มา</b> ${pr.origin}</p>` : '
   const today = dailyRemedy(liveAspects(state.chart, new Date(), { n: 6, exact: false }), bp, total);
   const recs = [{ id: birthChant(bp), kind: 'เสริม', reason: `บทประจำวันเกิดของคุณ (${TH_PLANETS[bp].day})` }];
   if (today.id !== recs[0].id) recs.unshift(today);
-  const list = PRAYERS.filter((p) => st.cat === 'all' || p.cat === st.cat);
+  const pu = st.purpose ? purposeById(st.purpose) : null;
+  const list = pu ? pu.items.map(prayerById) : PRAYERS.filter((p) => st.cat === 'all' || p.cat === st.cat);
   return `<main class="screen">
 ${head}
 <section class="pr-recs"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>แนะนำสำหรับคุณวันนี้</h2>${recs.map(remedyChip).join('')}</section>
-<div class="chips pr-cats" role="group" aria-label="หมวดบทสวด">${[{ id: 'all', th: 'ทั้งหมด' }, ...PRAYER_CATS].map((c) => `<button class="chip" aria-pressed="${st.cat === c.id}" data-act="prayerCat" data-v="${c.id}">${c.th}</button>`).join('')}</div>
-${st.cat === 'heart' ? '<p class="small">หัวใจคาถาคือการย่ออักษรตัวแรกของหลักธรรมให้ภาวนาง่าย ตำราหัวใจ 108 มีหลายบท ที่นี่คัดบทที่อธิบายที่มาได้ชัด ภาวนา 108 ครั้งตามเม็ดลูกประคำ</p>' : ''}
+<section class="pr-purpose"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>สวดเพื่อ…</h2>
+<div class="pu-grid">${PURPOSES.map((x) => `<button class="pu" data-act="prayerPurpose" data-v="${x.id}" aria-pressed="${st.purpose === x.id}"><span class="pu-ic">${x.ic}</span><b>${x.th}</b><span>${x.sub}</span></button>`).join('')}</div></section>
+${pu ? `<div class="pu-note"><span><b>${pu.th}</b> · ${pu.note}</span><button class="link-btn" data-act="prayerPurpose" data-v="">ดูบทสวดทั้งหมด</button></div>` : `<h2 class="t-step-h" style="margin-top:4px"><span style="border-color:var(--gold);color:var(--gold)">☰</span>ตามหมวด</h2>`}
+${pu ? '' : `<div class="chips pr-cats" role="group" aria-label="หมวดบทสวด">${[{ id: 'all', th: 'ทั้งหมด' }, ...PRAYER_CATS].map((c) => `<button class="chip" aria-pressed="${st.cat === c.id}" data-act="prayerCat" data-v="${c.id}">${c.th}</button>`).join('')}
+</div>`}
+${!pu && st.cat === 'heart' ? '<p class="small">หัวใจคาถาคือการย่ออักษรตัวแรกของหลักธรรมให้ภาวนาง่าย ตำราหัวใจ 108 มีหลายบท ที่นี่คัดบทที่อธิบายที่มาได้ชัด ภาวนา 108 ครั้งตามเม็ดลูกประคำ</p>' : ''}
 <ul class="pr-list">${list.map((p) => `<li><a href="#/prayer" data-act="openPrayer" data-v="${p.id}" class="pr-item">
 <span class="pr-ic">${p.heart ? `<b>${p.heart.split(' ')[0]}</b>` : icon('prayer', 18, 1.5)}</span>
 <span class="pr-it"><b>${p.th}</b><span>${p.heart ? p.heart + ' · ' : ''}${p.use}</span></span><span class="pr-badge">${p.count}<i>จบ</i></span></a></li>`).join('')}</ul>
@@ -4970,6 +5287,7 @@ document.addEventListener('click', (e) => {
     case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [] }); break;
     case 'numMode': state.num.mode = el.dataset.v; break;
     case 'prayerCat': state.prayer.cat = el.dataset.v; break;
+    case 'prayerPurpose': state.prayer.purpose = el.dataset.v || null; break;
     case 'prayerBack': { const b = state.prayer.back; state.prayer.open = null; state.prayer.back = null; if (b && b !== 'prayer') { go(b); return; } break; }
     case 'prayerReset': state.prayer.counts[state.prayer.open] = 0; { const c = document.getElementById('pr-counter'); if (c) c.innerHTML = counterHTML(prayerById(state.prayer.open)); } return;
     case 'prayerTap': {

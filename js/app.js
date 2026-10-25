@@ -10,7 +10,7 @@ import { natalProfile, sixthSense } from './profile.js';
 import { CARDS, drawCards, SPREADS, HOUSE_READ } from './tarot.js';
 import { mountGlobe, burnIncense, mountSiamsi, askMotion, randomDigit, thaiNum } from './luck.js';
 import { SIAMSI } from './siamsi.js';
-import { PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, EVENT_CHANT } from './prayer.js';
+import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, EVENT_CHANT } from './prayer.js';
 import { NUM_TOOLS, analyzeNumber, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
@@ -34,7 +34,7 @@ const state = {
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
-  prayer: { cat: 'all', open: null, counts: {} },
+  prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
   ask: { topic: 0, messages: [] }
@@ -1282,6 +1282,7 @@ ${head}
 <h2 class="pr-title">${pr.th}</h2>
 <p class="small" style="color:var(--text-2)">${pr.use}</p>
 ${pr.origin ? `<p class="pr-origin"><b>ที่มา</b> ${pr.origin}</p>` : ''}
+${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตัวบท: ${pr.src}${pr.cat === 'folk' ? ' · เป็นคาถาตามความเชื่อ ถ้อยคำอาจต่างกันในแต่ละสำนัก' : ''}</p>` : ''}
 <span class="pr-count">สวด ${pr.count} จบ${pr.cat === 'day' ? ' · ตามกำลังดาวประจำวัน' : ''}</span></section>
 <section class="pr-text${pr.heart ? ' heart' : ''}">${prayerText(pr)}</section>
 <section class="pr-counter" id="pr-counter">${counterHTML(pr)}</section>
@@ -1293,12 +1294,17 @@ ${pr.origin ? `<p class="pr-origin"><b>ที่มา</b> ${pr.origin}</p>` : '
   const today = dailyRemedy(liveAspects(state.chart, new Date(), { n: 6, exact: false }), bp, total);
   const recs = [{ id: birthChant(bp), kind: 'เสริม', reason: `บทประจำวันเกิดของคุณ (${TH_PLANETS[bp].day})` }];
   if (today.id !== recs[0].id) recs.unshift(today);
-  const list = PRAYERS.filter((p) => st.cat === 'all' || p.cat === st.cat);
+  const pu = st.purpose ? purposeById(st.purpose) : null;
+  const list = pu ? pu.items.map(prayerById) : PRAYERS.filter((p) => st.cat === 'all' || p.cat === st.cat);
   return `<main class="screen">
 ${head}
 <section class="pr-recs"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>แนะนำสำหรับคุณวันนี้</h2>${recs.map(remedyChip).join('')}</section>
-<div class="chips pr-cats" role="group" aria-label="หมวดบทสวด">${[{ id: 'all', th: 'ทั้งหมด' }, ...PRAYER_CATS].map((c) => `<button class="chip" aria-pressed="${st.cat === c.id}" data-act="prayerCat" data-v="${c.id}">${c.th}</button>`).join('')}</div>
-${st.cat === 'heart' ? '<p class="small">หัวใจคาถาคือการย่ออักษรตัวแรกของหลักธรรมให้ภาวนาง่าย ตำราหัวใจ 108 มีหลายบท ที่นี่คัดบทที่อธิบายที่มาได้ชัด ภาวนา 108 ครั้งตามเม็ดลูกประคำ</p>' : ''}
+<section class="pr-purpose"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>สวดเพื่อ…</h2>
+<div class="pu-grid">${PURPOSES.map((x) => `<button class="pu" data-act="prayerPurpose" data-v="${x.id}" aria-pressed="${st.purpose === x.id}"><span class="pu-ic">${x.ic}</span><b>${x.th}</b><span>${x.sub}</span></button>`).join('')}</div></section>
+${pu ? `<div class="pu-note"><span><b>${pu.th}</b> · ${pu.note}</span><button class="link-btn" data-act="prayerPurpose" data-v="">ดูบทสวดทั้งหมด</button></div>` : `<h2 class="t-step-h" style="margin-top:4px"><span style="border-color:var(--gold);color:var(--gold)">☰</span>ตามหมวด</h2>`}
+${pu ? '' : `<div class="chips pr-cats" role="group" aria-label="หมวดบทสวด">${[{ id: 'all', th: 'ทั้งหมด' }, ...PRAYER_CATS].map((c) => `<button class="chip" aria-pressed="${st.cat === c.id}" data-act="prayerCat" data-v="${c.id}">${c.th}</button>`).join('')}
+</div>`}
+${!pu && st.cat === 'heart' ? '<p class="small">หัวใจคาถาคือการย่ออักษรตัวแรกของหลักธรรมให้ภาวนาง่าย ตำราหัวใจ 108 มีหลายบท ที่นี่คัดบทที่อธิบายที่มาได้ชัด ภาวนา 108 ครั้งตามเม็ดลูกประคำ</p>' : ''}
 <ul class="pr-list">${list.map((p) => `<li><a href="#/prayer" data-act="openPrayer" data-v="${p.id}" class="pr-item">
 <span class="pr-ic">${p.heart ? `<b>${p.heart.split(' ')[0]}</b>` : icon('prayer', 18, 1.5)}</span>
 <span class="pr-it"><b>${p.th}</b><span>${p.heart ? p.heart + ' · ' : ''}${p.use}</span></span><span class="pr-badge">${p.count}<i>จบ</i></span></a></li>`).join('')}</ul>
@@ -1448,6 +1454,7 @@ document.addEventListener('click', (e) => {
     case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [] }); break;
     case 'numMode': state.num.mode = el.dataset.v; break;
     case 'prayerCat': state.prayer.cat = el.dataset.v; break;
+    case 'prayerPurpose': state.prayer.purpose = el.dataset.v || null; break;
     case 'prayerBack': { const b = state.prayer.back; state.prayer.open = null; state.prayer.back = null; if (b && b !== 'prayer') { go(b); return; } break; }
     case 'prayerReset': state.prayer.counts[state.prayer.open] = 0; { const c = document.getElementById('pr-counter'); if (c) c.innerHTML = counterHTML(prayerById(state.prayer.open)); } return;
     case 'prayerTap': {
