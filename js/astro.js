@@ -453,12 +453,13 @@ function exactness(id, target, angle, now) {
 }
 
 // All transit-to-natal aspects active right now, strongest first, with reasons.
-export function liveAspects(chart, now = new Date()) {
+export function liveAspects(chart, now = new Date(), { n = 6, exact = true, only = null } = {}) {
   const d = dayNumber(now);
   const targets = chart.planets.map((p) => ({ id: p.id, th: p.th, glyph: p.glyph, lon: p.lon, sign: p.sign }));
   if (chart.asc != null) targets.push({ id: 'asc', th: 'ลัคนา', glyph: 'ASC', lon: chart.asc, sign: signOf(chart.asc) });
   const out = [];
   for (const m of PLANETS) {
+    if (only && !only.includes(m.id)) continue;
     const lon = lonAt(m.id, d);
     for (const t of targets) {
       const dist = angDist(lon, t.lon);
@@ -472,14 +473,43 @@ export function liveAspects(chart, now = new Date()) {
     }
   }
   out.sort((a, b) => b.strength - a.strength);
-  const top = out.slice(0, 6);
+  const top = out.slice(0, n);
   for (const x of top) {
-    const ex = exactness(x.mover.id, x.target.lon, x.asp.angle, now);
-    x.applying = ex.applying; x.exactAt = ex.at;
+    if (exact) { const ex = exactness(x.mover.id, x.target.lon, x.asp.angle, now); x.applying = ex.applying; x.exactAt = ex.at; }
     x.reason = MOVER_ACT[x.mover.id] + TARGET_AREA[x.target.id];
     x.advice = ASPECT_ADVICE[x.asp.id];
   }
   return top;
+}
+
+// Moon phase as a Thai lunar day (tithi): 12 degrees of Moon-Sun elongation per day.
+// Astronomical approximation; the official Thai calendar can differ by a day.
+export function lunarPhase(date) {
+  const d = dayNumber(date);
+  const el = rev(lonAt('moon', d) - lonAt('sun', d));
+  const waxing = el < 180;
+  const day = Math.min(15, Math.floor((waxing ? el : el - 180) / 12) + 1);
+  const th = (waxing ? 'ขึ้น ' : 'แรม ') + day + ' ค่ำ';
+  const name = el < 12 || el >= 348 ? 'จันทร์ดับ' : Math.abs(el - 180) < 12 ? 'จันทร์เต็มดวง' : waxing ? 'ข้างขึ้น' : 'ข้างแรม';
+  return { elongation: el, waxing, day, th, name, lit: (1 - Math.cos(el * Math.PI / 180)) / 2 };
+}
+
+// Seven-day outlook, sampled at local noon each day. Fast planets drive the day-to-day changes.
+const FAST = ['moon', 'sun', 'mercury', 'venus', 'mars'];
+export function weekAhead(chart, start = new Date()) {
+  const out = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i, 12, 0);
+    const dl = daily(chart, d);
+    const avg = dl.scores.reduce((a, s) => a + s.score, 0) / dl.scores.length;
+    const moonLon = lonAt('moon', dayNumber(d));
+    const fast = liveAspects(chart, d, { n: 12, exact: false, only: FAST });
+    let tone = 0;
+    for (const x of fast) tone += x.strength * (x.asp.nature === 0 ? 0.4 : x.asp.nature);
+    const rating = Math.max(1, Math.min(5, Math.round(3.2 + 2 * Math.tanh(tone / 4))));
+    out.push({ date: d, scores: dl.scores, avg, rating, moonSign: signOf(moonLon), moonHouse: chart.houseOf(moonLon), phase: lunarPhase(d), top: fast.slice(0, 3) });
+  }
+  return out;
 }
 
 function nextIngress(id, now, span, step) {

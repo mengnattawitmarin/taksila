@@ -1,7 +1,7 @@
 // Taksila app — screens, state and routing (hash routes, no framework).
 import {
   SIGNS, ELEMENTS, PLANETS, HOUSES, planetById, computeChart, transits, daily, compatibility,
-  planetPositions, signOf, fmtDeg, localToUtc, liveAspects, upcomingIngresses, ASPECT_GLYPH, lonOf
+  planetPositions, signOf, fmtDeg, localToUtc, liveAspects, upcomingIngresses, ASPECT_GLYPH, lonOf, weekAhead, lunarPhase
 } from './astro.js';
 import { PLACES, MONTHS_TH, MONTHS_SHORT, TAROT, TOPICS, LIFE_PATH, DIGITS, SUM_MEANING } from './data.js';
 import { starMap, logoRing } from './starmap.js';
@@ -22,6 +22,7 @@ const state = {
   chartTab: 0,
   liveOpen: false,
   aspOpen: new Set(),
+  weekSel: null,
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, cards: null, open: 0 },
   num: { mode: 'phone', value: '' },
@@ -206,6 +207,7 @@ function viewHome() {
 ${bigThree(ch)}
 <nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
+<section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรระยะยาว</h2>
 <div class="hscroll edge">${tr.map((t) => `<a class="mini" href="#/chart" data-act="chartTab" data-i="2">
@@ -289,6 +291,42 @@ ${la.length ? `<ul class="asp-list">${items}</ul>` : '<p class="small">วัน
 </div>`;
 }
 
+// ---------------- seven-day outlook ----------------
+const WEEKDAY_SHORT = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+const WEEKDAY = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+const RATING_TH = ['', 'ระวังตัว', 'ค่อย ๆ ไป', 'กลาง ๆ', 'ดี', 'ดีมาก'];
+const ratingColor = (r) => r >= 4 ? 'var(--gold-2)' : r <= 2 ? 'var(--tension)' : 'var(--muted)';
+function moonIcon(ph, r = 7) {
+  const k = Math.cos(ph.elongation * Math.PI / 180), rx = Math.abs(k) * r;
+  const s1 = ph.waxing ? 1 : 0, s2 = ph.waxing ? (k > 0 ? 0 : 1) : (k > 0 ? 1 : 0);
+  return `<svg width="${2 * r + 2}" height="${2 * r + 2}" viewBox="${-r - 1} ${-r - 1} ${2 * r + 2} ${2 * r + 2}" aria-hidden="true"><circle r="${r}" fill="#2C261B" stroke="#5A4C33" stroke-width="0.6"/><path d="M0 ${-r}A${r} ${r} 0 0 ${s1} 0 ${r}A${rx.toFixed(2)} ${r} 0 0 ${s2} 0 ${-r}Z" fill="#F0D89A"/></svg>`;
+}
+let weekCache = null;
+function weekData() {
+  const now = new Date(), key = now.toDateString();
+  if (!weekCache || weekCache.key !== key || weekCache.chart !== state.chart) weekCache = { key, chart: state.chart, days: weekAhead(state.chart, now) };
+  return weekCache.days;
+}
+function weekHTML() {
+  const days = weekData(), sel = state.weekSel;
+  const strip = days.map((d, i) => `<button class="day${sel === i ? ' sel' : ''}" data-act="weekDay" data-i="${i}" aria-pressed="${sel === i}" aria-label="${WEEKDAY[d.date.getDay()]} ${d.date.getDate()} ${RATING_TH[d.rating]}">
+<span class="wd">${i === 0 ? 'วันนี้' : WEEKDAY_SHORT[d.date.getDay()]}</span><span class="dn">${d.date.getDate()}</span>${moonIcon(d.phase)}
+<span class="dots" aria-hidden="true">${[1, 2, 3, 4, 5].map((n) => `<i style="background:${n <= d.rating ? ratingColor(d.rating) : 'var(--line)'}"></i>`).join('')}</span></button>`).join('');
+  let detail = '';
+  if (sel != null) {
+    const d = days[sel];
+    detail = `<div class="card day-detail">
+<span class="eyebrow" style="letter-spacing:.14em">${WEEKDAY[d.date.getDay()].toUpperCase()} ${d.date.getDate()} ${MONTHS_SHORT[d.date.getMonth()]} · ${d.phase.th}</span>
+<p class="h2" style="font-size:18px;color:${ratingColor(d.rating)}">${RATING_TH[d.rating]}</p>
+<p class="small">ดวงจันทร์อยู่ราศี${SIGNS[d.moonSign].th} ผ่านภพ ${d.moonHouse} ของคุณ เรื่อง${HOUSES[d.moonHouse - 1]}จะเด่นขึ้นมาในวันนี้ · ${d.phase.name}</p>
+${d.top.length ? `<ul class="day-asp">${d.top.map((x) => `<li style="--c:${natureColor(x.asp.nature)}"><span class="asp-glyphs" aria-hidden="true"><span class="sym">${x.mover.glyph}&#xFE0E;</span><span class="sym" style="color:var(--c)">${ASPECT_GLYPH[x.asp.id]}&#xFE0E;</span>${targetGlyph(x.target)}</span>
+<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600">${pname(x.mover.id, x.mover.th)}${x.asp.th}${pname(x.target.id, x.target.th)}</span><span class="small">${x.reason}</span></span></li>`).join('')}</ul>` : '<p class="small">ดาวเคลื่อนเร็วไม่ทำมุมสำคัญ เป็นวันเรียบ ๆ เหมาะกับงานประจำ</p>'}
+</div>`;
+  }
+  return `<h2 class="label" style="display:flex;justify-content:space-between"><span>7 วันข้างหน้า</span><span class="mono" style="font-size:10px;letter-spacing:.1em">กดดูรายวัน</span></h2>
+<div class="week-strip">${strip}</div>${detail}`;
+}
+
 // Real-time refresh: recompute the live section every 30 seconds and announce sign changes.
 let liveTimer = null;
 let lastSigns = null;
@@ -307,6 +345,8 @@ function tickLive() {
   }
   lastSigns = snap;
   box.innerHTML = liveDailyHTML();
+  const wk = document.getElementById('week');
+  if (wk && weekCache && weekCache.key !== new Date().toDateString()) { state.weekSel = null; wk.innerHTML = weekHTML(); }
 }
 function startLive() {
   clearInterval(liveTimer);
@@ -673,6 +713,12 @@ document.addEventListener('click', (e) => {
   switch (act) {
     case 'go': go(el.dataset.to); return;
     case 'install': if (installEvt) { installEvt.prompt(); installEvt.userChoice.finally(() => { installEvt = null; el.remove(); }); } return;
+    case 'weekDay': {
+      state.weekSel = state.weekSel === i ? null : i;
+      const box = document.getElementById('week');
+      if (box) box.innerHTML = weekHTML();
+      return;
+    }
     case 'liveToggle': {
       state.liveOpen = !state.liveOpen;
       const card = el.closest('.daily');

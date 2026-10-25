@@ -172,6 +172,18 @@ a:hover { color: var(--gold-2); }
 @media (max-width: 360px) { .asp-body { padding-left: 0; } }
 @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } .fold, .chev { transition: none; } }
 
+/* seven-day strip */
+.week-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.day { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 0 8px; min-height: 44px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; color: var(--text); font: inherit; cursor: pointer; }
+.day.sel { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 9%, var(--surface)); }
+.day .wd { font-size: 10px; color: var(--muted); }
+.day .dn { font-family: var(--mono); font-size: 15px; }
+.day .dots { display: flex; gap: 2px; }
+.day .dots i { width: 3px; height: 3px; border-radius: 2px; }
+.day-detail { gap: 8px; }
+.day-asp { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line); padding-top: 12px; }
+.day-asp li { display: flex; align-items: center; gap: 12px; }
+
 /* chart */
 .legend { display: flex; gap: 16px; justify-content: center; font-family: var(--mono); font-size: 10px; color: var(--muted); }
 .legend i { display: inline-block; width: 14px; height: 1.5px; vertical-align: middle; margin-right: 6px; }
@@ -710,12 +722,13 @@ function exactness(id, target, angle, now) {
 }
 
 // All transit-to-natal aspects active right now, strongest first, with reasons.
-function liveAspects(chart, now = new Date()) {
+function liveAspects(chart, now = new Date(), { n = 6, exact = true, only = null } = {}) {
   const d = dayNumber(now);
   const targets = chart.planets.map((p) => ({ id: p.id, th: p.th, glyph: p.glyph, lon: p.lon, sign: p.sign }));
   if (chart.asc != null) targets.push({ id: 'asc', th: 'ลัคนา', glyph: 'ASC', lon: chart.asc, sign: signOf(chart.asc) });
   const out = [];
   for (const m of PLANETS) {
+    if (only && !only.includes(m.id)) continue;
     const lon = lonAt(m.id, d);
     for (const t of targets) {
       const dist = angDist(lon, t.lon);
@@ -729,14 +742,43 @@ function liveAspects(chart, now = new Date()) {
     }
   }
   out.sort((a, b) => b.strength - a.strength);
-  const top = out.slice(0, 6);
+  const top = out.slice(0, n);
   for (const x of top) {
-    const ex = exactness(x.mover.id, x.target.lon, x.asp.angle, now);
-    x.applying = ex.applying; x.exactAt = ex.at;
+    if (exact) { const ex = exactness(x.mover.id, x.target.lon, x.asp.angle, now); x.applying = ex.applying; x.exactAt = ex.at; }
     x.reason = MOVER_ACT[x.mover.id] + TARGET_AREA[x.target.id];
     x.advice = ASPECT_ADVICE[x.asp.id];
   }
   return top;
+}
+
+// Moon phase as a Thai lunar day (tithi): 12 degrees of Moon-Sun elongation per day.
+// Astronomical approximation; the official Thai calendar can differ by a day.
+function lunarPhase(date) {
+  const d = dayNumber(date);
+  const el = rev(lonAt('moon', d) - lonAt('sun', d));
+  const waxing = el < 180;
+  const day = Math.min(15, Math.floor((waxing ? el : el - 180) / 12) + 1);
+  const th = (waxing ? 'ขึ้น ' : 'แรม ') + day + ' ค่ำ';
+  const name = el < 12 || el >= 348 ? 'จันทร์ดับ' : Math.abs(el - 180) < 12 ? 'จันทร์เต็มดวง' : waxing ? 'ข้างขึ้น' : 'ข้างแรม';
+  return { elongation: el, waxing, day, th, name, lit: (1 - Math.cos(el * Math.PI / 180)) / 2 };
+}
+
+// Seven-day outlook, sampled at local noon each day. Fast planets drive the day-to-day changes.
+const FAST = ['moon', 'sun', 'mercury', 'venus', 'mars'];
+function weekAhead(chart, start = new Date()) {
+  const out = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i, 12, 0);
+    const dl = daily(chart, d);
+    const avg = dl.scores.reduce((a, s) => a + s.score, 0) / dl.scores.length;
+    const moonLon = lonAt('moon', dayNumber(d));
+    const fast = liveAspects(chart, d, { n: 12, exact: false, only: FAST });
+    let tone = 0;
+    for (const x of fast) tone += x.strength * (x.asp.nature === 0 ? 0.4 : x.asp.nature);
+    const rating = Math.max(1, Math.min(5, Math.round(3.2 + 2 * Math.tanh(tone / 4))));
+    out.push({ date: d, scores: dl.scores, avg, rating, moonSign: signOf(moonLon), moonHouse: chart.houseOf(moonLon), phase: lunarPhase(d), top: fast.slice(0, 3) });
+  }
+  return out;
 }
 
 function nextIngress(id, now, span, step) {
@@ -1135,6 +1177,7 @@ const state = {
   chartTab: 0,
   liveOpen: false,
   aspOpen: new Set(),
+  weekSel: null,
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, cards: null, open: 0 },
   num: { mode: 'phone', value: '' },
@@ -1319,6 +1362,7 @@ function viewHome() {
 ${bigThree(ch)}
 <nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
+<section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรระยะยาว</h2>
 <div class="hscroll edge">${tr.map((t) => `<a class="mini" href="#/chart" data-act="chartTab" data-i="2">
@@ -1402,6 +1446,42 @@ ${la.length ? `<ul class="asp-list">${items}</ul>` : '<p class="small">วัน
 </div>`;
 }
 
+// ---------------- seven-day outlook ----------------
+const WEEKDAY_SHORT = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+const WEEKDAY = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+const RATING_TH = ['', 'ระวังตัว', 'ค่อย ๆ ไป', 'กลาง ๆ', 'ดี', 'ดีมาก'];
+const ratingColor = (r) => r >= 4 ? 'var(--gold-2)' : r <= 2 ? 'var(--tension)' : 'var(--muted)';
+function moonIcon(ph, r = 7) {
+  const k = Math.cos(ph.elongation * Math.PI / 180), rx = Math.abs(k) * r;
+  const s1 = ph.waxing ? 1 : 0, s2 = ph.waxing ? (k > 0 ? 0 : 1) : (k > 0 ? 1 : 0);
+  return `<svg width="${2 * r + 2}" height="${2 * r + 2}" viewBox="${-r - 1} ${-r - 1} ${2 * r + 2} ${2 * r + 2}" aria-hidden="true"><circle r="${r}" fill="#2C261B" stroke="#5A4C33" stroke-width="0.6"/><path d="M0 ${-r}A${r} ${r} 0 0 ${s1} 0 ${r}A${rx.toFixed(2)} ${r} 0 0 ${s2} 0 ${-r}Z" fill="#F0D89A"/></svg>`;
+}
+let weekCache = null;
+function weekData() {
+  const now = new Date(), key = now.toDateString();
+  if (!weekCache || weekCache.key !== key || weekCache.chart !== state.chart) weekCache = { key, chart: state.chart, days: weekAhead(state.chart, now) };
+  return weekCache.days;
+}
+function weekHTML() {
+  const days = weekData(), sel = state.weekSel;
+  const strip = days.map((d, i) => `<button class="day${sel === i ? ' sel' : ''}" data-act="weekDay" data-i="${i}" aria-pressed="${sel === i}" aria-label="${WEEKDAY[d.date.getDay()]} ${d.date.getDate()} ${RATING_TH[d.rating]}">
+<span class="wd">${i === 0 ? 'วันนี้' : WEEKDAY_SHORT[d.date.getDay()]}</span><span class="dn">${d.date.getDate()}</span>${moonIcon(d.phase)}
+<span class="dots" aria-hidden="true">${[1, 2, 3, 4, 5].map((n) => `<i style="background:${n <= d.rating ? ratingColor(d.rating) : 'var(--line)'}"></i>`).join('')}</span></button>`).join('');
+  let detail = '';
+  if (sel != null) {
+    const d = days[sel];
+    detail = `<div class="card day-detail">
+<span class="eyebrow" style="letter-spacing:.14em">${WEEKDAY[d.date.getDay()].toUpperCase()} ${d.date.getDate()} ${MONTHS_SHORT[d.date.getMonth()]} · ${d.phase.th}</span>
+<p class="h2" style="font-size:18px;color:${ratingColor(d.rating)}">${RATING_TH[d.rating]}</p>
+<p class="small">ดวงจันทร์อยู่ราศี${SIGNS[d.moonSign].th} ผ่านภพ ${d.moonHouse} ของคุณ เรื่อง${HOUSES[d.moonHouse - 1]}จะเด่นขึ้นมาในวันนี้ · ${d.phase.name}</p>
+${d.top.length ? `<ul class="day-asp">${d.top.map((x) => `<li style="--c:${natureColor(x.asp.nature)}"><span class="asp-glyphs" aria-hidden="true"><span class="sym">${x.mover.glyph}&#xFE0E;</span><span class="sym" style="color:var(--c)">${ASPECT_GLYPH[x.asp.id]}&#xFE0E;</span>${targetGlyph(x.target)}</span>
+<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600">${pname(x.mover.id, x.mover.th)}${x.asp.th}${pname(x.target.id, x.target.th)}</span><span class="small">${x.reason}</span></span></li>`).join('')}</ul>` : '<p class="small">ดาวเคลื่อนเร็วไม่ทำมุมสำคัญ เป็นวันเรียบ ๆ เหมาะกับงานประจำ</p>'}
+</div>`;
+  }
+  return `<h2 class="label" style="display:flex;justify-content:space-between"><span>7 วันข้างหน้า</span><span class="mono" style="font-size:10px;letter-spacing:.1em">กดดูรายวัน</span></h2>
+<div class="week-strip">${strip}</div>${detail}`;
+}
+
 // Real-time refresh: recompute the live section every 30 seconds and announce sign changes.
 let liveTimer = null;
 let lastSigns = null;
@@ -1420,6 +1500,8 @@ function tickLive() {
   }
   lastSigns = snap;
   box.innerHTML = liveDailyHTML();
+  const wk = document.getElementById('week');
+  if (wk && weekCache && weekCache.key !== new Date().toDateString()) { state.weekSel = null; wk.innerHTML = weekHTML(); }
 }
 function startLive() {
   clearInterval(liveTimer);
@@ -1786,6 +1868,12 @@ document.addEventListener('click', (e) => {
   switch (act) {
     case 'go': go(el.dataset.to); return;
     case 'install': if (installEvt) { installEvt.prompt(); installEvt.userChoice.finally(() => { installEvt = null; el.remove(); }); } return;
+    case 'weekDay': {
+      state.weekSel = state.weekSel === i ? null : i;
+      const box = document.getElementById('week');
+      if (box) box.innerHTML = weekHTML();
+      return;
+    }
     case 'liveToggle': {
       state.liveOpen = !state.liveOpen;
       const card = el.closest('.daily');
