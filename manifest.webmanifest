@@ -1,7 +1,7 @@
 {
   "name": "ตักศิลา — อ่านดวงจากตำแหน่งดาวจริง",
   "short_name": "ตักศิลา",
-  "description": "ผังดาวกำเนิด ดวงรายวันแบบสด คู่ดวง ไพ่ทาโรต์ และศาสตร์ตัวเลข",
+  "description": "ผังดาวกำเนิด ดวงรายวันแบบสด ฤกษ์ยาม ไพ่ทาโรต์ 78 ใบ ศาสตร์ตัวเลข และเซียมซี",
   "lang": "th",
   "start_url": "./",
   "scope": "./",
@@ -10,8 +10,63 @@
   "background_color": "#0D0B08",
   "theme_color": "#0D0B08",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "./",
+  "categories": [
+    "lifestyle",
+    "entertainment"
+  ],
+  "shortcuts": [
+    {
+      "name": "ไพ่ทาโรต์",
+      "short_name": "ไพ่",
+      "url": "./#/tarot",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "เซียมซีและโชคลาภ",
+      "short_name": "เซียมซี",
+      "url": "./#/luck",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "ฤกษ์ยามวันนี้",
+      "short_name": "ฤกษ์ยาม",
+      "url": "./#/auspice",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }

@@ -165,6 +165,19 @@ a:hover { color: var(--gold-2); }
 .day-hero .drawer-toggle { margin-top: 0; }
 @media (prefers-reduced-motion: reduce) { .ring-arc { animation: none; } }
 
+/* install card */
+#install-slot:empty { display: none; }
+.install-card { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px 12px; align-items: center; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(212,175,99,.4); background: linear-gradient(120deg, rgba(212,175,99,.14), rgba(124,96,200,.10) 70%), var(--surface); }
+.ic-logo img { display: block; border-radius: 11px; box-shadow: 0 0 14px rgba(212,175,99,.35); }
+.ic-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ic-text b { font-size: 15px; color: var(--text); }
+.ic-text span { font-size: 12px; color: var(--text-2); }
+.ic-actions { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; }
+.ic-btn { flex: 1; min-height: 42px; font-size: 15px; }
+.ic-x { min-height: 42px; padding: 0 10px; background: none; border: 0; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; }
+.ic-steps { grid-column: 1 / -1; margin: 0; padding: 10px 12px 10px 30px; border-radius: 10px; background: rgba(0,0,0,.25); font-size: 13px; line-height: 1.7; color: var(--text-2); }
+.ic-steps b { color: var(--gold-2); }
+
 /* oracle grid: the divination rooms */
 .oracle-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .oracle { --c: var(--gold); text-decoration: none; color: var(--text); background: linear-gradient(180deg, color-mix(in srgb, var(--c) 7%, var(--surface)), var(--surface)); border: 1px solid var(--line); border-radius: 12px; padding: 10px 4px 9px; gap: 4px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; transition: border-color .2s, transform .2s; }
@@ -2672,6 +2685,7 @@ function viewHome() {
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section id="auspice-mini" aria-label="มงคลวันนี้">${auspiceMiniHTML()}</section>
 <nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
+<div id="install-slot">${installHTML()}</div>
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรระยะยาว</h2>
@@ -2682,14 +2696,25 @@ function viewHome() {
 </section>
 <a class="ask-link" href="#/ask"><span class="sigil" style="color:var(--bg);background:var(--gold);border:none;width:40px;height:40px">${icon('ask', 20, 1.6)}</span>
 <span style="flex:1;display:flex;flex-direction:column;gap:2px"><span class="h2" style="font-size:16px">ปรึกษาผู้เชี่ยวชาญ</span><span class="small">ถามเรื่องเฉพาะ คำตอบอ้างอิงผังดาวของคุณ</span></span>${icon('next', 16, 1.5)}</a>
-<div id="install-slot">${installHTML()}</div>
 </main>`;
 }
 
+// Install prompt: one-tap on Android/desktop Chrome, step-by-step help on iPhone and other browsers.
+const isStandalone = () => (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+let installHelp = false;
 function installHTML() {
-  if (!installEvt) return '';
-  return `<button class="ask-link" data-act="install" style="width:100%;background:none;font:inherit;text-align:left;cursor:pointer"><span class="sigil" style="color:var(--gold);width:40px;height:40px">${icon('down', 18, 1.6)}</span>
-<span style="flex:1;display:flex;flex-direction:column;gap:2px"><span class="h2" style="font-size:16px">ติดตั้งเป็นแอป</span><span class="small">เปิดดูดวงรายวันจากหน้าจอโทรศัพท์ได้ทันที</span></span></button>`;
+  if (isStandalone() || location.protocol === 'file:' || !document.querySelector('link[rel="manifest"]')) return '';
+  try { if (localStorage.getItem('taksila.installDismissed') === '1') return ''; } catch {}
+  const steps = isIOS()
+    ? ['เปิดหน้านี้ด้วย <b>Safari</b>', 'แตะปุ่ม <b>แชร์</b> (สี่เหลี่ยมมีลูกศรชี้ขึ้น) ด้านล่าง', 'เลื่อนหา <b>เพิ่มไปยังหน้าจอโฮม</b> แล้วแตะ <b>เพิ่ม</b>']
+    : ['แตะ <b>⋮</b> มุมขวาบนของ Chrome', 'เลือก <b>ติดตั้งแอป</b> หรือ <b>เพิ่มลงในหน้าจอหลัก</b>', 'แตะ <b>ติดตั้ง</b> ไอคอนตักศิลาจะขึ้นบนหน้าจอ'];
+  return `<div class="install-card">
+<span class="ic-logo"><img src="icons/icon-192.png" alt="" width="44" height="44"></span>
+<span class="ic-text"><b>ติดตั้งตักศิลาเป็นแอป</b><span>เปิดจากหน้าจอได้ทันที เต็มจอ ใช้ได้แม้ไม่มีเน็ต</span></span>
+<span class="ic-actions">${installEvt ? '<button class="btn ic-btn" data-act="install">ติดตั้ง</button>' : `<button class="btn ic-btn" data-act="installHelp">${installHelp ? 'ซ่อน' : 'วิธีติดตั้ง'}</button>`}<button class="ic-x" data-act="installDismiss" aria-label="ไม่ตอนนี้">ไม่ตอนนี้</button></span>
+${!installEvt && installHelp ? `<ol class="ic-steps">${steps.map((x) => `<li>${x}</li>`).join('')}</ol>` : ''}
+</div>`;
 }
 
 // ---------------- live daily reading ----------------
@@ -3685,7 +3710,9 @@ document.addEventListener('click', (e) => {
   const act = el.dataset.act, i = el.dataset.i != null ? +el.dataset.i : null;
   switch (act) {
     case 'go': go(el.dataset.to); return;
-    case 'install': if (installEvt) { installEvt.prompt(); installEvt.userChoice.finally(() => { installEvt = null; el.remove(); }); } return;
+    case 'install': if (installEvt) { installEvt.prompt(); installEvt.userChoice.then((r) => { installEvt = null; const sl = document.getElementById('install-slot'); if (sl) sl.innerHTML = r.outcome === 'accepted' ? '' : installHTML(); }); } return;
+    case 'installHelp': { installHelp = !installHelp; const sl = document.getElementById('install-slot'); if (sl) sl.innerHTML = installHTML(); return; }
+    case 'installDismiss': { try { localStorage.setItem('taksila.installDismissed', '1'); } catch {} const sl = document.getElementById('install-slot'); if (sl) sl.innerHTML = ''; return; }
     case 'senseToggle': { const li = el.closest('.sense'); const o = !li.classList.contains('open'); li.classList.toggle('open', o); el.setAttribute('aria-expanded', o); return; }
     case 'auspTab': state.ausp.tab = i; break;
     case 'auspEvent': state.ausp.event = el.dataset.v; state.ausp.open = 0; break;
