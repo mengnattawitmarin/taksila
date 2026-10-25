@@ -248,6 +248,92 @@ a:hover { color: var(--gold-2); }
 @media (max-width: 360px) { .reading { grid-template-columns: 64px minmax(0, 1fr); } .r-img { width: 64px; } .t-row .t-slot { width: 92px; } }
 @media (prefers-reduced-motion: reduce) { .tc-in { transition: none; } }
 
+/* luck: ping-pong globe */
+.globe-stage { position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+.globe { position: relative; width: min(78vw, 290px); aspect-ratio: 1; border-radius: 50%; overflow: hidden; touch-action: none;
+  background: radial-gradient(circle at 32% 26%, rgba(255,255,255,.22), rgba(255,255,255,0) 22%), radial-gradient(circle at 50% 60%, rgba(224,164,88,.10), rgba(13,11,8,.2) 70%), rgba(255,255,255,.025);
+  box-shadow: inset 0 0 0 2px rgba(232,199,122,.55), inset 0 -18px 40px rgba(224,164,88,.18), inset 0 10px 30px rgba(255,255,255,.06), 0 0 40px rgba(224,164,88,.12); }
+.globe::after { content: ''; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; background: radial-gradient(ellipse 36% 14% at 34% 18%, rgba(255,255,255,.35), transparent 70%), radial-gradient(ellipse 10% 30% at 86% 56%, rgba(255,255,255,.12), transparent 70%); }
+.globe.stirring { box-shadow: inset 0 0 0 2px rgba(240,216,154,.9), inset 0 -30px 60px rgba(224,164,88,.35), 0 0 50px rgba(224,164,88,.3); }
+.globe.full .pball { opacity: .35; pointer-events: none; }
+.globe-neck { width: 46px; height: 18px; margin-top: -4px; background: linear-gradient(90deg, #6E5422, #E8C77A, #6E5422); border-radius: 0 0 6px 6px; }
+.globe-base { width: 150px; height: 26px; background: linear-gradient(180deg, #2A2216, #15120D); border: 1px solid #5A4724; border-radius: 4px 4px 14px 14px; box-shadow: 0 10px 24px rgba(0,0,0,.6); }
+.pball { position: absolute; left: 0; top: 0; padding: 0; border: 0; border-radius: 50%; cursor: pointer; will-change: transform; transition: opacity .4s, scale .4s;
+  background: radial-gradient(circle at 34% 30%, #FFFFFF, #F1EDE4 38%, #C9C1B0 100%); box-shadow: 0 2px 4px rgba(0,0,0,.45); }
+.pball.h1 { background: radial-gradient(circle at 34% 30%, #FFE2B8, #F39A3D 45%, #B4601C 100%); }
+.pball.h2 { background: radial-gradient(circle at 34% 30%, #FFF6D8, #EBCB7A 45%, #A9832F 100%); }
+.pball.picked { scale: 2.2; opacity: 0; }
+.b-slots { display: flex; justify-content: center; gap: 16px; }
+.b-slot { width: 62px; height: 62px; border-radius: 50%; border: 1px dashed var(--line-2); display: flex; align-items: center; justify-content: center; font-family: var(--mono); color: var(--faint); }
+.b-slot.on { border: 0; background: radial-gradient(circle at 34% 30%, #FFFFFF, #F1EDE4 38%, #C9C1B0 100%); box-shadow: 0 6px 16px rgba(0,0,0,.5), 0 0 22px rgba(224,164,88,.35); animation: ballIn .7s cubic-bezier(.2,.9,.3,1.3); }
+.b-slot.on.h1 { background: radial-gradient(circle at 34% 30%, #FFE2B8, #F39A3D 45%, #B4601C 100%); }
+.b-slot.on.h2 { background: radial-gradient(circle at 34% 30%, #FFF6D8, #EBCB7A 45%, #A9832F 100%); }
+.b-slot.on b { font-family: var(--mono); font-size: 28px; font-weight: 600; color: #1C140A; animation: digitIn .9s ease-out; }
+@keyframes ballIn { from { transform: translateY(-90px) scale(.4) rotate(-200deg); opacity: 0; } }
+@keyframes digitIn { 0%, 45% { opacity: 0; transform: scale(.3); } 100% { opacity: 1; transform: none; } }
+
+/* luck: numbered incense */
+.inc-stage { position: relative; height: 380px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+.i-stick-wrap { position: absolute; bottom: 70px; left: 50%; width: 18px; height: 290px; transform: translateX(-50%); }
+.i-stick { position: relative; width: 100%; height: 100%; }
+.i-body { position: absolute; left: 0; right: 0; top: 5%; bottom: 0; border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, #C0392B 0%, #A52A1E 72%, #C9A86A 72.5%, #9A7A40 100%); box-shadow: inset -3px 0 4px rgba(0,0,0,.35), inset 2px 0 3px rgba(255,255,255,.15); }
+.i-body::before { content: ''; position: absolute; inset: 0 0 28% 0; background: repeating-linear-gradient(180deg, transparent 0 22px, rgba(242,213,140,.55) 22px 24px); }
+.i-ash { position: absolute; left: -2px; right: -2px; height: 0; border-radius: 4px; background: linear-gradient(90deg, #6F6A63, #B9B3A8 45%, #8C867D); box-shadow: inset 0 0 6px rgba(0,0,0,.35); }
+.i-dig { position: absolute; left: 50%; transform: translate(-50%, -50%); font-family: var(--mono); font-size: 16px; font-weight: 600; color: #3B3833; opacity: 0; z-index: 2; }
+.i-dig.show { opacity: 1; animation: ashGlow 2.4s ease-out; }
+.i-dig.gone { opacity: 0; }
+@keyframes ashGlow { 0% { color: #FFB45E; text-shadow: 0 0 10px #FF8A2A; transform: translate(-50%, -50%) scale(1.5); } 100% { color: #3B3833; text-shadow: none; transform: translate(-50%, -50%); } }
+.i-ember { position: absolute; left: 50%; top: 5%; width: 16px; height: 9px; transform: translate(-50%, -50%); border-radius: 50%; opacity: 0; background: radial-gradient(#FFF1C2, #FF8A2A 45%, rgba(255,90,20,0) 72%); box-shadow: 0 0 16px 6px rgba(255,120,40,.55); z-index: 3; }
+.lit .i-ember { opacity: 1; animation: ember .5s ease-in-out infinite alternate; }
+@keyframes ember { to { box-shadow: 0 0 22px 9px rgba(255,140,50,.75); } }
+.i-smoke { position: absolute; left: 50%; top: 5%; width: 0; height: 0; opacity: 0; }
+.lit .i-smoke { opacity: 1; }
+.i-smoke i { position: absolute; left: -6px; bottom: 0; width: 12px; height: 60px; border-radius: 50%; background: radial-gradient(ellipse at 50% 80%, rgba(220,212,196,.35), transparent 70%); filter: blur(3px); animation: smoke 3.2s linear infinite; }
+.i-smoke i:nth-child(2) { animation-delay: 1.1s; } .i-smoke i:nth-child(3) { animation-delay: 2.2s; }
+@keyframes smoke { 0% { transform: translate(0, 0) scale(.6); opacity: 0; } 15% { opacity: .9; } 100% { transform: translate(18px, -150px) scale(2.4) rotate(18deg); opacity: 0; } }
+.i-fall { position: absolute; left: -2px; right: -2px; border-radius: 4px; background: linear-gradient(90deg, #6F6A63, #B9B3A8 45%, #8C867D); animation: ashFall 1.5s cubic-bezier(.5,0,.8,.4) forwards; z-index: 4; }
+.i-fall span { position: absolute; left: 50%; transform: translate(-50%, -50%); font-family: var(--mono); font-size: 16px; font-weight: 600; color: #3B3833; }
+@keyframes ashFall { 0% { transform: none; } 20% { transform: translateX(4px) rotate(6deg); } 100% { transform: translate(26px, 300px) rotate(70deg); opacity: 0; } }
+.i-pot { width: 230px; display: block; filter: drop-shadow(0 10px 20px rgba(0,0,0,.6)); position: relative; z-index: 5; }
+.b-slots.inc { gap: 12px; }
+.n-slot { width: 58px; height: 70px; border-radius: 8px; border: 1px dashed var(--line-2); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 32px; color: var(--faint); }
+.n-slot.on { border: 1px solid #8C867D; color: #F2E7D0; background: linear-gradient(180deg, #2A2724, #151310); box-shadow: 0 0 18px rgba(255,140,50,.25); animation: pop .5s ease-out; }
+
+/* luck: เซียมซี */
+.ss-stage { position: relative; height: 320px; display: flex; justify-content: center; align-items: flex-end; overflow: hidden; }
+.ss-cyl { position: relative; width: 140px; margin-bottom: 40px; transform: rotate(-16deg); transform-origin: 50% 100%; cursor: grab; touch-action: none; filter: drop-shadow(0 14px 20px rgba(0,0,0,.6)); z-index: 2; }
+.ss-cyl svg { display: block; width: 100%; }
+.ss-cyl.shaking { animation: rattle .16s ease-in-out infinite; cursor: grabbing; }
+.ss-cyl.shaking .ss-sticks { animation: jiggle .12s linear infinite; }
+@keyframes rattle { 0% { transform: rotate(-24deg) translateY(-4px); } 50% { transform: rotate(-9deg) translateY(2px); } 100% { transform: rotate(-24deg) translateY(-4px); } }
+@keyframes jiggle { 50% { transform: translateY(-4px); } }
+.ss-out { position: absolute; left: 50%; bottom: 140px; width: 12px; height: 128px; margin-left: -22px; border-radius: 2px; opacity: 0; z-index: 3;
+  background: linear-gradient(90deg, #A9843F, #EED7A0 50%, #A9843F); box-shadow: 0 4px 10px rgba(0,0,0,.5); }
+.ss-out::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 18px; background: #B3271C; border-radius: 2px 2px 0 0; }
+.ss-out b { position: absolute; left: 50%; top: 58%; transform: translate(-50%, -50%) rotate(-90deg); font-family: var(--serif); font-size: 14px; font-weight: 700; color: #5E140F; white-space: nowrap; }
+.fallen .ss-out { animation: stickFall 1.2s cubic-bezier(.3,.1,.4,1) forwards; }
+@keyframes stickFall { 0% { opacity: 1; transform: translate(-6px, 40px) rotate(-16deg); } 35% { opacity: 1; transform: translate(-30px, -60px) rotate(-30deg); } 100% { opacity: 1; transform: translate(70px, 128px) rotate(84deg); } }
+.ss-floor { position: absolute; left: 10%; right: 10%; bottom: 18px; height: 22px; border-radius: 50%; background: radial-gradient(ellipse, rgba(224,164,88,.18), transparent 70%); }
+.ss-meter { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.ss-meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #B3271C, #F2D58C); box-shadow: 0 0 10px rgba(242,213,140,.6); }
+.ss-shake { user-select: none; -webkit-user-select: none; touch-action: none; }
+.slip { position: relative; background: #F4EAD5; color: #3A2A14; border-radius: 4px; padding: 22px 20px 16px; box-shadow: 0 10px 30px rgba(0,0,0,.5); border: 1px solid #C9A86A; outline: 3px double #A8231A; outline-offset: -10px; display: flex; flex-direction: column; gap: 12px; animation: slipIn .6s ease-out; }
+@keyframes slipIn { from { transform: translateY(24px) rotate(-1.5deg); opacity: 0; } }
+.slip-head { display: flex; justify-content: space-between; align-items: center; padding: 0 6px; }
+.slip-no { font-family: var(--serif); font-size: 22px; font-weight: 700; color: #A8231A; }
+.slip-seal { font-family: var(--serif); font-size: 14px; font-weight: 700; padding: 6px 10px; border: 2px solid; border-radius: 50%; transform: rotate(-8deg); }
+.slip-verse { text-align: center; font-family: var(--serif); font-size: 17px; line-height: 1.7; padding: 4px 8px; border-top: 1px solid #D9C49A; border-bottom: 1px solid #D9C49A; }
+.slip-verse p { margin: 0; }
+.slip-sum { margin: 0; font-size: 15px; font-weight: 600; text-align: center; padding: 0 8px; }
+.slip-topics { margin: 0; padding: 0 6px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
+.slip-topics dt { font-size: 11px; color: #A8231A; font-weight: 700; letter-spacing: .04em; }
+.slip-topics dd { margin: 2px 0 0; font-size: 13px; line-height: 1.45; }
+.slip-tip { margin: 0 6px; padding: 10px 12px; background: rgba(168,35,26,.07); border-radius: 4px; font-size: 13px; }
+.slip-tip b { color: #A8231A; margin-right: 4px; }
+.slip-foot { margin: 0; text-align: center; font-size: 10px; color: #8A7652; }
+@media (prefers-reduced-motion: reduce) { .ss-cyl.shaking, .ss-cyl.shaking .ss-sticks, .i-smoke i, .lit .i-ember { animation: none; } }
+
 /* pick-your-own fan */
 .p-slots { display: flex; justify-content: center; gap: 10px; }
 .p-slots.h { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
@@ -1652,6 +1738,243 @@ const HOUSE_READ = [
   { q: 'การงาน ชื่อเสียง และเป้าหมาย', use: 'work' }, { q: 'เพื่อน คอนเนกชัน และความหวัง', use: 'up' }, { q: 'จิตใจ เรื่องเบื้องหลัง และสิ่งที่ต้องปล่อย', use: 'up' }
 ];
 
+// ---- js/luck.js ----
+// Interactive pieces for the luck room: a ping-pong lottery globe with real physics,
+// a numbered incense stick that burns down, and a เซียมซี cylinder you shake yourself.
+
+const rnd = (n) => { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; };
+const randomDigit = () => rnd(10);
+const randomInt = (n) => rnd(n);
+
+// ---------- ping-pong globe ----------
+// Balls carry hidden digits. Air from the bottom keeps them dancing; "stir" blows harder.
+function mountGlobe(el, { count = 24, onPick } = {}) {
+  const S = el.clientWidth, R = S / 2, r = Math.round(S * 0.062);
+  const balls = [];
+  const digits = Array.from({ length: count }, (_, k) => k % 10);
+  for (let k = digits.length - 1; k > 0; k--) { const j = rnd(k + 1); [digits[k], digits[j]] = [digits[j], digits[k]]; }
+  for (let k = 0; k < count; k++) {
+    const d = document.createElement('button');
+    d.className = 'pball';
+    d.type = 'button';
+    d.setAttribute('aria-label', 'จับลูกปิงปอง');
+    d.style.width = d.style.height = 2 * r + 'px';
+    el.appendChild(d);
+    const a = Math.random() * Math.PI * 2, m = Math.random() * (R - r) * 0.8;
+    balls.push({ el: d, x: R + Math.cos(a) * m, y: R + Math.sin(a) * m, vx: (Math.random() - 0.5) * 2, vy: (Math.random() - 0.5) * 2, digit: digits[k], hue: k % 3 });
+    d.classList.add('h' + (k % 3));
+  }
+  let stirUntil = 0, raf = 0, alive = true;
+  const g = 0.32, maxR = R - r - 2;
+  function step(t) {
+    if (!alive) return;
+    const strong = t < stirUntil;
+    for (const b of balls) {
+      b.vy += g;
+      // blower at the bottom of the globe
+      if (b.y > R + R * 0.35) {
+        const p = strong ? 1.5 : 0.48;
+        b.vy -= Math.random() * p * 2.2;
+        b.vx += (Math.random() - 0.5) * p * 2.2;
+      }
+      if (strong) { b.vx += (Math.random() - 0.5) * 0.9; b.vy += (Math.random() - 0.5) * 0.9; }
+      b.vx *= 0.992; b.vy *= 0.992;
+      b.x += b.vx; b.y += b.vy;
+      const dx = b.x - R, dy = b.y - R, dist = Math.hypot(dx, dy);
+      if (dist > maxR) {
+        const nx = dx / dist, ny = dy / dist, dot = b.vx * nx + b.vy * ny;
+        if (dot > 0) { b.vx -= 1.75 * dot * nx; b.vy -= 1.75 * dot * ny; }
+        b.x = R + nx * maxR; b.y = R + ny * maxR;
+      }
+    }
+    for (let i = 0; i < balls.length; i++) {
+      for (let j = i + 1; j < balls.length; j++) {
+        const a = balls[i], b = balls[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+        if (d > 0 && d < 2 * r) {
+          const nx = dx / d, ny = dy / d, over = (2 * r - d) / 2;
+          a.x -= nx * over; a.y -= ny * over; b.x += nx * over; b.y += ny * over;
+          const rel = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+          if (rel < 0) { const imp = -rel * 0.9; a.vx -= imp * nx; a.vy -= imp * ny; b.vx += imp * nx; b.vy += imp * ny; }
+        }
+      }
+    }
+    for (const b of balls) b.el.style.transform = `translate(${(b.x - r).toFixed(1)}px,${(b.y - r).toFixed(1)}px) rotate(${(b.x * 3).toFixed(0)}deg)`;
+    raf = requestAnimationFrame(step);
+  }
+  raf = requestAnimationFrame(step);
+  el.addEventListener('pointerdown', (e) => {
+    const t = e.target.closest('.pball');
+    if (!t) return;
+    e.preventDefault();
+    const i = balls.findIndex((b) => b.el === t);
+    if (i < 0) return;
+    const [b] = balls.splice(i, 1);
+    t.classList.add('picked');
+    setTimeout(() => t.remove(), 450);
+    if (onPick) onPick(b.digit, b.hue);
+  });
+  return {
+    stir(ms = 1600) { stirUntil = performance.now() + ms; el.classList.add('stirring'); setTimeout(() => el.classList.remove('stirring'), ms); },
+    destroy() { alive = false; cancelAnimationFrame(raf); }
+  };
+}
+
+// ---------- numbered incense ----------
+// The ember moves down the stick; each digit appears in the ash, then the ash drops into the pot.
+function burnIncense(el, digits, { onDigit, onDone, duration = 12000 } = {}) {
+  const ash = el.querySelector('.i-ash'), body = el.querySelector('.i-body'), ember = el.querySelector('.i-ember');
+  const smoke = el.querySelector('.i-smoke'), wins = [...el.querySelectorAll('.i-dig')];
+  const zones = [0.24, 0.5, 0.76], start = 0.05, end = 0.93;
+  wins.forEach((w, k) => { w.textContent = digits[k]; w.style.top = zones[k] * 100 + '%'; });
+  let ashTop = start, dropped = 0, raf = 0, alive = true;
+  const t0 = performance.now();
+  el.classList.add('lit');
+  function frame(t) {
+    if (!alive) return;
+    const p = Math.min(1, (t - t0) / duration);
+    const front = start + (end - start) * p;
+    body.style.top = front * 100 + '%';
+    ember.style.top = front * 100 + '%';
+    smoke.style.top = front * 100 + '%';
+    ash.style.top = ashTop * 100 + '%';
+    ash.style.height = Math.max(0, front - ashTop) * 100 + '%';
+    wins.forEach((w, k) => {
+      if (k < dropped) return;
+      if (front > zones[k] + 0.03) w.classList.add('show');
+    });
+    if (dropped < 3 && front > zones[dropped] + 0.13) {
+      const cut = zones[dropped] + 0.07;
+      dropAsh(ashTop, cut, dropped);
+      ashTop = cut; dropped += 1;
+    }
+    if (p < 1) raf = requestAnimationFrame(frame);
+    else {
+      while (dropped < 3) { dropAsh(ashTop, zones[dropped] + 0.07, dropped); ashTop = zones[dropped] + 0.07; dropped += 1; }
+      el.classList.remove('lit'); el.classList.add('done');
+      ash.style.height = '0';
+      if (onDone) setTimeout(onDone, 900);
+    }
+  }
+  function dropAsh(top, bottom, k) {
+    const piece = document.createElement('div');
+    piece.className = 'i-fall';
+    piece.style.top = top * 100 + '%';
+    piece.style.height = (bottom - top) * 100 + '%';
+    const w = wins[k];
+    const dg = document.createElement('span');
+    dg.textContent = w.textContent;
+    dg.style.top = ((zones[k] - top) / (bottom - top)) * 100 + '%';
+    piece.appendChild(dg);
+    w.classList.remove('show'); w.classList.add('gone');
+    el.appendChild(piece);
+    setTimeout(() => piece.remove(), 1600);
+    if (onDigit) setTimeout(() => onDigit(k, digits[k]), 700);
+  }
+  raf = requestAnimationFrame(frame);
+  return { destroy() { alive = false; cancelAnimationFrame(raf); } };
+}
+
+// ---------- เซียมซี ----------
+// Hold the button (or shake the phone) to build up energy; at 100% one stick falls out.
+function mountSiamsi(el, { total = 28, onFall } = {}) {
+  const cyl = el.querySelector('.ss-cyl'), meter = document.querySelector('.ss-meter i'), btn = document.querySelector('.ss-shake');
+  let energy = 0, shaking = false, lastShake = 0, raf = 0, alive = true, fallen = false;
+  function frame() {
+    if (!alive) return;
+    const active = shaking || performance.now() - lastShake < 180;
+    cyl.classList.toggle('shaking', active && !fallen);
+    if (active && !fallen) {
+      energy = Math.min(1, energy + 0.0075 + Math.random() * 0.004);
+      if (navigator.vibrate && Math.random() < 0.06) navigator.vibrate(12);
+    } else if (!fallen) energy = Math.max(0, energy - 0.002);
+    meter.style.width = (energy * 100).toFixed(1) + '%';
+    if (energy >= 1 && !fallen) {
+      fallen = true;
+      const no = rnd(total) + 1;
+      cyl.classList.remove('shaking');
+      el.classList.add('fallen');
+      const stick = el.querySelector('.ss-out');
+      stick.querySelector('b').textContent = thaiNum(no);
+      if (navigator.vibrate) navigator.vibrate([30, 40, 60]);
+      setTimeout(() => onFall && onFall(no), 1300);
+    }
+    raf = requestAnimationFrame(frame);
+  }
+  const down = (e) => { e.preventDefault(); shaking = true; };
+  const up = () => { shaking = false; };
+  btn.addEventListener('pointerdown', down);
+  btn.addEventListener('pointerup', up);
+  btn.addEventListener('pointerleave', up);
+  btn.addEventListener('pointercancel', up);
+  cyl.addEventListener('pointerdown', down);
+  cyl.addEventListener('pointerup', up);
+  cyl.addEventListener('pointerleave', up);
+  let prev = null;
+  const onMotion = (e) => {
+    const a = e.accelerationIncludingGravity;
+    if (!a || a.x == null) return;
+    if (prev) {
+      const d = Math.abs(a.x - prev.x) + Math.abs(a.y - prev.y) + Math.abs(a.z - prev.z);
+      if (d > 9) lastShake = performance.now();
+    }
+    prev = { x: a.x, y: a.y, z: a.z };
+  };
+  window.addEventListener('devicemotion', onMotion);
+  raf = requestAnimationFrame(frame);
+  return { destroy() { alive = false; cancelAnimationFrame(raf); window.removeEventListener('devicemotion', onMotion); } };
+}
+// iOS asks for permission before sending motion events; must be called from a tap.
+async function askMotion() {
+  try {
+    if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+      return (await DeviceMotionEvent.requestPermission()) === 'granted';
+    }
+    return 'ondevicemotion' in window;
+  } catch { return false; }
+}
+const thaiNum = (n) => String(n).replace(/[0-9]/g, (d) => '๐๑๒๓๔๕๖๗๘๙'[d]);
+
+// ---- js/siamsi.js ----
+// เซียมซี 28 ใบ: original verses written for ตักศิลา (not copied from any temple's set).
+// Each slip carries practical advice, so the reading encourages action rather than reliance on luck.
+// Row: [level, verse line 1, verse line 2, summary, work, money, love, health, travel, lost item, advice]
+const SS_LV = { 4: 'ดีมาก', 3: 'ดี', 2: 'ปานกลาง', 1: 'ควรระวัง' };
+const SS_ROWS = [
+  [4, 'ฟ้าเปิดทางสว่าง ดั่งตะวันพ้นเมฆา', 'สิ่งที่หมายปองไว้ จะได้สมดั่งใจ', 'ช่วงขาขึ้นของชีวิต สิ่งที่ตั้งใจไว้กำลังจะสำเร็จ', 'ได้รับการยอมรับ มีโอกาสเลื่อนขั้น', 'รายได้เพิ่ม มีโชคจากผู้ใหญ่', 'สมหวัง คนโสดจะพบคนดี', 'แข็งแรง กระปรี้กระเปร่า', 'ราบรื่น ได้ผลดีกลับมา', 'ได้คืนเร็ว ลองหาในบ้าน', 'ใช้จังหวะดีนี้ลงมือเรื่องที่ค้างไว้'],
+  [3, 'ต้นกล้าเพิ่งผลิใบ อย่าใจร้อนรีบเด็ดดอก', 'รดน้ำพรวนดินไป ไม่นานผลจะงอกงาม', 'เรื่องกำลังไปได้ดี แต่ต้องให้เวลามันเติบโต', 'ค่อย ๆ ก้าวหน้า สม่ำเสมอแล้วดี', 'ออมได้ อย่าเพิ่งลงทุนเสี่ยง', 'ค่อยเป็นค่อยไปแล้วจะยืนยาว', 'ดูแลเรื่องการนอนให้พอ', 'ไปได้ ช้าแต่ปลอดภัย', 'อยู่ในที่เดิมที่เคยวางไว้', 'ทำทุกวันให้ต่อเนื่อง ผลจะมาเอง'],
+  [2, 'เรือลำน้อยกลางคลื่น ต้องถือหางเสือให้มั่น', 'ลมแรงเพียงชั่วครู่ ฟ้าจะกลับสงบงาม', 'มีอุปสรรคชั่วคราว ตั้งสติไว้แล้วจะผ่านไป', 'มีแรงกดดัน อดทนอีกนิด', 'มีรายจ่ายจร ควรมีเงินสำรอง', 'อาจกระทบกระทั่งเล็กน้อย ใจเย็นไว้', 'ระวังความเครียดสะสม', 'ถ้าเลื่อนได้ควรเลื่อน', 'หายากเล็กน้อย ลองถามคนใกล้ตัว', 'แยกเรื่องที่คุมได้ออกจากเรื่องที่คุมไม่ได้'],
+  [4, 'มังกรทองทะยานฟ้า ลาภลอยมาถึงมือ', 'ใครทำดีไว้ก่อน บัดนี้ได้รับผลบุญ', 'ผลของความดีที่ทำไว้กำลังกลับมาหาคุณ', 'ได้งานใหญ่หรือตำแหน่งสำคัญ', 'มีลาภลอย รายได้พิเศษ', 'คนรักคอยหนุนนำ', 'สุขภาพดี', 'เดินทางไกลได้โชค', 'ได้คืนพร้อมของแถม', 'แบ่งปันโชคให้คนรอบตัว จะยิ่งเพิ่มพูน'],
+  [1, 'หมอกควันบังตา อย่าเพิ่งก้าวเดินไกล', 'รอแสงเช้ามาถึง ค่อยเลือกทางที่ใช่', 'ข้อมูลยังไม่ชัด อย่าเพิ่งตัดสินใจเรื่องใหญ่', 'อย่าเพิ่งเปลี่ยนงานหรือลาออก', 'ระวังถูกหลอก ไม่ค้ำประกันให้ใคร', 'ระวังคำหวานที่ไม่จริงใจ', 'ควรไปตรวจสุขภาพ', 'ระวังอุบัติเหตุ เผื่อเวลา', 'ยากจะได้คืน', 'หาข้อมูลให้ครบ ถามคนที่รู้จริงก่อนตัดสินใจ'],
+  [3, 'นกน้อยคืนรัง ได้พบหน้าคนที่รัก', 'บ้านอบอุ่นดังเดิม ใจที่ห่างกลับมาใกล้', 'เรื่องครอบครัวและคนใกล้ตัวกลับมาดี', 'เพื่อนร่วมงานช่วยเหลือดี', 'ได้ความช่วยเหลือจากญาติ', 'คืนดี หรือความสัมพันธ์อบอุ่นขึ้น', 'ผู้ใหญ่ในบ้านอาการดีขึ้น', 'กลับบ้านเกิดดี', 'คนในบ้านเก็บไว้ให้', 'โทรหาคนที่ห่างกันไปนาน'],
+  [2, 'ปลูกบัวในโคลนตม อย่ารังเกียจดินดำ', 'วันหนึ่งดอกบานพ้นน้ำ งามกว่าใครในบึง', 'เริ่มจากความลำบาก แต่ปลายทางสวยงาม', 'เหนื่อยหนักแต่คุ้มค่า', 'ตอนนี้ตึงมือ ต่อไปดีขึ้น', 'ต้องใช้เวลาพิสูจน์ใจ', 'พักผ่อนให้มากขึ้น', 'ไปเพื่อเรียนรู้ได้ผลดี', 'จะเจอในภายหลัง', 'อย่าเทียบตัวเองกับคนอื่นในช่วงเริ่มต้น'],
+  [4, 'ทองคำอยู่ในมือ อย่าทิ้งไปเพราะไม่รู้ค่า', 'โอกาสมาถึงหน้าบ้าน รีบเปิดประตูรับ', 'โอกาสใหญ่มาถึงแล้ว คว้าไว้ให้ทัน', 'มีข้อเสนองานดี รับได้', 'ลงทุนถูกจังหวะ', 'คนที่ใช่อยู่ใกล้ตัวกว่าที่คิด', 'แข็งแรงดี', 'เดินทางแล้วได้ลาภ', 'ได้คืน', 'ตอบรับโอกาสก่อน แล้วค่อยเรียนรู้ระหว่างทาง'],
+  [3, 'ไม้ไผ่ลู่ตามลม แต่ไม่เคยหักโค่น', 'อ่อนน้อมแต่ยืนหยัด ภัยใดก็ผ่านพ้น', 'ความยืดหยุ่นจะพาคุณผ่านทุกเรื่อง', 'ประนีประนอมแล้วได้ผลดี', 'มีใช้ไม่ขาดมือ', 'ยอมกันคนละนิดแล้วจะรักกันยาว', 'ยืดเหยียด ออกกำลังกายเบา ๆ', 'ปลอดภัย', 'เจอถ้าใจเย็นหา', 'ฟังให้มากกว่าพูดในสัปดาห์นี้'],
+  [1, 'ไฟลุกในใจ ระวังจะไหม้บ้านตน', 'ดับไฟด้วยน้ำเย็น คำพูดดีย่อมเป็นมนต์', 'อารมณ์ร้อนคือศัตรูตัวจริงในช่วงนี้', 'ระวังขัดแย้งกับหัวหน้า', 'อย่าซื้อของตามอารมณ์', 'ระวังคำพูดที่ทำร้ายใจกัน', 'ระวังความดันและความเครียด', 'ขับรถใจเย็น', 'หายเพราะความรีบ ลองย้อนทางเดิม', 'โกรธเมื่อไรให้รอหนึ่งคืนก่อนตอบ'],
+  [3, 'ดวงจันทร์ส่องทาง คืนมืดไม่น่ากลัว', 'มีผู้ใหญ่ใจดี คอยประคองไม่ให้ล้ม', 'มีผู้อุปถัมภ์คอยช่วยเหลือ', 'หัวหน้าเอ็นดู สนับสนุน', 'ได้รับความช่วยเหลือเรื่องเงิน', 'ผู้ใหญ่ทั้งสองฝ่ายเห็นด้วย', 'เจอหมอเก่ง รักษาได้ผล', 'มีคนช่วยตลอดทาง', 'มีคนเก็บได้แล้วนำมาคืน', 'ขอคำปรึกษาจากคนที่มีประสบการณ์'],
+  [2, 'สองทางแยกตรงหน้า ทางหนึ่งง่ายทางหนึ่งยาก', 'ทางง่ายมักพาไปสั้น ทางยากพาไปไกล', 'ถึงเวลาต้องเลือก ให้เลือกทางที่ยั่งยืน', 'ทางที่ท้าทายให้ผลดีกว่า', 'อย่าเลือกทางรวยเร็ว', 'เลือกคนที่จริงใจ ไม่ใช่คนที่หวาน', 'สร้างนิสัยดีระยะยาว', 'ทางไกลคุ้มค่ากว่า', 'อยู่ในที่ที่ไม่คาดคิด', 'เขียนข้อดีข้อเสียของแต่ละทางลงกระดาษ'],
+  [4, 'ฝนแรกโปรยปราย นาข้าวเขียวขจี', 'ปีนี้ผลผลิตงาม ยุ้งฉางเต็มล้น', 'อุดมสมบูรณ์ สิ่งที่ลงแรงไว้ให้ผลเต็มที่', 'ผลงานโดดเด่น', 'รายได้งอกเงย', 'มีข่าวดีในครอบครัว', 'สดชื่นแจ่มใส', 'ไปค้าขายได้กำไร', 'ได้คืน', 'เก็บส่วนหนึ่งไว้สำหรับฤดูแล้ง'],
+  [3, 'ลมพัดใบเรือ ไปถึงฝั่งดังใจ', 'แต่อย่าลืมดูฟ้า ก่อนออกเดินทาง', 'มีแรงหนุน แต่ต้องวางแผนให้ดี', 'โปรเจกต์ไปได้สวยถ้าวางแผน', 'มีกำไร ควรกระจายความเสี่ยง', 'ไปในทางเดียวกัน', 'ดี ระวังเรื่องอาหาร', 'เดินทางดี เช็กตารางให้รอบคอบ', 'อยู่ในกระเป๋าหรือรถ', 'ทำเช็กลิสต์ก่อนเริ่มงานใหญ่'],
+  [1, 'งูซ่อนในพงหญ้า เดินระวังทุกก้าวย่าง', 'ไว้ใจคนให้น้อยหน่อย ปากหวานใจไม่ตรง', 'ระวังคนรอบตัวที่ไม่จริงใจ', 'ระวังคนแย่งผลงาน', 'อย่าให้ใครยืมเงิน', 'ระวังมือที่สาม', 'ระวังอาหารไม่สะอาด', 'ระวังทรัพย์สินหาย', 'อาจถูกหยิบไป', 'เก็บเรื่องสำคัญไว้กับตัว ทำเอกสารให้ชัด'],
+  [3, 'ช้างเผือกเดินเข้าเมือง ผู้คนต่างยกย่อง', 'ชื่อเสียงดีงามมา เพราะความเพียรของตน', 'ได้รับการยอมรับ มีชื่อเสียง', 'ได้รับคำชม มีคนรู้จักมากขึ้น', 'รายได้จากชื่อเสียง', 'เป็นที่หมายตา', 'ดี', 'ได้รับการต้อนรับดี', 'มีคนเห็นแล้วแจ้งกลับมา', 'รักษามาตรฐานไว้ อย่าหยุดพัฒนา'],
+  [2, 'น้ำนิ่งไหลลึก อย่าคิดว่าไม่มีอะไร', 'เรื่องที่รอคำตอบ ยังต้องอดใจอีกนิด', 'เรื่องที่รอยังไม่มีคำตอบ แต่กำลังเดินอยู่เบื้องหลัง', 'รอผลอีกสักพัก', 'เงินที่รอจะมาช้ากว่ากำหนด', 'อีกฝ่ายยังไม่พร้อมบอก', 'ค่อย ๆ ดีขึ้น', 'รอจังหวะ', 'ยังไม่เจอตอนนี้', 'ใช้ช่วงรอนี้เตรียมตัวให้พร้อม'],
+  [4, 'ดอกไม้บานรับเช้า ผึ้งภู่บินมาเชยชม', 'เสน่ห์ล้นเต็มตัว ใครเห็นใครก็รัก', 'เสน่ห์แรง ความรักและความนิยมเด่นมาก', 'งานที่ต้องเจอคนไปได้ดี', 'ค้าขายดี ลูกค้าเข้า', 'สมหวังในความรัก', 'ผิวพรรณสดใส', 'ได้มิตรใหม่ระหว่างทาง', 'มีคนช่วยหา', 'ใช้เสน่ห์ทำสิ่งดี ๆ ให้คนรอบตัว'],
+  [2, 'ภูเขาสูงชัน ปีนทีละก้าวไม่ต้องรีบ', 'ยอดเขาไม่หนีไปไหน ขอเพียงอย่าหยุดเดิน', 'เป้าหมายใหญ่ต้องใช้ความพยายามต่อเนื่อง', 'งานหนักแต่สำเร็จแน่', 'เก็บทีละน้อยได้มาก', 'ค่อย ๆ สร้างความไว้ใจ', 'ระวังหักโหม', 'เดินทางไกลเหนื่อยแต่คุ้ม', 'ต้องค้นละเอียด', 'แบ่งเป้าหมายใหญ่เป็นขั้นเล็ก ๆ'],
+  [3, 'บ่อน้ำใสในป่า ดับกระหายผู้เดินทาง', 'ให้แล้วได้กลับคืน น้ำใจย่อมไม่สูญเปล่า', 'น้ำใจที่ให้ไปจะกลับมาเป็นผลดี', 'ช่วยเพื่อนแล้วเพื่อนช่วยกลับ', 'ได้เงินคืน', 'ความใส่ใจทำให้รักแน่นแฟ้น', 'จิตใจดี สุขภาพดีตาม', 'มีคนน้ำใจดีช่วย', 'มีคนใจดีคืนให้', 'ทำบุญด้วยการช่วยคนตรงหน้า'],
+  [1, 'เมฆดำตั้งเค้า เตรียมร่มไว้ก่อนฝนตก', 'ป้องกันดีกว่าแก้ เรื่องร้ายจะเบาบาง', 'มีเรื่องท้าทายมา แต่เตรียมตัวก่อนจะเบาลง', 'สำรองไฟล์ ตรวจงานซ้ำ', 'มีเงินฉุกเฉินไว้', 'คุยปัญหาก่อนจะบานปลาย', 'ระวังหวัดและพักผ่อน', 'ทำประกันการเดินทาง', 'หายยาก ระวังหายซ้ำ', 'เตรียมแผนสำรองสำหรับเรื่องสำคัญ'],
+  [4, 'ประตูทองเปิดกว้าง เทวดาโปรยดอกไม้', 'ขอสิ่งใดก็สมหมาย ดังที่ตั้งจิตอธิษฐาน', 'สมปรารถนา เรื่องที่ขอมีโอกาสเป็นจริงสูง', 'ได้ตามที่หวัง', 'มีโชคทางการเงิน', 'สมหวังในรัก', 'หายป่วย', 'ได้ไปตามฝัน', 'ได้คืนแน่นอน', 'ลงมือทำส่วนของคุณให้เต็มที่'],
+  [3, 'ปลาว่ายทวนน้ำ แข็งแรงกว่าปลาใดใด', 'อุปสรรคทำให้เก่ง อย่าท้อกับคลื่นลม', 'อุปสรรคตรงหน้ากำลังทำให้คุณเก่งขึ้น', 'งานยากทำให้โดดเด่น', 'หาเงินเหนื่อยแต่ได้', 'ฝ่าอุปสรรคไปด้วยกัน', 'ร่างกายแข็งแรงขึ้น', 'ไปได้แม้มีติดขัด', 'ต้องลงแรงหา', 'มองปัญหาเป็นบททดสอบฝีมือ'],
+  [2, 'เทียนเล่มเดียวในห้อง ส่องได้เพียงรอบตัว', 'อยากสว่างทั้งบ้าน ต้องจุดเพิ่มอีกหลายดวง', 'ทำคนเดียวไม่พอ ต้องมีทีมและแนวร่วม', 'หาทีมช่วย งานจะเร็วขึ้น', 'ร่วมลงทุนกับคนไว้ใจได้', 'ให้เพื่อนช่วยแนะนำ', 'ชวนคนออกกำลังกาย', 'ไปเป็นหมู่คณะดีกว่า', 'ขอให้คนช่วยหา', 'ขอความช่วยเหลือไม่ใช่เรื่องน่าอาย'],
+  [3, 'นกอินทรีบินสูง เห็นไกลกว่าใครในฝูง', 'มองการณ์ไกลไว้ก่อน จะไม่พลาดโอกาสดี', 'วิสัยทัศน์ดี มองเห็นโอกาสก่อนคนอื่น', 'วางแผนระยะยาวได้ผล', 'ลงทุนระยะยาวดี', 'มองอนาคตร่วมกัน', 'ดี', 'เดินทางไกลได้ประโยชน์', 'อยู่ที่สูง', 'ตั้งเป้าหมาย 1 ปีไว้ให้ชัด'],
+  [2, 'ใบไม้ร่วงหล่น เพื่อผลิใบใหม่ในวันหน้า', 'สิ่งที่จากไปแล้ว ปล่อยให้เป็นปุ๋ยแก่ใจ', 'ปล่อยวางสิ่งเก่า เพื่อเริ่มต้นใหม่', 'จบงานเก่า เริ่มงานใหม่', 'ตัดรายจ่ายที่ไม่จำเป็น', 'ปล่อยวางคนเก่า', 'ล้างพิษ ปรับนิสัยการกิน', 'ย้ายที่อยู่ได้ดี', 'อาจไม่ได้คืน ปล่อยวาง', 'เคลียร์ของที่ไม่ใช้แล้วออกจากบ้าน'],
+  [3, 'เกลือไม่มีวันจืด คนดีไม่มีวันหมด', 'รักษาความซื่อตรง ทุกคนจะไว้วางใจ', 'ความซื่อสัตย์คือทุนที่มีค่าที่สุดของคุณ', 'ได้รับความไว้วางใจ', 'เงินมั่นคงจากงานสุจริต', 'ความจริงใจชนะใจ', 'ดี', 'ปลอดภัย', 'คนซื่อจะนำมาคืน', 'รักษาคำพูด ทำตามที่สัญญาไว้'],
+  [4, 'พระอาทิตย์ขึ้นตรงหน้า ฟ้าใสไร้เมฆหมอก', 'เริ่มต้นสิ่งใดวันนี้ ล้วนสำเร็จดั่งหวัง', 'จังหวะเริ่มต้นที่ดีที่สุด', 'เริ่มงานใหม่ได้ดี', 'เปิดกิจการดี', 'เริ่มต้นความรักใหม่', 'สดใส', 'ออกเดินทางได้เลย', 'ได้คืนเร็ว', 'เริ่มเรื่องที่ตั้งใจไว้ภายในสัปดาห์นี้']
+];
+const SIAMSI = SS_ROWS.map((r, i) => ({
+  no: i + 1, level: r[0], levelTh: SS_LV[r[0]], verse: [r[1], r[2]], summary: r[3],
+  topics: [['การงาน', r[4]], ['การเงิน', r[5]], ['ความรัก', r[6]], ['สุขภาพ', r[7]], ['เดินทาง', r[8]], ['ของหาย', r[9]]],
+  advice: r[10]
+}));
+
 // ---- js/data.js ----
 // Static content: places, tarot deck, numerology tables.
 
@@ -1981,6 +2304,8 @@ function logoRing() {
 
 
 
+
+
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
@@ -2002,7 +2327,7 @@ const state = {
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '' },
   num: { mode: 'phone', value: '' },
-  luck: { mode: 'ball', balls: [], ash: null, shake: false },
+  luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
   ask: { topic: 0, messages: [] }
 };
 if (state.profile) state.chart = safeChart(state.profile);
@@ -2856,34 +3181,93 @@ ${lp}
 </main>`;
 }
 
-const BOX_SVG = (() => {
-  const balls = [[78, 114, 3], [102, 116, 7], [126, 113, 1], [150, 116, 9], [174, 113, 0], [198, 116, 5], [90, 92, 8], [114, 92, 4], [138, 90, 6], [162, 92, 2], [186, 91, 7], [126, 69, 5], [154, 69, 3]];
-  return `<svg role="img" aria-label="กล่องใสบรรจุลูกเลข 0 ถึง 9" width="280" height="160" viewBox="0 0 280 160" fill="none">
-<defs><radialGradient id="lGlow"><stop offset="0" stop-color="#E0A458" stop-opacity="0.35"/><stop offset="1" stop-color="#E0A458" stop-opacity="0"/></radialGradient></defs>
-<ellipse cx="140" cy="96" rx="120" ry="60" fill="url(#lGlow)"/><rect x="50" y="14" width="180" height="120" rx="10" stroke="#E0A458" opacity="0.8"/><rect x="56" y="20" width="168" height="108" rx="7" stroke="#3D3424" stroke-width="0.6"/>
-<path d="M118 14a22 5 0 0 0 44 0" stroke="#E0A458"/><path d="M40 140H240M60 148H220" stroke="#3D3424"/>
-${balls.map(([x, y, n]) => `<circle cx="${x}" cy="${y}" r="11" fill="#15120D" stroke="#E0A458" stroke-width="0.8"/><text x="${x}" y="${y}" font-family="'IBM Plex Mono',monospace" font-size="10" fill="#F1E6CF" text-anchor="middle" dominant-baseline="central">${n}</text>`).join('')}</svg>`;
+const LUCK_MODES = [['ball', 'ลูกปิงปอง'], ['incense', 'ธูปเลข'], ['siamsi', 'เซียมซี']];
+const ballSlots = (vals) => `<div class="b-slots">${[0, 1, 2].map((k) => vals[k] ? `<span class="b-slot on h${vals[k].hue}"><b>${vals[k].d}</b></span>` : `<span class="b-slot">${k + 1}</span>`).join('')}</div>`;
+const incSlots = (vals) => `<div class="b-slots inc">${[0, 1, 2].map((k) => vals[k] != null ? `<span class="n-slot on">${vals[k]}</span>` : `<span class="n-slot">–</span>`).join('')}</div>`;
+const INCENSE_POT = `<svg class="i-pot" viewBox="0 0 220 110" aria-hidden="true"><defs><linearGradient id="potg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C9A24E"/><stop offset=".5" stop-color="#8A6A2C"/><stop offset="1" stop-color="#4A3815"/></linearGradient><radialGradient id="sand" cx="50%" cy="40%"><stop offset="0" stop-color="#9A8C74"/><stop offset="1" stop-color="#5E5446"/></radialGradient></defs>
+<ellipse cx="110" cy="18" rx="92" ry="14" fill="url(#sand)"/><path d="M18 18q4 64 40 78h104q36-14 40-78" fill="url(#potg)"/><ellipse cx="110" cy="18" rx="92" ry="14" fill="none" stroke="#E8C77A" stroke-width="1.5"/>
+<path d="M40 48q70 14 140 0" stroke="#E8C77A" stroke-width=".8" fill="none" opacity=".6"/><path d="M52 70q58 10 116 0" stroke="#E8C77A" stroke-width=".8" fill="none" opacity=".4"/>
+<path d="M70 96l-8 12h96l-8-12" fill="#3A2C10"/><text x="110" y="62" text-anchor="middle" font-family="Taviraj, serif" font-size="15" fill="#F4DFA3" opacity=".85">ตักศิลา</text></svg>`;
+const SS_CYL = (() => {
+  const sticks = Array.from({ length: 13 }, (_, k) => `<rect x="${34 + k * 4.6}" y="${8 + ((k * 7) % 11)}" width="3.2" height="60" rx="1.2" fill="${k % 4 === 0 ? '#E7C98A' : '#D9B472'}" stroke="#8A6630" stroke-width=".4"/>`).join('');
+  return `<svg viewBox="0 0 130 230" aria-hidden="true"><defs><linearGradient id="lac" x1="0" x2="1"><stop offset="0" stop-color="#5E140F"/><stop offset=".35" stop-color="#B3271C"/><stop offset=".55" stop-color="#D2372A"/><stop offset="1" stop-color="#5E140F"/></linearGradient>
+<linearGradient id="gband" x1="0" x2="1"><stop offset="0" stop-color="#8A6630"/><stop offset=".5" stop-color="#F2D58C"/><stop offset="1" stop-color="#8A6630"/></linearGradient></defs>
+<g class="ss-sticks">${sticks}</g>
+<path d="M28 50h74v162q0 10-10 10H38q-10 0-10-10z" fill="url(#lac)"/><ellipse cx="65" cy="50" rx="37" ry="7" fill="#3A0C08" stroke="url(#gband)" stroke-width="2"/>
+<rect x="28" y="66" width="74" height="6" fill="url(#gband)"/><rect x="28" y="196" width="74" height="6" fill="url(#gband)"/>
+<circle cx="65" cy="134" r="24" fill="none" stroke="url(#gband)" stroke-width="2"/><text x="65" y="142" text-anchor="middle" font-family="Taviraj, serif" font-size="22" font-weight="600" fill="#F2D58C">ซี</text>
+<path d="M41 100q24-10 48 0M41 168q24 10 48 0" stroke="#F2D58C" stroke-width=".8" fill="none" opacity=".7"/></svg>`;
 })();
-function potSvg(lit) {
-  return `<svg role="img" aria-label="กระถางธูป${lit ? ' จุดธูปสามดอก มีควันลอย' : ' ยังไม่ได้จุด'}" width="260" height="160" viewBox="0 0 240 160" fill="none">
-<defs><radialGradient id="iGlow"><stop offset="0" stop-color="#FFB45E" stop-opacity="0.9"/><stop offset="1" stop-color="#FFB45E" stop-opacity="0"/></radialGradient></defs>
-${lit ? `<path d="M90 36q-7-7 0-14q7-7 0-14M120 30q-7-7 0-14q7-7 0-12M150 36q-7-7 0-14q7-7 0-14" stroke="#C9BC9F" stroke-width="0.8" stroke-linecap="round" opacity="0.6"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite"/></path>` : ''}
-<path d="M96 110L90 44M120 110V38M144 110L150 44" stroke="#C0574A" stroke-width="2" stroke-linecap="round"/>
-${lit ? '<circle cx="90" cy="44" r="8" fill="url(#iGlow)"/><circle cx="120" cy="38" r="8" fill="url(#iGlow)"/><circle cx="150" cy="44" r="8" fill="url(#iGlow)"/><g fill="#FFE3B0"><circle cx="90" cy="44" r="2"/><circle cx="120" cy="38" r="2"/><circle cx="150" cy="44" r="2"/></g>' : ''}
-<g stroke="#E0A458"><ellipse cx="120" cy="110" rx="76" ry="9"/><path d="M44 110L58 146Q120 160 182 146L196 110M66 130H174"/></g></svg>`;
+
+function siamsiSlip(no) {
+  const f = SIAMSI[no - 1];
+  const lvColor = f.level >= 4 ? '#A8231A' : f.level === 3 ? '#B5541E' : f.level === 2 ? '#6B5A3A' : '#4A4A4A';
+  return `<article class="slip">
+<header class="slip-head"><span class="slip-no">ใบที่ ${thaiNum(no)}</span><span class="slip-seal" style="border-color:${lvColor};color:${lvColor}">${f.levelTh}</span></header>
+<div class="slip-verse"><p>${f.verse[0]}</p><p>${f.verse[1]}</p></div>
+<p class="slip-sum">${f.summary}</p>
+<dl class="slip-topics">${f.topics.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+<p class="slip-tip"><b>ข้อคิด</b> ${f.advice}</p>
+<p class="slip-foot">เซียมซีตักศิลา · คำทำนายเป็นกำลังใจ ผลจริงขึ้นอยู่กับการลงมือของคุณ</p>
+</article>`;
 }
+
 function viewLuck() {
-  const l = state.luck, ball = l.mode === 'ball';
-  const slots = (vals) => `<div class="slots">${[0, 1, 2].map((i) => vals[i] != null ? `<span class="slot-n on">${vals[i]}</span>` : '<span class="slot-n">–</span>').join('')}</div>`;
+  const l = state.luck, mode = l.mode;
+  let body = '';
+  if (mode === 'ball') {
+    const done = l.balls.length >= 3;
+    body = `<div class="globe-stage"><div class="globe${done ? ' full' : ''}" id="globe"></div><div class="globe-neck"></div><div class="globe-base"></div></div>
+<div id="ball-slots">${ballSlots(l.balls)}</div>
+<p class="p-hint" id="ball-hint">${done ? `เลขของคุณคือ <b>${l.balls.map((b) => b.d).join(' ')}</b>` : 'กด "หมุนโถ" ให้ลูกกระจาย แล้วแตะจับลูกที่ใจเรียก · ตัวเลขจะโผล่ตอนลูกออกมา'}</p>
+<div style="display:flex;gap:8px"><button class="btn" data-act="stirGlobe" style="flex:1"${done ? ' disabled' : ''}>หมุนโถ</button>${l.balls.length ? '<button class="btn btn-line" data-act="ballReset" style="flex:1">เริ่มใหม่</button>' : ''}</div>`;
+  } else if (mode === 'incense') {
+    body = `<div class="inc-stage"><div class="i-stick-wrap"><div class="i-stick" id="inc">
+<div class="i-body"></div><div class="i-ash"></div><span class="i-dig"></span><span class="i-dig"></span><span class="i-dig"></span>
+<span class="i-ember"></span><span class="i-smoke"><i></i><i></i><i></i></span></div></div>${INCENSE_POT}</div>
+<div id="inc-slots">${incSlots(l.incShown)}</div>
+<p class="p-hint" id="inc-hint">${l.inc === 'done' ? `ธูปเผยเลข <b>${l.incDigits.join(' ')}</b>` : l.inc === 'burning' ? 'ธูปกำลังไหม้ ขี้ธูปจะค่อย ๆ หล่นเผยเลขทีละตัว' : 'ตั้งจิตอธิษฐาน แล้วจุดธูปเลข'}</p>
+<button class="btn" data-act="lightUp"${l.inc === 'burning' ? ' disabled' : ''}>${l.inc === 'done' ? 'จุดธูปดอกใหม่' : 'จุดธูป'}</button>`;
+  } else {
+    body = `<div class="ss-stage${l.ss ? ' fallen' : ''}" id="ss"><div class="ss-cyl">${SS_CYL}</div><div class="ss-out"><b>${l.ss ? thaiNum(l.ss) : ''}</b></div><div class="ss-floor"></div></div>
+${l.ss ? siamsiSlip(l.ss) + '<button class="btn btn-line" data-act="ssReset">เสี่ยงเซียมซีใหม่</button>'
+    : `<p class="p-hint">ตั้งจิตนึกถึงเรื่องที่อยากรู้ แล้วกดค้างที่ปุ่มหรือที่กระบอกเพื่อเขย่า จนไม้หล่นออกมาหนึ่งอัน</p>
+<div class="ss-meter" aria-hidden="true"><i></i></div>
+<button class="btn ss-shake">กดค้างเพื่อเขย่า</button>
+<button class="link-btn" data-act="ssMotion" style="align-self:center">หรือเขย่ามือถือจริง</button>`}`;
+  }
   return `<main class="screen" style="--accent:var(--amber)">
 ${pageHead('05', 'FORTUNE', 'โชคลาภ', 'var(--amber)', 'luck')}
-<div class="seg" role="group" aria-label="วิธีเสี่ยงโชค"><button aria-pressed="${ball}" data-act="luckMode" data-v="ball">ล้วงลูกเลข</button><button aria-pressed="${!ball}" data-act="luckMode" data-v="incense">จุดธูปขอเลข</button></div>
-${ball ? `<div style="display:flex;justify-content:center"><div class="${l.shake ? 'shake' : ''}" style="line-height:0">${BOX_SVG}</div></div>
-${slots(l.balls)}<button class="btn" data-act="drawBall">${l.balls.length < 3 ? 'ล้วงลูกที่ ' + (l.balls.length + 1) : 'เริ่มใหม่'}</button>`
-    : `<div style="display:flex;justify-content:center">${potSvg(!!l.ash)}</div>${slots(l.ash || [])}<button class="btn" data-act="lightUp">${l.ash ? 'จุดธูปใหม่' : 'จุดธูปสามดอก'}</button>`}
-<p class="small" style="text-align:center">เพื่อความบันเทิงเท่านั้น ตัวเลขสุ่มจากเครื่องของคุณ ไม่ใช่การรับประกันผลใด ๆ · โปรดเล่นอย่างพอประมาณ</p>
+<div class="seg" role="group" aria-label="วิธีเสี่ยงโชค">${LUCK_MODES.map(([id, th]) => `<button aria-pressed="${mode === id}" data-act="luckMode" data-v="${id}">${th}</button>`).join('')}</div>
+${body}
+<p class="small" style="text-align:center;font-size:11px">${mode === 'siamsi' ? 'คำทำนายแต่งขึ้นใหม่โดยตักศิลา ใช้เป็นข้อคิดและกำลังใจ' : 'เพื่อความบันเทิง ตัวเลขสุ่มจากเครื่องของคุณ ไม่ใช่การรับประกันผลใด ๆ · โปรดเล่นอย่างพอประมาณ'}</p>
 </main>`;
 }
+
+let luckCtl = null;
+function mountLuck() {
+  if (luckCtl) { luckCtl.destroy(); luckCtl = null; }
+  if (route() !== 'luck') return;
+  const l = state.luck;
+  if (l.mode === 'ball') {
+    const g = document.getElementById('globe');
+    if (!g || l.balls.length >= 3) return;
+    luckCtl = mountGlobe(g, {
+      onPick(d, hue) {
+        if (l.balls.length >= 3) return;
+        l.balls.push({ d, hue });
+        if (navigator.vibrate) navigator.vibrate(20);
+        document.getElementById('ball-slots').innerHTML = ballSlots(l.balls);
+        if (l.balls.length >= 3) setTimeout(render, 700);
+        else { const h = document.getElementById('ball-hint'); if (h) h.textContent = `ได้ลูกที่ ${l.balls.length} แล้ว จับต่ออีก ${3 - l.balls.length} ลูก`; }
+      }
+    });
+  } else if (l.mode === 'siamsi' && !l.ss) {
+    const el = document.getElementById('ss');
+    if (el) luckCtl = mountSiamsi(el, { total: SIAMSI.length, onFall(no) { l.ss = no; render(); const sl = document.querySelector('.slip'); if (sl) sl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
+  }
+}
+
 
 // ---------------- consult (rule-based, grounded in the chart) ----------------
 const ASK_TOPICS = [
@@ -2991,6 +3375,7 @@ function render() {
   const showNav = !['welcome', 'setup'].includes(r);
   root.innerHTML = view() + (showNav ? nav(r) : '');
   if (r === 'home') startLive(); else clearInterval(liveTimer);
+  mountLuck();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
   document.title = 'ตักศิลา · ' + ({ home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด' }[r] || 'อ่านดวงจากดาวจริง');
 }
@@ -3110,15 +3495,22 @@ document.addEventListener('click', (e) => {
     }
     case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [] }); break;
     case 'numMode': state.num.mode = el.dataset.v; break;
-    case 'luckMode': state.luck.mode = el.dataset.v; break;
-    case 'drawBall': {
+    case 'luckMode': state.luck.mode = el.dataset.v; if (state.luck.inc === 'burning') state.luck.inc = 'idle'; break;
+    case 'stirGlobe': if (luckCtl && luckCtl.stir) luckCtl.stir(); return;
+    case 'ballReset': state.luck.balls = []; break;
+    case 'lightUp': {
       const l = state.luck;
-      if (l.balls.length >= 3) { l.balls = []; break; }
-      l.shake = true; render();
-      setTimeout(() => { l.shake = false; l.balls = l.balls.concat([Math.floor(Math.random() * 10)]); render(); }, 500);
+      l.inc = 'burning'; l.incDigits = [randomDigit(), randomDigit(), randomDigit()]; l.incShown = [];
+      render();
+      const el = document.getElementById('inc');
+      luckCtl = burnIncense(el, l.incDigits, {
+        onDigit(k, d) { l.incShown[k] = d; const s2 = document.getElementById('inc-slots'); if (s2) s2.innerHTML = incSlots(l.incShown); },
+        onDone() { l.inc = 'done'; if (route() === 'luck' && l.mode === 'incense') render(); }
+      });
       return;
     }
-    case 'lightUp': state.luck.ash = [0, 1, 2].map(() => Math.floor(Math.random() * 10)); break;
+    case 'ssReset': state.luck.ss = null; break;
+    case 'ssMotion': askMotion().then((ok) => toast(ok ? 'พร้อมแล้ว เขย่ามือถือได้เลย' : 'เครื่องนี้ไม่รองรับการเขย่า ใช้วิธีกดค้างแทน')); return;
     case 'askTopic': state.ask.topic = i; state.ask.messages = []; break;
     case 'askChip': ask(el.dataset.q); return;
     default: return;

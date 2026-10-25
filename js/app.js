@@ -8,6 +8,8 @@ import { starMap, logoRing } from './starmap.js';
 import { EVENTS, findAuspicious } from './auspice.js';
 import { natalProfile, sixthSense } from './profile.js';
 import { CARDS, drawCards, SPREADS, HOUSE_READ } from './tarot.js';
+import { mountGlobe, burnIncense, mountSiamsi, askMotion, randomDigit, thaiNum } from './luck.js';
+import { SIAMSI } from './siamsi.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
 // ---------------- storage ----------------
@@ -31,7 +33,7 @@ const state = {
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '' },
   num: { mode: 'phone', value: '' },
-  luck: { mode: 'ball', balls: [], ash: null, shake: false },
+  luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
   ask: { topic: 0, messages: [] }
 };
 if (state.profile) state.chart = safeChart(state.profile);
@@ -885,34 +887,93 @@ ${lp}
 </main>`;
 }
 
-const BOX_SVG = (() => {
-  const balls = [[78, 114, 3], [102, 116, 7], [126, 113, 1], [150, 116, 9], [174, 113, 0], [198, 116, 5], [90, 92, 8], [114, 92, 4], [138, 90, 6], [162, 92, 2], [186, 91, 7], [126, 69, 5], [154, 69, 3]];
-  return `<svg role="img" aria-label="กล่องใสบรรจุลูกเลข 0 ถึง 9" width="280" height="160" viewBox="0 0 280 160" fill="none">
-<defs><radialGradient id="lGlow"><stop offset="0" stop-color="#E0A458" stop-opacity="0.35"/><stop offset="1" stop-color="#E0A458" stop-opacity="0"/></radialGradient></defs>
-<ellipse cx="140" cy="96" rx="120" ry="60" fill="url(#lGlow)"/><rect x="50" y="14" width="180" height="120" rx="10" stroke="#E0A458" opacity="0.8"/><rect x="56" y="20" width="168" height="108" rx="7" stroke="#3D3424" stroke-width="0.6"/>
-<path d="M118 14a22 5 0 0 0 44 0" stroke="#E0A458"/><path d="M40 140H240M60 148H220" stroke="#3D3424"/>
-${balls.map(([x, y, n]) => `<circle cx="${x}" cy="${y}" r="11" fill="#15120D" stroke="#E0A458" stroke-width="0.8"/><text x="${x}" y="${y}" font-family="'IBM Plex Mono',monospace" font-size="10" fill="#F1E6CF" text-anchor="middle" dominant-baseline="central">${n}</text>`).join('')}</svg>`;
+const LUCK_MODES = [['ball', 'ลูกปิงปอง'], ['incense', 'ธูปเลข'], ['siamsi', 'เซียมซี']];
+const ballSlots = (vals) => `<div class="b-slots">${[0, 1, 2].map((k) => vals[k] ? `<span class="b-slot on h${vals[k].hue}"><b>${vals[k].d}</b></span>` : `<span class="b-slot">${k + 1}</span>`).join('')}</div>`;
+const incSlots = (vals) => `<div class="b-slots inc">${[0, 1, 2].map((k) => vals[k] != null ? `<span class="n-slot on">${vals[k]}</span>` : `<span class="n-slot">–</span>`).join('')}</div>`;
+const INCENSE_POT = `<svg class="i-pot" viewBox="0 0 220 110" aria-hidden="true"><defs><linearGradient id="potg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#C9A24E"/><stop offset=".5" stop-color="#8A6A2C"/><stop offset="1" stop-color="#4A3815"/></linearGradient><radialGradient id="sand" cx="50%" cy="40%"><stop offset="0" stop-color="#9A8C74"/><stop offset="1" stop-color="#5E5446"/></radialGradient></defs>
+<ellipse cx="110" cy="18" rx="92" ry="14" fill="url(#sand)"/><path d="M18 18q4 64 40 78h104q36-14 40-78" fill="url(#potg)"/><ellipse cx="110" cy="18" rx="92" ry="14" fill="none" stroke="#E8C77A" stroke-width="1.5"/>
+<path d="M40 48q70 14 140 0" stroke="#E8C77A" stroke-width=".8" fill="none" opacity=".6"/><path d="M52 70q58 10 116 0" stroke="#E8C77A" stroke-width=".8" fill="none" opacity=".4"/>
+<path d="M70 96l-8 12h96l-8-12" fill="#3A2C10"/><text x="110" y="62" text-anchor="middle" font-family="Taviraj, serif" font-size="15" fill="#F4DFA3" opacity=".85">ตักศิลา</text></svg>`;
+const SS_CYL = (() => {
+  const sticks = Array.from({ length: 13 }, (_, k) => `<rect x="${34 + k * 4.6}" y="${8 + ((k * 7) % 11)}" width="3.2" height="60" rx="1.2" fill="${k % 4 === 0 ? '#E7C98A' : '#D9B472'}" stroke="#8A6630" stroke-width=".4"/>`).join('');
+  return `<svg viewBox="0 0 130 230" aria-hidden="true"><defs><linearGradient id="lac" x1="0" x2="1"><stop offset="0" stop-color="#5E140F"/><stop offset=".35" stop-color="#B3271C"/><stop offset=".55" stop-color="#D2372A"/><stop offset="1" stop-color="#5E140F"/></linearGradient>
+<linearGradient id="gband" x1="0" x2="1"><stop offset="0" stop-color="#8A6630"/><stop offset=".5" stop-color="#F2D58C"/><stop offset="1" stop-color="#8A6630"/></linearGradient></defs>
+<g class="ss-sticks">${sticks}</g>
+<path d="M28 50h74v162q0 10-10 10H38q-10 0-10-10z" fill="url(#lac)"/><ellipse cx="65" cy="50" rx="37" ry="7" fill="#3A0C08" stroke="url(#gband)" stroke-width="2"/>
+<rect x="28" y="66" width="74" height="6" fill="url(#gband)"/><rect x="28" y="196" width="74" height="6" fill="url(#gband)"/>
+<circle cx="65" cy="134" r="24" fill="none" stroke="url(#gband)" stroke-width="2"/><text x="65" y="142" text-anchor="middle" font-family="Taviraj, serif" font-size="22" font-weight="600" fill="#F2D58C">ซี</text>
+<path d="M41 100q24-10 48 0M41 168q24 10 48 0" stroke="#F2D58C" stroke-width=".8" fill="none" opacity=".7"/></svg>`;
 })();
-function potSvg(lit) {
-  return `<svg role="img" aria-label="กระถางธูป${lit ? ' จุดธูปสามดอก มีควันลอย' : ' ยังไม่ได้จุด'}" width="260" height="160" viewBox="0 0 240 160" fill="none">
-<defs><radialGradient id="iGlow"><stop offset="0" stop-color="#FFB45E" stop-opacity="0.9"/><stop offset="1" stop-color="#FFB45E" stop-opacity="0"/></radialGradient></defs>
-${lit ? `<path d="M90 36q-7-7 0-14q7-7 0-14M120 30q-7-7 0-14q7-7 0-12M150 36q-7-7 0-14q7-7 0-14" stroke="#C9BC9F" stroke-width="0.8" stroke-linecap="round" opacity="0.6"><animate attributeName="opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite"/></path>` : ''}
-<path d="M96 110L90 44M120 110V38M144 110L150 44" stroke="#C0574A" stroke-width="2" stroke-linecap="round"/>
-${lit ? '<circle cx="90" cy="44" r="8" fill="url(#iGlow)"/><circle cx="120" cy="38" r="8" fill="url(#iGlow)"/><circle cx="150" cy="44" r="8" fill="url(#iGlow)"/><g fill="#FFE3B0"><circle cx="90" cy="44" r="2"/><circle cx="120" cy="38" r="2"/><circle cx="150" cy="44" r="2"/></g>' : ''}
-<g stroke="#E0A458"><ellipse cx="120" cy="110" rx="76" ry="9"/><path d="M44 110L58 146Q120 160 182 146L196 110M66 130H174"/></g></svg>`;
+
+function siamsiSlip(no) {
+  const f = SIAMSI[no - 1];
+  const lvColor = f.level >= 4 ? '#A8231A' : f.level === 3 ? '#B5541E' : f.level === 2 ? '#6B5A3A' : '#4A4A4A';
+  return `<article class="slip">
+<header class="slip-head"><span class="slip-no">ใบที่ ${thaiNum(no)}</span><span class="slip-seal" style="border-color:${lvColor};color:${lvColor}">${f.levelTh}</span></header>
+<div class="slip-verse"><p>${f.verse[0]}</p><p>${f.verse[1]}</p></div>
+<p class="slip-sum">${f.summary}</p>
+<dl class="slip-topics">${f.topics.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+<p class="slip-tip"><b>ข้อคิด</b> ${f.advice}</p>
+<p class="slip-foot">เซียมซีตักศิลา · คำทำนายเป็นกำลังใจ ผลจริงขึ้นอยู่กับการลงมือของคุณ</p>
+</article>`;
 }
+
 function viewLuck() {
-  const l = state.luck, ball = l.mode === 'ball';
-  const slots = (vals) => `<div class="slots">${[0, 1, 2].map((i) => vals[i] != null ? `<span class="slot-n on">${vals[i]}</span>` : '<span class="slot-n">–</span>').join('')}</div>`;
+  const l = state.luck, mode = l.mode;
+  let body = '';
+  if (mode === 'ball') {
+    const done = l.balls.length >= 3;
+    body = `<div class="globe-stage"><div class="globe${done ? ' full' : ''}" id="globe"></div><div class="globe-neck"></div><div class="globe-base"></div></div>
+<div id="ball-slots">${ballSlots(l.balls)}</div>
+<p class="p-hint" id="ball-hint">${done ? `เลขของคุณคือ <b>${l.balls.map((b) => b.d).join(' ')}</b>` : 'กด "หมุนโถ" ให้ลูกกระจาย แล้วแตะจับลูกที่ใจเรียก · ตัวเลขจะโผล่ตอนลูกออกมา'}</p>
+<div style="display:flex;gap:8px"><button class="btn" data-act="stirGlobe" style="flex:1"${done ? ' disabled' : ''}>หมุนโถ</button>${l.balls.length ? '<button class="btn btn-line" data-act="ballReset" style="flex:1">เริ่มใหม่</button>' : ''}</div>`;
+  } else if (mode === 'incense') {
+    body = `<div class="inc-stage"><div class="i-stick-wrap"><div class="i-stick" id="inc">
+<div class="i-body"></div><div class="i-ash"></div><span class="i-dig"></span><span class="i-dig"></span><span class="i-dig"></span>
+<span class="i-ember"></span><span class="i-smoke"><i></i><i></i><i></i></span></div></div>${INCENSE_POT}</div>
+<div id="inc-slots">${incSlots(l.incShown)}</div>
+<p class="p-hint" id="inc-hint">${l.inc === 'done' ? `ธูปเผยเลข <b>${l.incDigits.join(' ')}</b>` : l.inc === 'burning' ? 'ธูปกำลังไหม้ ขี้ธูปจะค่อย ๆ หล่นเผยเลขทีละตัว' : 'ตั้งจิตอธิษฐาน แล้วจุดธูปเลข'}</p>
+<button class="btn" data-act="lightUp"${l.inc === 'burning' ? ' disabled' : ''}>${l.inc === 'done' ? 'จุดธูปดอกใหม่' : 'จุดธูป'}</button>`;
+  } else {
+    body = `<div class="ss-stage${l.ss ? ' fallen' : ''}" id="ss"><div class="ss-cyl">${SS_CYL}</div><div class="ss-out"><b>${l.ss ? thaiNum(l.ss) : ''}</b></div><div class="ss-floor"></div></div>
+${l.ss ? siamsiSlip(l.ss) + '<button class="btn btn-line" data-act="ssReset">เสี่ยงเซียมซีใหม่</button>'
+    : `<p class="p-hint">ตั้งจิตนึกถึงเรื่องที่อยากรู้ แล้วกดค้างที่ปุ่มหรือที่กระบอกเพื่อเขย่า จนไม้หล่นออกมาหนึ่งอัน</p>
+<div class="ss-meter" aria-hidden="true"><i></i></div>
+<button class="btn ss-shake">กดค้างเพื่อเขย่า</button>
+<button class="link-btn" data-act="ssMotion" style="align-self:center">หรือเขย่ามือถือจริง</button>`}`;
+  }
   return `<main class="screen" style="--accent:var(--amber)">
 ${pageHead('05', 'FORTUNE', 'โชคลาภ', 'var(--amber)', 'luck')}
-<div class="seg" role="group" aria-label="วิธีเสี่ยงโชค"><button aria-pressed="${ball}" data-act="luckMode" data-v="ball">ล้วงลูกเลข</button><button aria-pressed="${!ball}" data-act="luckMode" data-v="incense">จุดธูปขอเลข</button></div>
-${ball ? `<div style="display:flex;justify-content:center"><div class="${l.shake ? 'shake' : ''}" style="line-height:0">${BOX_SVG}</div></div>
-${slots(l.balls)}<button class="btn" data-act="drawBall">${l.balls.length < 3 ? 'ล้วงลูกที่ ' + (l.balls.length + 1) : 'เริ่มใหม่'}</button>`
-    : `<div style="display:flex;justify-content:center">${potSvg(!!l.ash)}</div>${slots(l.ash || [])}<button class="btn" data-act="lightUp">${l.ash ? 'จุดธูปใหม่' : 'จุดธูปสามดอก'}</button>`}
-<p class="small" style="text-align:center">เพื่อความบันเทิงเท่านั้น ตัวเลขสุ่มจากเครื่องของคุณ ไม่ใช่การรับประกันผลใด ๆ · โปรดเล่นอย่างพอประมาณ</p>
+<div class="seg" role="group" aria-label="วิธีเสี่ยงโชค">${LUCK_MODES.map(([id, th]) => `<button aria-pressed="${mode === id}" data-act="luckMode" data-v="${id}">${th}</button>`).join('')}</div>
+${body}
+<p class="small" style="text-align:center;font-size:11px">${mode === 'siamsi' ? 'คำทำนายแต่งขึ้นใหม่โดยตักศิลา ใช้เป็นข้อคิดและกำลังใจ' : 'เพื่อความบันเทิง ตัวเลขสุ่มจากเครื่องของคุณ ไม่ใช่การรับประกันผลใด ๆ · โปรดเล่นอย่างพอประมาณ'}</p>
 </main>`;
 }
+
+let luckCtl = null;
+function mountLuck() {
+  if (luckCtl) { luckCtl.destroy(); luckCtl = null; }
+  if (route() !== 'luck') return;
+  const l = state.luck;
+  if (l.mode === 'ball') {
+    const g = document.getElementById('globe');
+    if (!g || l.balls.length >= 3) return;
+    luckCtl = mountGlobe(g, {
+      onPick(d, hue) {
+        if (l.balls.length >= 3) return;
+        l.balls.push({ d, hue });
+        if (navigator.vibrate) navigator.vibrate(20);
+        document.getElementById('ball-slots').innerHTML = ballSlots(l.balls);
+        if (l.balls.length >= 3) setTimeout(render, 700);
+        else { const h = document.getElementById('ball-hint'); if (h) h.textContent = `ได้ลูกที่ ${l.balls.length} แล้ว จับต่ออีก ${3 - l.balls.length} ลูก`; }
+      }
+    });
+  } else if (l.mode === 'siamsi' && !l.ss) {
+    const el = document.getElementById('ss');
+    if (el) luckCtl = mountSiamsi(el, { total: SIAMSI.length, onFall(no) { l.ss = no; render(); const sl = document.querySelector('.slip'); if (sl) sl.scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
+  }
+}
+
 
 // ---------------- consult (rule-based, grounded in the chart) ----------------
 const ASK_TOPICS = [
@@ -1020,6 +1081,7 @@ function render() {
   const showNav = !['welcome', 'setup'].includes(r);
   root.innerHTML = view() + (showNav ? nav(r) : '');
   if (r === 'home') startLive(); else clearInterval(liveTimer);
+  mountLuck();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
   document.title = 'ตักศิลา · ' + ({ home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด' }[r] || 'อ่านดวงจากดาวจริง');
 }
@@ -1139,15 +1201,22 @@ document.addEventListener('click', (e) => {
     }
     case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [] }); break;
     case 'numMode': state.num.mode = el.dataset.v; break;
-    case 'luckMode': state.luck.mode = el.dataset.v; break;
-    case 'drawBall': {
+    case 'luckMode': state.luck.mode = el.dataset.v; if (state.luck.inc === 'burning') state.luck.inc = 'idle'; break;
+    case 'stirGlobe': if (luckCtl && luckCtl.stir) luckCtl.stir(); return;
+    case 'ballReset': state.luck.balls = []; break;
+    case 'lightUp': {
       const l = state.luck;
-      if (l.balls.length >= 3) { l.balls = []; break; }
-      l.shake = true; render();
-      setTimeout(() => { l.shake = false; l.balls = l.balls.concat([Math.floor(Math.random() * 10)]); render(); }, 500);
+      l.inc = 'burning'; l.incDigits = [randomDigit(), randomDigit(), randomDigit()]; l.incShown = [];
+      render();
+      const el = document.getElementById('inc');
+      luckCtl = burnIncense(el, l.incDigits, {
+        onDigit(k, d) { l.incShown[k] = d; const s2 = document.getElementById('inc-slots'); if (s2) s2.innerHTML = incSlots(l.incShown); },
+        onDone() { l.inc = 'done'; if (route() === 'luck' && l.mode === 'incense') render(); }
+      });
       return;
     }
-    case 'lightUp': state.luck.ash = [0, 1, 2].map(() => Math.floor(Math.random() * 10)); break;
+    case 'ssReset': state.luck.ss = null; break;
+    case 'ssMotion': askMotion().then((ok) => toast(ok ? 'พร้อมแล้ว เขย่ามือถือได้เลย' : 'เครื่องนี้ไม่รองรับการเขย่า ใช้วิธีกดค้างแทน')); return;
     case 'askTopic': state.ask.topic = i; state.ask.messages = []; break;
     case 'askChip': ask(el.dataset.q); return;
     default: return;

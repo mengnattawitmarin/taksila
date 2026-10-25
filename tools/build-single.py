@@ -11,7 +11,7 @@ is wrapped in one function so nothing leaks into the global scope.
 import pathlib, re
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-ORDER = ['js/astro.js', 'js/thai.js', 'js/auspice.js', 'js/profile.js', 'js/tarot.js', 'js/data.js', 'js/starmap.js', 'js/app.js']
+ORDER = ['js/astro.js', 'js/thai.js', 'js/auspice.js', 'js/profile.js', 'js/tarot.js', 'js/luck.js', 'js/siamsi.js', 'js/data.js', 'js/starmap.js', 'js/app.js']
 FONTS = ('https://fonts.googleapis.com/css2?family=Taviraj:wght@400;500;600'
          '&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500'
          '&family=Noto+Sans+Symbols&family=Noto+Sans+Symbols+2&display=swap')
