@@ -1723,9 +1723,9 @@ function malaSVG(n, done) {
   return `<svg class="mala" viewBox="0 0 120 120" aria-hidden="true">${dots}</svg>`;
 }
 function prayerText(pr) {
-  return pr.blocks.map((b) => `${b.note ? `<p class="pr-note">${b.note}</p>` : ''}${b.lines ? `<div class="pr-stanza">${b.n ? `<span class="pr-n">${thaiNum(b.n)}</span>` : ''}<div>${b.lines.map((l) => `<p>${l}</p>`).join('')}</div></div>` : ''}${b.p ? `<p class="pr-prose">${b.p}</p>` : ''}`).join('');
+  return pr.blocks.map((b) => `${b.note ? `<p class="pr-note">${b.note}</p>` : ''}${b.lines ? `<div class="pr-stanza">${b.n ? `<span class="pr-n">${thaiNum(b.n)}</span>` : ''}<div>${b.lines.map((l) => `<p>${l}</p>`).join('')}</div></div>` : ''}${b.p ? `<p class="pr-prose">${b.p}</p>` : ''}${b.go ? `<a href="#/prayer" class="ask-link" data-act="openPrayer" data-v="${b.go}" style="align-self:center">เปิด${prayerById(b.go).th} ›</a>` : ''}`).join('');
 }
-const QUICK_CHANTS = [['ts-popular', 'คนนิยม', '☺'], ['ts-trade', 'ค้าขายดี', '◈'], ['ts-talk', 'การเจรจา', '❝'], ['ts-safe', 'แคล้วคลาด', '➶'], ['ts-lightning', 'กันฟ้าผ่า', 'ϟ'], ['ts-ghost', 'ป้องกันผี', '☾'], ['ts-dog', 'กันสุนัข', '⚑'], ['ts-snake', 'ป้องกันงู', '§']];
+const QUICK_CHANTS = [['metta-all', 'แผ่เมตตา', '♡'], ['metta-self', 'เมตตาตนเอง', '☺'], ['kruadnam', 'กรวดน้ำ', '≈'], ['khama', 'ขอขมา', '☸'], ['ts-popular', 'คนนิยม', '✿'], ['ts-trade', 'ค้าขายดี', '◈'], ['ts-talk', 'การเจรจา', '❝'], ['ts-safe', 'แคล้วคลาด', '➶'], ['ts-lightning', 'กันฟ้าผ่า', 'ϟ'], ['ts-ghost', 'ป้องกันผี', '☾'], ['ts-dog', 'กันสุนัข', '⚑'], ['ts-snake', 'ป้องกันงู', '§']];
 function viewPrayer() {
   const st = state.prayer, bp = birthPlanet(state.profile);
   const head = pageHead('07', 'PRAYER', 'บทสวดมนต์', 'var(--gold-2)', 'prayer', st.open ? `<button class="back" data-act="prayerBack" aria-label="กลับ" style="margin:0">${icon('back', 20, 1.5)}</button>` : '');
