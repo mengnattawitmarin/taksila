@@ -340,6 +340,12 @@ a:hover { color: var(--gold-2); }
 .slip-foot { margin: 0; text-align: center; font-size: 10px; color: #8A7652; }
 @media (prefers-reduced-motion: reduce) { .ss-cyl.shaking, .ss-cyl.shaking .ss-sticks, .i-smoke i, .lit .i-ember { animation: none; } }
 
+/* tarot: reading for someone else */
+.who-card { gap: 10px; }
+.dob-row { display: grid; grid-template-columns: 1fr 1.6fr 1.3fr; gap: 8px; }
+.for-chip { align-self: center; margin: 0; padding: 4px 12px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--violet) 45%, var(--line)); font-size: 13px; color: var(--text); }
+.for-chip span { color: var(--violet); margin-right: 2px; }
+
 /* 12-house zodiac wheel */
 .t-wheel { position: relative; width: 100%; max-width: 420px; margin: 0 auto; aspect-ratio: 100 / 106; }
 .w-ring { position: absolute; inset: 0; width: 100%; height: 100%; }
