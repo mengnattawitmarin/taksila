@@ -1711,6 +1711,7 @@ function malaSVG(n, done) {
 function prayerText(pr) {
   return pr.blocks.map((b) => `${b.note ? `<p class="pr-note">${b.note}</p>` : ''}${b.lines ? `<div class="pr-stanza">${b.n ? `<span class="pr-n">${thaiNum(b.n)}</span>` : ''}<div>${b.lines.map((l) => `<p>${l}</p>`).join('')}</div></div>` : ''}${b.p ? `<p class="pr-prose">${b.p}</p>` : ''}`).join('');
 }
+const QUICK_CHANTS = [['ts-popular', 'คนนิยม', '☺'], ['ts-trade', 'ค้าขายดี', '◈'], ['ts-talk', 'การเจรจา', '❝'], ['ts-safe', 'แคล้วคลาด', '➶'], ['ts-lightning', 'กันฟ้าผ่า', 'ϟ'], ['ts-ghost', 'ป้องกันผี', '☾'], ['ts-dog', 'กันสุนัข', '⚑'], ['ts-snake', 'ป้องกันงู', '§']];
 function viewPrayer() {
   const st = state.prayer, bp = birthPlanet(state.profile);
   const head = pageHead('07', 'PRAYER', 'บทสวดมนต์', 'var(--gold-2)', 'prayer', st.open ? `<button class="back" data-act="prayerBack" aria-label="กลับ" style="margin:0">${icon('back', 20, 1.5)}</button>` : '');
@@ -1741,6 +1742,8 @@ ${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตั�
   return `<main class="screen">
 ${head}
 <section class="pr-recs"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>แนะนำสำหรับคุณวันนี้</h2>${recs.map(remedyChip).join('')}</section>
+<section class="pr-quick"><h2 class="t-step-h" ><span style="border-color:var(--gold);color:var(--gold)">⚡</span>คาถาลัด · กดแล้วสวดได้ทันที</h2>
+<div class="qk-grid">${QUICK_CHANTS.map(([id, th, ic]) => `<a href="#/prayer" class="qk" data-act="openPrayer" data-v="${id}"><span class="qk-ic">${ic}</span><b>${th}</b></a>`).join('')}</div></section>
 <section class="pr-purpose"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>สวดเพื่อ…</h2>
 <div class="pu-grid">${PURPOSES.map((x) => `<button class="pu" data-act="prayerPurpose" data-v="${x.id}" aria-pressed="${st.purpose === x.id}"><span class="pu-ic">${x.ic}</span><b>${x.th}</b><span>${x.sub}</span></button>`).join('')}</div></section>
 ${pu ? `<div class="pu-note"><span><b>${pu.th}</b> · ${pu.note}</span><button class="link-btn" data-act="prayerPurpose" data-v="">ดูบทสวดทั้งหมด</button></div>` : `<h2 class="t-step-h" style="margin-top:4px"><span style="border-color:var(--gold);color:var(--gold)">☰</span>ตามหมวด</h2>`}
