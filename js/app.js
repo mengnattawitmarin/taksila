@@ -3,10 +3,11 @@ import {
   SIGNS, ELEMENTS, PLANETS, HOUSES, planetById, computeChart, transits, daily, compatibility,
   planetPositions, signOf, fmtDeg, localToUtc, liveAspects, upcomingIngresses, ASPECT_GLYPH, lonOf, weekAhead, lunarPhase
 } from './astro.js';
-import { PLACES, MONTHS_TH, MONTHS_SHORT, TAROT, TOPICS, LIFE_PATH, DIGITS, SUM_MEANING } from './data.js';
+import { PLACES, MONTHS_TH, MONTHS_SHORT, TOPICS, LIFE_PATH, DIGITS, SUM_MEANING } from './data.js';
 import { starMap, logoRing } from './starmap.js';
 import { EVENTS, findAuspicious } from './auspice.js';
 import { natalProfile, sixthSense } from './profile.js';
+import { CARDS, drawCards, SPREADS, HOUSE_READ } from './tarot.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
 // ---------------- storage ----------------
@@ -28,7 +29,7 @@ const state = {
   weekSel: null,
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
-  tarot: { topic: 0, cards: null, open: 0 },
+  tarot: { topic: 0, spread: 2, cards: null, flipped: [], sel: 0, q: '' },
   num: { mode: 'phone', value: '' },
   luck: { mode: 'ball', balls: [], ash: null, shake: false },
   ask: { topic: 0, messages: [] }
@@ -684,44 +685,139 @@ ${m.useDate ? `<div class="date-row">
 </section></main>`;
 }
 
-const MOTIFS = [
-  '<path d="M24 6l4.2 13.2L42 24l-13.8 4.8L24 42l-4.2-13.2L6 24l13.8-4.8z"/>',
-  '<circle cx="24" cy="24" r="8"/><path d="M24 6v8M24 34v8M6 24h8M34 24h8M11 11l6 6M31 31l6 6M37 11l-6 6M17 31l-6 6"/>',
-  '<path d="M30 10A14 14 0 1 0 30 38A11 11 0 1 1 30 10Z"/>',
-  '<path d="M6 24c6-9 30-9 36 0c-6 9-30 9-36 0z"/><circle cx="24" cy="24" r="5"/>'
-];
-function tarotFace(card) {
-  const [roman, en, th] = TAROT[card.i];
-  return `<div class="tcard${card.rev ? ' rev' : ''}"><span class="num">${roman}</span>
-<svg role="img" aria-label="ภาพไพ่${th}" width="46" height="46" viewBox="0 0 48 48" fill="none" stroke="#F0D89A" stroke-width="1.1" stroke-linejoin="round"><circle cx="24" cy="24" r="20" stroke="#3D3424"/>${MOTIFS[card.i % 4]}</svg>
-<span class="nm">${th}${card.rev ? '<br><span class="mono small" style="font-size:9px">กลับหัว</span>' : ''}</span></div>`;
+// ---------------- tarot (Rider–Waite–Smith, 78 cards) ----------------
+const TAROT_TOPICS = [{ th: 'ภาพรวม', f: 'up' }, { th: 'ความรัก', f: 'love' }, { th: 'การงาน', f: 'work' }, { th: 'การเงิน', f: 'work' }];
+const CARD_BACK = `<svg aria-hidden="true" viewBox="0 0 120 208" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+<defs><radialGradient id="cbg" cx="50%" cy="50%" r="70%"><stop offset="0" stop-color="#2A2140"/><stop offset="1" stop-color="#110E18"/></radialGradient>
+<pattern id="cbp" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M6 0L12 6L6 12L0 6Z" fill="none" stroke="#3A3058" stroke-width=".6"/></pattern></defs>
+<rect width="120" height="208" fill="url(#cbg)"/><rect width="120" height="208" fill="url(#cbp)"/>
+<rect x="6" y="6" width="108" height="196" rx="4" fill="none" stroke="#D4AF63" stroke-width=".8"/><rect x="10" y="10" width="100" height="188" rx="3" fill="none" stroke="#D4AF63" stroke-width=".4" opacity=".6"/>
+<g fill="none" stroke="#D4AF63" stroke-width=".7"><circle cx="60" cy="104" r="30"/><circle cx="60" cy="104" r="22" stroke-dasharray="1 2.4"/><path d="M60 64v80M20 104h80" opacity=".4"/></g>
+<path d="M60 86l4 14 14 4-14 4-4 14-4-14-14-4 14-4z" fill="#F0D89A"/><circle cx="60" cy="40" r="1.6" fill="#F0D89A"/><circle cx="60" cy="168" r="1.6" fill="#F0D89A"/></svg>`;
+const cardAstro = (c) => {
+  if (c.major) return c.sign != null ? `ไพ่ประจำราศี${SIGNS[c.sign].th} ${SIGNS[c.sign].glyph}&#xFE0E;` : `ไพ่ประจำดาว${planetById(c.planet).th} ${planetById(c.planet).glyph}&#xFE0E;`;
+  if (c.sign != null) return `ดาว${planetById(c.planet).th}ในราศี${SIGNS[c.sign].th} · ธาตุ${ELEMENTS[c.element].th}`;
+  return `ธาตุ${ELEMENTS[c.element].th} · ชุด${c.suitInfo.th}`;
+};
+// How the card touches the person's own chart.
+function cardLink(c, houseSign) {
+  const ch = state.chart, out = [];
+  const sun = ch.planets[0], moon = ch.planets[1], asc = ch.timeKnown ? signOf(ch.asc) : null;
+  if (houseSign != null && c.sign === houseSign) out.push('ไพ่ใบนี้เป็นราศีเดียวกับภพนี้ของคุณ พลังส่งตรงเต็มที่');
+  else if (houseSign != null && c.element != null && c.element === houseSign % 4) out.push(`ธาตุ${ELEMENTS[c.element].th}ของไพ่ตรงกับราศีของภพนี้ เสริมกันดี`);
+  if (c.sign != null && c.sign === sun.sign) out.push(`ตรงกับราศีเกิดของคุณ (${SIGNS[sun.sign].th}) เรื่องนี้เกี่ยวกับตัวคุณโดยตรง`);
+  else if (c.sign != null && c.sign === moon.sign) out.push(`ตรงกับราศีดวงจันทร์ของคุณ เรื่องนี้กระทบใจมาก`);
+  else if (c.sign != null && c.sign === asc) out.push(`ตรงกับราศีลัคนาของคุณ คนรอบตัวจะเห็นผลชัด`);
+  if (c.planet && ch.planets.find((p) => p.id === c.planet)) {
+    const pl = ch.planets.find((p) => p.id === c.planet);
+    if (ch.timeKnown) out.push(`ดาว${pl.th}ในดวงกำเนิดของคุณอยู่ภพ ${pl.house} เรื่อง${HOUSES[pl.house - 1].split(' ')[0]}จะได้รับผลของไพ่ใบนี้ด้วย`);
+  }
+  return out.slice(0, 2);
 }
-const CARD_BACK = `<svg aria-hidden="true" width="100%" height="100%" viewBox="0 0 80 130" fill="none" stroke="currentColor" stroke-width="0.8" preserveAspectRatio="none"><rect x="3" y="3" width="74" height="124" rx="3"/><circle cx="40" cy="65" r="22"/><circle cx="40" cy="65" r="14"/><circle cx="40" cy="65" r="6"/><path d="M40 35v8M40 87v8M10 65h8M62 65h8M19 44l6 6M55 80l6 6M61 44l-6 6M25 80l-6 6"/></svg>`;
+const lean = (c, rev) => rev ? (c.yes === 1 ? 0 : -1) : c.yes;
+const LEAN_TH = { 1: 'ใช่ ไปได้', 0: 'ยังไม่ชัด รอดูอีกนิด', '-1': 'ยังไม่ใช่ตอนนี้' };
+
+function tarotCardHTML(d, i, opts = {}) {
+  const c = CARDS[d.i], open = state.tarot.flipped.includes(i);
+  return `<button class="tc${open ? ' flipped' : ''}${opts.sel ? ' sel' : ''}${d.rev ? ' rev' : ''}" data-act="tarotFlip" data-i="${i}" aria-label="${open ? c.th + (d.rev ? ' กลับหัว' : '') : 'เปิดไพ่ใบที่ ' + (i + 1)}">
+<span class="tc-in"><span class="tc-back">${CARD_BACK}</span><span class="tc-front"><img src="${c.img}" alt="${c.en}" loading="lazy" decoding="async"></span></span></button>`;
+}
+
+function tarotReading(d, i, spread) {
+  const c = CARDS[d.i], t = state.tarot, topic = TAROT_TOPICS[t.topic];
+  const pos = spread.pos[i];
+  let field = topic.f, head = pos.th, houseSign = null, q = '';
+  if (spread.house) {
+    const h = HOUSE_READ[i];
+    field = h.use; houseSign = (state.chart.firstSign + i) % 12; q = h.q;
+    head = `ภพ ${i + 1} · ${q}`;
+  }
+  const main = d.rev ? c.rev : (field === 'up' ? c.up : c[field]);
+  const extra = d.rev ? `ถ้าแก้จุดนี้ได้ พลังของไพ่จะกลับมา: ${field === 'up' ? c.up : c[field]}` : (field !== 'up' ? c.up : '');
+  const links = cardLink(c, houseSign);
+  return `<article class="reading">
+<img class="r-img${d.rev ? ' rev' : ''}" src="${c.img}" alt="" loading="lazy">
+<div class="r-body">
+<span class="eyebrow" style="color:var(--violet);letter-spacing:.14em">${pos.en}${spread.house ? ' · ราศี' + SIGNS[houseSign].th : ''}${d.rev ? ' · กลับหัว' : ''}</span>
+<h3 class="h2" style="font-size:18px">${spread.house ? '' : head + ': '}${c.th}</h3>
+<span class="mono" style="font-size:10px;color:var(--muted)">${c.en}${spread.house ? ' · ' + head : ''}</span>
+<span class="r-kw">${c.kw}</span>
+<p class="body" style="font-size:14px">${main}</p>
+${extra ? `<p class="small" style="color:var(--text-2)">${extra}</p>` : ''}
+<p class="r-pic">ในภาพ: ${c.pic}</p>
+<p class="r-astro">${cardAstro(c)}</p>
+${links.map((l) => `<p class="r-link">✦ ${l}</p>`).join('')}
+</div></article>`;
+}
+
+function tarotSummary(spread, cards) {
+  const t = state.tarot;
+  if (t.flipped.length < cards.length) return '';
+  const C = cards.map((d) => ({ c: CARDS[d.i], rev: d.rev }));
+  if (spread.id === 'one') {
+    const l = lean(C[0].c, C[0].rev);
+    return `<div class="card t-sum"><span class="eyebrow" style="color:var(--violet);letter-spacing:.16em">คำตอบจากไพ่</span><p class="h2" style="font-size:22px;color:${l > 0 ? 'var(--gold-2)' : l < 0 ? 'var(--tension)' : 'var(--text)'}">${LEAN_TH[l]}</p>${t.q ? `<p class="small">คำถาม: ${esc(t.q)}</p>` : ''}</div>`;
+  }
+  if (spread.id === 'two') {
+    const sc = C.map((x) => lean(x.c, x.rev) * (x.c.major ? 1.5 : 1) + (x.rev ? -0.3 : 0));
+    const pick = sc[0] === sc[1] ? 'ทั้งสองทางพลังพอ ๆ กัน เลือกทางที่ใจสบายกว่า' : `ไพ่เอียงไปทาง${sc[0] > sc[1] ? ' A' : ' B'} มากกว่า`;
+    return `<div class="card t-sum"><span class="eyebrow" style="color:var(--violet);letter-spacing:.16em">สรุปสองทางเลือก</span><p class="h2" style="font-size:19px">${pick}</p>${t.q ? `<p class="small">คำถาม: ${esc(t.q)}</p>` : ''}</div>`;
+  }
+  if (spread.id === 'three') {
+    const k = C.map((x) => x.c.kw.split(' · ')[0]);
+    const end = lean(C[2].c, C[2].rev);
+    return `<div class="card t-sum"><span class="eyebrow" style="color:var(--violet);letter-spacing:.16em">เส้นเรื่องของคุณ</span><p class="h2" style="font-size:17px">${k[0]} → ${k[1]} → ${k[2]}</p><p class="small">${end > 0 ? 'ปลายทางออกมาดี เดินต่อได้เลย' : end < 0 ? 'ปลายทางยังมีบทเรียน ใช้คำแนะนำในไพ่ใบสุดท้ายเพื่อเปลี่ยนผล' : 'อนาคตยังเปิดกว้าง ขึ้นอยู่กับการตัดสินใจตอนนี้'}</p></div>`;
+  }
+  const majors = C.map((x, i) => ({ ...x, h: i + 1 })).filter((x) => x.c.major);
+  const suits = { w: 0, c: 0, s: 0, p: 0 }; C.forEach((x) => { if (x.c.suit) suits[x.c.suit] += 1; });
+  const domSuit = Object.entries(suits).sort((a, b) => b[1] - a[1])[0];
+  const revN = C.filter((x) => x.rev).length;
+  const best = C.map((x, i) => ({ l: lean(x.c, x.rev) + (x.c.major ? 0.5 : 0), h: i + 1 })).sort((a, b) => b.l - a.l)[0];
+  return `<div class="card t-sum"><span class="eyebrow" style="color:var(--violet);letter-spacing:.16em">ภาพรวม 12 ภพ</span>
+<p class="h2" style="font-size:17px">ช่วงนี้ชีวิตคุณหมุนรอบเรื่อง${CARDS[0] && domSuit[1] >= 4 ? domSuit[0] === 'w' ? 'แรงบันดาลใจและการลงมือ' : domSuit[0] === 'c' ? 'ความรู้สึกและความรัก' : domSuit[0] === 's' ? 'ความคิดและการตัดสินใจ' : 'เงินและงาน' : 'หลายด้านพร้อมกัน'}</p>
+<p class="small" style="color:var(--text)">ไพ่ชุดใหญ่ ${majors.length} ใบ${majors.length ? ` อยู่ภพ ${majors.map((x) => x.h).join(', ')} ซึ่งเป็นเรื่องที่ชะตากำลังขยับแรง` : ' ชีวิตช่วงนี้อยู่ในมือคุณเองมากกว่าโชคชะตา'} · ไพ่กลับหัว ${revN} ใบ${revN >= 5 ? ' มีหลายเรื่องที่ต้องแก้' : ''} · ภพที่ดีที่สุดคือภพ ${best.h} (${HOUSE_READ[best.h - 1].q})</p>
+<p class="small">กดไพ่แต่ละภพเพื่ออ่านละเอียด</p></div>`;
+}
 
 function viewTarot() {
-  const t = state.tarot, topic = TOPICS[t.topic];
-  const pos = ['อดีต', 'ปัจจุบัน', 'อนาคต'], posEn = ['PAST', 'PRESENT', 'FUTURE'];
-  let spread = '', reading = '', action = '';
+  const t = state.tarot, spread = SPREADS[t.spread];
+  let body = '';
   if (!t.cards) {
-    spread = [0, 1, 2].map((i) => `<div class="slot"><div class="tback" style="opacity:.5">${CARD_BACK}</div><span class="label" style="font-size:10px">${posEn[i]}</span></div>`).join('');
-    action = `<button class="btn" data-act="tarotDraw">สับไพ่และเลือก 3 ใบ</button><p class="small" style="text-align:center">ตั้งคำถาม${topic.lead}ให้ชัดในใจก่อนกด</p>`;
+    body = `<div class="t-pick">${SPREADS.map((x, i) => `<button class="t-sp" data-act="tarotSpread" data-i="${i}" aria-pressed="${i === t.spread}"><b>${x.th}</b><span>${x.sub}</span></button>`).join('')}</div>
+${spread.house ? `<p class="small">เปิดไพ่ 12 ใบลงบนภพทั้ง 12 ของผังดาวคุณ ภพ 1 เริ่มที่ราศี${SIGNS[state.chart.firstSign].th} (ลัคนาของคุณ)</p>` : `<div class="seg" role="group" aria-label="หัวข้อ">${TAROT_TOPICS.map((x, i) => `<button aria-pressed="${i === t.topic}" data-act="tarotTopic" data-i="${i}">${x.th}</button>`).join('')}</div>
+<label class="field">คำถามในใจ (ไม่บังคับ)<input class="input" data-in="tarotQ" value="${esc(t.q)}" placeholder="${spread.id === 'two' ? 'เช่น ควรเลือกงานที่ A หรือ B' : 'เช่น เดือนนี้งานจะเป็นยังไง'}" maxlength="120"></label>`}
+<div class="deck-stack" aria-hidden="true">${[0, 1, 2, 3, 4].map((k) => `<span style="--k:${k}">${CARD_BACK}</span>`).join('')}</div>
+<button class="btn" data-act="tarotDraw">สับไพ่และเปิด ${spread.pos.length} ใบ</button>
+<p class="small" style="text-align:center">ตั้งจิตถึงคำถามให้ชัด แล้วค่อยกด</p>`;
   } else {
-    spread = t.cards.map((c, i) => `<div class="slot">${i < t.open ? tarotFace(c) : `<button class="tback" data-act="tarotOpen" aria-label="เปิดไพ่ใบ${pos[i]}"${i === t.open ? '' : ' disabled'}>${CARD_BACK}</button>`}<span class="label" style="font-size:10px;${i === t.open - 1 ? 'color:var(--text)' : ''}">${posEn[i]}</span></div>`).join('');
-    reading = t.cards.slice(0, t.open).map((c, i) => {
-      const card = TAROT[c.i];
-      return `<section class="card" style="gap:6px"><span class="eyebrow" style="color:var(--violet);letter-spacing:.2em">${posEn[i]} · ${card[1].toUpperCase()}${c.rev ? ' · REVERSED' : ''}</span>
-<h2 class="h2">${pos[i]}: ${card[2]}</h2><p class="body">${topic.lead} ${c.rev ? card[4] : card[3]}</p></section>`;
-    }).reverse().join('');
-    action = t.open < 3 ? `<button class="btn" data-act="tarotOpen">เปิดไพ่ใบ${pos[t.open]}</button>` : `<button class="btn btn-line" data-act="tarotReset">สับไพ่ใหม่</button>`;
+    const all = t.flipped.length === t.cards.length;
+    const grid = spread.house
+      ? `<div class="t-houses">${t.cards.map((d, i) => `<div class="t-slot"><span class="t-lbl">ภพ ${i + 1} ${SIGNS[(state.chart.firstSign + i) % 12].glyph}&#xFE0E;</span>${tarotCardHTML(d, i, { sel: all && t.sel === i })}</div>`).join('')}</div>`
+      : `<div class="t-row n${t.cards.length}">${t.cards.map((d, i) => `<div class="t-slot">${tarotCardHTML(d, i)}<span class="t-lbl">${spread.pos[i].th}</span></div>`).join('')}</div>`;
+    body = `${t.q && !spread.house ? `<p class="small" style="text-align:center">“${esc(t.q)}”</p>` : ''}
+${grid}
+<div id="tarot-reading">${tarotReadingArea()}</div>
+<div style="display:flex;gap:8px">${!all ? '<button class="btn" data-act="tarotAll" style="flex:1">เปิดทั้งหมด</button>' : ''}<button class="btn btn-line" data-act="tarotReset" style="flex:1">สับไพ่ใหม่</button></div>`;
   }
   return `<main class="screen" style="--accent:var(--violet)">
 ${pageHead('03', 'TAROT', 'ไพ่ทาโรต์', 'var(--violet)', 'tarot')}
-<div class="seg" role="group" aria-label="หัวข้อที่อยากรู้">${TOPICS.map((x, i) => `<button aria-pressed="${i === t.topic}" data-act="tarotTopic" data-i="${i}">${x.th}</button>`).join('')}</div>
-<div class="spread">${spread}</div>
-${action}
-${reading}
-<p class="small" style="text-align:center">ใช้ไพ่ชุดใหญ่ 22 ใบ · สุ่มใหม่ทุกครั้งที่สับ</p>
+${body}
+<p class="small" style="text-align:center;font-size:11px">สำรับ Rider–Waite–Smith 78 ใบ ภาพวาดต้นฉบับของ Pamela Colman Smith (1909) · ความหมายตามตำรา A. E. Waite</p>
 </main>`;
+}
+
+function tarotReadingArea() {
+  const t = state.tarot, spread = SPREADS[t.spread];
+  if (!t.cards) return '';
+  const sum = tarotSummary(spread, t.cards);
+  if (spread.house) {
+    const all = t.flipped.length === t.cards.length;
+    if (!all) return `<p class="small" style="text-align:center">แตะไพ่เพื่อเปิดทีละภพ หรือกด "เปิดทั้งหมด"</p>`;
+    return sum + tarotReading(t.cards[t.sel], t.sel, spread);
+  }
+  const open = t.flipped.slice().sort((a, b) => a - b);
+  if (!open.length) return `<p class="small" style="text-align:center">แตะที่ไพ่เพื่อเปิด</p>`;
+  return sum + open.map((i) => tarotReading(t.cards[i], i, spread)).join('');
 }
 
 function reduceNum(n, keepMaster) {
@@ -818,9 +914,8 @@ const AREAS = [
 function answer(topicIdx, text) {
   const ch = state.chart, now = new Date();
   if (topicIdx === 2) {
-    const c = { i: Math.floor(Math.random() * 22), rev: Math.random() < 0.25 };
-    const card = TAROT[c.i];
-    return { text: `ไพ่ที่ได้คือ "${card[2]}" (${card[1]}${c.rev ? ', กลับหัว' : ''}) — ${c.rev ? card[4] : card[3]}`, basis: ['TAROT · ' + card[0]] };
+    const c = drawCards(1)[0], card = CARDS[c.i];
+    return { text: `ไพ่ที่ได้คือ "${card.th}" (${card.en}${c.rev ? ', กลับหัว' : ''}) — ${c.rev ? card.rev : card.up}`, basis: ['TAROT · ' + card.en] };
   }
   if (topicIdx === 3) {
     const v = text.replace(/[^0-9]/g, '');
@@ -979,15 +1074,36 @@ document.addEventListener('click', (e) => {
     case 'matchSign': state.match.sign = i; break;
     case 'matchDate': state.match.useDate = !state.match.useDate; break;
     case 'tarotTopic': state.tarot.topic = i; break;
+    case 'tarotSpread': state.tarot.spread = i; break;
     case 'tarotDraw': {
-      const pool = Array.from({ length: 22 }, (_, k) => k);
-      for (let k = pool.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [pool[k], pool[j]] = [pool[j], pool[k]]; }
-      state.tarot.cards = pool.slice(0, 3).map((n) => ({ i: n, rev: Math.random() < 0.25 }));
-      state.tarot.open = 0;
+      const t = state.tarot;
+      t.cards = drawCards(SPREADS[t.spread].pos.length); t.flipped = []; t.sel = 0;
       break;
     }
-    case 'tarotOpen': if (state.tarot.cards && state.tarot.open < 3) state.tarot.open += 1; break;
-    case 'tarotReset': state.tarot.cards = null; state.tarot.open = 0; break;
+    case 'tarotFlip': {
+      const t = state.tarot, spread = SPREADS[t.spread];
+      if (!t.flipped.includes(i)) { t.flipped.push(i); el.classList.add('flipped'); el.setAttribute('aria-label', CARDS[t.cards[i].i].th); }
+      else if (spread.house) t.sel = i;
+      if (spread.house && t.flipped.length === t.cards.length) {
+        if (!el.dataset.justAll) document.querySelectorAll('.tc').forEach((b) => b.classList.toggle('sel', +b.dataset.i === t.sel));
+      }
+      const box = document.getElementById('tarot-reading');
+      if (box) box.innerHTML = tarotReadingArea();
+      if (t.flipped.length === t.cards.length) { const all = document.querySelector('[data-act="tarotAll"]'); if (all) all.remove(); }
+      if (spread.house && t.flipped.length === t.cards.length && box) box.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      return;
+    }
+    case 'tarotAll': {
+      const t = state.tarot;
+      t.flipped = t.cards.map((_, k) => k);
+      document.querySelectorAll('.tc').forEach((b) => b.classList.add('flipped'));
+      const box = document.getElementById('tarot-reading');
+      if (box) box.innerHTML = tarotReadingArea();
+      if (SPREADS[t.spread].house) document.querySelectorAll('.tc').forEach((b) => b.classList.toggle('sel', +b.dataset.i === t.sel));
+      el.remove();
+      return;
+    }
+    case 'tarotReset': state.tarot.cards = null; state.tarot.flipped = []; break;
     case 'numMode': state.num.mode = el.dataset.v; break;
     case 'luckMode': state.luck.mode = el.dataset.v; break;
     case 'drawBall': {
@@ -1024,6 +1140,7 @@ document.addEventListener('input', (e) => {
   const key = e.target.dataset.in;
   if (!key) return;
   const v = e.target.value;
+  if (key === 'tarotQ') { state.tarot.q = v; return; }
   if (key === 'placeQuery') {
     state.placeQuery = v;
     const list = document.getElementById('place-list');
