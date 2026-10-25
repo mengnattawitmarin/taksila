@@ -10,7 +10,7 @@ import { natalProfile, sixthSense } from './profile.js';
 import { CARDS, drawCards, SPREADS, HOUSE_READ } from './tarot.js';
 import { mountGlobe, burnIncense, mountSiamsi, askMotion, randomDigit, thaiNum } from './luck.js';
 import { SIAMSI } from './siamsi.js';
-import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, EVENT_CHANT } from './prayer.js';
+import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
 import { NUM_TOOLS, analyzeNumber, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
@@ -1260,7 +1260,7 @@ function remedyChip(r) {
   const pr = prayerById(r.id);
   if (!pr) return '';
   return `<a class="rem-chip${r.kind === 'แก้' ? ' fix' : ''}" href="#/prayer" data-act="openPrayer" data-v="${pr.id}">
-<span class="rem-ic">${icon('prayer', 18, 1.5)}</span><span class="rem-t"><span class="rem-k">${r.kind}ดวง · สวด${pr.th.replace(/^บทสวด/, '')} ${pr.count} จบ</span><span class="rem-r">${r.reason}</span></span>${icon('next', 14, 1.5)}</a>`;
+<span class="rem-ic">${icon('prayer', 18, 1.5)}</span><span class="rem-t"><span class="rem-k">${r.kind === 'บูชา' ? 'เทพประจำวันเกิด' : r.kind + 'ดวง'} · สวด${pr.th.replace(/^บทสวด/, '')} ${pr.count} จบ</span><span class="rem-r">${r.reason}</span></span>${icon('next', 14, 1.5)}</a>`;
 }
 function malaSVG(n, done) {
   const R = 46, pts = n < 5 ? 36 : Math.min(n, 108), lit = Math.round((Math.min(done, n) / n) * pts);
@@ -1294,6 +1294,7 @@ ${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตั�
   const today = dailyRemedy(liveAspects(state.chart, new Date(), { n: 6, exact: false }), bp, total);
   const recs = [{ id: birthChant(bp), kind: 'เสริม', reason: `บทประจำวันเกิดของคุณ (${TH_PLANETS[bp].day})` }];
   if (today.id !== recs[0].id) recs.unshift(today);
+  recs.push({ id: devaOfDay(bp), kind: 'บูชา', reason: `เทพประจำวันเกิดตามคติฮินดู (${TH_PLANETS[bp].day})` });
   const pu = st.purpose ? purposeById(st.purpose) : null;
   const list = pu ? pu.items.map(prayerById) : PRAYERS.filter((p) => st.cat === 'all' || p.cat === st.cat);
   return `<main class="screen">
