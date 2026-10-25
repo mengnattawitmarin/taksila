@@ -10,6 +10,7 @@ import { natalProfile, sixthSense } from './profile.js';
 import { CARDS, drawCards, SPREADS, HOUSE_READ } from './tarot.js';
 import { mountGlobe, burnIncense, mountSiamsi, askMotion, randomDigit, thaiNum } from './luck.js';
 import { SIAMSI } from './siamsi.js';
+import { PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, EVENT_CHANT } from './prayer.js';
 import { NUM_TOOLS, analyzeNumber, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
@@ -33,6 +34,7 @@ const state = {
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
+  prayer: { cat: 'all', open: null, counts: {} },
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
   ask: { topic: 0, messages: [] }
@@ -56,6 +58,7 @@ const IC = {
   numbers: '<rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16"/>',
   luck: '<circle cx="12" cy="12" r="8"/><rect x="10" y="10" width="4" height="4"/>',
   ask: '<path d="M4 5h16v11H10l-5 4v-4H4z"/>',
+  prayer: '<path d="M12 20c-4 0-8-3-9-7 3 0 6 1.5 9 5 3-3.5 6-5 9-5-1 4-5 7-9 7z"/><path d="M12 18c-2.5-2.5-3-6.5 0-11 3 4.5 2.5 8.5 0 11z"/>',
   back: '<path d="M15 5l-7 7 7 7"/>',
   next: '<path d="M9 5l7 7-7 7"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
@@ -203,7 +206,9 @@ function viewHome() {
     ['tarot', 'ไพ่ทาโรต์', '78 ใบ เลือกเอง', 'var(--violet)'],
     ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน', 'var(--teal)'],
     ['luck', 'โชคลาภ', 'ปิงปอง ธูป', 'var(--amber)'],
-    ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)']
+    ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
+    ['prayer', 'บทสวด', 'แก้ดวง เสริมดวง', 'var(--gold-2)'],
+    ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)']
   ];
   return `<main class="screen home">
 <header class="home-head">
@@ -224,8 +229,6 @@ function viewHome() {
 <span class="t">${t.isReturn ? (t.id === 'saturn' ? 'เสาร์คืนเรือน' : 'พฤหัสคืนเรือน') : planetById(t.id).th + 'จร' + SIGNS[t.sign].th}</span>
 <span class="small">${HOUSES[t.house - 1]}</span></a>`).join('')}</div>
 </section>
-<a class="ask-link" href="#/ask"><span class="sigil" style="color:var(--bg);background:var(--gold);border:none;width:40px;height:40px">${icon('ask', 20, 1.6)}</span>
-<span style="flex:1;display:flex;flex-direction:column;gap:2px"><span class="h2" style="font-size:16px">ปรึกษาผู้เชี่ยวชาญ</span><span class="small">ถามเรื่องเฉพาะ คำตอบอ้างอิงผังดาวของคุณ</span></span>${icon('next', 16, 1.5)}</a>
 </main>`;
 }
 
@@ -311,6 +314,7 @@ function liveDailyHTML() {
 <ul class="dh-legend">${dl.scores.map((x, k) => `<li><i style="background:${RING_COL[k]}"></i><span>${x.name}</span><b>${x.score}/5</b></li>`).join('')}</ul></div>
 </div>
 <p class="dh-head">${headline}</p>
+${remedyChip(dailyRemedy(la, birthPlanet(state.profile), total))}
 <button class="drawer-toggle" data-act="liveToggle" data-closed="ดูเหตุผล ${la.length} มุมดาว" aria-expanded="${open}">
 <span class="peek" aria-hidden="true">${la.slice(0, 3).map((x) => `<span class="peek-chip">${trio(x)}</span>`).join('')}</span>
 <span class="lbl">${open ? 'พับเก็บ' : `ดูเหตุผล ${la.length} มุมดาว`}</span>
@@ -425,6 +429,7 @@ function auspFinder(bp) {
 <span class="chev">${icon('down', 16, 1.6)}</span></button>
 <div class="fold"><div class="fold-in"><div class="rk-body">
 <ul class="why">${r.good.map((g) => `<li class="ok">${g}</li>`).join('')}${r.warn.map((w) => `<li class="no">${w}</li>`).join('')}</ul>
+${remedyChip({ id: EVENT_CHANT[a.event], kind: 'เสริม', reason: `สวดก่อนเริ่มงาน${ev.th} เพื่อความเป็นสิริมงคล` })}
 ${r.alt.length ? `<p class="small">เวลาสำรอง ${r.alt.map((y) => `${hm(y.start)}–${hm(y.end)} (ยาม${y.pos.th})`).join(' · ')}</p>` : ''}
 </div></div></div></li>`;
   };
@@ -614,6 +619,7 @@ ${senseHTML(ch)}
 <p class="mono" style="font-size:10px;color:var(--muted)">${r.career.basis}</p></div></section>
 <section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">เรื่องที่ต้องระวัง</h2>
 <ul class="trait-list">${r.cautions.map((t) => item(t, 'bad')).join('')}</ul></section>
+${remedyChip({ id: birthChant(birthPlanet(p)), kind: 'เสริม', reason: 'บทสวดประจำวันเกิด ใช้เสริมจุดเด่นและแก้เรื่องที่ต้องระวังในดวง' })}
 <section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">โชคลาภและสุขภาพ</h2>
 <div class="card" style="gap:8px"><p class="small" style="color:var(--text)"><span style="color:var(--gold-2)">โชคลาภ ·</span> ${r.luck}</p>
 ${r.health.map((h) => `<p class="small" style="color:var(--text)"><span style="color:var(--gold-2)">จุดที่ควรดูแล ·</span> ${h}</p>`).join('')}
@@ -784,6 +790,7 @@ function tarotReading(d, i, spread) {
 ${extra ? `<p class="small" style="color:var(--text-2)">${extra}</p>` : ''}
 <p class="r-pic">ในภาพ: ${c.pic}</p>
 <p class="r-astro">${cardAstro(c)}</p>
+${remedyChip(tarotRemedy(c, d.rev))}
 ${links.map((l) => `<p class="r-link">✦ ${l}</p>`).join('')}
 </div></article>`;
 }
@@ -991,7 +998,7 @@ function nameResults() {
   return `<div class="card num-sum"><div class="ns-top">
 <svg class="ns-ring" viewBox="0 0 72 72" aria-label="คะแนน ${r.score}"><circle cx="36" cy="36" r="${R}" fill="none" stroke="#2C261B" stroke-width="6"/><circle class="ring-arc" cx="36" cy="36" r="${R}" fill="none" stroke="#7FC4B4" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(r.score / 100 * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 36 36)" style="--c:${C.toFixed(1)}"/><text x="36" y="40" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" fill="#F1E6CF">${r.score}</text></svg>
 <span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span class="eyebrow" style="color:var(--teal)">พลังชื่อรวม · เกรด ${gL}</span><b class="ns-title">${esc(n.first)} ${esc(n.last)}</b><span class="small" style="color:var(--text)">${gTh} · ชื่อ 40% นามสกุล 20% ชื่อรวมสกุล 40%</span></span></div>
-${r.kalakiniFirst.length ? `<p class="small ns-note" style="color:var(--tension)">พบอักษรกาลกิณีในชื่อ: <b>${r.kalakiniFirst.join(' ')}</b> (ของคนเกิด${TH_PLANETS[bp].day}) ตำราแนะนำให้เลี่ยง</p>` : L ? `<p class="small ns-note" style="color:var(--teal)">ชื่อไม่มีอักษรกาลกิณีของคนเกิด${TH_PLANETS[bp].day}${r.kalakini.length ? ` (นามสกุลมี ${r.kalakini.join(' ')} แต่ตำรามักผ่อนผันให้นามสกุล)` : ''}</p>` : ''}
+${r.kalakiniFirst.length ? `<p class="small ns-note" style="color:var(--tension)">พบอักษรกาลกิณีในชื่อ: <b>${r.kalakiniFirst.join(' ')}</b> (ของคนเกิด${TH_PLANETS[bp].day}) ตำราแนะนำให้เลี่ยง</p>${remedyChip({ id: birthChant(bp), kind: 'แก้', reason: 'ระหว่างยังไม่เปลี่ยนชื่อ สวดบทประจำวันเกิดเพื่อเสริมดวง' })}` : L ? `<p class="small ns-note" style="color:var(--teal)">ชื่อไม่มีอักษรกาลกิณีของคนเกิด${TH_PLANETS[bp].day}${r.kalakini.length ? ` (นามสกุลมี ${r.kalakini.join(' ')} แต่ตำรามักผ่อนผันให้นามสกุล)` : ''}</p>` : ''}
 ${r.lucky.length ? `<p class="small" style="margin:0">อักษรมงคลในชื่อ (ศรี เดช มนตรี): <b style="color:var(--gold-2)">${r.lucky.join(' ')}</b></p>` : ''}
 </div>
 ${r.rows.map((row) => `<div class="nm-row" style="--lc:${LVC[row.rate.level]}">
@@ -1082,7 +1089,7 @@ function siamsiSlip(no) {
 <dl class="slip-topics">${f.topics.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
 <p class="slip-tip"><b>ข้อคิด</b> ${f.advice}</p>
 <p class="slip-foot">เซียมซีตักศิลา · คำทำนายเป็นกำลังใจ ผลจริงขึ้นอยู่กับการลงมือของคุณ</p>
-</article>`;
+</article>${remedyChip(siamsiRemedy(f.level))}`;
 }
 
 function viewLuck() {
@@ -1247,7 +1254,63 @@ function go(r) {
   try { history.replaceState(null, '', '#/' + r); } catch (e) { /* not allowed in some frames */ }
   render();
 }
-const VIEWS = { auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- บทสวดมนต์ ----------------
+function remedyChip(r) {
+  if (!r || !r.id) return '';
+  const pr = prayerById(r.id);
+  if (!pr) return '';
+  return `<a class="rem-chip${r.kind === 'แก้' ? ' fix' : ''}" href="#/prayer" data-act="openPrayer" data-v="${pr.id}">
+<span class="rem-ic">${icon('prayer', 18, 1.5)}</span><span class="rem-t"><span class="rem-k">${r.kind}ดวง · สวด${pr.th.replace(/^บทสวด/, '')} ${pr.count} จบ</span><span class="rem-r">${r.reason}</span></span>${icon('next', 14, 1.5)}</a>`;
+}
+function malaSVG(n, done) {
+  const R = 46, pts = n < 5 ? 36 : Math.min(n, 108), lit = Math.round((Math.min(done, n) / n) * pts);
+  const dots = Array.from({ length: pts }, (_, k) => { const a = (k / pts) * Math.PI * 2 - Math.PI / 2; const on = k < lit; return `<circle cx="${(60 + R * Math.cos(a)).toFixed(2)}" cy="${(60 + R * Math.sin(a)).toFixed(2)}" r="${pts > 40 ? 1.5 : 2.6}" fill="${on ? '#F0D89A' : '#3A3224'}"/>`; }).join('');
+  return `<svg class="mala" viewBox="0 0 120 120" aria-hidden="true">${dots}</svg>`;
+}
+function prayerText(pr) {
+  return pr.blocks.map((b) => `${b.note ? `<p class="pr-note">${b.note}</p>` : ''}${b.lines ? `<div class="pr-stanza">${b.n ? `<span class="pr-n">${thaiNum(b.n)}</span>` : ''}<div>${b.lines.map((l) => `<p>${l}</p>`).join('')}</div></div>` : ''}${b.p ? `<p class="pr-prose">${b.p}</p>` : ''}`).join('');
+}
+function viewPrayer() {
+  const st = state.prayer, bp = birthPlanet(state.profile);
+  const head = pageHead('07', 'PRAYER', 'บทสวดมนต์', 'var(--gold-2)', 'prayer', st.open ? `<button class="back" data-act="prayerBack" aria-label="กลับ" style="margin:0">${icon('back', 20, 1.5)}</button>` : '');
+  if (st.open) {
+    const pr = prayerById(st.open), done = st.counts[pr.id] || 0;
+    const cat = PRAYER_CATS.find((c) => c.id === pr.cat);
+    return `<main class="screen pr-screen">
+${head}
+<section class="pr-head"><span class="eyebrow" style="color:var(--gold)">${cat.th}${pr.sub ? ' · ' + pr.sub : ''}</span>
+<h2 class="pr-title">${pr.th}</h2>
+<p class="small" style="color:var(--text-2)">${pr.use}</p>
+${pr.origin ? `<p class="pr-origin"><b>ที่มา</b> ${pr.origin}</p>` : ''}
+<span class="pr-count">สวด ${pr.count} จบ${pr.cat === 'day' ? ' · ตามกำลังดาวประจำวัน' : ''}</span></section>
+<section class="pr-text${pr.heart ? ' heart' : ''}">${prayerText(pr)}</section>
+<section class="pr-counter" id="pr-counter">${counterHTML(pr)}</section>
+<p class="small" style="text-align:center;font-size:11px">ตั้งนะโม 3 จบก่อนสวด · สวดด้วยใจสงบ ความหมายเป็นสรุปสั้นเพื่อความเข้าใจ</p>
+</main>`;
+  }
+  const L = luckOf(bp), dl = daily(state.chart, new Date());
+  const total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
+  const today = dailyRemedy(liveAspects(state.chart, new Date(), { n: 6, exact: false }), bp, total);
+  const recs = [{ id: birthChant(bp), kind: 'เสริม', reason: `บทประจำวันเกิดของคุณ (${TH_PLANETS[bp].day})` }];
+  if (today.id !== recs[0].id) recs.unshift(today);
+  const list = PRAYERS.filter((p) => st.cat === 'all' || p.cat === st.cat);
+  return `<main class="screen">
+${head}
+<section class="pr-recs"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>แนะนำสำหรับคุณวันนี้</h2>${recs.map(remedyChip).join('')}</section>
+<div class="chips pr-cats" role="group" aria-label="หมวดบทสวด">${[{ id: 'all', th: 'ทั้งหมด' }, ...PRAYER_CATS].map((c) => `<button class="chip" aria-pressed="${st.cat === c.id}" data-act="prayerCat" data-v="${c.id}">${c.th}</button>`).join('')}</div>
+${st.cat === 'heart' ? '<p class="small">หัวใจคาถาคือการย่ออักษรตัวแรกของหลักธรรมให้ภาวนาง่าย ตำราหัวใจ 108 มีหลายบท ที่นี่คัดบทที่อธิบายที่มาได้ชัด ภาวนา 108 ครั้งตามเม็ดลูกประคำ</p>' : ''}
+<ul class="pr-list">${list.map((p) => `<li><a href="#/prayer" data-act="openPrayer" data-v="${p.id}" class="pr-item">
+<span class="pr-ic">${p.heart ? `<b>${p.heart.split(' ')[0]}</b>` : icon('prayer', 18, 1.5)}</span>
+<span class="pr-it"><b>${p.th}</b><span>${p.heart ? p.heart + ' · ' : ''}${p.use}</span></span><span class="pr-badge">${p.count}<i>จบ</i></span></a></li>`).join('')}</ul>
+</main>`;
+}
+function counterHTML(pr) {
+  const done = state.prayer.counts[pr.id] || 0, n = pr.count, full = done >= n;
+  return `<button class="pr-tap${full ? ' full' : ''}" data-act="prayerTap" aria-label="นับจบ ${done} จาก ${n}">${malaSVG(n, done)}<span class="pr-num"><b class="mono">${done}</b><i>/ ${n} จบ</i></span></button>
+<div class="pr-ctrl"><span class="small">${full ? 'ครบแล้ว สาธุ' : 'แตะวงกลมทุกครั้งที่สวดจบหนึ่งรอบ'}</span>${done ? '<button class="link-btn" data-act="prayerReset">เริ่มนับใหม่</button>' : ''}</div>`;
+}
+
+const VIEWS = { prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -1259,7 +1322,7 @@ function render() {
   if (r === 'home') startLive(); else clearInterval(liveTimer);
   mountLuck();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -1275,6 +1338,7 @@ document.addEventListener('click', (e) => {
   if (link) {
     e.preventDefault();
     if (el && el.dataset.act === 'chartTab') state.chartTab = +el.dataset.i;
+    if (el && el.dataset.act === 'openPrayer') { state.prayer.open = el.dataset.v; state.prayer.back = route(); }
     go(link.getAttribute('href').slice(2));
     return;
   }
@@ -1383,6 +1447,18 @@ document.addEventListener('click', (e) => {
     }
     case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [] }); break;
     case 'numMode': state.num.mode = el.dataset.v; break;
+    case 'prayerCat': state.prayer.cat = el.dataset.v; break;
+    case 'prayerBack': { const b = state.prayer.back; state.prayer.open = null; state.prayer.back = null; if (b && b !== 'prayer') { go(b); return; } break; }
+    case 'prayerReset': state.prayer.counts[state.prayer.open] = 0; { const c = document.getElementById('pr-counter'); if (c) c.innerHTML = counterHTML(prayerById(state.prayer.open)); } return;
+    case 'prayerTap': {
+      const pr = prayerById(state.prayer.open), c0 = state.prayer.counts[pr.id] || 0;
+      if (c0 >= pr.count) return;
+      state.prayer.counts[pr.id] = c0 + 1;
+      if (navigator.vibrate) navigator.vibrate(c0 + 1 >= pr.count ? [30, 50, 80] : 12);
+      const c = document.getElementById('pr-counter'); if (c) c.innerHTML = counterHTML(pr);
+      if (c0 + 1 >= pr.count) toast(`ครบ ${pr.count} จบ สาธุ`);
+      return;
+    }
     case 'nmGender': { state.num.gender = el.dataset.v; document.querySelectorAll('[data-act=nmGender]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state.num.gender)); const box = document.getElementById('num-results'); if (box) box.innerHTML = numResults(); return; }
     case 'luckMode': state.luck.mode = el.dataset.v; if (state.luck.inc === 'burning') state.luck.inc = 'idle'; break;
     case 'stirGlobe': if (luckCtl && luckCtl.stir) luckCtl.stir(); return;

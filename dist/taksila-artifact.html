@@ -160,6 +160,48 @@ a:hover { color: var(--gold-2); }
 .day-hero .drawer-toggle { margin-top: 0; }
 @media (prefers-reduced-motion: reduce) { .ring-arc { animation: none; } }
 
+/* prayer */
+.rem-chip { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; text-decoration: none; color: var(--text); border: 1px solid rgba(212,175,99,.35); background: linear-gradient(90deg, rgba(212,175,99,.10), transparent 80%); }
+.rem-chip.fix { border-color: rgba(224,122,98,.45); background: linear-gradient(90deg, rgba(224,122,98,.10), transparent 80%); }
+.rem-ic { flex: none; width: 32px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--gold-2); border: 1px solid rgba(212,175,99,.45); }
+.rem-chip.fix .rem-ic { color: #F2B3A3; border-color: rgba(224,122,98,.5); }
+.rem-t { flex: 1; display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.rem-k { font-size: 13px; font-weight: 600; }
+.rem-r { font-size: 11px; color: var(--text-2); line-height: 1.4; }
+.pr-recs { display: flex; flex-direction: column; gap: 8px; }
+.pr-cats { flex-wrap: nowrap; }
+.pr-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.pr-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); text-decoration: none; color: var(--text); }
+.pr-ic { flex: none; width: 40px; height: 40px; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: var(--gold-2); background: radial-gradient(circle, rgba(212,175,99,.18), transparent 70%); border: 1px solid rgba(212,175,99,.35); }
+.pr-ic b { font-family: var(--serif); font-size: 15px; }
+.pr-it { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pr-it b { font-family: var(--serif); font-size: 16px; }
+.pr-it span { font-size: 12px; color: var(--text-2); line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pr-badge { flex: none; display: flex; flex-direction: column; align-items: center; font-family: var(--mono); font-size: 16px; color: var(--gold-2); }
+.pr-badge i { font-style: normal; font-family: var(--sans, inherit); font-size: 10px; color: var(--muted); }
+.pr-head { display: flex; flex-direction: column; gap: 6px; text-align: center; align-items: center; }
+.pr-title { margin: 0; font-family: var(--serif); font-size: 24px; color: var(--text); }
+.pr-origin { margin: 0; font-size: 12px; color: var(--text-2); padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,.25); }
+.pr-origin b { color: var(--gold); margin-right: 4px; }
+.pr-count { font-size: 12px; padding: 4px 12px; border-radius: 12px; border: 1px solid rgba(212,175,99,.45); color: var(--gold-2); }
+.pr-text { padding: 20px 16px; border-radius: 14px; background: linear-gradient(180deg, #17130C, #110E09); border: 1px solid rgba(212,175,99,.25); text-align: center; }
+.pr-text p { margin: 0; font-family: var(--serif); font-size: 17px; line-height: 1.8; color: #F1E6CF; }
+.pr-text.heart p { font-size: 34px; letter-spacing: .12em; color: var(--gold-2); text-shadow: 0 0 18px rgba(240,216,154,.35); }
+.pr-note { font-size: 12px !important; font-family: var(--mono) !important; color: var(--gold) !important; letter-spacing: .1em; margin: 16px 0 6px !important; }
+.pr-note:first-child { margin-top: 0 !important; }
+.pr-stanza { position: relative; margin: 0 0 14px; padding: 0 14px; }
+.pr-n { position: absolute; left: -6px; top: 6px; font-family: var(--serif); font-size: 12px; color: var(--muted); }
+.pr-prose { font-size: 16px !important; text-align: left; margin-bottom: 10px !important; }
+.pr-counter { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.pr-tap { position: relative; width: 168px; height: 168px; border-radius: 50%; border: 0; padding: 0; cursor: pointer; background: radial-gradient(circle, rgba(212,175,99,.16), rgba(13,11,8,0) 70%); }
+.pr-tap:active { transform: scale(.97); }
+.pr-tap .mala { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pr-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.pr-num b { font-size: 38px; color: var(--text); }
+.pr-num i { font-style: normal; font-size: 12px; color: var(--muted); }
+.pr-tap.full .pr-num b { color: var(--gold-2); text-shadow: 0 0 16px rgba(240,216,154,.6); }
+.pr-ctrl { display: flex; gap: 12px; align-items: center; }
+
 /* install card */
 #install-slot:empty { display: none; }
 .install-card { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px 12px; align-items: center; padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(212,175,99,.4); background: linear-gradient(120deg, rgba(212,175,99,.14), rgba(124,96,200,.10) 70%), var(--surface); }
@@ -174,7 +216,10 @@ a:hover { color: var(--gold-2); }
 .ic-steps b { color: var(--gold-2); }
 
 /* oracle grid: the divination rooms */
-.oracle-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.oracle-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.oracle-grid .oracle .small { display: none; }
+.oracle-grid .oracle .n { font-size: 13px; }
+.oracle-grid .oracle .sigil { width: 34px; height: 34px; }
 .oracle { --c: var(--gold); text-decoration: none; color: var(--text); background: linear-gradient(180deg, color-mix(in srgb, var(--c) 7%, var(--surface)), var(--surface)); border: 1px solid var(--line); border-radius: 12px; padding: 10px 4px 9px; gap: 4px; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; transition: border-color .2s, transform .2s; }
 .oracle:active { transform: scale(.97); }
 .oracle:hover { border-color: color-mix(in srgb, var(--c) 50%, var(--line)); }
@@ -2495,6 +2540,828 @@ function analyzeName(first, last, { gender = '', avoidPlanet = null, goodPlanets
   return { rows, score: kalakiniFirst.length ? Math.min(score, 45) : score, kalakini, kalakiniFirst, lucky };
 }
 
+// ---- js/prayer.js ----
+// บทสวดมนต์: texts, categories, and the rules that link a reading to a chant.
+// Pali texts for นะโม อิติปิโส พาหุงมหากา ชินบัญชร and แผ่เมตตา come from the open-source
+// bedtime-chant project (MIT License, (c) 2026 Samit Koyom, github.com/iamsamitdev/bedtime-chant).
+// The weekday chants were checked against two published sources. Meanings are short summaries written for ตักศิลา.
+const PRAYER_CATS = [
+  { id: 'start', th: 'เริ่มต้นสวด' }, { id: 'day', th: 'ประจำวันเกิด · บูชาดาว' }, { id: 'guard', th: 'คุ้มครอง · พุทธคุณ' },
+  { id: 'win', th: 'ชัยชนะ · มงคล' }, { id: 'metta', th: 'เมตตา · อุทิศ' }, { id: 'heart', th: 'หัวใจคาถา (หัวใจ 108)' }, { id: 'deva', th: 'บูชาเทพ' }
+];
+const PRAYERS = [
+ {
+  "id": "namo",
+  "cat": "start",
+  "th": "นะโม ตัสสะ (บูชาพระรัตนตรัย)",
+  "count": 3,
+  "use": "สวดก่อนบทอื่นทุกครั้ง เป็นการนอบน้อมต่อพระพุทธเจ้า",
+  "blocks": [
+   {
+    "lines": [
+     "นะโม ตัสสะ ภะคะวะโต อะระหะโต สัมมาสัมพุทธัสสะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "trisarana",
+  "cat": "start",
+  "th": "ไตรสรณคมน์",
+  "count": 1,
+  "use": "ประกาศถึงพระพุทธ พระธรรม พระสงฆ์ เป็นที่พึ่ง ต่อจากนะโม",
+  "blocks": [
+   {
+    "lines": [
+     "พุทธัง สะระณัง คัจฉามิ",
+     "ธัมมัง สะระณัง คัจฉามิ",
+     "สังฆัง สะระณัง คัจฉามิ"
+    ]
+   },
+   {
+    "lines": [
+     "ทุติยัมปิ พุทธัง สะระณัง คัจฉามิ",
+     "ทุติยัมปิ ธัมมัง สะระณัง คัจฉามิ",
+     "ทุติยัมปิ สังฆัง สะระณัง คัจฉามิ"
+    ]
+   },
+   {
+    "lines": [
+     "ตะติยัมปิ พุทธัง สะระณัง คัจฉามิ",
+     "ตะติยัมปิ ธัมมัง สะระณัง คัจฉามิ",
+     "ตะติยัมปิ สังฆัง สะระณัง คัจฉามิ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "itipiso",
+  "cat": "guard",
+  "th": "อิติปิโส (พุทธคุณ ธรรมคุณ สังฆคุณ)",
+  "count": 9,
+  "use": "บทพื้นฐานที่สุด ระลึกถึงคุณพระรัตนตรัย ให้ใจนิ่ง มีสติ เสริมสิริมงคลทุกด้าน นิยมสวดเท่าอายุ +1",
+  "blocks": [
+   {
+    "note": "พุทธคุณ"
+   },
+   {
+    "p": "อิติปิ โส ภะคะวา อะระหัง สัมมาสัมพุทโธ วิชชาจะระณะสัมปันโน สุคะโต โลกะวิทู อะนุตตะโร ปุริสะทัมมะสาระถิ สัตถา เทวะมะนุสสานัง พุทโธ ภะคะวาติ."
+   },
+   {
+    "note": "ธรรมคุณ"
+   },
+   {
+    "p": "สวากขาโต ภะคะวะตา ธัมโม สันทิฏฐิโก อะกาลิโก เอหิปัสสิโก โอปะนะยิโก ปัจจัตตัง เวทิตัพโพ วิญญูหีติ."
+   },
+   {
+    "note": "สังฆคุณ"
+   },
+   {
+    "p": "สุปะฏิปันโน ภะคะวะโต สาวะกะสังโฆ อุชุปะฏิปันโน ภะคะวะโต สาวะกะสังโฆ ญายะปะฏิปันโน ภะคะวะโต สาวะกะสังโฆ สามีจิปะฏิปันโน ภะคะวะโต สาวะกะสังโฆ ยะทิทัง จัตตาริ ปุริสะยุคานิ อัฏฐะ ปุริสะปุคคะลา เอสะ ภะคะวะโต สาวะกะสังโฆ อาหุเนยโย ปาหุเนยโย ทักขิเณยโย อัญชะลีกะระณีโย อะนุตตะรัง ปุญญักเขตตัง โลกัสสาติ."
+   }
+  ]
+ },
+ {
+  "id": "chinabanchon",
+  "cat": "guard",
+  "th": "พระคาถาชินบัญชร",
+  "count": 1,
+  "use": "ของสมเด็จพระพุฒาจารย์ (โต พรหมรังสี) อัญเชิญพระพุทธเจ้าและพระอรหันต์มาคุ้มครองทั่วกาย ป้องกันภัย แคล้วคลาด",
+  "blocks": [
+   {
+    "note": "บทระลึก"
+   },
+   {
+    "lines": [
+     "ปุตตะกาโม ละเภ ปุตตัง ธะนะกาโม ละเภ ธะนัง",
+     "อัตถิ กาเย กายะ ญายะ เทวานัง ปิยะตัง สุตตะวา",
+     "อิติปิ โส ภะคะวา ยะมะราชาโน ท้าวเวสสุวัณโณ",
+     "มะระณัง สุขัง อะระหัง สุคะโต นะโม พุทธายะ"
+    ]
+   },
+   {
+    "note": "บทสวด"
+   },
+   {
+    "n": 1,
+    "lines": [
+     "ชะยาสะนาคะตา พุทธา เชตวา มารัง สะวาหะนัง",
+     "จะตุสัจจาสะภัง ระสัง เย ปิวิงสุ นะราสะภา"
+    ]
+   },
+   {
+    "n": 2,
+    "lines": [
+     "ตัณหังกะราทะโย พุทธา อัฏฐะวีสะติ นายะกา",
+     "สัพเพ ปะติฏฐิตา มัยหัง มัตถะเก เต มุนิสสะรา"
+    ]
+   },
+   {
+    "n": 3,
+    "lines": [
+     "สีเส ปะติฏฐิโต มัยหัง พุทโธ ธัมโม ทะวิโลจะเน",
+     "สังโฆ ปะติฏฐิโต มัยหัง อุเร สัพพะคุณากะโร"
+    ]
+   },
+   {
+    "n": 4,
+    "lines": [
+     "หะทะเย เม อะนุรุทโธ สารีปุตโต จะ ทักขิเณ",
+     "โกณฑัญโญ ปิฏฐิภาคัสมิง โมคคัลลาโน จะ วามะเก"
+    ]
+   },
+   {
+    "n": 5,
+    "lines": [
+     "ทักขิเณ สะวะเน มัยหัง อาสุง อานันทะราหุโล",
+     "กัสสะโป จะ มะหานาโม อุภาสุง วามะโสตะเก"
+    ]
+   },
+   {
+    "n": 6,
+    "lines": [
+     "เกสันเต ปิฏฐิภาคัสมิง สุริโย วะ ปะภังกะโร",
+     "นิสินโน สิริสัมปันโน โสภิโต มุนิปุงคะโว"
+    ]
+   },
+   {
+    "n": 7,
+    "lines": [
+     "กุมาระกัสสะโป เถโร มะเหสี จิตตะวาทะโก",
+     "โส มัยหัง วะทะเน นิจจัง ปะติฏฐาสิ คุณากะโร"
+    ]
+   },
+   {
+    "n": 8,
+    "lines": [
+     "ปุณโณ อังคุลิมาโล จะ อุปาลี นันทะสีวะลี",
+     "เถรา ปัญจะ อิเม ชาตา นะลาเฏ ติละกา มะมะ"
+    ]
+   },
+   {
+    "n": 9,
+    "lines": [
+     "เสสาสีติ มะหาเถรา วิชิตา ชินะสาวะกา",
+     "เอเตสีติ มะหาเถรา ชิตะวันโต ชิโนระสา",
+     "ชะลันตา สีละเตเชนะ อังคะมังเคสุ สัณฐิตา"
+    ]
+   },
+   {
+    "n": 10,
+    "lines": [
+     "ระตะนัง ปุระโต อาสิ ทักขิเณ เมตตะสุตตะกัง",
+     "ธะชัคคัง ปัจฉะโต อาสิ วาเม อังคุลิมาละกัง"
+    ]
+   },
+   {
+    "n": 11,
+    "lines": [
+     "ขันธะโมระปะริตตัญจะ อาฏานาฏิยะสุตตะกัง",
+     "อากาเส ฉะทะนัง อาสิ เสสา ปาการะสัณฐิตา"
+    ]
+   },
+   {
+    "n": 12,
+    "lines": [
+     "ชินา นานาวะระสังยุตตา สัตตัปปาการะลังกะตา",
+     "วาตะปิตตาทิสัญชาตา พาหิรัชฌัตตุปัททะวา"
+    ]
+   },
+   {
+    "n": 13,
+    "lines": [
+     "อะเสสา วินะยัง ยันตุ อะนันตะชินะเตชะสา",
+     "วะสะโต เม สะกิจเจนะ สะทา สัมพุทธะปัญชะเร"
+    ]
+   },
+   {
+    "n": 14,
+    "lines": [
+     "ชินะปัญชะระมัชฌัมหิ วิหะรันตัง มะหีตะเล",
+     "สะทา ปาเลนตุ มัง สัพเพ เต มะหาปุริสาสะภา"
+    ]
+   },
+   {
+    "n": 15,
+    "lines": [
+     "อิจเจวะมันโต สุคุตโต สุรักโข",
+     "ชินานุภาเวนะ ชิตุปัททะโว",
+     "ธัมมานุภาเวนะ ชิตาริสังโฆ",
+     "สังฆานุภาเวนะ ชิตันตะราโย",
+     "สัทธัมมานุภาวะปาลิโต",
+     "จะรามิ ชินะปัญชะเรติ."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "bahung",
+  "cat": "win",
+  "th": "พาหุงมหากา (ชัยมงคลคาถา)",
+  "count": 1,
+  "use": "บทแห่งชัยชนะ 8 ครั้งของพระพุทธเจ้า นิยมสวดก่อนงานมงคล สอบ สัมภาษณ์ แข่งขัน หรือวันที่ต้องเผชิญอุปสรรค",
+  "blocks": [
+   {
+    "n": 1,
+    "lines": [
+     "พาหุง สะหัสสะมะภินิมมิตะสาวุธันตัง",
+     "ครีเมขะลัง อุทิตะโฆระสะเสนะมารัง",
+     "ทานาทิธัมมะวิธินา ชิตะวา มุนินโท",
+     "ตันเตชะสา ภะวะตุ เต ชะยะมังคะลานิ"
+    ]
+   },
+   {
+    "n": 2,
+    "lines": [
+     "มาราติเรกะมะภิยุชฌิตะสัพพะรัตติง",
+     "โฆรัมปะนาฬะวะกะมักขะมะถัทธะยักขัง",
+     "ขันตีสุทันตะวิธินา ชิตะวา มุนินโท",
+     "ตันเตชะสา ภะวะตุ เต ชะยะมังคะลานิ"
+    ]
+   },
+   {
+    "n": 3,
+    "lines": [
+     "นาฬาคิริง คะชะวะรัง อะติมัตตะภูตัง",
+     "ทาวัคคิจักกะมะสะนีวะ สุทารุณันตัง",
+     "เมตตัมพุเสกะวิธินา ชิตะวา มุนินโท",
+     "ตันเตชะสา ภะวะตุ เต ชะยะมังคะลานิ"
+    ]
+   },
+   {
+    "n": 4,
+    "lines": [
+     "อุกขิตตะขัคคะมะติหัตถะสุทารุณันตัง",
+     "ธาวันติโยชะนะปะถังคุลิมาละวันตัง",
+     "อิทธีภิสังขะตะมะโน ชิตะวา มุนินโท",
+     "ตันเตชะสา ภะวะตุ เต ชะยะมังคะลานิ"
+    ]
+   },
+   {
+    "n": 5,
+    "lines": [
+     "กัตวานะ กัฏฐะมุทะรัง อิวะ คัพภินียา",
+     "จิญจายะ ทุฏฐะวะจะนัง ชะนะกายะมัชเฌ",
+     "สันเตนะ โสมะวิธินา ชิตะวา มุนินโท",
+     "ตันเตชะสา ภะวะตุ เต ชะยะมังคะลานิ"
+    ]
+   },
+   {
+    "n": 6,
+    "lines": [
+     "สัจจัง วิหายะ มะติสัจจะกะวาทะเกตุง",
+     "วาทาภิโรปิตะมะนัง อะติอันธะภูตัง",
+     "ปัญญาปะทีปะชะลิโต ชิตะวา มุนินโท",
+     "ตันเตชะสา ภะวะตุ เต ชะยะมังคะลานิ"
+    ]
+   },
+   {
+    "n": 7,
+    "lines": [
+     "นันโทปะนันทะภุชะคัง วิพุธัง มะหิทธิง",
+     "ปุตเตนะ เถระภุชะเคนะ ทะมาปะยันโต",
+     "อิทธูปะเทสะวิธินา ชิตะวา มุนินโท",
+     "ตันเตชะสา ภะวะตุ เต ชะยะมังคะลานิ"
+    ]
+   },
+   {
+    "n": 8,
+    "lines": [
+     "ทุคคาหะทิฏฐิภุชะเคนะ สุทัฏฐะหัตถัง",
+     "พรัหมัง วิสุทธิชุติมิทธิพะกาภิธานัง",
+     "ญาณาคะเทนะ วิธินา ชิตะวา มุนินโท",
+     "ตันเตชะสา ภะวะตุ เต ชะยะมังคะลานิ"
+    ]
+   },
+   {
+    "n": 9,
+    "lines": [
+     "เอตาปิ พุทธะชะยะมังคะละอัฏฐะคาถา",
+     "โย วาจะโน ทินะทิเน สะระเต มะตันที",
+     "หิตวานะเนกะวิวิธานิ จุปัททะวานิ",
+     "โมกขัง สุขัง อะธิคะเมยยะ นะโร สะปัญโญ."
+    ]
+   },
+   {
+    "note": "มหาการุณิโก (ชยปริตร)",
+    "lines": [
+     "มะหาการุณิโก นาโถ หิตายะ สัพพะปาณินัง",
+     "ปูเรตวา ปาระมี สัพพา ปัตโต สัมโพธิมุตตะมัง",
+     "เอเตนะ สัจจะวัชเชนะ โหตุ เต ชะยะมังคะลัง."
+    ]
+   },
+   {
+    "lines": [
+     "ชะยันโต โพธิยา มูเล สักยานัง นันทิวัฑฒะโน",
+     "เอวัง ตวัง วิชะโย โหหิ ชะยัสสุ ชะยะมังคะเล",
+     "อะปะราชิตะปัลลังเก สีเส ปะฐะวิโปกขะเร",
+     "อะภิเสเก สัพพะพุทธานัง อัคคัปปัตโต ปะโมทะติ."
+    ]
+   },
+   {
+    "lines": [
+     "สุนักขัตตัง สุมังคะลัง สุปะภาตัง สุหุฏฐิตัง",
+     "สุขะโณ สุมุหุตโต จะ สุยิฏฐัง พรัหมะจาริสุ",
+     "ปะทักขิณัง กายะกัมมัง วาจากัมมัง ปะทักขิณัง",
+     "ปะทักขิณัง มะโนกัมมัง ปะณิธี เต ปะทักขิณา",
+     "ปะทักขิณานิ กัตวานะ ละภันตัตเถ ปะทักขิเณ."
+    ]
+   },
+   {
+    "lines": [
+     "ภะวะตุ สัพพะมังคะลัง รักขันตุ สัพพะเทวะตา",
+     "สัพพะพุทธานุภาเวนะ สะทา โสตถี ภะวันตุ เต."
+    ]
+   },
+   {
+    "lines": [
+     "ภะวะตุ สัพพะมังคะลัง รักขันตุ สัพพะเทวะตา",
+     "สัพพะธัมมานุภาเวนะ สะทา โสตถี ภะวันตุ เต."
+    ]
+   },
+   {
+    "lines": [
+     "ภะวะตุ สัพพะมังคะลัง รักขันตุ สัพพะเทวะตา",
+     "สัพพะสังฆานุภาเวนะ สะทา โสตถี ภะวันตุ เต."
+    ]
+   }
+  ]
+ },
+ {
+  "id": "metta-self",
+  "cat": "metta",
+  "th": "แผ่เมตตาให้ตนเอง",
+  "count": 1,
+  "use": "ทำใจให้เป็นสุข ไม่มีเวร ใช้เมื่อเครียด กังวล หรือก่อนนอน",
+  "blocks": [
+   {
+    "lines": [
+     "อะหัง สุขิโต โหมิ",
+     "นิททุกโข โหมิ",
+     "อะเวโร โหมิ",
+     "อัพยาปัชโฌ โหมิ",
+     "อะนีโฆ โหมิ",
+     "สุขี อัตตานัง ปะริหะรามิ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "metta-all",
+  "cat": "metta",
+  "th": "แผ่เมตตาให้สรรพสัตว์",
+  "count": 1,
+  "use": "ลดความขัดแย้ง เสริมเมตตามหานิยม เหมาะเมื่อมีปัญหากับคนรอบตัวหรือความรัก",
+  "blocks": [
+   {
+    "p": "สัพเพ สัตตา สัตว์ทั้งหลายที่เป็นเพื่อนทุกข์ เกิด แก่ เจ็บ ตาย ด้วยกันหมดทั้งสิ้น"
+   },
+   {
+    "p": "อะเวรา จงเป็นสุขเป็นสุขเถิด อย่าได้มีเวรแก่กันและกันเลย"
+   },
+   {
+    "p": "สัพเพ สัตตา สัตว์ทั้งหลายที่เป็นเพื่อนทุกข์ เกิด แก่ เจ็บ ตาย ด้วยกันหมดทั้งสิ้น"
+   },
+   {
+    "p": "อัพยาปัชฌา จงเป็นสุขเป็นสุขเถิด อย่าได้เบียดเบียนซึ่งกันและกันเลย"
+   },
+   {
+    "p": "สัพเพ สัตตา สัตว์ทั้งหลายที่เป็นเพื่อนทุกข์ เกิด แก่ เจ็บ ตาย ด้วยกันหมดทั้งสิ้น"
+   },
+   {
+    "p": "อะนีฆา จงเป็นสุขเป็นสุขเถิด อย่าได้มีความทุกข์กายทุกข์ใจเลย"
+   },
+   {
+    "p": "สัพเพ สัตตา สัตว์ทั้งหลายที่เป็นเพื่อนทุกข์ เกิด แก่ เจ็บ ตาย ด้วยกันหมดทั้งสิ้น"
+   },
+   {
+    "p": "สุขี อัตตานัง ปะริหะรันตุ จงมีความสุขกายสุขใจ รักษาตนให้พ้นจากทุกข์ภัยทั้งสิ้นเถิด ท่านทั้งหลายที่ท่านได้ทุกข์ ขอให้ท่านมีความสุข ท่านทั้งหลายที่ท่านได้สุข ขอให้สุขยิ่ง ๆ"
+   },
+   {
+    "p": "สัพเพ สัตตา สัตว์ทั้งหลายที่เกิดเป็นชะลาพุชะ ที่เกิดเป็นอัณฑะชะ ที่เกิดเป็นสังเสทะชะ ที่เกิดเป็นโอปปาติกะ จงมารับกุศลผลบุญให้ถ้วนทั่วทุกตัวสัตว์"
+   }
+  ]
+ },
+ {
+  "id": "kruadnam",
+  "cat": "metta",
+  "th": "กรวดน้ำ อุทิศส่วนกุศล (บทย่อ)",
+  "count": 3,
+  "use": "อุทิศบุญให้ญาติและเจ้ากรรมนายเวร หลังทำบุญหรือหลังสวดมนต์",
+  "blocks": [
+   {
+    "lines": [
+     "อิทัง เม ญาตีนัง โหตุ",
+     "สุขิตา โหนตุ ญาตะโย"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "day-sun",
+  "cat": "day",
+  "th": "บทสวดวันอาทิตย์",
+  "sub": "พระปางถวายเนตร",
+  "count": 6,
+  "use": "โมรปริตร บทของพญานกยูงทอง สวดเพื่อคุ้มครองตนให้แคล้วคลาดตลอดวันและคืน",
+  "blocks": [
+   {
+    "lines": [
+     "อุเทตะยัญจักขุมา เอกะราชา",
+     "หะริสสะวัณโณ ปะฐะวิปปะภาโส",
+     "ตัง ตัง นะมัสสามิ หะริสสะวัณณัง ปะฐะวิปปะภาสัง",
+     "ตะยัชชะ คุตตา วิหะเรมุ ทิวะสัง",
+     "เย พราหมะณา เวทะคู สัพพะธัมเม",
+     "เต เม นะโม เต จะ มัง ปาละยันตุ",
+     "นะมัตถุ พุทธานัง นะมัตถุ โพธิยา",
+     "นะโม วิมุตตานัง นะโม วิมุตติยา",
+     "อิมัง โส ปะริตตัง กัตวา โมโร จะระติ เอสะนา ฯ",
+     "อะเปตะยัญจักขุมา เอกะราชา",
+     "หะริสสะวัณโณ ปะฐะวิปปะภาโส",
+     "ตัง ตัง นะมัสสามิ หะริสสะวัณณัง ปะฐะวิปปะภาสัง",
+     "ตะยัชชะ คุตตา วิหะเรมุ รัตติง",
+     "เย พราหมะณา เวทะคู สัพพะธัมเม",
+     "เต เม นะโม เต จะ มัง ปาละยันตุ",
+     "นะมัตถุ พุทธานัง นะมัตถุ โพธิยา",
+     "นะโม วิมุตตานัง นะโม วิมุตติยา",
+     "อิมัง โส ปะริตตัง กัตวา โมโร วาสะมะกัปปะยีติ ฯ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "day-mon",
+  "cat": "day",
+  "th": "บทสวดวันจันทร์",
+  "sub": "พระปางห้ามญาติ",
+  "count": 15,
+  "use": "บทขับลางร้าย ฝันร้าย และสิ่งอัปมงคล ด้วยอานุภาพพระพุทธ พระธรรม พระสงฆ์",
+  "blocks": [
+   {
+    "lines": [
+     "ยันทุนนิมิตตัง อะวะมังคะลัญจะ",
+     "โย จามะนาโป สะกุณัสสะ สัทโท",
+     "ปาปัคคะโห ทุสสุปินัง อะกันตัง",
+     "พุทธานุภาเวนะ วินาสะเมนตุ ฯ",
+     "ยันทุนนิมิตตัง อะวะมังคะลัญจะ",
+     "โย จามะนาโป สะกุณัสสะ สัทโท",
+     "ปาปัคคะโห ทุสสุปินัง อะกันตัง",
+     "ธัมมานุภาเวนะ วินาสะเมนตุ ฯ",
+     "ยันทุนนิมิตตัง อะวะมังคะลัญจะ",
+     "โย จามะนาโป สะกุณัสสะ สัทโท",
+     "ปาปัคคะโห ทุสสุปินัง อะกันตัง",
+     "สังฆานุภาเวนะ วินาสะเมนตุ ฯ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "day-tue",
+  "cat": "day",
+  "th": "บทสวดวันอังคาร",
+  "sub": "พระปางไสยาสน์",
+  "count": 8,
+  "use": "ธชัคคปริตร ระลึกถึงพระรัตนตรัยเพื่อให้มีที่พึ่งและพ้นจากอุปัทวะทั้งปวง",
+  "blocks": [
+   {
+    "lines": [
+     "ยัสสานุสสะระเณนาปิ อันตะลิกเขปิ ปาณิโน",
+     "ปะติฏฐะมะธิคัจฉันติ ภูมิยัง วิยะ สัพพะทา",
+     "สัพพูปัททะวะชาลัมหา ยักขะโจราทิสัมภะวา",
+     "คะณะนา นะ จะ มุตตานัง ปะริตตันตัมภะณามะ เห ฯ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "day-wed",
+  "cat": "day",
+  "th": "บทสวดวันพุธ (กลางวัน)",
+  "sub": "พระปางอุ้มบาตร",
+  "count": 17,
+  "use": "ขันธปริตร ป้องกันภัยจากสัตว์มีพิษและอันตรายรอบตัว",
+  "blocks": [
+   {
+    "lines": [
+     "สัพพาสีวิสะชาตีนัง ทิพพะมันตาคะทัง วิยะ",
+     "ยันนาเสติ วิสัง โฆรัง เสสัญจาปิ ปะริสสะยัง",
+     "อาณักเขตตัมหิ สัพพัตถะ สัพพะทา สัพพะปาณินัง",
+     "สัพพะโสปิ นิวาเรติ ปะริตตันตัมภะณามะ เห ฯ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "day-rahu",
+  "cat": "day",
+  "th": "บทสวดวันพุธ (กลางคืน) · ราหู",
+  "sub": "พระปางป่าเลไลยก์",
+  "count": 12,
+  "use": "จันทปริตร บทที่พระจันทร์ขอให้พ้นจากราหู ใช้สวดเมื่อราหูให้โทษหรือเรื่องร้ายคืบคลานเข้ามา",
+  "blocks": [
+   {
+    "lines": [
+     "กินนุ สันตะระมาโนวะ ราหุ จันทัง ปะมุญจะสิ",
+     "สังวิคคะรูโป อาคัมมะ กินนุ ภีโต ติฏฐะสีติ",
+     "สัตตะธา เม ผะเล มุทธา ชีวันโต นะ สุขัง ละเภ",
+     "พุทธาคาถาภิคิโตมหิ โนเจ มุญเจยะ จันทิมันติ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "day-thu",
+  "cat": "day",
+  "th": "บทสวดวันพฤหัสบดี",
+  "sub": "พระปางสมาธิ",
+  "count": 19,
+  "use": "วัฏฏกปริตร บทแห่งสัจจะที่ทำให้ไฟป่าดับ สวดเพื่อปัดเป่าภัยและเสริมปัญญา",
+  "blocks": [
+   {
+    "lines": [
+     "ปูเรนตัมโพธิสัมภาเร นิพพัตตัง วัฏฏะชาติยัง",
+     "ยัสสะ เตเชนะ ทาวัคคิ มะหาสัตตัง วิวัชชะยิ",
+     "เถรัสสะ สารีปุตตัสสะ โลกะนาเถนะ ภาสิตัง",
+     "กัปปัฏฐายิ มะหาเตชัง ปะริตตันตัมภะณามะ เห ฯ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "day-fri",
+  "cat": "day",
+  "th": "บทสวดวันศุกร์",
+  "sub": "พระปางรำพึง",
+  "count": 21,
+  "use": "บทขัดเมตตปริตร ผู้สวดหลับเป็นสุข ตื่นเป็นสุข ไม่ฝันร้าย และเป็นที่รักของผู้คน",
+  "blocks": [
+   {
+    "lines": [
+     "ยัสสานุภาวะโต ยักขา เนวะ ทัสเสนติ ภิงสะนัง",
+     "ยัมหิ เจวานุยุญชันโต รัตตินทิวะมะตันทิโต",
+     "สุขัง สุปะติ สุตโต จะ ปาปัง กิญจิ นะ ปัสสะติ",
+     "เอวะมาทิคุณูเปตัง ปะริตตันตัมภะณามะ เห ฯ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "day-sat",
+  "cat": "day",
+  "th": "บทสวดวันเสาร์",
+  "sub": "พระปางนาคปรก",
+  "count": 10,
+  "use": "อังคุลิมาลปริตร บทแห่งสัจจะของพระองคุลิมาล สวดเพื่อความปลอดภัยและคลอดง่าย",
+  "blocks": [
+   {
+    "lines": [
+     "ยะโตหัง ภะคินิ อะริยายะ ชาติยา ชาโต",
+     "นาภิชานามิ สัญจิจจะ ปาณัง ชีวิตา โวโรเปตา",
+     "เตนะ สัจเจนะ โสตถิ เต โหตุ โสตถิ คัพภัสสะ ฯ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-buddha",
+  "cat": "heart",
+  "th": "หัวใจพระพุทธคุณ",
+  "count": 108,
+  "use": "คุ้มครอง ใช้ภาวนาแทนบทอิติปิโสเต็มเมื่อมีเวลาน้อย",
+  "heart": "อิ สวา สุ",
+  "origin": "ย่อจาก อิติปิโส · สวากขาโต · สุปะฏิปันโน (พุทธคุณ ธรรมคุณ สังฆคุณ)",
+  "blocks": [
+   {
+    "lines": [
+     "อิ สวา สุ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-setthi",
+  "cat": "heart",
+  "th": "หัวใจเศรษฐี",
+  "count": 108,
+  "use": "เรื่องเงินและการงาน ภาวนาพร้อมนำหลักทั้ง 4 ไปปฏิบัติ",
+  "heart": "อุ อา กะ สะ",
+  "origin": "ย่อจาก อุฏฐานสัมปทา (ขยันหา) · อารักขสัมปทา (รู้จักเก็บ) · กัลยาณมิตตตา (คบคนดี) · สมชีวิตา (ใช้จ่ายพอดี)",
+  "blocks": [
+   {
+    "lines": [
+     "อุ อา กะ สะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-5buddha",
+  "cat": "heart",
+  "th": "หัวใจพระเจ้าห้าพระองค์",
+  "count": 108,
+  "use": "คุ้มครองรอบด้าน นิยมภาวนาก่อนออกจากบ้าน",
+  "heart": "นะ โม พุท ธา ยะ",
+  "origin": "พระพุทธเจ้า 5 พระองค์ในภัทรกัป: กกุสันธะ โกนาคมนะ กัสสปะ โคตมะ และศรีอาริยเมตไตรย",
+  "blocks": [
+   {
+    "lines": [
+     "นะ โม พุท ธา ยะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-ariya",
+  "cat": "heart",
+  "th": "หัวใจอริยสัจ",
+  "count": 108,
+  "use": "ตั้งสติเมื่อเจอปัญหา มองเห็นเหตุและทางออก",
+  "heart": "ทุ สะ นิ มะ",
+  "origin": "ทุกข์ · สมุทัย · นิโรธ · มรรค",
+  "blocks": [
+   {
+    "lines": [
+     "ทุ สะ นิ มะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-tilakkhana",
+  "cat": "heart",
+  "th": "หัวใจไตรลักษณ์",
+  "count": 108,
+  "use": "ปล่อยวาง ทำใจกับความสูญเสียหรือการเปลี่ยนแปลง",
+  "heart": "อะ ทุ อะ",
+  "origin": "อนิจจัง · ทุกขัง · อนัตตา",
+  "blocks": [
+   {
+    "lines": [
+     "อะ ทุ อะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-brahma",
+  "cat": "heart",
+  "th": "หัวใจพรหมวิหาร",
+  "count": 108,
+  "use": "เสริมเมตตามหานิยม คนรอบตัวรักใคร่",
+  "heart": "เม กะ มุ อุ",
+  "origin": "เมตตา · กรุณา · มุทิตา · อุเบกขา",
+  "blocks": [
+   {
+    "lines": [
+     "เม กะ มุ อุ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-iddhi",
+  "cat": "heart",
+  "th": "หัวใจอิทธิบาท",
+  "count": 108,
+  "use": "ทำงาน เรียน หรือสอบให้สำเร็จ",
+  "heart": "ฉัน วิ จิ วี",
+  "origin": "ฉันทะ · วิริยะ · จิตตะ · วิมังสา",
+  "blocks": [
+   {
+    "lines": [
+     "ฉัน วิ จิ วี"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-sangaha",
+  "cat": "heart",
+  "th": "หัวใจสังคหวัตถุ",
+  "count": 108,
+  "use": "ผูกใจคน เหมาะกับงานบริการและผู้นำ",
+  "heart": "ทา ปิ อัต สะ",
+  "origin": "ทาน · ปิยวาจา · อัตถจริยา · สมานัตตตา",
+  "blocks": [
+   {
+    "lines": [
+     "ทา ปิ อัต สะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-sati",
+  "cat": "heart",
+  "th": "หัวใจสติปัฏฐาน",
+  "count": 108,
+  "use": "ทำสมาธิ คลายความกังวลและฟุ้งซ่าน",
+  "heart": "กา เว จิ ธะ",
+  "origin": "กาย · เวทนา · จิต · ธรรม",
+  "blocks": [
+   {
+    "lines": [
+     "กา เว จิ ธะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-vinaya",
+  "cat": "heart",
+  "th": "หัวใจพระวินัย",
+  "count": 108,
+  "use": "รักษาศีล วินัย และความรับผิดชอบ",
+  "heart": "อา ปา มะ จุ ปะ",
+  "origin": "คัมภีร์ อาทิกรรม · ปาจิตตีย์ · มหาวรรค · จุลวรรค · ปริวาร",
+  "blocks": [
+   {
+    "lines": [
+     "อา ปา มะ จุ ปะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-sutta",
+  "cat": "heart",
+  "th": "หัวใจพระสูตร",
+  "count": 108,
+  "use": "เสริมปัญญาและวาทศิลป์",
+  "heart": "ที มะ สัง อัง ขุ",
+  "origin": "ทีฆนิกาย · มัชฌิมนิกาย · สังยุตตนิกาย · อังคุตตรนิกาย · ขุททกนิกาย",
+  "blocks": [
+   {
+    "lines": [
+     "ที มะ สัง อัง ขุ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "heart-abhidhamma",
+  "cat": "heart",
+  "th": "หัวใจพระอภิธรรม",
+  "count": 108,
+  "use": "นิยมสวดในงานอุทิศส่วนกุศล",
+  "heart": "สัง วิ ธา ปุ กะ ยะ ปะ",
+  "origin": "คัมภีร์ สังคณี · วิภังค์ · ธาตุกถา · ปุคคลบัญญัติ · กถาวัตถุ · ยมก · ปัฏฐาน",
+  "blocks": [
+   {
+    "lines": [
+     "สัง วิ ธา ปุ กะ ยะ ปะ"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "ganesha",
+  "cat": "deva",
+  "th": "คาถาบูชาพระพิฆเนศ (บทสั้น)",
+  "count": 9,
+  "use": "ขอพรความสำเร็จ ขจัดอุปสรรค นิยมใช้ก่อนเริ่มงานใหม่ งานศิลปะ หรือธุรกิจ",
+  "blocks": [
+   {
+    "lines": [
+     "โอม ศรี คเณศายะ นะมะห์"
+    ]
+   }
+  ]
+ }
+];
+const prayerById = (id) => PRAYERS.find((p) => p.id === id);
+
+// ---------- remedies: which chant fits a reading ----------
+// Thai tradition: when a planet troubles you, chant the verse of that planet's weekday deity
+// the number of times equal to the planet's strength (Sun 6, Moon 15, Mars 8, Mercury 17, Rahu 12, Jupiter 19, Venus 21, Saturn 10).
+const PLANET_DAY = { sun: 'day-sun', moon: 'day-mon', mars: 'day-tue', mercury: 'day-wed', jupiter: 'day-thu', venus: 'day-fri', saturn: 'day-sat', uranus: 'day-rahu', neptune: 'day-rahu', pluto: 'day-rahu' };
+const THAI_DAY = { 1: 'day-sun', 2: 'day-mon', 3: 'day-tue', 4: 'day-wed', 5: 'day-thu', 6: 'day-fri', 7: 'day-sat', 8: 'day-rahu' };
+const birthChant = (thaiPlanet) => THAI_DAY[thaiPlanet];
+const planetChant = (planetId) => PLANET_DAY[planetId];
+
+// Daily: the hardest transit from a troubling planet decides the chant; otherwise the birth-day chant strengthens the day.
+function dailyRemedy(aspects, birthPlanetNo, totalScore) {
+  const hard = aspects.find((x) => x.asp.nature < 0 && ['saturn', 'mars', 'uranus', 'neptune', 'pluto'].includes(x.mover.id) && x.strength > 0.5);
+  if (hard) return { id: PLANET_DAY[hard.mover.id], kind: 'แก้', reason: `ดาว${hard.mover.th}จรทำมุม${hard.asp.th}กับดวงของคุณ ตำราให้บูชาเทวดาประจำดาวนั้น` };
+  if (totalScore < 50) return { id: 'chinabanchon', kind: 'แก้', reason: 'ดวงวันนี้ค่อนข้างตึง สวดชินบัญชรเพื่อคุ้มครองและตั้งสติ' };
+  return { id: THAI_DAY[birthPlanetNo], kind: 'เสริม', reason: 'บทสวดประจำวันเกิดของคุณ เสริมสิริมงคลให้วันนี้' };
+}
+// Tarot: troubling cards get a chant that matches the suit's area of life.
+function tarotRemedy(card, reversed) {
+  const lean = reversed ? (card.yes === 1 ? 0 : -1) : card.yes;
+  if (lean >= 0) return null;
+  if (card.major) return { id: 'chinabanchon', kind: 'แก้', reason: 'ไพ่ชุดใหญ่ที่เตือนเรื่องหนัก สวดชินบัญชรเพื่อคุ้มครองและตั้งสติ' };
+  const bySuit = { c: ['metta-all', 'เรื่องหัวใจ แผ่เมตตาช่วยคลายเวรและเปิดใจกัน'], s: ['heart-sati', 'ความคิดวุ่นวาย ภาวนาหัวใจสติปัฏฐานให้ใจนิ่ง'], w: ['bahung', 'มีอุปสรรคในการลงมือ บทพาหุงฯ เพื่อชัยชนะ'], p: ['heart-setthi', 'เรื่องเงินตึง ภาวนาหัวใจเศรษฐีพร้อมทำตามหลักทั้ง 4'] };
+  const [id, reason] = bySuit[card.suit];
+  return { id, kind: 'แก้', reason };
+}
+function siamsiRemedy(level) {
+  if (level <= 1) return { id: 'chinabanchon', kind: 'แก้', reason: 'ใบเซียมซีเตือนให้ระวัง สวดชินบัญชรเพื่อคุ้มครอง' };
+  if (level === 2) return { id: 'itipiso', kind: 'เสริม', reason: 'ช่วงกลาง ๆ สวดอิติปิโสให้ใจมั่นคง' };
+  return { id: 'kruadnam', kind: 'เสริม', reason: 'ได้ใบดี ทำบุญแล้วกรวดน้ำอุทิศส่วนกุศล ให้ความดีต่อยอด' };
+}
+const EVENT_CHANT = { wedding: 'bahung', ordain: 'itipiso', house: 'bahung', business: 'ganesha', car: 'chinabanchon', contract: 'bahung', job: 'bahung', travel: 'chinabanchon' };
+
 // ---- js/starmap.js ----
 // Builds the animated star-map SVG from a computed natal chart.
 
@@ -2668,6 +3535,7 @@ function logoRing() {
 
 
 
+
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
@@ -2688,6 +3556,7 @@ const state = {
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
+  prayer: { cat: 'all', open: null, counts: {} },
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
   ask: { topic: 0, messages: [] }
@@ -2711,6 +3580,7 @@ const IC = {
   numbers: '<rect x="4" y="4" width="16" height="16" rx="1.5"/><path d="M4 9.3h16M4 14.7h16M9.3 4v16M14.7 4v16"/>',
   luck: '<circle cx="12" cy="12" r="8"/><rect x="10" y="10" width="4" height="4"/>',
   ask: '<path d="M4 5h16v11H10l-5 4v-4H4z"/>',
+  prayer: '<path d="M12 20c-4 0-8-3-9-7 3 0 6 1.5 9 5 3-3.5 6-5 9-5-1 4-5 7-9 7z"/><path d="M12 18c-2.5-2.5-3-6.5 0-11 3 4.5 2.5 8.5 0 11z"/>',
   back: '<path d="M15 5l-7 7 7 7"/>',
   next: '<path d="M9 5l7 7-7 7"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
@@ -2858,7 +3728,9 @@ function viewHome() {
     ['tarot', 'ไพ่ทาโรต์', '78 ใบ เลือกเอง', 'var(--violet)'],
     ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน', 'var(--teal)'],
     ['luck', 'โชคลาภ', 'ปิงปอง ธูป', 'var(--amber)'],
-    ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)']
+    ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
+    ['prayer', 'บทสวด', 'แก้ดวง เสริมดวง', 'var(--gold-2)'],
+    ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)']
   ];
   return `<main class="screen home">
 <header class="home-head">
@@ -2879,8 +3751,6 @@ function viewHome() {
 <span class="t">${t.isReturn ? (t.id === 'saturn' ? 'เสาร์คืนเรือน' : 'พฤหัสคืนเรือน') : planetById(t.id).th + 'จร' + SIGNS[t.sign].th}</span>
 <span class="small">${HOUSES[t.house - 1]}</span></a>`).join('')}</div>
 </section>
-<a class="ask-link" href="#/ask"><span class="sigil" style="color:var(--bg);background:var(--gold);border:none;width:40px;height:40px">${icon('ask', 20, 1.6)}</span>
-<span style="flex:1;display:flex;flex-direction:column;gap:2px"><span class="h2" style="font-size:16px">ปรึกษาผู้เชี่ยวชาญ</span><span class="small">ถามเรื่องเฉพาะ คำตอบอ้างอิงผังดาวของคุณ</span></span>${icon('next', 16, 1.5)}</a>
 </main>`;
 }
 
@@ -2966,6 +3836,7 @@ function liveDailyHTML() {
 <ul class="dh-legend">${dl.scores.map((x, k) => `<li><i style="background:${RING_COL[k]}"></i><span>${x.name}</span><b>${x.score}/5</b></li>`).join('')}</ul></div>
 </div>
 <p class="dh-head">${headline}</p>
+${remedyChip(dailyRemedy(la, birthPlanet(state.profile), total))}
 <button class="drawer-toggle" data-act="liveToggle" data-closed="ดูเหตุผล ${la.length} มุมดาว" aria-expanded="${open}">
 <span class="peek" aria-hidden="true">${la.slice(0, 3).map((x) => `<span class="peek-chip">${trio(x)}</span>`).join('')}</span>
 <span class="lbl">${open ? 'พับเก็บ' : `ดูเหตุผล ${la.length} มุมดาว`}</span>
@@ -3080,6 +3951,7 @@ function auspFinder(bp) {
 <span class="chev">${icon('down', 16, 1.6)}</span></button>
 <div class="fold"><div class="fold-in"><div class="rk-body">
 <ul class="why">${r.good.map((g) => `<li class="ok">${g}</li>`).join('')}${r.warn.map((w) => `<li class="no">${w}</li>`).join('')}</ul>
+${remedyChip({ id: EVENT_CHANT[a.event], kind: 'เสริม', reason: `สวดก่อนเริ่มงาน${ev.th} เพื่อความเป็นสิริมงคล` })}
 ${r.alt.length ? `<p class="small">เวลาสำรอง ${r.alt.map((y) => `${hm(y.start)}–${hm(y.end)} (ยาม${y.pos.th})`).join(' · ')}</p>` : ''}
 </div></div></div></li>`;
   };
@@ -3269,6 +4141,7 @@ ${senseHTML(ch)}
 <p class="mono" style="font-size:10px;color:var(--muted)">${r.career.basis}</p></div></section>
 <section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">เรื่องที่ต้องระวัง</h2>
 <ul class="trait-list">${r.cautions.map((t) => item(t, 'bad')).join('')}</ul></section>
+${remedyChip({ id: birthChant(birthPlanet(p)), kind: 'เสริม', reason: 'บทสวดประจำวันเกิด ใช้เสริมจุดเด่นและแก้เรื่องที่ต้องระวังในดวง' })}
 <section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">โชคลาภและสุขภาพ</h2>
 <div class="card" style="gap:8px"><p class="small" style="color:var(--text)"><span style="color:var(--gold-2)">โชคลาภ ·</span> ${r.luck}</p>
 ${r.health.map((h) => `<p class="small" style="color:var(--text)"><span style="color:var(--gold-2)">จุดที่ควรดูแล ·</span> ${h}</p>`).join('')}
@@ -3439,6 +4312,7 @@ function tarotReading(d, i, spread) {
 ${extra ? `<p class="small" style="color:var(--text-2)">${extra}</p>` : ''}
 <p class="r-pic">ในภาพ: ${c.pic}</p>
 <p class="r-astro">${cardAstro(c)}</p>
+${remedyChip(tarotRemedy(c, d.rev))}
 ${links.map((l) => `<p class="r-link">✦ ${l}</p>`).join('')}
 </div></article>`;
 }
@@ -3646,7 +4520,7 @@ function nameResults() {
   return `<div class="card num-sum"><div class="ns-top">
 <svg class="ns-ring" viewBox="0 0 72 72" aria-label="คะแนน ${r.score}"><circle cx="36" cy="36" r="${R}" fill="none" stroke="#2C261B" stroke-width="6"/><circle class="ring-arc" cx="36" cy="36" r="${R}" fill="none" stroke="#7FC4B4" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(r.score / 100 * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 36 36)" style="--c:${C.toFixed(1)}"/><text x="36" y="40" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" fill="#F1E6CF">${r.score}</text></svg>
 <span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span class="eyebrow" style="color:var(--teal)">พลังชื่อรวม · เกรด ${gL}</span><b class="ns-title">${esc(n.first)} ${esc(n.last)}</b><span class="small" style="color:var(--text)">${gTh} · ชื่อ 40% นามสกุล 20% ชื่อรวมสกุล 40%</span></span></div>
-${r.kalakiniFirst.length ? `<p class="small ns-note" style="color:var(--tension)">พบอักษรกาลกิณีในชื่อ: <b>${r.kalakiniFirst.join(' ')}</b> (ของคนเกิด${TH_PLANETS[bp].day}) ตำราแนะนำให้เลี่ยง</p>` : L ? `<p class="small ns-note" style="color:var(--teal)">ชื่อไม่มีอักษรกาลกิณีของคนเกิด${TH_PLANETS[bp].day}${r.kalakini.length ? ` (นามสกุลมี ${r.kalakini.join(' ')} แต่ตำรามักผ่อนผันให้นามสกุล)` : ''}</p>` : ''}
+${r.kalakiniFirst.length ? `<p class="small ns-note" style="color:var(--tension)">พบอักษรกาลกิณีในชื่อ: <b>${r.kalakiniFirst.join(' ')}</b> (ของคนเกิด${TH_PLANETS[bp].day}) ตำราแนะนำให้เลี่ยง</p>${remedyChip({ id: birthChant(bp), kind: 'แก้', reason: 'ระหว่างยังไม่เปลี่ยนชื่อ สวดบทประจำวันเกิดเพื่อเสริมดวง' })}` : L ? `<p class="small ns-note" style="color:var(--teal)">ชื่อไม่มีอักษรกาลกิณีของคนเกิด${TH_PLANETS[bp].day}${r.kalakini.length ? ` (นามสกุลมี ${r.kalakini.join(' ')} แต่ตำรามักผ่อนผันให้นามสกุล)` : ''}</p>` : ''}
 ${r.lucky.length ? `<p class="small" style="margin:0">อักษรมงคลในชื่อ (ศรี เดช มนตรี): <b style="color:var(--gold-2)">${r.lucky.join(' ')}</b></p>` : ''}
 </div>
 ${r.rows.map((row) => `<div class="nm-row" style="--lc:${LVC[row.rate.level]}">
@@ -3737,7 +4611,7 @@ function siamsiSlip(no) {
 <dl class="slip-topics">${f.topics.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
 <p class="slip-tip"><b>ข้อคิด</b> ${f.advice}</p>
 <p class="slip-foot">เซียมซีตักศิลา · คำทำนายเป็นกำลังใจ ผลจริงขึ้นอยู่กับการลงมือของคุณ</p>
-</article>`;
+</article>${remedyChip(siamsiRemedy(f.level))}`;
 }
 
 function viewLuck() {
@@ -3902,7 +4776,63 @@ function go(r) {
   try { history.replaceState(null, '', '#/' + r); } catch (e) { /* not allowed in some frames */ }
   render();
 }
-const VIEWS = { auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- บทสวดมนต์ ----------------
+function remedyChip(r) {
+  if (!r || !r.id) return '';
+  const pr = prayerById(r.id);
+  if (!pr) return '';
+  return `<a class="rem-chip${r.kind === 'แก้' ? ' fix' : ''}" href="#/prayer" data-act="openPrayer" data-v="${pr.id}">
+<span class="rem-ic">${icon('prayer', 18, 1.5)}</span><span class="rem-t"><span class="rem-k">${r.kind}ดวง · สวด${pr.th.replace(/^บทสวด/, '')} ${pr.count} จบ</span><span class="rem-r">${r.reason}</span></span>${icon('next', 14, 1.5)}</a>`;
+}
+function malaSVG(n, done) {
+  const R = 46, pts = n < 5 ? 36 : Math.min(n, 108), lit = Math.round((Math.min(done, n) / n) * pts);
+  const dots = Array.from({ length: pts }, (_, k) => { const a = (k / pts) * Math.PI * 2 - Math.PI / 2; const on = k < lit; return `<circle cx="${(60 + R * Math.cos(a)).toFixed(2)}" cy="${(60 + R * Math.sin(a)).toFixed(2)}" r="${pts > 40 ? 1.5 : 2.6}" fill="${on ? '#F0D89A' : '#3A3224'}"/>`; }).join('');
+  return `<svg class="mala" viewBox="0 0 120 120" aria-hidden="true">${dots}</svg>`;
+}
+function prayerText(pr) {
+  return pr.blocks.map((b) => `${b.note ? `<p class="pr-note">${b.note}</p>` : ''}${b.lines ? `<div class="pr-stanza">${b.n ? `<span class="pr-n">${thaiNum(b.n)}</span>` : ''}<div>${b.lines.map((l) => `<p>${l}</p>`).join('')}</div></div>` : ''}${b.p ? `<p class="pr-prose">${b.p}</p>` : ''}`).join('');
+}
+function viewPrayer() {
+  const st = state.prayer, bp = birthPlanet(state.profile);
+  const head = pageHead('07', 'PRAYER', 'บทสวดมนต์', 'var(--gold-2)', 'prayer', st.open ? `<button class="back" data-act="prayerBack" aria-label="กลับ" style="margin:0">${icon('back', 20, 1.5)}</button>` : '');
+  if (st.open) {
+    const pr = prayerById(st.open), done = st.counts[pr.id] || 0;
+    const cat = PRAYER_CATS.find((c) => c.id === pr.cat);
+    return `<main class="screen pr-screen">
+${head}
+<section class="pr-head"><span class="eyebrow" style="color:var(--gold)">${cat.th}${pr.sub ? ' · ' + pr.sub : ''}</span>
+<h2 class="pr-title">${pr.th}</h2>
+<p class="small" style="color:var(--text-2)">${pr.use}</p>
+${pr.origin ? `<p class="pr-origin"><b>ที่มา</b> ${pr.origin}</p>` : ''}
+<span class="pr-count">สวด ${pr.count} จบ${pr.cat === 'day' ? ' · ตามกำลังดาวประจำวัน' : ''}</span></section>
+<section class="pr-text${pr.heart ? ' heart' : ''}">${prayerText(pr)}</section>
+<section class="pr-counter" id="pr-counter">${counterHTML(pr)}</section>
+<p class="small" style="text-align:center;font-size:11px">ตั้งนะโม 3 จบก่อนสวด · สวดด้วยใจสงบ ความหมายเป็นสรุปสั้นเพื่อความเข้าใจ</p>
+</main>`;
+  }
+  const L = luckOf(bp), dl = daily(state.chart, new Date());
+  const total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
+  const today = dailyRemedy(liveAspects(state.chart, new Date(), { n: 6, exact: false }), bp, total);
+  const recs = [{ id: birthChant(bp), kind: 'เสริม', reason: `บทประจำวันเกิดของคุณ (${TH_PLANETS[bp].day})` }];
+  if (today.id !== recs[0].id) recs.unshift(today);
+  const list = PRAYERS.filter((p) => st.cat === 'all' || p.cat === st.cat);
+  return `<main class="screen">
+${head}
+<section class="pr-recs"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">✦</span>แนะนำสำหรับคุณวันนี้</h2>${recs.map(remedyChip).join('')}</section>
+<div class="chips pr-cats" role="group" aria-label="หมวดบทสวด">${[{ id: 'all', th: 'ทั้งหมด' }, ...PRAYER_CATS].map((c) => `<button class="chip" aria-pressed="${st.cat === c.id}" data-act="prayerCat" data-v="${c.id}">${c.th}</button>`).join('')}</div>
+${st.cat === 'heart' ? '<p class="small">หัวใจคาถาคือการย่ออักษรตัวแรกของหลักธรรมให้ภาวนาง่าย ตำราหัวใจ 108 มีหลายบท ที่นี่คัดบทที่อธิบายที่มาได้ชัด ภาวนา 108 ครั้งตามเม็ดลูกประคำ</p>' : ''}
+<ul class="pr-list">${list.map((p) => `<li><a href="#/prayer" data-act="openPrayer" data-v="${p.id}" class="pr-item">
+<span class="pr-ic">${p.heart ? `<b>${p.heart.split(' ')[0]}</b>` : icon('prayer', 18, 1.5)}</span>
+<span class="pr-it"><b>${p.th}</b><span>${p.heart ? p.heart + ' · ' : ''}${p.use}</span></span><span class="pr-badge">${p.count}<i>จบ</i></span></a></li>`).join('')}</ul>
+</main>`;
+}
+function counterHTML(pr) {
+  const done = state.prayer.counts[pr.id] || 0, n = pr.count, full = done >= n;
+  return `<button class="pr-tap${full ? ' full' : ''}" data-act="prayerTap" aria-label="นับจบ ${done} จาก ${n}">${malaSVG(n, done)}<span class="pr-num"><b class="mono">${done}</b><i>/ ${n} จบ</i></span></button>
+<div class="pr-ctrl"><span class="small">${full ? 'ครบแล้ว สาธุ' : 'แตะวงกลมทุกครั้งที่สวดจบหนึ่งรอบ'}</span>${done ? '<button class="link-btn" data-act="prayerReset">เริ่มนับใหม่</button>' : ''}</div>`;
+}
+
+const VIEWS = { prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -3914,7 +4844,7 @@ function render() {
   if (r === 'home') startLive(); else clearInterval(liveTimer);
   mountLuck();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -3930,6 +4860,7 @@ document.addEventListener('click', (e) => {
   if (link) {
     e.preventDefault();
     if (el && el.dataset.act === 'chartTab') state.chartTab = +el.dataset.i;
+    if (el && el.dataset.act === 'openPrayer') { state.prayer.open = el.dataset.v; state.prayer.back = route(); }
     go(link.getAttribute('href').slice(2));
     return;
   }
@@ -4038,6 +4969,18 @@ document.addEventListener('click', (e) => {
     }
     case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [] }); break;
     case 'numMode': state.num.mode = el.dataset.v; break;
+    case 'prayerCat': state.prayer.cat = el.dataset.v; break;
+    case 'prayerBack': { const b = state.prayer.back; state.prayer.open = null; state.prayer.back = null; if (b && b !== 'prayer') { go(b); return; } break; }
+    case 'prayerReset': state.prayer.counts[state.prayer.open] = 0; { const c = document.getElementById('pr-counter'); if (c) c.innerHTML = counterHTML(prayerById(state.prayer.open)); } return;
+    case 'prayerTap': {
+      const pr = prayerById(state.prayer.open), c0 = state.prayer.counts[pr.id] || 0;
+      if (c0 >= pr.count) return;
+      state.prayer.counts[pr.id] = c0 + 1;
+      if (navigator.vibrate) navigator.vibrate(c0 + 1 >= pr.count ? [30, 50, 80] : 12);
+      const c = document.getElementById('pr-counter'); if (c) c.innerHTML = counterHTML(pr);
+      if (c0 + 1 >= pr.count) toast(`ครบ ${pr.count} จบ สาธุ`);
+      return;
+    }
     case 'nmGender': { state.num.gender = el.dataset.v; document.querySelectorAll('[data-act=nmGender]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state.num.gender)); const box = document.getElementById('num-results'); if (box) box.innerHTML = numResults(); return; }
     case 'luckMode': state.luck.mode = el.dataset.v; if (state.luck.inc === 'burning') state.luck.inc = 'idle'; break;
     case 'stirGlobe': if (luckCtl && luckCtl.stir) luckCtl.stir(); return;
