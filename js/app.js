@@ -935,11 +935,11 @@ function viewLuck() {
 <p class="p-hint" id="inc-hint">${l.inc === 'done' ? `ธูปเผยเลข <b>${l.incDigits.join(' ')}</b>` : l.inc === 'burning' ? 'ธูปกำลังไหม้ ขี้ธูปจะค่อย ๆ หล่นเผยเลขทีละตัว' : 'ตั้งจิตอธิษฐาน แล้วจุดธูปเลข'}</p>
 <button class="btn" data-act="lightUp"${l.inc === 'burning' ? ' disabled' : ''}>${l.inc === 'done' ? 'จุดธูปดอกใหม่' : 'จุดธูป'}</button>`;
   } else {
-    body = `<div class="ss-stage${l.ss ? ' fallen' : ''}" id="ss"><div class="ss-cyl">${SS_CYL}</div><div class="ss-out"><b>${l.ss ? thaiNum(l.ss) : ''}</b></div><div class="ss-floor"></div></div>
+    body = `<div class="ss-stage${l.ss ? ' fallen' : ''}" id="ss"><div class="ss-cyl"><span class="ss-rise"><b>${l.ss ? thaiNum(l.ss) : ''}</b></span>${SS_CYL}</div><div class="ss-out"><b>${l.ss ? thaiNum(l.ss) : ''}</b></div><div class="ss-floor"></div></div>
 ${l.ss ? siamsiSlip(l.ss) + '<button class="btn btn-line" data-act="ssReset">เสี่ยงเซียมซีใหม่</button>'
-    : `<p class="p-hint">ตั้งจิตนึกถึงเรื่องที่อยากรู้ แล้วกดค้างที่ปุ่มหรือที่กระบอกเพื่อเขย่า จนไม้หล่นออกมาหนึ่งอัน</p>
+    : `<p class="p-hint">ตั้งจิตนึกถึงเรื่องที่อยากรู้ แล้ว<b>ใช้นิ้วจับกระบอกลากเขย่าไปมา</b> ไม้เซียมซีจะค่อย ๆ โผล่ขึ้นมาจนกระเด็นออกหนึ่งอัน</p>
 <div class="ss-meter" aria-hidden="true"><i></i></div>
-<button class="btn ss-shake">กดค้างเพื่อเขย่า</button>
+<button class="btn btn-line ss-shake">หรือกดค้างที่นี่เพื่อเขย่า</button>
 <button class="link-btn" data-act="ssMotion" style="align-self:center">หรือเขย่ามือถือจริง</button>`}`;
   }
   return `<main class="screen" style="--accent:var(--amber)">

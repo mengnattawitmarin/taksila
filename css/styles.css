@@ -297,9 +297,20 @@ a:hover { color: var(--gold-2); }
 
 /* luck: เซียมซี */
 .ss-stage { position: relative; height: 320px; display: flex; justify-content: center; align-items: flex-end; overflow: hidden; }
-.ss-cyl { position: relative; width: 140px; margin-bottom: 40px; transform: rotate(-16deg); transform-origin: 50% 100%; cursor: grab; touch-action: none; filter: drop-shadow(0 14px 20px rgba(0,0,0,.6)); z-index: 2; }
+.ss-cyl { position: relative; width: 140px; margin-bottom: 40px; transform: rotate(-16deg); user-select: none; -webkit-user-select: none; transform-origin: 50% 100%; cursor: grab; touch-action: none; filter: drop-shadow(0 14px 20px rgba(0,0,0,.6)); z-index: 2; }
 .ss-cyl svg { display: block; width: 100%; }
 .ss-cyl.shaking { animation: rattle .16s ease-in-out infinite; cursor: grabbing; }
+.ss-cyl.held { cursor: grabbing; filter: drop-shadow(0 18px 24px rgba(0,0,0,.7)) drop-shadow(0 0 16px rgba(242,213,140,.25)); }
+.ss-cyl.active .ss-sticks { animation: jiggle .12s linear infinite; }
+.ss-cyl.clack svg { animation: clack .14s ease-out; }
+@keyframes clack { 50% { transform: translateY(-3px) rotate(2deg); } }
+.ss-rise { position: absolute; left: 50%; top: 12px; width: 11px; height: 118px; margin-left: -2px; border-radius: 2px; opacity: 0; z-index: 0; transition: opacity .3s;
+  background: linear-gradient(90deg, #A9843F, #F5E2B0 50%, #A9843F); box-shadow: 0 0 12px rgba(242,213,140,.55); }
+.ss-rise::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 16px; background: #B3271C; border-radius: 2px 2px 0 0; }
+.ss-rise b { position: absolute; left: 50%; top: 34px; transform: translateX(-50%); writing-mode: vertical-rl; font-family: var(--serif); font-size: 11px; font-weight: 700; color: #5E140F; }
+.ss-rise.fly { animation: riseFly .4s ease-in forwards; }
+@keyframes riseFly { to { transform: translateY(-170px) rotate(-30deg); opacity: 0; } }
+.ss-cyl svg { position: relative; z-index: 1; }
 .ss-cyl.shaking .ss-sticks { animation: jiggle .12s linear infinite; }
 @keyframes rattle { 0% { transform: rotate(-24deg) translateY(-4px); } 50% { transform: rotate(-9deg) translateY(2px); } 100% { transform: rotate(-24deg) translateY(-4px); } }
 @keyframes jiggle { 50% { transform: translateY(-4px); } }
@@ -308,7 +319,7 @@ a:hover { color: var(--gold-2); }
 .ss-out::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 18px; background: #B3271C; border-radius: 2px 2px 0 0; }
 .ss-out b { position: absolute; left: 50%; top: 58%; transform: translate(-50%, -50%) rotate(-90deg); font-family: var(--serif); font-size: 14px; font-weight: 700; color: #5E140F; white-space: nowrap; }
 .fallen .ss-out { animation: stickFall 1.2s cubic-bezier(.3,.1,.4,1) forwards; }
-@keyframes stickFall { 0% { opacity: 1; transform: translate(-6px, 40px) rotate(-16deg); } 35% { opacity: 1; transform: translate(-30px, -60px) rotate(-30deg); } 100% { opacity: 1; transform: translate(70px, 128px) rotate(84deg); } }
+@keyframes stickFall { 0% { opacity: 1; transform: translate(-40px, -120px) rotate(-30deg); } 35% { opacity: 1; transform: translate(-30px, -60px) rotate(-30deg); } 100% { opacity: 1; transform: translate(70px, 128px) rotate(84deg); } }
 .ss-floor { position: absolute; left: 10%; right: 10%; bottom: 18px; height: 22px; border-radius: 50%; background: radial-gradient(ellipse, rgba(224,164,88,.18), transparent 70%); }
 .ss-meter { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
 .ss-meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #B3271C, #F2D58C); box-shadow: 0 0 10px rgba(242,213,140,.6); }

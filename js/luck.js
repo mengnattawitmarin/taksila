@@ -136,49 +136,96 @@ export function burnIncense(el, digits, { onDigit, onDone, duration = 12000 } = 
 // ---------- เซียมซี ----------
 // Hold the button (or shake the phone) to build up energy; at 100% one stick falls out.
 export function mountSiamsi(el, { total = 28, onFall } = {}) {
-  const cyl = el.querySelector('.ss-cyl'), meter = document.querySelector('.ss-meter i'), btn = document.querySelector('.ss-shake');
-  let energy = 0, shaking = false, lastShake = 0, raf = 0, alive = true, fallen = false;
-  function frame() {
-    if (!alive) return;
-    const active = shaking || performance.now() - lastShake < 180;
-    cyl.classList.toggle('shaking', active && !fallen);
-    if (active && !fallen) {
-      energy = Math.min(1, energy + 0.0075 + Math.random() * 0.004);
-      if (navigator.vibrate && Math.random() < 0.06) navigator.vibrate(12);
-    } else if (!fallen) energy = Math.max(0, energy - 0.002);
-    meter.style.width = (energy * 100).toFixed(1) + '%';
-    if (energy >= 1 && !fallen) {
-      fallen = true;
-      const no = rnd(total) + 1;
-      cyl.classList.remove('shaking');
-      el.classList.add('fallen');
-      const stick = el.querySelector('.ss-out');
-      stick.querySelector('b').textContent = thaiNum(no);
-      if (navigator.vibrate) navigator.vibrate([30, 40, 60]);
-      setTimeout(() => onFall && onFall(no), 1300);
+  const cyl = el.querySelector('.ss-cyl'), rise = el.querySelector('.ss-rise');
+  const meter = document.querySelector('.ss-meter i'), btn = document.querySelector('.ss-shake');
+  const no = rnd(total) + 1;
+  rise.querySelector('b').textContent = thaiNum(no);
+  let energy = 0, holding = false, lastShake = 0, raf = 0, alive = true, fallen = false;
+  // finger drag state
+  let drag = null, ox = 0, oy = 0, lastDir = 0, lastBuzz = 0;
+  const place = () => {
+    cyl.style.transform = `translate(${ox.toFixed(1)}px, ${oy.toFixed(1)}px) rotate(${(-16 + ox * 0.35).toFixed(1)}deg)`;
+  };
+  const kick = (amount) => {
+    if (fallen) return;
+    energy = Math.min(1, energy + amount);
+    lastShake = performance.now();
+  };
+  cyl.addEventListener('pointerdown', (e) => {
+    if (fallen) return;
+    e.preventDefault();
+    cyl.setPointerCapture(e.pointerId);
+    drag = { x: e.clientX, y: e.clientY, px: e.clientX, py: e.clientY, t: performance.now() };
+    cyl.classList.add('held');
+  });
+  cyl.addEventListener('pointermove', (e) => {
+    if (!drag || fallen) return;
+    const now = performance.now(), dt = Math.max(8, now - drag.t);
+    const vx = (e.clientX - drag.px) / dt, vy = (e.clientY - drag.py) / dt;
+    ox = Math.max(-70, Math.min(70, (e.clientX - drag.x) * 0.8));
+    oy = Math.max(-50, Math.min(40, (e.clientY - drag.y) * 0.6));
+    place();
+    const speed = Math.hypot(vx, vy);
+    kick(Math.min(0.02, speed * 0.009));
+    const dir = Math.sign(e.clientX - drag.px) || Math.sign(e.clientY - drag.py);
+    if (dir && lastDir && dir !== lastDir && speed > 0.25) {
+      kick(0.025);
+      cyl.classList.remove('clack'); void cyl.offsetWidth; cyl.classList.add('clack');
+      if (navigator.vibrate && now - lastBuzz > 90) { navigator.vibrate(14); lastBuzz = now; }
     }
-    raf = requestAnimationFrame(frame);
+    if (dir) lastDir = dir;
+    drag.px = e.clientX; drag.py = e.clientY; drag.t = now;
+  });
+  const release = () => {
+    drag = null; cyl.classList.remove('held');
+    if (!fallen) { ox = 0; oy = 0; cyl.style.transition = 'transform .35s cubic-bezier(.3,1.6,.5,1)'; place(); setTimeout(() => { cyl.style.transition = ''; }, 360); }
+  };
+  cyl.addEventListener('pointerup', release);
+  cyl.addEventListener('pointercancel', release);
+  // hold-to-shake button
+  const down = (e) => { e.preventDefault(); holding = true; };
+  const up = () => { holding = false; };
+  if (btn) {
+    btn.addEventListener('pointerdown', down);
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => btn.addEventListener(ev, up));
   }
-  const down = (e) => { e.preventDefault(); shaking = true; };
-  const up = () => { shaking = false; };
-  btn.addEventListener('pointerdown', down);
-  btn.addEventListener('pointerup', up);
-  btn.addEventListener('pointerleave', up);
-  btn.addEventListener('pointercancel', up);
-  cyl.addEventListener('pointerdown', down);
-  cyl.addEventListener('pointerup', up);
-  cyl.addEventListener('pointerleave', up);
+  // real phone shake
   let prev = null;
   const onMotion = (e) => {
     const a = e.accelerationIncludingGravity;
     if (!a || a.x == null) return;
     if (prev) {
       const d = Math.abs(a.x - prev.x) + Math.abs(a.y - prev.y) + Math.abs(a.z - prev.z);
-      if (d > 9) lastShake = performance.now();
+      if (d > 9) kick(Math.min(0.04, d * 0.0025));
     }
     prev = { x: a.x, y: a.y, z: a.z };
   };
   window.addEventListener('devicemotion', onMotion);
+
+  function frame(t) {
+    if (!alive) return;
+    if (holding && !fallen) { kick(0.0075 + Math.random() * 0.004); if (navigator.vibrate && Math.random() < 0.06) navigator.vibrate(12); }
+    const active = holding || t - lastShake < 160;
+    cyl.classList.toggle('shaking', holding && !fallen);
+    cyl.classList.toggle('active', active && !fallen);
+    if (!active && !fallen) energy = Math.max(0, energy - 0.0015);
+    meter.style.width = (energy * 100).toFixed(1) + '%';
+    // the chosen stick works its way out, hopping a little while you shake
+    const hop = active && !fallen ? Math.abs(Math.sin(t / 45)) * 6 * energy : 0;
+    rise.style.transform = `translateY(${(-energy * 78 - hop).toFixed(1)}px)`;
+    rise.style.opacity = energy > 0.08 ? '1' : '0';
+    if (energy >= 1 && !fallen) {
+      fallen = true;
+      drag = null;
+      cyl.classList.remove('shaking', 'active', 'held');
+      ox = 0; oy = 0; cyl.style.transition = 'transform .4s ease'; place();
+      rise.classList.add('fly');
+      if (navigator.vibrate) navigator.vibrate([30, 40, 60]);
+      setTimeout(() => { el.classList.add('fallen'); el.querySelector('.ss-out b').textContent = thaiNum(no); }, 380);
+      setTimeout(() => onFall && onFall(no), 1700);
+    }
+    raf = requestAnimationFrame(frame);
+  }
   raf = requestAnimationFrame(frame);
   return { destroy() { alive = false; cancelAnimationFrame(raf); window.removeEventListener('devicemotion', onMotion); } };
 }
