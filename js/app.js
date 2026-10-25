@@ -5,6 +5,7 @@ import {
 } from './astro.js';
 import { PLACES, MONTHS_TH, MONTHS_SHORT, TAROT, TOPICS, LIFE_PATH, DIGITS, SUM_MEANING } from './data.js';
 import { starMap, logoRing } from './starmap.js';
+import { EVENTS, findAuspicious } from './auspice.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
 // ---------------- storage ----------------
@@ -24,6 +25,7 @@ const state = {
   liveOpen: false,
   aspOpen: new Set(),
   weekSel: null,
+  ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, cards: null, open: 0 },
   num: { mode: 'phone', value: '' },
@@ -196,7 +198,7 @@ function viewHome() {
     ['tarot', 'ไพ่ทาโรต์', 'เปิดสามใบ', 'var(--violet)'],
     ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน', 'var(--teal)'],
     ['luck', 'โชคลาภ', 'ปิงปอง ธูป', 'var(--amber)'],
-    ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--gold-2)']
+    ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)']
   ];
   return `<main class="screen">
 <header style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
@@ -218,6 +220,8 @@ ${bigThree(ch)}
 <span class="t">${t.isReturn ? (t.id === 'saturn' ? 'เสาร์คืนเรือน' : 'พฤหัสคืนเรือน') : planetById(t.id).th + 'จร' + SIGNS[t.sign].th}</span>
 <span class="small">${HOUSES[t.house - 1]}</span></a>`).join('')}</div>
 </section>
+<a class="ask-link" href="#/ask"><span class="sigil" style="color:var(--bg);background:var(--gold);border:none;width:40px;height:40px">${icon('ask', 20, 1.6)}</span>
+<span style="flex:1;display:flex;flex-direction:column;gap:2px"><span class="h2" style="font-size:16px">ปรึกษาผู้เชี่ยวชาญ</span><span class="small">ถามเรื่องเฉพาะ คำตอบอ้างอิงผังดาวของคุณ</span></span>${icon('next', 16, 1.5)}</a>
 <div id="install-slot">${installHTML()}</div>
 </main>`;
 }
@@ -281,7 +285,7 @@ function liveDailyHTML() {
 <p class="small">ที่มา · <span style="color:var(--text)">${basis}</span></p>
 <div class="score-grid">${dl.scores.map((s) => `<div><span>${s.name}</span><span class="bars" role="img" aria-label="${s.name} ${s.score} จาก 5">${[1, 2, 3, 4, 5].map((i) => `<span${i <= s.score ? ' class="on"' : ''}></span>`).join('')}</span></div>`).join('')}</div>
 <button class="drawer-toggle" data-act="liveToggle" data-closed="ดูเหตุผล ${la.length} มุมดาว" aria-expanded="${open}">
-<span class="peek" aria-hidden="true">${la.slice(0, 3).map((x) => `<span class="chip">${trio(x)}</span>`).join('')}</span>
+<span class="peek" aria-hidden="true">${la.slice(0, 3).map((x) => `<span class="peek-chip">${trio(x)}</span>`).join('')}</span>
 <span class="lbl">${open ? 'พับเก็บ' : `ดูเหตุผล ${la.length} มุมดาว`}</span>
 <span class="chev">${icon('down', 16, 1.6)}</span>
 </button>
@@ -348,11 +352,12 @@ function luckBlock(title, sub, L) {
 <p class="small">เลขถูกโฉลก <b class="mono" style="color:var(--gold-2);font-size:15px;letter-spacing:.1em">${L.numbers.join(' · ')}</b> · เลี่ยงเลข <b class="mono" style="color:var(--tension)">${L.avoid}</b></p></div>`;
 }
 
-function viewAuspice() {
-  const now = new Date(), p = state.profile, { bp, me, lagna } = personalLuck();
+const TH_DOW = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+const fullDate = (d) => `${TH_DOW[d.getDay()]} ${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${d.getFullYear() + 543}`;
+
+function auspToday(now, bp, me) {
   const today = dayColors(now), rel = posOf(bp, today.owner);
   const { all, cur } = currentYams(now);
-  const lg = lagna ? luckOf(lagna.lord) : null;
   const yamRow = (y) => {
     const tone = y.pos.tone === 2 ? 'good' : y.pos.tone < 0 ? 'bad' : '';
     const isCur = y === cur, past = y.end <= now;
@@ -360,9 +365,7 @@ function viewAuspice() {
 <span class="ydot" style="background:${TH_PLANETS[y.planet].hex}"></span>
 <span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span class="n">ยาม${y.pos.th} <span class="small">· ${TH_PLANETS[y.planet].th}</span>${isCur ? ' <span class="now">ตอนนี้</span>' : ''}</span><span class="small">${yamUse(y.pos)}</span></span></li>`;
   };
-  return `<main class="screen" style="--accent:var(--amber)">
-${pageHead('06', 'AUSPICE', 'ฤกษ์และมงคล', 'var(--amber)', 'auspice', `<button class="back" data-act="go" data-to="home" aria-label="กลับหน้าหลัก" style="margin:0">${icon('back', 20, 1.5)}</button>`)}
-<section class="card" style="gap:6px">
+  return `<section class="card" style="gap:6px">
 <span class="eyebrow" style="letter-spacing:.16em;color:var(--amber)">วันนี้ · ${TH_PLANETS[today.owner].day.toUpperCase()}</span>
 <p class="h2" style="font-size:19px">วันนี้เป็น "วัน${rel.th}" ของคุณ</p>
 <p class="small">${rel.tone === 2 ? 'วันส่งเสริม ' : rel.tone < 0 ? 'วันที่ควรระวัง ' : ''}เด่นเรื่อง${rel.use}${rel.tone < 0 ? ' เลี่ยงเริ่มเรื่องสำคัญ' : ''}</p>
@@ -377,16 +380,64 @@ ${pageHead('06', 'AUSPICE', 'ฤกษ์และมงคล', 'var(--amber)',
 <div class="yam-tabs"><span>กลางคืน 18:00–06:00</span></div>
 <ul class="yam-list">${all.filter((y) => y.night).map(yamRow).join('')}</ul>
 <p class="small" style="font-size:11px">ยามละ 1 ชั่วโมงครึ่ง กลางวันเดินดาวทีละ 5 กลางคืนทีละ 4 · ยามศรี เดช มนตรี ของคุณ = ยามดี ยามกาลกิณี = ควรเลี่ยง</p>
+</section>`;
+}
+
+function auspFinder(bp) {
+  const a = state.ausp, ev = EVENTS.find((e) => e.id === a.event);
+  const partner = ev.partner && a.partner ? a.partner : null;
+  const { results } = findAuspicious(state.chart, bp, a.event, { days: a.days, partner });
+  const top = results.slice(0, 5);
+  const dayOpts = [[0, 'ไม่ระบุ'], ...[1, 2, 3, 4, 8, 5, 6, 7].map((n) => [n, TH_PLANETS[n].day])];
+  const card = (r, i) => {
+    const open = a.open === i, b = r.best;
+    return `<li class="rk${open ? ' open' : ''}">
+<button class="rk-head" data-act="auspOpen" data-i="${i}" aria-expanded="${open}">
+<span class="rk-n mono">${i + 1}</span>
+<span style="flex:1;display:flex;flex-direction:column;gap:2px;min-width:0"><span class="rk-date">${fullDate(r.date)}</span>
+<span class="small">${b ? `<b style="color:var(--gold-2)">${hm(b.start)}–${hm(b.end)}</b> ยาม${b.pos.th} · ` : ''}${r.phase.th}</span></span>
+<span class="rk-score"><b class="mono">${r.score}</b><span class="tr-bar" style="width:44px;margin:0"><span style="width:${r.score}%;background:var(--gold)"></span></span></span>
+<span class="chev">${icon('down', 16, 1.6)}</span></button>
+<div class="fold"><div class="fold-in"><div class="rk-body">
+<ul class="why">${r.good.map((g) => `<li class="ok">${g}</li>`).join('')}${r.warn.map((w) => `<li class="no">${w}</li>`).join('')}</ul>
+${r.alt.length ? `<p class="small">เวลาสำรอง ${r.alt.map((y) => `${hm(y.start)}–${hm(y.end)} (ยาม${y.pos.th})`).join(' · ')}</p>` : ''}
+</div></div></div></li>`;
+  };
+  return `<section style="display:flex;flex-direction:column;gap:12px">
+<h2 class="label">เลือกงานที่จะหาฤกษ์</h2>
+<div class="ev-grid">${EVENTS.map((e) => `<button class="ev" data-act="auspEvent" data-v="${e.id}" aria-pressed="${e.id === a.event}">${e.th}</button>`).join('')}</div>
+<p class="small">${ev.note}</p>
+<div class="seg" role="group" aria-label="ช่วงเวลา">${[30, 60, 90, 180].map((n) => `<button aria-pressed="${a.days === n}" data-act="auspDays" data-i="${n}">${n === 180 ? '6 เดือน' : n + ' วัน'}</button>`).join('')}</div>
+${ev.partner ? `<label class="field">วันเกิดของคู่ (เพื่อเลี่ยงกาลกิณีของทั้งสองคน)<select class="select" data-in="a.partner">${dayOpts.map(([v, t]) => `<option value="${v}"${v === a.partner ? ' selected' : ''}>${t}</option>`).join('')}</select></label>` : ''}
 </section>
 <section style="display:flex;flex-direction:column;gap:10px">
+<h2 class="label">ฤกษ์${ev.th} ${top.length} อันดับแรก · ${a.days === 180 ? '6 เดือน' : a.days + ' วัน'}ข้างหน้า</h2>
+${top.length ? `<ol class="rk-list">${top.map(card).join('')}</ol>` : '<p class="small">ไม่พบวันที่เหมาะในช่วงนี้ ลองขยายช่วงเวลา</p>'}
+<p class="small" style="font-size:11px">คิดจากทักษาของ${partner ? 'ทั้งสองคน' : 'คุณ'} ข้างขึ้นข้างแรม วันพระ วันที่ธรรมเนียมไม่นิยม ดาวถอยหลัง และดวงจันทร์จรกับผังดาวของคุณ · ตัดวันกาลกิณีออกแล้ว · งานใหญ่อย่างแต่งงานและบวช ควรให้พระหรือโหรตรวจทานฤกษ์อีกครั้ง</p>
+</section>`;
+}
+
+function auspLucky(p, bp, me, lagna) {
+  const lg = lagna ? luckOf(lagna.lord) : null;
+  return `<section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">ทักษาประจำตัว · เกิด${TH_PLANETS[bp].day}${p.timeKnown ? '' : ' (ไม่ทราบเวลาเกิด ใช้เวลากลางวัน)'}</h2>
 ${thaksaWheel(bp)}
 </section>
 ${luckBlock('สีและเลขถูกโฉลกกับวันเกิด', `ตามทักษา ดาวประจำตัวคือ${TH_PLANETS[bp].th} (${bp})`, me)}
-${lg ? luckBlock(`สีและเลขถูกโฉลกกับลัคนา`, `ลัคนาแบบไทยราศี${SIGNS[lagna.sign].th} ${Math.floor(lagna.deg)}° เจ้าเรือนลัคนาคือดาว${TH_PLANETS[lagna.lord].th} (${lagna.lord})`, lg)
+${lg ? luckBlock('สีและเลขถูกโฉลกกับลัคนา', `ลัคนาแบบไทยราศี${SIGNS[lagna.sign].th} ${Math.floor(lagna.deg)}° เจ้าเรือนลัคนาคือดาว${TH_PLANETS[lagna.lord].th} (${lagna.lord})`, lg)
     : '<div class="card"><p class="small">ใส่เวลาเกิดเพื่อดูสีและเลขถูกโฉลกกับลัคนา</p></div>'}
-${lagna && lagna.sign !== state.chart.firstSign ? `<p class="small" style="font-size:11px">หมายเหตุ: โหราศาสตร์ไทยใช้จักรราศีแบบนิรายนะ (ถอยราว ${Math.round(23.9)}°) ลัคนาแบบไทยจึงเป็นราศี${SIGNS[lagna.sign].th} ขณะที่ผังดาวสากลเป็นราศี${SIGNS[state.chart.firstSign].th}</p>` : ''}
-<p class="small" style="text-align:center;font-size:11px">ตามตำราทักษาและยามอัฏฐกาล เพื่อเป็นแนวทางเสริมความมั่นใจ</p>
+${lagna && lagna.sign !== state.chart.firstSign ? `<p class="small" style="font-size:11px">หมายเหตุ: โหราศาสตร์ไทยใช้จักรราศีแบบนิรายนะ (ถอยราว 24°) ลัคนาแบบไทยจึงเป็นราศี${SIGNS[lagna.sign].th} ขณะที่ผังดาวสากลเป็นราศี${SIGNS[state.chart.firstSign].th}</p>` : ''}`;
+}
+
+function viewAuspice() {
+  const now = new Date(), p = state.profile, { bp, me, lagna } = personalLuck(), tab = state.ausp.tab;
+  const tabs = ['วันนี้', 'หาฤกษ์', 'ดวงมงคล'];
+  const body = tab === 0 ? auspToday(now, bp, me) : tab === 1 ? auspFinder(bp) : auspLucky(p, bp, me, lagna);
+  return `<main class="screen" style="--accent:var(--amber)">
+${pageHead('06', 'AUSPICE', 'ฤกษ์ยาม', 'var(--amber)', 'auspice', `<button class="back" data-act="go" data-to="home" aria-label="กลับหน้าหลัก" style="margin:0">${icon('back', 20, 1.5)}</button>`)}
+<div class="seg" role="tablist" aria-label="ฤกษ์ยาม">${tabs.map((t, i) => `<button role="tab" aria-selected="${i === tab}" data-act="auspTab" data-i="${i}">${t}</button>`).join('')}</div>
+${body}
+<p class="small" style="text-align:center;font-size:11px">ตามตำราทักษา ยามอัฏฐกาล และตำแหน่งดาวจริง เพื่อเป็นแนวทางเสริมความมั่นใจ</p>
 </main>`;
 }
 
@@ -814,6 +865,14 @@ document.addEventListener('click', (e) => {
   switch (act) {
     case 'go': go(el.dataset.to); return;
     case 'install': if (installEvt) { installEvt.prompt(); installEvt.userChoice.finally(() => { installEvt = null; el.remove(); }); } return;
+    case 'auspTab': state.ausp.tab = i; break;
+    case 'auspEvent': state.ausp.event = el.dataset.v; state.ausp.open = 0; break;
+    case 'auspDays': state.ausp.days = i; state.ausp.open = 0; break;
+    case 'auspOpen': {
+      state.ausp.open = state.ausp.open === i ? -1 : i;
+      document.querySelectorAll('.rk').forEach((li, j) => { li.classList.toggle('open', j === state.ausp.open); li.querySelector('.rk-head').setAttribute('aria-expanded', j === state.ausp.open); });
+      return;
+    }
     case 'weekDay': {
       state.weekSel = state.weekSel === i ? null : i;
       const box = document.getElementById('week');
@@ -918,6 +977,7 @@ document.addEventListener('change', (e) => {
   if (!key) return;
   const v = +e.target.value;
   if (key.startsWith('m.')) { state.match[key.slice(2)] = v; render(); return; }
+  if (key.startsWith('a.')) { state.ausp[key.slice(2)] = v; state.ausp.open = 0; render(); return; }
   if (['day', 'month', 'yearBE', 'hour', 'minute'].includes(key)) { state.draft[key] = v; if (key !== 'hour' && key !== 'minute') render(); }
 });
 

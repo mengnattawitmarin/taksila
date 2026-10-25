@@ -141,7 +141,7 @@ a:hover { color: var(--gold-2); }
 .drawer-toggle { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; margin-top: 2px; padding: 8px 10px; background: var(--bg); border: 1px solid var(--line-2); border-radius: 8px; color: var(--text); font: inherit; cursor: pointer; text-align: left; }
 .drawer-toggle .peek { display: flex; gap: 4px; }
 .drawer-toggle .lbl { flex: 1; font-size: 13px; color: var(--gold-2); }
-.chip { display: inline-flex; align-items: center; gap: 1px; padding: 3px 6px; border-radius: 12px; border: 1px solid var(--line); font-size: 12px; color: var(--gold-2); }
+.peek-chip { display: inline-flex; align-items: center; gap: 1px; padding: 3px 6px; border-radius: 12px; border: 1px solid var(--line); font-size: 12px; color: var(--gold-2); }
 .drawer-body { display: flex; flex-direction: column; gap: 12px; padding-top: 14px; }
 .asp-list, .next-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .asp { border-top: 1px solid var(--line); }
@@ -186,6 +186,27 @@ a:hover { color: var(--gold-2); }
 .yam.past { opacity: .45; }
 .yam.cur { background: color-mix(in srgb, var(--gold) 9%, transparent); border-radius: 6px; box-shadow: inset 2px 0 0 var(--gold); }
 .yam .now { font-family: var(--mono); font-size: 9px; letter-spacing: .1em; color: var(--bg); background: var(--gold); padding: 1px 6px; border-radius: 8px; vertical-align: 2px; }
+
+/* ฤกษ์ finder */
+.ev-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.ev { min-height: 44px; padding: 6px 4px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); color: var(--text-2); font: inherit; font-size: 13px; line-height: 1.25; cursor: pointer; }
+.ev[aria-pressed="true"] { border-color: var(--amber); color: var(--text); font-weight: 600; background: color-mix(in srgb, var(--amber) 12%, var(--surface)); }
+.rk-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.rk { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.rk.open { border-color: color-mix(in srgb, var(--gold) 45%, var(--line)); }
+.rk-head { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 60px; padding: 10px 12px; background: none; border: 0; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.rk-n { flex: none; width: 26px; height: 26px; border-radius: 13px; border: 1px solid var(--gold); color: var(--gold-2); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.rk:first-child .rk-n { background: var(--gold); color: var(--bg); }
+.rk-date { font-family: var(--serif); font-size: 16px; font-weight: 600; }
+.rk-score { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.rk-score b { font-size: 15px; color: var(--gold-2); }
+.rk-body { padding: 0 12px 14px 50px; display: flex; flex-direction: column; gap: 8px; }
+.why { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.why li { padding-left: 18px; position: relative; }
+.why li::before { position: absolute; left: 0; top: 0; font-weight: 700; }
+.why .ok::before { content: '✓'; color: var(--harmony); }
+.why .no::before { content: '!'; color: var(--tension); left: 4px; }
+@media (max-width: 360px) { .ev-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rk-body { padding-left: 12px; } }
 
 /* seven-day strip */
 .week-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
