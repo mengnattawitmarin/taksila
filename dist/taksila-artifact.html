@@ -563,6 +563,20 @@ a:hover { color: var(--gold-2); }
 .num-tool { display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 70px; padding: 10px 4px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--text-2); font: inherit; font-size: 13px; cursor: pointer; transition: border-color .2s, box-shadow .2s; }
 .num-tool svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .num-tool[aria-pressed="true"] { border-color: var(--teal); color: #BDEBDF; background: rgba(127,196,180,.08); box-shadow: 0 0 16px rgba(127,196,180,.18); }
+.num-tool.wide { grid-column: 1 / -1; flex-direction: row; justify-content: center; min-height: 52px; font-size: 15px; gap: 10px; }
+.nm-form { display: flex; flex-direction: column; gap: 10px; }
+.nm-opts { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.nm-row { display: flex; flex-direction: column; gap: 8px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line); border-left: 3px solid var(--lc); background: var(--surface); }
+.nm-head { display: flex; align-items: baseline; gap: 10px; }
+.nm-head span:first-child { font-size: 14px; color: var(--text-2); }
+.nm-head b { font-size: 20px; color: var(--text); }
+.nm-lv { margin-left: auto; font-size: 13px; font-weight: 600; color: var(--lc); }
+.lt-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.lt { display: flex; flex-direction: column; align-items: center; min-width: 30px; padding: 4px 3px 3px; border-radius: 7px; border: 1px solid var(--line); background: rgba(0,0,0,.2); }
+.lt b { font-size: 16px; font-weight: 500; color: var(--text); line-height: 1.3; }
+.lt i { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--teal); }
+.lt.good { border-color: rgba(212,175,99,.7); }
+.lt.kal { border-color: var(--tension); background: rgba(224,122,98,.1); }
 .num-input { font-size: 22px; letter-spacing: .08em; }
 .num-empty { text-align: center; padding: 18px 0; }
 .num-sum { gap: 10px; background: radial-gradient(ellipse 60% 80% at 0% 0%, rgba(127,196,180,.12), transparent 70%), var(--surface); }
@@ -2331,6 +2345,7 @@ const reduceTo9 = (n) => { while (n > 9) n = String(n).split('').reduce((a, b) =
 const onlyDigits = (s) => (s || '').replace(/[^0-9]/g, '');
 
 const NUM_TOOLS = [
+  { id: 'name', th: 'ชื่อ-นามสกุล', hint: 'เลขศาสตร์ชื่อตามหลักโหราเลขศาสตร์ และเช็กอักษรกาลกิณีตามวันเกิด', ph: '', kind: 'name', max: 40 },
   { id: 'phone', th: 'เบอร์มือถือ', hint: 'เช่น 081 234 5678', ph: '0812345678', kind: 'digits', max: 12 },
   { id: 'plate', th: 'ทะเบียนรถ', hint: 'ใส่ทั้งตัวอักษรและเลขได้ ระบบใช้เฉพาะตัวเลข', ph: '1กข 1234', kind: 'text', max: 12 },
   { id: 'id', th: 'บัตรประชาชน', hint: 'เลข 13 หลัก ประมวลผลในเครื่องเท่านั้น ไม่บันทึก ไม่ส่งออก', ph: '1 2345 67890 12 3', kind: 'digits', max: 17 },
@@ -2416,6 +2431,69 @@ function analyzeHex(raw) {
 
 // The birth date written as DD MM YY reads as a six-digit hex colour.
 const birthHexColor = (p) => '#' + String(p.day).padStart(2, '0') + String(p.month).padStart(2, '0') + String((p.yearBE - 543) % 100).padStart(2, '0');
+
+// ---------- เลขศาสตร์ชื่อ (Thai name numerology, Cheiro system as adapted by อ.พลูหลวง) ----------
+// Letter values, checked against three Thai references that agree.
+const LETTER_GROUPS = {
+  1: 'กดถทภฤฦาุำ่', 2: 'ขชงบปเแู้', 3: 'ฆตฑฒฃ๋', 4: 'คธญรษะโิั',
+  5: 'ฉฌณนมหฎฮฬึ', 6: 'จลวอใ', 7: 'ซศสีื๊', 8: 'ผฝพฟย็', 9: 'ฏฐไ์'
+};
+const EN_GROUPS = { 1: 'AIJQY', 2: 'BKR', 3: 'CGLS', 4: 'DMT', 5: 'EHNX', 6: 'UVW', 7: 'OZ', 8: 'FP' };
+const LETTER_VAL = {};
+for (const [v, chars] of Object.entries(LETTER_GROUPS)) for (const c of chars) LETTER_VAL[c] = +v;
+for (const [v, chars] of Object.entries(EN_GROUPS)) for (const c of chars) LETTER_VAL[c] = +v;
+
+// Totals from the โหราเลขศาสตร์ grouping (mahamongkol.com).
+const BEST = [2, 4, 5, 6, 9, 14, 15, 19, 23, 24, 36, 41, 42, 45, 50, 51, 54, 55, 56, 59, 63, 65, 90, 95, 99, 100, 104, 105];
+const MID = [32, 40, 44, 46, 64, 79, 89, 97, 98];
+const NOT_WOMEN = [16, 17, 18, 19, 20, 109];
+const NOT_MEN = [13, 23, 31, 32, 46, 64, 68, 86];
+const DANGER = [27, 29, 30];
+const NUM_PLANET = { 1: 'อาทิตย์', 2: 'จันทร์', 3: 'อังคาร', 4: 'พุธ', 5: 'พฤหัสบดี', 6: 'ศุกร์', 7: 'เสาร์', 8: 'ราหู', 9: 'เกตุ' };
+
+// Totals of 101–109 drop the middle zero; 110 and above keep the last two digits.
+const normTotal = (n) => n > 100 && n < 110 ? 10 + (n - 100) : n >= 110 ? n % 100 : n;
+
+function nameValue(str) {
+  const parts = [];
+  for (const ch of (str || '').toUpperCase()) { if (LETTER_VAL[ch]) parts.push({ ch, v: LETTER_VAL[ch] }); }
+  const total = parts.reduce((a, p) => a + p.v, 0);
+  return { parts, total };
+}
+function rateTotal(raw, gender) {
+  const n = normTotal(raw), rev = +String(n).split('').reverse().join('');
+  let level = BEST.includes(n) || BEST.includes(raw) ? 'best' : MID.includes(n) ? 'mid' : DANGER.includes(n) ? 'bad' : 'weak';
+  const notes = [];
+  if (gender === 'f' && NOT_WOMEN.includes(n)) { notes.push('ไม่เหมาะกับสุภาพสตรี เรื่องความรักและชีวิตคู่'); if (level === 'best') level = 'mid'; else level = 'weak'; }
+  if (gender === 'm' && NOT_MEN.includes(n)) { notes.push('ไม่เหมาะกับสุภาพบุรุษ เรื่องชู้สาวและความมั่นคงของครอบครัว'); if (level === 'best') level = 'mid'; else level = 'weak'; }
+  if (rev !== n && ((gender === 'f' && NOT_WOMEN.includes(rev)) || (gender === 'm' && NOT_MEN.includes(rev)))) notes.push(`เลขกลับ ${rev} อยู่ในกลุ่มที่ควรระวัง`);
+  const root = reduceTo9(n);
+  return { n, level, root, planet: NUM_PLANET[root], notes };
+}
+const LEVEL_TH = { best: 'ให้คุณสูง', mid: 'ระดับกลาง', weak: 'ควรพิจารณา', bad: 'ไม่ส่งเสริม' };
+const LEVEL_PTS = { best: 100, mid: 65, weak: 35, bad: 15 };
+
+// อักษรประจำวัน (ทักษา): letters belong to the planet of their group.
+const VOWELS = 'ะาำิีึืุูเแโใไัฤฦ';
+const TAKSA_LETTERS = { 1: VOWELS, 2: 'กขฃคฅฆง', 3: 'จฉชซฌญ', 4: 'ฎฏฐฑฒณ', 8: 'ยรลว', 5: 'บปผฝพฟภม', 6: 'ศษสหฬอฮ', 7: 'ดตถทธน' };
+const taksaOf = (ch) => { for (const [p, s] of Object.entries(TAKSA_LETTERS)) if (s.includes(ch)) return +p; return null; };
+
+function analyzeName(first, last, { gender = '', avoidPlanet = null, goodPlanets = [] } = {}) {
+  const f = nameValue(first), l = nameValue(last);
+  if (!f.parts.length) return null;
+  const full = { parts: [...f.parts, ...l.parts], total: f.total + l.total };
+  const rows = [
+    { th: 'ชื่อ', w: 0.4, ...f, rate: rateTotal(f.total, gender) },
+    l.parts.length ? { th: 'นามสกุล', w: 0.2, ...l, rate: rateTotal(l.total, gender) } : null,
+    l.parts.length ? { th: 'ชื่อ + นามสกุล', w: 0.4, ...full, rate: rateTotal(full.total, gender) } : null
+  ].filter(Boolean);
+  const wsum = rows.reduce((a, r) => a + r.w, 0);
+  const score = Math.round(rows.reduce((a, r) => a + LEVEL_PTS[r.rate.level] * r.w, 0) / wsum);
+  const kalakini = avoidPlanet ? [...new Set([...(first || ''), ...(last || '')].filter((c) => taksaOf(c) === avoidPlanet))] : [];
+  const kalakiniFirst = avoidPlanet ? [...new Set([...(first || '')].filter((c) => taksaOf(c) === avoidPlanet))] : [];
+  const lucky = [...new Set([...(first || '')].filter((c) => goodPlanets.includes(taksaOf(c))))];
+  return { rows, score: kalakiniFirst.length ? Math.min(score, 45) : score, kalakini, kalakiniFirst, lucky };
+}
 
 // ---- js/starmap.js ----
 // Builds the animated star-map SVG from a computed natal chart.
@@ -2610,7 +2688,7 @@ const state = {
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
-  num: { mode: 'phone', values: {} },
+  num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
   ask: { topic: 0, messages: [] }
 };
@@ -3548,6 +3626,7 @@ function reduceNum(n, keepMaster) {
   return n;
 }
 const NUM_ICONS = {
+  name: '<path d="M4 19V6.5L8.5 15 13 6.5V19"/><path d="M16 19v-7M16 9.2v-.4M19.5 19v-5.5a2 2 0 0 0-3.5-1.3"/>',
   phone: '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10.5 18.5h3"/>',
   plate: '<rect x="2.5" y="7" width="19" height="10" rx="2"/><path d="M6 12h3M11 12h7"/>',
   id: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2.2"/><path d="M5.5 16c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4M14 10h5M14 13.5h4"/>',
@@ -3555,7 +3634,29 @@ const NUM_ICONS = {
   bank: '<path d="M3 9.5L12 4l9 5.5M4.5 9.5v8M9.5 9.5v8M14.5 9.5v8M19.5 9.5v8M3 20h18"/>',
   hex: '<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><path d="M9 9.5l-1.5 5M12.5 9.5L11 14.5M8 11h5M7.5 13h5"/>'
 };
+function nameResults() {
+  const n = state.num, bp = n.day || (state.profile ? birthPlanet(state.profile) : 0);
+  const L = bp ? luckOf(bp) : null;
+  const r = analyzeName(n.first, n.last, { gender: n.gender, avoidPlanet: L ? L.avoid : null, goodPlanets: L ? [L.money, L.work, L.patron] : [] });
+  if (!r) return '<p class="small num-empty">พิมพ์ชื่อเพื่อดูพลังของชื่อ</p>';
+  const LVC = { best: 'var(--teal)', mid: 'var(--gold)', weak: 'var(--amber)', bad: 'var(--tension)' };
+  const [gTh, gL] = gradeOf(r.score);
+  const R = 30, C = 2 * Math.PI * R;
+  const chip = (p) => { const tk = taksaOf(p.ch), kal = L && tk === L.avoid, good = L && [L.money, L.work, L.patron].includes(tk); return `<span class="lt${kal ? ' kal' : good ? ' good' : ''}"><b>${p.ch === '์' ? '◌์' : /[ะาำิีึืุูั็่้๊๋]/.test(p.ch) ? '◌' + p.ch : p.ch}</b><i>${p.v}</i></span>`; };
+  return `<div class="card num-sum"><div class="ns-top">
+<svg class="ns-ring" viewBox="0 0 72 72" aria-label="คะแนน ${r.score}"><circle cx="36" cy="36" r="${R}" fill="none" stroke="#2C261B" stroke-width="6"/><circle class="ring-arc" cx="36" cy="36" r="${R}" fill="none" stroke="#7FC4B4" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(r.score / 100 * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 36 36)" style="--c:${C.toFixed(1)}"/><text x="36" y="40" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" fill="#F1E6CF">${r.score}</text></svg>
+<span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span class="eyebrow" style="color:var(--teal)">พลังชื่อรวม · เกรด ${gL}</span><b class="ns-title">${esc(n.first)} ${esc(n.last)}</b><span class="small" style="color:var(--text)">${gTh} · ชื่อ 40% นามสกุล 20% ชื่อรวมสกุล 40%</span></span></div>
+${r.kalakiniFirst.length ? `<p class="small ns-note" style="color:var(--tension)">พบอักษรกาลกิณีในชื่อ: <b>${r.kalakiniFirst.join(' ')}</b> (ของคนเกิด${TH_PLANETS[bp].day}) ตำราแนะนำให้เลี่ยง</p>` : L ? `<p class="small ns-note" style="color:var(--teal)">ชื่อไม่มีอักษรกาลกิณีของคนเกิด${TH_PLANETS[bp].day}${r.kalakini.length ? ` (นามสกุลมี ${r.kalakini.join(' ')} แต่ตำรามักผ่อนผันให้นามสกุล)` : ''}</p>` : ''}
+${r.lucky.length ? `<p class="small" style="margin:0">อักษรมงคลในชื่อ (ศรี เดช มนตรี): <b style="color:var(--gold-2)">${r.lucky.join(' ')}</b></p>` : ''}
+</div>
+${r.rows.map((row) => `<div class="nm-row" style="--lc:${LVC[row.rate.level]}">
+<div class="nm-head"><span>${row.th}</span><b class="mono">${row.total}${row.rate.n !== row.total ? ' → ' + row.rate.n : ''}</b><span class="nm-lv">${LEVEL_TH[row.rate.level]}</span></div>
+<div class="lt-row">${row.parts.map(chip).join('')}</div>
+<p class="small" style="margin:0">ผลรวมรากเลข ${row.rate.root} ดาว${row.rate.planet}${row.rate.notes.length ? ' · ' + row.rate.notes.join(' · ') : ''}</p></div>`).join('')}
+<p class="small">กรอบทองคืออักษรมงคลตามทักษาวันเกิด กรอบแดงคืออักษรกาลกิณี · กลุ่มผลรวมดี กลาง และที่ควรระวังตามตำราโหราเลขศาสตร์ ใช้เป็นแนวทางในการตั้งหรือเปลี่ยนชื่อ</p>`;
+}
 function numResults() {
+  if (state.num.mode === 'name') return nameResults();
   const n = state.num, tool = NUM_TOOLS.find((t) => t.id === n.mode), v = n.values[n.mode] || '';
   const r = analyzeNumber(n.mode, v);
   if (!r) return `<p class="small num-empty">พิมพ์${tool.th}เพื่อดูผลวิเคราะห์</p>`;
@@ -3595,9 +3696,15 @@ function viewNumbers() {
 ${pageHead('04', 'NUMEROLOGY', 'ศาสตร์ตัวเลข', 'var(--teal)', 'numbers')}
 ${lp}${hexCard}
 <section class="t-step"><h2 class="t-step-h"><span style="border-color:var(--teal);color:var(--teal)">✦</span>เลือกสิ่งที่อยากดู</h2>
-<div class="num-tools">${NUM_TOOLS.map((t) => `<button class="num-tool" data-act="numMode" data-v="${t.id}" aria-pressed="${n.mode === t.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${NUM_ICONS[t.id]}</svg>${t.th}</button>`).join('')}</div></section>
-<label class="field">${tool.th}<input class="input mono num-input" inputmode="${tool.kind === 'digits' ? 'numeric' : 'text'}" autocomplete="off" maxlength="${tool.max + 4}" data-in="numValue" value="${esc(n.values[n.mode] || '')}" placeholder="${tool.ph}"></label>
-<p class="small" style="margin-top:-12px">${tool.hint}</p>
+<div class="num-tools">${NUM_TOOLS.map((t) => `<button class="num-tool${t.id === 'name' ? ' wide' : ''}" data-act="numMode" data-v="${t.id}" aria-pressed="${n.mode === t.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${NUM_ICONS[t.id]}</svg>${t.th}</button>`).join('')}</div></section>
+${tool.kind === 'name' ? `<div class="nm-form">
+<label class="field">ชื่อ<input class="input" data-in="nmFirst" value="${esc(n.first)}" placeholder="เช่น ธัญพร" autocomplete="off" maxlength="40"></label>
+<label class="field">นามสกุล<input class="input" data-in="nmLast" value="${esc(n.last)}" placeholder="ไม่บังคับ" autocomplete="off" maxlength="40"></label>
+<div class="nm-opts"><div class="seg" role="group" aria-label="เพศ">${[['', 'ไม่ระบุ'], ['f', 'หญิง'], ['m', 'ชาย']].map(([v, t]) => `<button aria-pressed="${n.gender === v}" data-act="nmGender" data-v="${v}">${t}</button>`).join('')}</div>
+<label class="field" style="flex:1">วันเกิดเจ้าของชื่อ<select class="select" data-in="nm.day">${[[0, state.profile ? 'ของฉัน (' + TH_PLANETS[birthPlanet(state.profile)].day + ')' : 'ไม่ระบุ'], ...[1, 2, 3, 4, 8, 5, 6, 7].map((k) => [k, TH_PLANETS[k].day])].map(([v, t]) => `<option value="${v}"${v === n.day ? ' selected' : ''}>${t}</option>`).join('')}</select></label></div></div>
+<p class="small" style="margin-top:-12px">${tool.hint}</p>`
+    : `<label class="field">${tool.th}<input class="input mono num-input" inputmode="${tool.kind === 'digits' ? 'numeric' : 'text'}" autocomplete="off" maxlength="${tool.max + 4}" data-in="numValue" value="${esc(n.values[n.mode] || '')}" placeholder="${tool.ph}"></label>
+<p class="small" style="margin-top:-12px">${tool.hint}</p>`}
 <div id="num-results" style="display:flex;flex-direction:column;gap:10px">${numResults()}</div>
 </main>`;
 }
@@ -3931,6 +4038,7 @@ document.addEventListener('click', (e) => {
     }
     case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [] }); break;
     case 'numMode': state.num.mode = el.dataset.v; break;
+    case 'nmGender': { state.num.gender = el.dataset.v; document.querySelectorAll('[data-act=nmGender]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state.num.gender)); const box = document.getElementById('num-results'); if (box) box.innerHTML = numResults(); return; }
     case 'luckMode': state.luck.mode = el.dataset.v; if (state.luck.inc === 'burning') state.luck.inc = 'idle'; break;
     case 'stirGlobe': if (luckCtl && luckCtl.stir) luckCtl.stir(); return;
     case 'ballReset': state.luck.balls = []; break;
@@ -3981,6 +4089,12 @@ document.addEventListener('input', (e) => {
     if (list) list.innerHTML = placeOptions();
     return;
   }
+  if (key === 'nmFirst' || key === 'nmLast') {
+    state.num[key === 'nmFirst' ? 'first' : 'last'] = v;
+    const box = document.getElementById('num-results');
+    if (box) box.innerHTML = numResults();
+    return;
+  }
   if (key === 'numValue') {
     state.num.values[state.num.mode] = v;
     const box = document.getElementById('num-results');
@@ -3996,6 +4110,7 @@ document.addEventListener('change', (e) => {
   if (!key) return;
   const v = +e.target.value;
   if (key.startsWith('m.')) { state.match[key.slice(2)] = v; render(); return; }
+  if (key === 'nm.day') { state.num.day = v; const box = document.getElementById('num-results'); if (box) box.innerHTML = numResults(); return; }
   if (key.startsWith('t.')) { state.tarot.other[key.slice(2)] = v; render(); return; }
   if (key.startsWith('a.')) { state.ausp[key.slice(2)] = v; state.ausp.open = 0; render(); return; }
   if (['day', 'month', 'yearBE', 'hour', 'minute'].includes(key)) { state.draft[key] = v; if (key !== 'hour' && key !== 'minute') render(); }

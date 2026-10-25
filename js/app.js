@@ -10,7 +10,7 @@ import { natalProfile, sixthSense } from './profile.js';
 import { CARDS, drawCards, SPREADS, HOUSE_READ } from './tarot.js';
 import { mountGlobe, burnIncense, mountSiamsi, askMotion, randomDigit, thaiNum } from './luck.js';
 import { SIAMSI } from './siamsi.js';
-import { NUM_TOOLS, analyzeNumber, gradeOf, birthHexColor, reduceTo9 } from './numerology.js';
+import { NUM_TOOLS, analyzeNumber, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
 // ---------------- storage ----------------
@@ -33,7 +33,7 @@ const state = {
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
-  num: { mode: 'phone', values: {} },
+  num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
   ask: { topic: 0, messages: [] }
 };
@@ -971,6 +971,7 @@ function reduceNum(n, keepMaster) {
   return n;
 }
 const NUM_ICONS = {
+  name: '<path d="M4 19V6.5L8.5 15 13 6.5V19"/><path d="M16 19v-7M16 9.2v-.4M19.5 19v-5.5a2 2 0 0 0-3.5-1.3"/>',
   phone: '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10.5 18.5h3"/>',
   plate: '<rect x="2.5" y="7" width="19" height="10" rx="2"/><path d="M6 12h3M11 12h7"/>',
   id: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2.2"/><path d="M5.5 16c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4M14 10h5M14 13.5h4"/>',
@@ -978,7 +979,29 @@ const NUM_ICONS = {
   bank: '<path d="M3 9.5L12 4l9 5.5M4.5 9.5v8M9.5 9.5v8M14.5 9.5v8M19.5 9.5v8M3 20h18"/>',
   hex: '<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><path d="M9 9.5l-1.5 5M12.5 9.5L11 14.5M8 11h5M7.5 13h5"/>'
 };
+function nameResults() {
+  const n = state.num, bp = n.day || (state.profile ? birthPlanet(state.profile) : 0);
+  const L = bp ? luckOf(bp) : null;
+  const r = analyzeName(n.first, n.last, { gender: n.gender, avoidPlanet: L ? L.avoid : null, goodPlanets: L ? [L.money, L.work, L.patron] : [] });
+  if (!r) return '<p class="small num-empty">พิมพ์ชื่อเพื่อดูพลังของชื่อ</p>';
+  const LVC = { best: 'var(--teal)', mid: 'var(--gold)', weak: 'var(--amber)', bad: 'var(--tension)' };
+  const [gTh, gL] = gradeOf(r.score);
+  const R = 30, C = 2 * Math.PI * R;
+  const chip = (p) => { const tk = taksaOf(p.ch), kal = L && tk === L.avoid, good = L && [L.money, L.work, L.patron].includes(tk); return `<span class="lt${kal ? ' kal' : good ? ' good' : ''}"><b>${p.ch === '์' ? '◌์' : /[ะาำิีึืุูั็่้๊๋]/.test(p.ch) ? '◌' + p.ch : p.ch}</b><i>${p.v}</i></span>`; };
+  return `<div class="card num-sum"><div class="ns-top">
+<svg class="ns-ring" viewBox="0 0 72 72" aria-label="คะแนน ${r.score}"><circle cx="36" cy="36" r="${R}" fill="none" stroke="#2C261B" stroke-width="6"/><circle class="ring-arc" cx="36" cy="36" r="${R}" fill="none" stroke="#7FC4B4" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(r.score / 100 * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 36 36)" style="--c:${C.toFixed(1)}"/><text x="36" y="40" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" fill="#F1E6CF">${r.score}</text></svg>
+<span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span class="eyebrow" style="color:var(--teal)">พลังชื่อรวม · เกรด ${gL}</span><b class="ns-title">${esc(n.first)} ${esc(n.last)}</b><span class="small" style="color:var(--text)">${gTh} · ชื่อ 40% นามสกุล 20% ชื่อรวมสกุล 40%</span></span></div>
+${r.kalakiniFirst.length ? `<p class="small ns-note" style="color:var(--tension)">พบอักษรกาลกิณีในชื่อ: <b>${r.kalakiniFirst.join(' ')}</b> (ของคนเกิด${TH_PLANETS[bp].day}) ตำราแนะนำให้เลี่ยง</p>` : L ? `<p class="small ns-note" style="color:var(--teal)">ชื่อไม่มีอักษรกาลกิณีของคนเกิด${TH_PLANETS[bp].day}${r.kalakini.length ? ` (นามสกุลมี ${r.kalakini.join(' ')} แต่ตำรามักผ่อนผันให้นามสกุล)` : ''}</p>` : ''}
+${r.lucky.length ? `<p class="small" style="margin:0">อักษรมงคลในชื่อ (ศรี เดช มนตรี): <b style="color:var(--gold-2)">${r.lucky.join(' ')}</b></p>` : ''}
+</div>
+${r.rows.map((row) => `<div class="nm-row" style="--lc:${LVC[row.rate.level]}">
+<div class="nm-head"><span>${row.th}</span><b class="mono">${row.total}${row.rate.n !== row.total ? ' → ' + row.rate.n : ''}</b><span class="nm-lv">${LEVEL_TH[row.rate.level]}</span></div>
+<div class="lt-row">${row.parts.map(chip).join('')}</div>
+<p class="small" style="margin:0">ผลรวมรากเลข ${row.rate.root} ดาว${row.rate.planet}${row.rate.notes.length ? ' · ' + row.rate.notes.join(' · ') : ''}</p></div>`).join('')}
+<p class="small">กรอบทองคืออักษรมงคลตามทักษาวันเกิด กรอบแดงคืออักษรกาลกิณี · กลุ่มผลรวมดี กลาง และที่ควรระวังตามตำราโหราเลขศาสตร์ ใช้เป็นแนวทางในการตั้งหรือเปลี่ยนชื่อ</p>`;
+}
 function numResults() {
+  if (state.num.mode === 'name') return nameResults();
   const n = state.num, tool = NUM_TOOLS.find((t) => t.id === n.mode), v = n.values[n.mode] || '';
   const r = analyzeNumber(n.mode, v);
   if (!r) return `<p class="small num-empty">พิมพ์${tool.th}เพื่อดูผลวิเคราะห์</p>`;
@@ -1018,9 +1041,15 @@ function viewNumbers() {
 ${pageHead('04', 'NUMEROLOGY', 'ศาสตร์ตัวเลข', 'var(--teal)', 'numbers')}
 ${lp}${hexCard}
 <section class="t-step"><h2 class="t-step-h"><span style="border-color:var(--teal);color:var(--teal)">✦</span>เลือกสิ่งที่อยากดู</h2>
-<div class="num-tools">${NUM_TOOLS.map((t) => `<button class="num-tool" data-act="numMode" data-v="${t.id}" aria-pressed="${n.mode === t.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${NUM_ICONS[t.id]}</svg>${t.th}</button>`).join('')}</div></section>
-<label class="field">${tool.th}<input class="input mono num-input" inputmode="${tool.kind === 'digits' ? 'numeric' : 'text'}" autocomplete="off" maxlength="${tool.max + 4}" data-in="numValue" value="${esc(n.values[n.mode] || '')}" placeholder="${tool.ph}"></label>
-<p class="small" style="margin-top:-12px">${tool.hint}</p>
+<div class="num-tools">${NUM_TOOLS.map((t) => `<button class="num-tool${t.id === 'name' ? ' wide' : ''}" data-act="numMode" data-v="${t.id}" aria-pressed="${n.mode === t.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${NUM_ICONS[t.id]}</svg>${t.th}</button>`).join('')}</div></section>
+${tool.kind === 'name' ? `<div class="nm-form">
+<label class="field">ชื่อ<input class="input" data-in="nmFirst" value="${esc(n.first)}" placeholder="เช่น ธัญพร" autocomplete="off" maxlength="40"></label>
+<label class="field">นามสกุล<input class="input" data-in="nmLast" value="${esc(n.last)}" placeholder="ไม่บังคับ" autocomplete="off" maxlength="40"></label>
+<div class="nm-opts"><div class="seg" role="group" aria-label="เพศ">${[['', 'ไม่ระบุ'], ['f', 'หญิง'], ['m', 'ชาย']].map(([v, t]) => `<button aria-pressed="${n.gender === v}" data-act="nmGender" data-v="${v}">${t}</button>`).join('')}</div>
+<label class="field" style="flex:1">วันเกิดเจ้าของชื่อ<select class="select" data-in="nm.day">${[[0, state.profile ? 'ของฉัน (' + TH_PLANETS[birthPlanet(state.profile)].day + ')' : 'ไม่ระบุ'], ...[1, 2, 3, 4, 8, 5, 6, 7].map((k) => [k, TH_PLANETS[k].day])].map(([v, t]) => `<option value="${v}"${v === n.day ? ' selected' : ''}>${t}</option>`).join('')}</select></label></div></div>
+<p class="small" style="margin-top:-12px">${tool.hint}</p>`
+    : `<label class="field">${tool.th}<input class="input mono num-input" inputmode="${tool.kind === 'digits' ? 'numeric' : 'text'}" autocomplete="off" maxlength="${tool.max + 4}" data-in="numValue" value="${esc(n.values[n.mode] || '')}" placeholder="${tool.ph}"></label>
+<p class="small" style="margin-top:-12px">${tool.hint}</p>`}
 <div id="num-results" style="display:flex;flex-direction:column;gap:10px">${numResults()}</div>
 </main>`;
 }
@@ -1354,6 +1383,7 @@ document.addEventListener('click', (e) => {
     }
     case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [] }); break;
     case 'numMode': state.num.mode = el.dataset.v; break;
+    case 'nmGender': { state.num.gender = el.dataset.v; document.querySelectorAll('[data-act=nmGender]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.v === state.num.gender)); const box = document.getElementById('num-results'); if (box) box.innerHTML = numResults(); return; }
     case 'luckMode': state.luck.mode = el.dataset.v; if (state.luck.inc === 'burning') state.luck.inc = 'idle'; break;
     case 'stirGlobe': if (luckCtl && luckCtl.stir) luckCtl.stir(); return;
     case 'ballReset': state.luck.balls = []; break;
@@ -1404,6 +1434,12 @@ document.addEventListener('input', (e) => {
     if (list) list.innerHTML = placeOptions();
     return;
   }
+  if (key === 'nmFirst' || key === 'nmLast') {
+    state.num[key === 'nmFirst' ? 'first' : 'last'] = v;
+    const box = document.getElementById('num-results');
+    if (box) box.innerHTML = numResults();
+    return;
+  }
   if (key === 'numValue') {
     state.num.values[state.num.mode] = v;
     const box = document.getElementById('num-results');
@@ -1419,6 +1455,7 @@ document.addEventListener('change', (e) => {
   if (!key) return;
   const v = +e.target.value;
   if (key.startsWith('m.')) { state.match[key.slice(2)] = v; render(); return; }
+  if (key === 'nm.day') { state.num.day = v; const box = document.getElementById('num-results'); if (box) box.innerHTML = numResults(); return; }
   if (key.startsWith('t.')) { state.tarot.other[key.slice(2)] = v; render(); return; }
   if (key.startsWith('a.')) { state.ausp[key.slice(2)] = v; state.ausp.open = 0; render(); return; }
   if (['day', 'month', 'yearBE', 'hour', 'minute'].includes(key)) { state.draft[key] = v; if (key !== 'hour' && key !== 'minute') render(); }
