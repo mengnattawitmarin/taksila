@@ -29,7 +29,7 @@ const state = {
   weekSel: null,
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
-  tarot: { topic: 0, spread: 2, cards: null, flipped: [], sel: 0, q: '' },
+  tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '' },
   num: { mode: 'phone', value: '' },
   luck: { mode: 'ball', balls: [], ash: null, shake: false },
   ask: { topic: 0, messages: [] }
@@ -779,15 +779,34 @@ function tarotSummary(spread, cards) {
 <p class="small">กดไพ่แต่ละภพเพื่ออ่านละเอียด</p></div>`;
 }
 
+function pickSlotsHTML() {
+  const t = state.tarot, spread = SPREADS[t.spread], need = spread.pos.length;
+  const slot = (k) => {
+    const filled = k < t.picks.length;
+    return `<span class="p-slot${filled ? ' on' : ''}${k === t.picks.length ? ' next' : ''}">${filled ? CARD_BACK : `<b>${k + 1}</b>`}</span>`;
+  };
+  return `<div class="p-slots ${spread.house ? 'h' : 'n' + need}">${Array.from({ length: need }, (_, k) => `<span class="p-wrap">${slot(k)}<span class="t-lbl">${spread.house ? 'ภพ ' + (k + 1) : spread.pos[k].th}</span></span>`).join('')}</div>
+<p class="p-hint">${t.picks.length < need ? `ตั้งจิต แล้วเลือกไพ่ใบที่ <b>${t.picks.length + 1}</b> จาก ${need} ใบ${spread.house ? '' : ` · ${spread.pos[t.picks.length].th}`}` : 'ครบแล้ว กำลังวางไพ่...'}</p>`;
+}
+
 function viewTarot() {
   const t = state.tarot, spread = SPREADS[t.spread];
   let body = '';
-  if (!t.cards) {
+  if (t.deck && !t.cards) {
+    const n = t.deck.length, mid = (n - 1) / 2;
+    body = `<div id="pick-slots">${pickSlotsHTML()}</div>
+<div class="fan-wrap" id="fan"><div class="fan" style="--n:${n}">${t.deck.map((_, k) => {
+      const x = (k - mid) / mid;
+      return `<button class="fan-card${t.picks.includes(k) ? ' taken' : ''}" data-act="tarotPick" data-i="${k}" aria-label="ไพ่คว่ำใบที่ ${k + 1}" style="--r:${(Math.sin(k * 1.7) * 5 + x * 6).toFixed(2)}deg;--y:${(Math.sin(k / 5) * 12 + 14).toFixed(1)}px;--d:${Math.abs(k - mid) * 9 | 0}">${CARD_BACK}</button>`;
+    }).join('')}</div></div>
+<p class="small" style="text-align:center">เลื่อนซ้ายขวาเพื่อดูไพ่ทั้ง 78 ใบ แล้วแตะใบที่ใจเรียก</p>
+<div style="display:flex;gap:8px"><button class="btn btn-line" data-act="tarotDraw" style="flex:1">สับใหม่</button><button class="btn btn-line" data-act="tarotReset" style="flex:1">เปลี่ยนแบบเปิดไพ่</button></div>`;
+  } else if (!t.cards) {
     body = `<div class="t-pick">${SPREADS.map((x, i) => `<button class="t-sp" data-act="tarotSpread" data-i="${i}" aria-pressed="${i === t.spread}"><b>${x.th}</b><span>${x.sub}</span></button>`).join('')}</div>
 ${spread.house ? `<p class="small">เปิดไพ่ 12 ใบลงบนภพทั้ง 12 ของผังดาวคุณ ภพ 1 เริ่มที่ราศี${SIGNS[state.chart.firstSign].th} (ลัคนาของคุณ)</p>` : `<div class="seg" role="group" aria-label="หัวข้อ">${TAROT_TOPICS.map((x, i) => `<button aria-pressed="${i === t.topic}" data-act="tarotTopic" data-i="${i}">${x.th}</button>`).join('')}</div>
 <label class="field">คำถามในใจ (ไม่บังคับ)<input class="input" data-in="tarotQ" value="${esc(t.q)}" placeholder="${spread.id === 'two' ? 'เช่น ควรเลือกงานที่ A หรือ B' : 'เช่น เดือนนี้งานจะเป็นยังไง'}" maxlength="120"></label>`}
 <div class="deck-stack" aria-hidden="true">${[0, 1, 2, 3, 4].map((k) => `<span style="--k:${k}">${CARD_BACK}</span>`).join('')}</div>
-<button class="btn" data-act="tarotDraw">สับไพ่และเปิด ${spread.pos.length} ใบ</button>
+<button class="btn" data-act="tarotDraw">สับไพ่ แล้วเลือกเอง ${spread.pos.length} ใบ</button>
 <p class="small" style="text-align:center">ตั้งจิตถึงคำถามให้ชัด แล้วค่อยกด</p>`;
   } else {
     const all = t.flipped.length === t.cards.length;
@@ -1077,8 +1096,23 @@ document.addEventListener('click', (e) => {
     case 'tarotSpread': state.tarot.spread = i; break;
     case 'tarotDraw': {
       const t = state.tarot;
-      t.cards = drawCards(SPREADS[t.spread].pos.length); t.flipped = []; t.sel = 0;
-      break;
+      t.deck = drawCards(78); t.picks = []; t.cards = null; t.flipped = []; t.sel = 0;
+      render();
+      const fan = document.getElementById('fan');
+      if (fan) { fan.scrollLeft = (fan.scrollWidth - fan.clientWidth) / 2; fan.classList.add('shuffle'); }
+      return;
+    }
+    case 'tarotPick': {
+      const t = state.tarot, need = SPREADS[t.spread].pos.length;
+      if (t.picks.includes(i) || t.picks.length >= need) return;
+      t.picks.push(i);
+      el.classList.add('taken');
+      const slots = document.getElementById('pick-slots');
+      if (slots) slots.innerHTML = pickSlotsHTML();
+      if (t.picks.length === need) {
+        setTimeout(() => { t.cards = t.picks.map((k) => t.deck[k]); t.flipped = []; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); }, 650);
+      }
+      return;
     }
     case 'tarotFlip': {
       const t = state.tarot, spread = SPREADS[t.spread];
@@ -1103,7 +1137,7 @@ document.addEventListener('click', (e) => {
       el.remove();
       return;
     }
-    case 'tarotReset': state.tarot.cards = null; state.tarot.flipped = []; break;
+    case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [] }); break;
     case 'numMode': state.num.mode = el.dataset.v; break;
     case 'luckMode': state.luck.mode = el.dataset.v; break;
     case 'drawBall': {

@@ -1,7 +1,7 @@
 // ตักศิลา service worker: lets the app open offline and install to the home screen.
 // Strategy: network first for the app's own files (so updates arrive right away),
 // falling back to the cached copy when offline. Fonts are cache first.
-const CACHE = 'taksila-v7';
+const CACHE = 'taksila-v8';
 const CORE = ['/', '/index.html', '/css/styles.css', '/js/app.js', '/js/astro.js', '/js/data.js', '/js/starmap.js', '/js/thai.js', '/js/auspice.js', '/js/profile.js', '/js/tarot.js', '/manifest.webmanifest', '/icons/icon-192.png'];
 
 self.addEventListener('install', (e) => {
