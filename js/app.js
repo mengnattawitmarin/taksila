@@ -19,6 +19,8 @@ const state = {
   draft: null,
   placeQuery: '',
   chartTab: 0,
+  liveOpen: false,
+  aspOpen: new Set(),
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, cards: null, open: 0 },
   num: { mode: 'phone', value: '' },
@@ -48,6 +50,7 @@ const IC = {
   next: '<path d="M9 5l7 7-7 7"/>',
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  down: '<path d="M6 9l6 6 6-6"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'
 };
 const icon = (name, size = 20, sw = 1.4) => `<svg aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${IC[name]}</svg>`;
@@ -184,10 +187,12 @@ function viewHome() {
   const tr = transits(ch, now).slice(0, 4);
   const trColor = (t) => t.level === 'HIGH' ? 'var(--tension)' : t.level === 'SUPPORT' ? 'var(--gold)' : 'var(--harmony)';
   const tools = [
-    ['match', '02', 'คู่ดวง', 'เทียบดวงสองคน', 'var(--rose)'],
-    ['tarot', '03', 'ไพ่ทาโรต์', 'เปิดไพ่สามใบ', 'var(--violet)'],
-    ['numbers', '04', 'ศาสตร์ตัวเลข', 'เลขชีวิต เบอร์ ทะเบียน', 'var(--teal)'],
-    ['luck', '05', 'โชคลาภ', 'เพื่อความบันเทิง', 'var(--amber)']
+    ['chart', 'ผังดาว', 'ดวงกำเนิด', 'var(--gold)'],
+    ['match', 'คู่ดวง', 'เทียบสองคน', 'var(--rose)'],
+    ['tarot', 'ไพ่ทาโรต์', 'เปิดสามใบ', 'var(--violet)'],
+    ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน', 'var(--teal)'],
+    ['luck', 'โชคลาภ', 'ปิงปอง ธูป', 'var(--amber)'],
+    ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--gold-2)']
   ];
   return `<main class="screen">
 <header style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
@@ -198,21 +203,15 @@ function viewHome() {
 </header>
 <a class="map-link" href="#/chart" aria-label="เปิดผังดาวฉบับเต็ม">${starMap(ch, { id: 'home', hud: hudFor(p), label: 'ผังดาวกำเนิดของคุณ' })}</a>
 ${bigThree(ch)}
-<section id="live-daily" style="display:flex;flex-direction:column;gap:14px" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
+<nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
+<section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
-<h2 class="label">TRANSITS · ดาวจรที่มีผลกับคุณ</h2>
+<h2 class="label">TRANSITS · ดาวจรระยะยาว</h2>
 <div class="hscroll edge">${tr.map((t) => `<a class="mini" href="#/chart" data-act="chartTab" data-i="2">
 <span style="display:flex;justify-content:space-between;align-items:center"><span class="sym" style="font-size:20px;color:${trColor(t)}">${t.glyph}&#xFE0E;</span><span class="mono small" style="font-size:10px">H${t.house}</span></span>
 <span class="t">${t.isReturn ? (t.id === 'saturn' ? 'เสาร์คืนเรือน' : 'พฤหัสคืนเรือน') : planetById(t.id).th + 'จร' + SIGNS[t.sign].th}</span>
 <span class="small">${HOUSES[t.house - 1]}</span></a>`).join('')}</div>
 </section>
-<section style="display:flex;flex-direction:column;gap:10px">
-<h2 class="label">TOOLS · ศาสตร์เสริม</h2>
-<div class="tool-grid">${tools.map(([r, n, t, s, c]) => `<a class="tool" href="#/${r}"><span class="sigil" style="color:${c}">${icon(r, 20)}</span>
-<span style="display:flex;flex-direction:column;gap:2px"><span class="mono small" style="font-size:9px;letter-spacing:.16em">${n}</span><span class="n">${t}</span><span class="small">${s}</span></span></a>`).join('')}</div>
-</section>
-<a class="ask-link" href="#/ask"><span class="sigil" style="color:var(--bg);background:var(--gold);border:none;width:40px;height:40px">${icon('ask', 20, 1.6)}</span>
-<span style="flex:1;display:flex;flex-direction:column;gap:2px"><span class="h2" style="font-size:16px">ปรึกษาผู้เชี่ยวชาญ</span><span class="small">ถามเรื่องเฉพาะ คำตอบอ้างอิงผังดาวของคุณ</span></span>${icon('next', 16, 1.5)}</a>
 </main>`;
 }
 
@@ -226,47 +225,59 @@ function when(d, now = new Date()) {
 }
 const natureColor = (n) => n > 0 ? 'var(--harmony)' : n < 0 ? 'var(--tension)' : 'var(--gold-2)';
 
+const aspKey = (x) => `${x.mover.id}-${x.asp.id}-${x.target.id}`;
+const targetGlyph = (t) => t.id === 'asc' ? '<span class="mono" style="font-size:10px;letter-spacing:.05em">ASC</span>' : `<span class="sym">${t.glyph}&#xFE0E;</span>`;
+
 function liveDailyHTML() {
   const ch = state.chart, now = new Date();
   const dl = daily(ch, now);
   const la = liveAspects(ch, now);
   const up = upcomingIngresses(ch, now);
   const top = la[0];
+  const open = state.liveOpen;
   const headline = top ? top.reason : dl.headline;
   const basis = top ? `${pname(top.mover.id, top.mover.th)}จร${top.asp.th}${pname(top.target.id, top.target.th)}ในดวงกำเนิด` : dl.basis;
-  const timing = (x) => x.applying
-    ? (x.exactAt ? `กำลังเข้าใกล้ · แม่นยำสุด ${when(x.exactAt, now)}` : 'กำลังเข้าใกล้ · ส่งผลต่อเนื่องหลายสัปดาห์')
-    : 'ผ่านจุดแม่นยำแล้ว · กำลังคลายตัว';
+  const timing = (x) => x.applying ? (x.exactAt ? `แม่นยำสุด ${when(x.exactAt, now)}` : 'ส่งผลหลายสัปดาห์') : 'กำลังคลายตัว';
+  const trio = (x) => `<span class="sym">${x.mover.glyph}&#xFE0E;</span><span class="sym" style="color:${natureColor(x.asp.nature)}">${ASPECT_GLYPH[x.asp.id]}&#xFE0E;</span>${targetGlyph(x.target)}`;
   const items = la.map((x) => {
-    const m = x.mover, t = x.target, col = natureColor(x.asp.nature);
+    const m = x.mover, t = x.target, col = natureColor(x.asp.nature), k = aspKey(x);
     const pct = Math.round(Math.min(1, x.strength / 1.6) * 100);
-    return `<li class="tr-item">
-<div class="tr-glyphs" aria-hidden="true"><span class="sym">${m.glyph}&#xFE0E;</span><span class="sym" style="color:${col}">${ASPECT_GLYPH[x.asp.id]}&#xFE0E;</span><span class="${t.id === 'asc' ? 'mono' : 'sym'}" style="${t.id === 'asc' ? 'font-size:10px' : ''}">${t.id === 'asc' ? 'ASC' : t.glyph + '&#xFE0E;'}</span></div>
-<div style="display:flex;flex-direction:column;gap:4px;min-width:0">
-<span style="font-size:15px;font-weight:600">${pname(m.id, m.th)} ${x.asp.th} ${pname(t.id, t.th)}ของคุณ</span>
-<span class="mono small" style="font-size:10px">${SIGNS[m.sign].th} ${fmtDeg(m.lon)}${m.retro ? ' R' : ''} · ภพ ${m.house} → ${SIGNS[t.sign].th} ${fmtDeg(t.lon)} · ห่าง ${x.off.toFixed(1)}°</span>
-<span class="body" style="font-size:13px">${x.reason}</span>
-<span class="small" style="color:${col}">${x.advice}</span>
-<span class="tr-meta"><span class="tr-bar" role="img" aria-label="น้ำหนัก ${pct}%"><span style="width:${pct}%;background:${col}"></span></span><span class="mono small" style="font-size:10px">${timing(x)}</span></span>
-</div></li>`;
+    const isOpen = state.aspOpen.has(k);
+    return `<li class="asp${isOpen ? ' open' : ''}" style="--c:${col}">
+<button class="asp-head" data-act="aspToggle" data-k="${k}" aria-expanded="${isOpen}">
+<span class="asp-glyphs" aria-hidden="true">${trio(x)}</span>
+<span class="asp-title"><span>${pname(m.id, m.th)}${x.asp.th}${pname(t.id, t.th)}</span><span class="mono">${timing(x)}</span></span>
+<span class="chev">${icon('down', 16, 1.6)}</span>
+</button>
+<div class="fold"><div class="fold-in"><div class="asp-body">
+<p class="body" style="font-size:14px">${x.reason}</p>
+<p class="small" style="color:${col}">${x.advice}</p>
+<dl class="asp-facts">
+<div><dt>ดาวจร</dt><dd>${SIGNS[m.sign].th} ${fmtDeg(m.lon)}${m.retro ? ' (ถอยหลัง)' : ''} · ภพ ${m.house}</dd></div>
+<div><dt>ดาวกำเนิด</dt><dd>${SIGNS[t.sign].th} ${fmtDeg(t.lon)}</dd></div>
+<div><dt>ระยะห่าง</dt><dd>${x.off.toFixed(1)}° · ${x.applying ? 'กำลังเข้าใกล้' : 'ผ่านจุดแม่นยำแล้ว'}</dd></div>
+<div><dt>น้ำหนัก</dt><dd><span class="tr-bar" role="img" aria-label="${pct}%"><span style="width:${pct}%;background:${col}"></span></span></dd></div>
+</dl></div></div></div></li>`;
   }).join('');
-  const nextEvents = up.slice(0, 4).map((e) => `<li><span class="mono" style="font-size:11px;color:var(--gold)">${when(e.at, now)}</span>
-<span style="font-size:14px">${pname(e.id, PLANETS.find((p) => p.id === e.id).th)}ย้ายเข้าราศี${SIGNS[e.sign].th}</span>
-<span class="small">เข้าสู่ภพ ${e.house} ของคุณ · ${HOUSES[e.house - 1]}</span></li>`).join('');
-  return `<div class="card">
+  const nextEvents = up.slice(0, 4).map((e) => `<li><span class="sym" style="color:var(--gold-2)">${PLANETS.find((p) => p.id === e.id).glyph}&#xFE0E;</span>
+<span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:14px">${pname(e.id, PLANETS.find((p) => p.id === e.id).th)}เข้าราศี${SIGNS[e.sign].th}</span><span class="small">ภพ ${e.house} · ${HOUSES[e.house - 1]}</span></span>
+<span class="mono" style="font-size:10px;color:var(--gold);white-space:nowrap">${when(e.at, now)}</span></li>`).join('');
+  return `<div class="card daily${open ? ' open' : ''}">
 <span style="display:flex;justify-content:space-between;align-items:center"><span class="eyebrow" style="letter-spacing:.2em;display:flex;align-items:center;gap:8px"><span class="live-dot" aria-hidden="true"></span>TODAY · LIVE</span><span class="mono small" style="font-size:10px">อัปเดต ${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
 <p class="h2" style="font-size:20px">${headline}</p>
 <p class="small">ที่มา · <span style="color:var(--text)">${basis}</span></p>
 <div class="score-grid">${dl.scores.map((s) => `<div><span>${s.name}</span><span class="bars" role="img" aria-label="${s.name} ${s.score} จาก 5">${[1, 2, 3, 4, 5].map((i) => `<span${i <= s.score ? ' class="on"' : ''}></span>`).join('')}</span></div>`).join('')}</div>
-</div>
-<div style="display:flex;flex-direction:column;gap:10px">
-<h2 class="label">ดาวที่ส่งผลกับคุณวันนี้ · ${la.length} มุม</h2>
-${la.length ? `<ul class="tr-list">${items}</ul>` : '<p class="small">วันนี้ไม่มีดาวจรทำมุมใกล้ดาวในดวงกำเนิด เป็นวันที่ค่อนข้างสงบ</p>'}
-<p class="small" style="font-size:11px">${G(ASPECT_GLYPH.conj)} ร่วม · ${G(ASPECT_GLYPH.sext)} หกสิบองศา · ${G(ASPECT_GLYPH.square)} ตั้งฉาก · ${G(ASPECT_GLYPH.trine)} ตรีโกณ · ${G(ASPECT_GLYPH.opp)} เล็งกัน</p>
-</div>
-<div style="display:flex;flex-direction:column;gap:10px">
-<h2 class="label">ถัดไป · ดาวย้ายราศี</h2>
+<button class="drawer-toggle" data-act="liveToggle" data-closed="ดูเหตุผล ${la.length} มุมดาว" aria-expanded="${open}">
+<span class="peek" aria-hidden="true">${la.slice(0, 3).map((x) => `<span class="chip">${trio(x)}</span>`).join('')}</span>
+<span class="lbl">${open ? 'พับเก็บ' : `ดูเหตุผล ${la.length} มุมดาว`}</span>
+<span class="chev">${icon('down', 16, 1.6)}</span>
+</button>
+<div class="fold"><div class="fold-in"><div class="drawer-body">
+${la.length ? `<ul class="asp-list">${items}</ul>` : '<p class="small">วันนี้ไม่มีดาวจรทำมุมใกล้ดาวในดวงกำเนิด เป็นวันที่ค่อนข้างสงบ</p>'}
+<p class="small legend">${G(ASPECT_GLYPH.conj)} ร่วม ${G(ASPECT_GLYPH.sext)} หกสิบ ${G(ASPECT_GLYPH.square)} ตั้งฉาก ${G(ASPECT_GLYPH.trine)} ตรีโกณ ${G(ASPECT_GLYPH.opp)} เล็ง</p>
+<h3 class="label">ถัดไป · ดาวย้ายราศี</h3>
 <ul class="next-list">${nextEvents}</ul>
+</div></div></div>
 </div>`;
 }
 
@@ -653,6 +664,21 @@ document.addEventListener('click', (e) => {
   const act = el.dataset.act, i = el.dataset.i != null ? +el.dataset.i : null;
   switch (act) {
     case 'go': go(el.dataset.to); return;
+    case 'liveToggle': {
+      state.liveOpen = !state.liveOpen;
+      const card = el.closest('.daily');
+      card.classList.toggle('open', state.liveOpen);
+      el.setAttribute('aria-expanded', state.liveOpen);
+      el.querySelector('.lbl').textContent = state.liveOpen ? 'พับเก็บ' : el.dataset.closed;
+      return;
+    }
+    case 'aspToggle': {
+      const k = el.dataset.k, li = el.closest('.asp');
+      if (state.aspOpen.has(k)) state.aspOpen.delete(k); else state.aspOpen.add(k);
+      li.classList.toggle('open', state.aspOpen.has(k));
+      el.setAttribute('aria-expanded', state.aspOpen.has(k));
+      return;
+    }
     case 'place': state.draft.placeIdx = i; if (i >= 0) state.draft.place = PLACES[i]; break;
     case 'unknownTime': state.draft.timeKnown = !state.draft.timeKnown; break;
     case 'saveProfile': {
