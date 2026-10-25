@@ -211,11 +211,11 @@ function viewHome() {
 <p class="hh-big3"><span>${SIGNS[ch.planets[0].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[0].sign].th}</span><span>${SIGNS[ch.planets[1].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[1].sign].th}</span>${ch.timeKnown ? `<span>ลัคนา ${SIGNS[signOf(ch.asc)].th}</span>` : ''}</p></div>
 <a class="hh-map" href="#/chart" aria-label="เปิดผังดาวกำเนิด">${starMap(ch, { id: 'home', label: 'ผังดาวกำเนิดของคุณ', size: 92 })}</a>
 </header>
-<section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
+<section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <section id="auspice-mini" aria-label="มงคลวันนี้">${auspiceMiniHTML()}</section>
 <nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
 <div id="install-slot">${installHTML()}</div>
-<section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
+<section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรระยะยาว</h2>
 <div class="hscroll edge">${tr.map((t) => `<a class="mini" href="#/chart" data-act="chartTab" data-i="2">
