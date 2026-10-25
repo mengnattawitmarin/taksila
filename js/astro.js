@@ -400,6 +400,8 @@ export function daily(chart, now = new Date()) {
 
 // ---------- live daily transits (recomputed every minute by the app) ----------
 export const lonOf = (id, date) => lonAt(id, dayNumber(date));
+// Mean lunar node (Schlyter). North node = ราหู (Western), south node = เกตุ / Ketu.
+export const meanNode = (date) => rev(125.1228 - 0.0529538083 * dayNumber(date));
 
 const MOVER_ORB = { moon: 6, sun: 4, mercury: 3.5, venus: 3.5, mars: 3.5, jupiter: 3, saturn: 3, uranus: 2, neptune: 2, pluto: 2 };
 const MOVER_W = { moon: 1, sun: 1.2, mercury: 0.9, venus: 1, mars: 1.1, jupiter: 1.3, saturn: 1.4, uranus: 1.2, neptune: 1, pluto: 1.2 };

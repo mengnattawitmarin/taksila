@@ -1,5 +1,5 @@
 // Natal profile: symbols, personality, career, cautions and talents, all derived from the birth chart.
-import { SIGNS, ELEMENTS, PLANETS, HOUSES, elementOf, signOf } from './astro.js';
+import { SIGNS, ELEMENTS, PLANETS, HOUSES, elementOf, signOf, angDist, meanNode, findAspect } from './astro.js';
 import { TH_PLANETS, birthPlanet } from './thai.js';
 
 // ---------- symbols by sign (Western tradition) ----------
@@ -229,3 +229,100 @@ export function natalProfile(ch, profile) {
 
   return { symbols, highlights, personality, career, talents: uniq(talents).slice(0, 6), cautions: uniq(cautions).slice(0, 5), luck, health, ruler, elements: el };
 }
+
+// ---------- sixth sense: intuition, spirit sensitivity, premonition, reading people, astrologer talent ----------
+// Signatures collected from common Western psychic-astrology practice (Neptune, Moon, Pluto, Uranus,
+// the 8th and 12th houses, water emphasis) plus the south node (เกตุ, Ketu), which Thai and Indian
+// astrology treat as the planet of ญาณ and the unseen.
+const SENSES = [
+  { id: 'intuition', th: 'สัญชาตญาณ เซนส์แรง', icon: '\u263D', desc: 'รู้สึกได้ก่อนคนอื่นว่าอะไรจะเกิด อ่านบรรยากาศเก่ง' },
+  { id: 'spirit', th: 'สัมผัสสิ่งลึกลับ โลกวิญญาณ', icon: '\u2646', desc: 'ไวต่อพลังงานที่มองไม่เห็น รับรู้สิ่งเร้นลับ บางคนเห็นหรือรู้สึกถึงวิญญาณ' },
+  { id: 'dream', th: 'ฝันเป็นลาง', icon: '\u2727', desc: 'ความฝันมักมีความหมาย ฝันแล้วเป็นจริง' },
+  { id: 'flash', th: 'ลางสังหรณ์ฉับพลัน', icon: '\u2645', desc: 'ได้ยินเสียงในใจหรือไอเดียผุดขึ้นมาแบบไม่รู้ที่มา' },
+  { id: 'people', th: 'หยั่งรู้ใจคน', icon: '\u2647', desc: 'มองทะลุเจตนาและความลับของคนได้ลึก' },
+  { id: 'seer', th: 'พรสวรรค์ด้านการดูดวง', icon: '\u263F', desc: 'มีแววเป็นหมอดู โหร หรือผู้ให้คำปรึกษาด้านจิตวิญญาณ' }
+];
+const LEVEL = (s) => s >= 70 ? 'เด่นมาก' : s >= 45 ? 'เด่น' : s >= 22 ? 'มีบ้าง' : 'น้อย';
+
+export function sixthSense(ch) {
+  const P = Object.fromEntries(ch.planets.map((p) => [p.id, p]));
+  const known = ch.timeKnown;
+  const asp = (a, b) => ch.aspects.find((x) => (x.a.id === a && x.b.id === b) || (x.a.id === b && x.b.id === a));
+  const ketuLon = rev360(meanNode(ch.utc) + 180), ketuSign = signOf(ketuLon), ketuHouse = ch.houseOf(ketuLon);
+  const near = (lon, id, orb = 8) => angDist(lon, P[id].lon) <= orb;
+  const water = ch.planets.filter((p) => [3, 7, 11].includes(p.sign)).length + (known && [3, 7, 11].includes(signOf(ch.asc)) ? 2 : 0);
+  const inHouse = (h) => known ? ch.planets.filter((p) => p.house === h) : [];
+  const res = Object.fromEntries(SENSES.map((x) => [x.id, { ...x, score: 0, why: [] }]));
+  const add = (id, pts, why) => { res[id].score += pts; res[id].why.push(why); };
+  const aspW = (a) => Math.max(0.35, 1 - a.off / 8);
+  const aspTxt = (a) => `${pnm(a.a)}${a.th}${pnm(a.b)} (${a.off.toFixed(1)}°)`;
+
+  // Moon–Neptune: the classic medium/empath signature.
+  const mn = asp('moon', 'neptune');
+  if (mn) { const w = aspW(mn); add('intuition', 30 * w, aspTxt(mn)); add('spirit', 34 * w, aspTxt(mn)); add('dream', 30 * w, aspTxt(mn)); }
+  const sn = asp('sun', 'neptune'); if (sn) { const w = aspW(sn); add('spirit', 16 * w, aspTxt(sn)); add('dream', 14 * w, aspTxt(sn)); }
+  const men = asp('mercury', 'neptune'); if (men) { const w = aspW(men); add('spirit', 14 * w, aspTxt(men)); add('seer', 16 * w, aspTxt(men)); add('intuition', 10 * w, aspTxt(men)); }
+  const mm = asp('moon', 'mercury'); if (mm && mm.id === 'conj') add('intuition', 10, `ดวงจันทร์ร่วมดาวพุธ ความคิดกับความรู้สึกเชื่อมกัน`);
+  // Uranus with Moon or Mercury: sudden knowing, clairaudience; Mercury–Uranus is the astrologer's mind.
+  const mu = asp('moon', 'uranus'); if (mu) { const w = aspW(mu); add('flash', 30 * w, aspTxt(mu)); add('intuition', 8 * w, aspTxt(mu)); }
+  const meu = asp('mercury', 'uranus'); if (meu) { const w = aspW(meu); add('flash', 26 * w, aspTxt(meu)); add('seer', 26 * w, aspTxt(meu)); }
+  // Pluto with personal planets: x-ray insight into people and hidden matters.
+  for (const id of ['moon', 'sun', 'mercury', 'venus', 'mars']) {
+    const a = asp(id, 'pluto'); if (!a) continue;
+    const w = aspW(a);
+    add('people', (id === 'moon' || id === 'mercury' ? 26 : 16) * w, aspTxt(a));
+    if (id === 'moon') add('spirit', 10 * w, aspTxt(a));
+    if (id === 'mercury') add('seer', 12 * w, aspTxt(a));
+  }
+  const jn = asp('jupiter', 'neptune'); if (jn) add('seer', 8 * aspW(jn), `${aspTxt(jn)} ความศรัทธาและความสนใจด้านจิตวิญญาณ`);
+  const mj = asp('mercury', 'jupiter'); if (mj && mj.nature >= 0) add('seer', 8 * aspW(mj), `${aspTxt(mj)} อธิบายและแนะนำคนเก่ง`);
+
+  // Houses (need birth time).
+  if (known) {
+    const h12 = inHouse(12), h8 = inHouse(8), h9 = inHouse(9);
+    if (P.moon.house === 12) { add('intuition', 18, 'ดวงจันทร์ในภพ 12 (ภพแห่งจิตใต้สำนึก)'); add('dream', 26, 'ดวงจันทร์ในภพ 12'); add('spirit', 14, 'ดวงจันทร์ในภพ 12'); }
+    if (P.moon.house === 8) { add('spirit', 18, 'ดวงจันทร์ในภพ 8 (ภพแห่งความลึกลับ)'); add('people', 14, 'ดวงจันทร์ในภพ 8'); add('intuition', 10, 'ดวงจันทร์ในภพ 8'); }
+    if (P.neptune.house === 12) { add('spirit', 24, 'ดาวเนปจูนในภพ 12'); add('dream', 18, 'ดาวเนปจูนในภพ 12'); }
+    if (P.neptune.house === 8) { add('spirit', 22, 'ดาวเนปจูนในภพ 8'); add('intuition', 8, 'ดาวเนปจูนในภพ 8'); }
+    if (P.neptune.house === 1 || angDist(P.neptune.lon, ch.asc) <= 8) add('spirit', 18, 'ดาวเนปจูนอยู่ใกล้ลัคนา ร่างกายเป็นเหมือนเสาอากาศรับพลัง');
+    if (P.pluto.house === 8) add('people', 16, 'ดาวพลูโตในภพ 8');
+    if (P.pluto.house === 1) add('people', 12, 'ดาวพลูโตในภพ 1');
+    if (P.uranus.house === 12 || P.uranus.house === 8) add('flash', 14, `ดาวมฤตยูในภพ ${P.uranus.house}`);
+    if ([8, 9, 12].includes(P.mercury.house)) add('seer', 16, `ดาวพุธในภพ ${P.mercury.house} ความคิดสนใจเรื่องลึกลับและปรัชญา`);
+    if (P.uranus.house === 1 || P.uranus.house === 10 || P.uranus.house === 9) add('seer', 14, `ดาวมฤตยู (ดาวแห่งโหราศาสตร์) เด่นในภพ ${P.uranus.house}`);
+    if (h12.length >= 3) { add('spirit', 14, `ดาว ${h12.length} ดวงในภพ 12`); add('dream', 12, `ดาว ${h12.length} ดวงในภพ 12`); }
+    if (h8.length >= 3) { add('spirit', 10, `ดาว ${h8.length} ดวงในภพ 8`); add('seer', 10, `ดาว ${h8.length} ดวงในภพ 8`); }
+    if (h9.length >= 2) add('seer', 8, `ดาว ${h9.length} ดวงในภพ 9 (ภพแห่งปรัชญาและศาสตร์ชั้นสูง)`);
+    // Ketu (เกตุ)
+    if (ketuHouse === 12) { add('spirit', 18, 'ดาวเกตุในภพ 12 ญาณและบุญเก่าด้านจิตวิญญาณ'); add('seer', 10, 'ดาวเกตุในภพ 12'); }
+    if (ketuHouse === 8) { add('spirit', 14, 'ดาวเกตุในภพ 8 รับรู้เรื่องลี้ลับ'); add('seer', 8, 'ดาวเกตุในภพ 8'); }
+    if (P.saturn.house === 12 || P.saturn.house === 8) add('spirit', 6, `ดาวเสาร์ในภพ ${P.saturn.house} สนใจเรื่องชีวิตหลังความตาย`);
+  }
+  if (near(ketuLon, 'moon')) { add('intuition', 16, 'ดาวเกตุกุมดวงจันทร์ ญาณหยั่งรู้แรง'); add('spirit', 12, 'ดาวเกตุกุมดวงจันทร์'); }
+  if (near(ketuLon, 'mercury')) add('seer', 12, 'ดาวเกตุกุมดาวพุธ ความคิดเชื่อมกับญาณ');
+  if (near(ketuLon, 'neptune')) add('spirit', 12, 'ดาวเกตุกุมดาวเนปจูน');
+
+  // Signs.
+  if ([3, 7, 11].includes(P.moon.sign)) { add('intuition', 14, `ดวงจันทร์ราศี${SIGNS[P.moon.sign].th} (ธาตุน้ำ)`); if (P.moon.sign === 11) add('dream', 14, 'ดวงจันทร์ราศีมีน'); if (P.moon.sign === 7) add('people', 12, 'ดวงจันทร์ราศีพิจิก'); }
+  if (P.sun.sign === 11) { add('intuition', 8, 'ดวงอาทิตย์ราศีมีน'); add('dream', 8, 'ดวงอาทิตย์ราศีมีน'); }
+  if (P.sun.sign === 7 || P.mercury.sign === 7) add('people', 8, `${P.sun.sign === 7 ? 'ดวงอาทิตย์' : 'ดาวพุธ'}ราศีพิจิก`);
+  if (P.mercury.sign === 11) add('spirit', 6, 'ดาวพุธราศีมีน รับข้อมูลจากความรู้สึก');
+  if (P.sun.sign === 10 || P.mercury.sign === 10 || (known && signOf(ch.asc) === 10)) add('seer', 8, 'ราศีกุมภ์เด่น (ราศีของโหราศาสตร์)');
+  if (known && signOf(ch.asc) === 11) { add('spirit', 10, 'ลัคนาราศีมีน'); add('intuition', 8, 'ลัคนาราศีมีน'); }
+  if (known && signOf(ch.asc) === 7) add('people', 10, 'ลัคนาราศีพิจิก');
+  if (water >= 5) add('intuition', 14, `ธาตุน้ำในดวงสูง (${water} จุด)`);
+
+  // Astrologer talent also grows with overall sensitivity.
+  const base = (res.intuition.score + res.spirit.score + res.people.score) / 3;
+  if (base > 25) add('seer', Math.min(16, base * 0.3), 'เซนส์โดยรวมดี ช่วยให้อ่านดวงได้ลึกกว่าตำรา');
+
+  const list = SENSES.map((x) => {
+    const r = res[x.id];
+    const score = Math.round(Math.min(100, r.score));
+    return { ...r, score, level: LEVEL(score), why: [...new Set(r.why)].slice(0, 4) };
+  });
+  const overall = Math.round(list.reduce((a, x) => a + x.score, 0) / list.length * 1.25);
+  const top = [...list].sort((a, b) => b.score - a.score)[0];
+  return { list, overall: Math.min(100, overall), top, ketu: { lon: ketuLon, sign: ketuSign, house: known ? ketuHouse : null } };
+}
+const rev360 = (x) => ((x % 360) + 360) % 360;

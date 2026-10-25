@@ -6,7 +6,7 @@ import {
 import { PLACES, MONTHS_TH, MONTHS_SHORT, TAROT, TOPICS, LIFE_PATH, DIGITS, SUM_MEANING } from './data.js';
 import { starMap, logoRing } from './starmap.js';
 import { EVENTS, findAuspicious } from './auspice.js';
-import { natalProfile } from './profile.js';
+import { natalProfile, sixthSense } from './profile.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
 // ---------------- storage ----------------
@@ -533,6 +533,33 @@ const ASPECT_TEXT = {
   0: 'สองพลังหลอมรวมกัน ส่งผลชัดเจน'
 };
 
+function senseHTML(ch) {
+  const x = sixthSense(ch);
+  const R = 34, C = 2 * Math.PI * R, dash = (x.overall / 100) * C;
+  const levelColor = (l) => l === 'เด่นมาก' ? 'var(--gold-2)' : l === 'เด่น' ? 'var(--gold)' : l === 'มีบ้าง' ? 'var(--violet)' : 'var(--muted)';
+  const summary = x.top.score >= 22 ? `เซนส์ที่เด่นที่สุดของคุณคือ "${x.top.th}"` : 'ดวงของคุณเน้นเหตุผลมากกว่าสัมผัสพิเศษ เชื่อสิ่งที่พิสูจน์ได้';
+  return `<section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">สัมผัสพิเศษ · เซนส์จากดวงดาว</h2>
+<div class="card sense-hero">
+<svg width="84" height="84" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="${R}" fill="none" stroke="#2C261B" stroke-width="5"/>
+<circle cx="42" cy="42" r="${R}" fill="none" stroke="url(#sg)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 42 42)"/>
+<defs><linearGradient id="sg" x1="0" x2="1"><stop offset="0" stop-color="#9C7CE0"/><stop offset="1" stop-color="#F0D89A"/></linearGradient></defs>
+<text x="42" y="47" text-anchor="middle" font-family="IBM Plex Mono" font-size="17" fill="#F1E6CF">${x.overall}</text></svg>
+<span style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="eyebrow" style="letter-spacing:.14em;color:var(--violet)">SIXTH SENSE · ระดับเซนส์</span>
+<span class="h2" style="font-size:16px">${summary}</span>
+<span class="small" style="font-size:11px">ดาวเกตุ (ดาวแห่งญาณ) อยู่ราศี${SIGNS[x.ketu.sign].th}${x.ketu.house ? ' ภพ ' + x.ketu.house : ''}</span></span>
+</div>
+<ul class="sense-list">${x.list.map((r) => `<li class="sense">
+<button class="sense-head" data-act="senseToggle" aria-expanded="false">
+<span class="sense-ic sym" aria-hidden="true">${r.icon}&#xFE0E;</span>
+<span style="flex:1;display:flex;flex-direction:column;gap:5px;min-width:0"><span style="display:flex;justify-content:space-between;gap:8px"><span class="n">${r.th}</span><span class="lv" style="color:${levelColor(r.level)}">${r.level}</span></span>
+<span class="tr-bar" style="width:100%;margin:0"><span style="width:${Math.max(3, r.score)}%;background:${levelColor(r.level)}"></span></span></span>
+<span class="chev">${icon('down', 16, 1.6)}</span></button>
+<div class="fold"><div class="fold-in"><div class="sense-body"><p class="small" style="color:var(--text-2)">${r.desc}</p>
+${r.why.length ? `<ul class="why">${r.why.map((w) => `<li class="ok">${w}</li>`).join('')}</ul>` : '<p class="small">ไม่พบตำแหน่งดาวที่บ่งชี้เรื่องนี้ชัดเจน</p>'}</div></div></div></li>`).join('')}</ul>
+<p class="small" style="font-size:11px">ประเมินจากตำแหน่งดาวที่ตำราโหราศาสตร์ถือว่าเกี่ยวกับสัมผัสพิเศษ: ดาวเนปจูน ดวงจันทร์ ดาวพลูโต ดาวมฤตยู ดาวเกตุ ภพ 8 ภพ 12 และธาตุน้ำ · เป็นความเชื่อทางโหราศาสตร์ ไม่ใช่การพิสูจน์ทางวิทยาศาสตร์</p>
+</section>`;
+}
+
 function identityHTML(ch, p) {
   const r = natalProfile(ch, p);
   const symCard = (x) => {
@@ -556,6 +583,7 @@ ${r.highlights.map((h, i) => `<div class="card hl"><span class="mono" style="fon
 <section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">ความสามารถพิเศษจากมุมดาว</h2>
 <div class="badges">${r.talents.map((t) => `<span class="badge">${t.title}</span>`).join('')}</div>
 <ul class="trait-list">${r.talents.map((t) => item(t, 'good')).join('')}</ul></section>
+${senseHTML(ch)}
 <section style="display:flex;flex-direction:column;gap:10px"><h2 class="label">อาชีพที่เหมาะ</h2>
 <div class="card" style="gap:10px"><p class="body" style="font-size:14px">${r.career.style}</p>
 <div class="tags">${r.career.list.map((c) => `<span class="tag">${c}</span>`).join('')}</div>
@@ -903,6 +931,7 @@ document.addEventListener('click', (e) => {
   switch (act) {
     case 'go': go(el.dataset.to); return;
     case 'install': if (installEvt) { installEvt.prompt(); installEvt.userChoice.finally(() => { installEvt = null; el.remove(); }); } return;
+    case 'senseToggle': { const li = el.closest('.sense'); const o = !li.classList.contains('open'); li.classList.toggle('open', o); el.setAttribute('aria-expanded', o); return; }
     case 'auspTab': state.ausp.tab = i; break;
     case 'auspEvent': state.ausp.event = el.dataset.v; state.ausp.open = 0; break;
     case 'auspDays': state.ausp.days = i; state.ausp.open = 0; break;
