@@ -17,6 +17,13 @@ python3 -m http.server 8000
 
 **ขึ้นเว็บจริง** อัปโหลดทั้งโฟลเดอร์ (หรือแค่ `dist/taksila.html`) ขึ้น Netlify, Vercel, GitHub Pages หรือโฮสติ้งใดก็ได้ ไม่ต้องตั้งค่าเพิ่ม
 
+## เว็บที่ใช้งานจริง
+
+https://mengnattawitmarin.github.io/taksila/ (GitHub Pages อัปเดตอัตโนมัติทุกครั้งที่ push ขึ้น branch main ใช้ฟรีไม่จำกัดจำนวนครั้ง)
+
+เว็บเดิมที่ taksila.netlify.app หยุดอัปเดตแล้ว เพราะเครดิตฟรีของ Netlify จำกัดไว้ประมาณ 20 ครั้งต่อเดือน
+ถ้าจะเริ่มเก็บเงินจากผู้ใช้ ควรย้ายไปที่ฝากเว็บที่อนุญาตการใช้งานเชิงธุรกิจ (GitHub Pages ไม่อนุญาต)
+
 ## โครงสร้างไฟล์
 
 | ไฟล์ | หน้าที่ |
@@ -50,7 +57,7 @@ python3 -m http.server 8000
 
 ## ติดตั้งเป็นแอป
 
-เปิด taksila.netlify.app บนมือถือ แล้ว
+เปิด https://mengnattawitmarin.github.io/taksila/ บนมือถือ แล้ว
 - **Android (Chrome):** กดปุ่ม "ติดตั้งเป็นแอป" ท้ายหน้าแรก หรือเมนู ⋮ > ติดตั้งแอป
 - **iPhone (Safari):** ปุ่มแชร์ > เพิ่มไปยังหน้าจอโฮม
 
