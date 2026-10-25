@@ -3086,7 +3086,7 @@ function cardLink(c, houseSign) {
   else if (c.sign != null && c.sign === asc) out.push(`ตรงกับราศีลัคนาของคุณ คนรอบตัวจะเห็นผลชัด`);
   if (c.planet && ch.planets.find((p) => p.id === c.planet)) {
     const pl = ch.planets.find((p) => p.id === c.planet);
-    if (ch.timeKnown) out.push(`ดาว${pl.th}ในดวงกำเนิดของคุณอยู่ภพ${HOUSE_READ[pl.house - 1].th} เรื่อง${HOUSE_READ[pl.house - 1].short}จะได้รับผลของไพ่ใบนี้ด้วย`);
+    if (ch.timeKnown) out.push(houseSign != null ? `ดาว${pl.th}ในดวงกำเนิดของคุณอยู่ภพ${HOUSE_READ[pl.house - 1].th} เรื่อง${HOUSE_READ[pl.house - 1].short}จะได้รับผลของไพ่ใบนี้ด้วย` : `ดาว${pl.th}ในดวงกำเนิดของคุณอยู่ภพ ${pl.house} เรื่อง${HOUSES[pl.house - 1].split(' ')[0]}จะได้รับผลของไพ่ใบนี้ด้วย`);
   }
   return out.slice(0, 2);
 }
