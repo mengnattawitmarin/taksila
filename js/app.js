@@ -781,13 +781,55 @@ function tarotSummary(spread, cards) {
 <p class="small">กดไพ่แต่ละภพเพื่ออ่านละเอียด</p></div>`;
 }
 
+// Zodiac wheel for the 12-house spread. House 1 sits at the left (the ascendant) and the
+// houses run counter-clockwise, the same way as the star map.
+const WHEEL_R = 43.5, WHEEL_H = 106; // card ring radius and box height, in % of the width
+const houseAngle = (i) => (195 + i * 30) * Math.PI / 180;
+function wheelPos(i, r = WHEEL_R) {
+  const a = houseAngle(i);
+  return { x: 50 + r * Math.cos(a), y: WHEEL_H / 2 - r * Math.sin(a) };
+}
+function wheelRing(sel) {
+  const first = state.chart.firstSign, cy = WHEEL_H / 2;
+  const pt = (deg, r) => [50 + r * Math.cos(deg * Math.PI / 180), cy - r * Math.sin(deg * Math.PI / 180)];
+  const elCol = ['#E07A62', '#9FBF7A', '#E8D49A', '#8FB3E0'];
+  let sectors = '';
+  for (let i = 0; i < 12; i++) {
+    const a0 = 180 + i * 30, a1 = a0 + 30, [x0, y0] = pt(a0, 34), [x1, y1] = pt(a1, 34), [x2, y2] = pt(a1, 21), [x3, y3] = pt(a0, 21);
+    const sg = (first + i) % 12, [gx, gy] = pt(a0 + 15, 28.6), [nx, ny] = pt(a0 + 15, 23.4);
+    sectors += `<g class="w-sec${sel === i ? ' on' : ''}" data-h="${i}"><path d="M${x0.toFixed(2)} ${y0.toFixed(2)}A34 34 0 0 0 ${x1.toFixed(2)} ${y1.toFixed(2)}L${x2.toFixed(2)} ${y2.toFixed(2)}A21 21 0 0 1 ${x3.toFixed(2)} ${y3.toFixed(2)}Z"/>
+<text x="${gx.toFixed(2)}" y="${(gy + 1.3).toFixed(2)}" text-anchor="middle" font-size="4" fill="${elCol[sg % 4]}">${SIGNS[sg].glyph}&#xFE0E;</text>
+<text x="${nx.toFixed(2)}" y="${(ny + 0.9).toFixed(2)}" text-anchor="middle" font-size="2.4" fill="#A3967D" font-family="IBM Plex Mono">${i + 1}</text></g>`;
+  }
+  const [ax, ay] = pt(180, 38), [ax2] = pt(180, 17);
+  return `<svg class="w-ring" viewBox="0 0 100 ${WHEEL_H}" aria-hidden="true">
+<circle cx="50" cy="${cy}" r="38.5" fill="none" stroke="#2C261B" stroke-width=".25" stroke-dasharray=".6 1.2"/>
+${sectors}
+<circle cx="50" cy="${cy}" r="21" fill="#0D0B08" stroke="#D4AF63" stroke-width=".3"/>
+<line x1="${ax.toFixed(2)}" y1="${ay}" x2="${ax2.toFixed(2)}" y2="${ay}" stroke="#D4AF63" stroke-width=".35" stroke-dasharray="1 .8"/>
+<text x="${(ax + 0.6).toFixed(2)}" y="${(ay - 1.2).toFixed(2)}" font-size="2.2" fill="#D4AF63" font-family="IBM Plex Mono">ASC</text></svg>`;
+}
+function wheelHTML(slotFn, center, sel) {
+  return `<div class="t-wheel">${wheelRing(sel)}
+${Array.from({ length: 12 }, (_, i) => { const p = wheelPos(i); return `<div class="w-slot" style="left:${p.x.toFixed(2)}%;top:${(p.y / WHEEL_H * 100).toFixed(2)}%">${slotFn(i)}</div>`; }).join('')}
+<div class="w-center" id="wheel-center">${center}</div></div>`;
+}
+function wheelCenter() {
+  const t = state.tarot, all = t.cards && t.flipped.length === t.cards.length;
+  if (!t.cards) return `<span class="eyebrow" style="color:var(--violet)">12 HOUSES</span><b>เลือกไพ่ ${t.picks.length}/12</b><span>วางตามภพของคุณ</span>`;
+  if (!all) return `<span class="eyebrow" style="color:var(--violet)">12 HOUSES</span><b>${t.flipped.length}/12</b><span>แตะไพ่เพื่อเปิด</span>`;
+  const i = t.sel, c = CARDS[t.cards[i].i], sg = (state.chart.firstSign + i) % 12;
+  return `<span class="eyebrow" style="color:var(--violet)">ภพ ${i + 1} · ${SIGNS[sg].th}</span><b>${c.th}</b><span>${HOUSE_READ[i].q.split(' ')[0]}${t.cards[i].rev ? ' · กลับหัว' : ''}</span>`;
+}
+
 function pickSlotsHTML() {
   const t = state.tarot, spread = SPREADS[t.spread], need = spread.pos.length;
   const slot = (k) => {
     const filled = k < t.picks.length;
     return `<span class="p-slot${filled ? ' on' : ''}${k === t.picks.length ? ' next' : ''}">${filled ? CARD_BACK : `<b>${k + 1}</b>`}</span>`;
   };
-  return `<div class="p-slots ${spread.house ? 'h' : 'n' + need}">${Array.from({ length: need }, (_, k) => `<span class="p-wrap">${slot(k)}<span class="t-lbl">${spread.house ? 'ภพ ' + (k + 1) : spread.pos[k].th}</span></span>`).join('')}</div>
+  if (spread.house) return wheelHTML((k) => slot(k), wheelCenter(), -1) + `<p class="p-hint">${t.picks.length < need ? `เลือกไพ่ใบที่ <b>${t.picks.length + 1}</b> สำหรับภพ ${t.picks.length + 1} (ราศี${SIGNS[(state.chart.firstSign + t.picks.length) % 12].th})` : 'ครบแล้ว กำลังวางไพ่...'}</p>`;
+  return `<div class="p-slots n${need}">${Array.from({ length: need }, (_, k) => `<span class="p-wrap">${slot(k)}<span class="t-lbl">${spread.house ? 'ภพ ' + (k + 1) : spread.pos[k].th}</span></span>`).join('')}</div>
 <p class="p-hint">${t.picks.length < need ? `ตั้งจิต แล้วเลือกไพ่ใบที่ <b>${t.picks.length + 1}</b> จาก ${need} ใบ${spread.house ? '' : ` · ${spread.pos[t.picks.length].th}`}` : 'ครบแล้ว กำลังวางไพ่...'}</p>`;
 }
 
@@ -813,7 +855,7 @@ ${spread.house ? `<p class="small">เปิดไพ่ 12 ใบลงบน�
   } else {
     const all = t.flipped.length === t.cards.length;
     const grid = spread.house
-      ? `<div class="t-houses">${t.cards.map((d, i) => `<div class="t-slot"><span class="t-lbl">ภพ ${i + 1} ${SIGNS[(state.chart.firstSign + i) % 12].glyph}&#xFE0E;</span>${tarotCardHTML(d, i, { sel: all && t.sel === i })}</div>`).join('')}</div>`
+      ? wheelHTML((i) => tarotCardHTML(t.cards[i], i, { sel: all && t.sel === i }), wheelCenter(), all ? t.sel : -1)
       : `<div class="t-row n${t.cards.length}">${t.cards.map((d, i) => `<div class="t-slot">${tarotCardHTML(d, i)}<span class="t-lbl">${spread.pos[i].th}</span></div>`).join('')}</div>`;
     body = `${t.q && !spread.house ? `<p class="small" style="text-align:center">“${esc(t.q)}”</p>` : ''}
 ${grid}
@@ -948,6 +990,15 @@ ${pageHead('05', 'FORTUNE', 'โชคลาภ', 'var(--amber)', 'luck')}
 ${body}
 <p class="small" style="text-align:center;font-size:11px">${mode === 'siamsi' ? 'คำทำนายแต่งขึ้นใหม่โดยตักศิลา ใช้เป็นข้อคิดและกำลังใจ' : 'เพื่อความบันเทิง ตัวเลขสุ่มจากเครื่องของคุณ ไม่ใช่การรับประกันผลใด ๆ · โปรดเล่นอย่างพอประมาณ'}</p>
 </main>`;
+}
+
+function syncWheel() {
+  const t = state.tarot, c = document.getElementById('wheel-center');
+  if (!c || !t.cards) return;
+  c.innerHTML = wheelCenter();
+  const all = t.flipped.length === t.cards.length;
+  document.querySelectorAll('.w-sec').forEach((g) => g.classList.toggle('on', all && +g.dataset.h === t.sel));
+  if (all) document.querySelectorAll('.tc').forEach((b) => b.classList.toggle('sel', +b.dataset.i === t.sel));
 }
 
 let luckCtl = null;
@@ -1185,6 +1236,7 @@ document.addEventListener('click', (e) => {
       }
       const box = document.getElementById('tarot-reading');
       if (box) box.innerHTML = tarotReadingArea();
+      syncWheel();
       if (t.flipped.length === t.cards.length) { const all = document.querySelector('[data-act="tarotAll"]'); if (all) all.remove(); }
       if (spread.house && t.flipped.length === t.cards.length && box) box.scrollIntoView({ block: 'start', behavior: 'smooth' });
       return;
@@ -1196,6 +1248,7 @@ document.addEventListener('click', (e) => {
       const box = document.getElementById('tarot-reading');
       if (box) box.innerHTML = tarotReadingArea();
       if (SPREADS[t.spread].house) document.querySelectorAll('.tc').forEach((b) => b.classList.toggle('sel', +b.dataset.i === t.sel));
+      syncWheel();
       el.remove();
       return;
     }
