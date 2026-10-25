@@ -1723,7 +1723,7 @@ ${head}
 <h2 class="pr-title">${pr.th}</h2>
 <p class="small" style="color:var(--text-2)">${pr.use}</p>
 ${pr.origin ? `<p class="pr-origin"><b>ที่มา</b> ${pr.origin}</p>` : ''}
-${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตัวบท: ${pr.src}${pr.cat === 'folk' || pr.cat === 'geji' ? ' · เป็นคาถาตามความเชื่อ ถ้อยคำอาจต่างกันในแต่ละสำนัก' : ''}</p>` : ''}
+${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตัวบท: ${pr.src}${pr.cat === 'folk' || pr.cat === 'geji' || pr.cat === 'thasung' ? ' · เป็นคาถาตามความเชื่อ ถ้อยคำอาจต่างกันในแต่ละสำนัก' : ''}</p>` : ''}
 <span class="pr-count">สวด ${pr.count} จบ${pr.cat === 'day' ? ' · ตามกำลังดาวประจำวัน' : ''}</span></section>
 <section class="pr-text${pr.heart ? ' heart' : ''}">${prayerText(pr)}</section>
 <section class="pr-counter" id="pr-counter">${counterHTML(pr)}</section>
