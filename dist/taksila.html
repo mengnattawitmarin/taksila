@@ -785,6 +785,59 @@ a:hover { color: var(--gold-2); }
 .ask-chips { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
 .ask-chips .chip { white-space: nowrap; flex: none; }
 
+/* ---------- คู่ดวง redesign ---------- */
+.mt-rel { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+.mt-relb { flex: none; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); color: var(--text-2); font: inherit; font-size: 13px; cursor: pointer; }
+.mt-relb span { color: var(--rose); }
+.mt-relb[aria-pressed="true"] { background: linear-gradient(135deg, rgba(229,146,178,.25), rgba(240,216,154,.12)); color: var(--text); border-color: rgba(229,146,178,.6); font-weight: 600; }
+.mt-people { display: flex; flex-direction: column; gap: 6px; }
+.mt-people > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.mt-pc { display: inline-flex; border: 1px solid var(--line-2); border-radius: 999px; overflow: hidden; }
+.mt-pc button { min-height: 34px; border: none; background: var(--surface); color: var(--text); font: inherit; font-size: 13px; padding: 0 12px; cursor: pointer; }
+.mt-pc button[aria-pressed="true"] { background: rgba(229,146,178,.2); }
+.mt-pc .x { padding: 0 10px; color: var(--muted); border-left: 1px solid var(--line); }
+.mt-hero { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 4px; padding: 18px 10px 16px; border-radius: 22px; border: 1px solid rgba(229,146,178,.3); background: radial-gradient(ellipse 60% 70% at 50% 30%, rgba(229,146,178,.16), transparent 70%), radial-gradient(ellipse 50% 50% at 90% 100%, rgba(124,96,200,.12), transparent 70%), var(--surface); }
+.mt-p { display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; min-width: 0; }
+.mt-p b { font-family: var(--serif); font-size: 16px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mt-p > span:last-child { font-size: 11px; color: var(--muted); }
+.mt-g svg { width: 132px; height: 132px; display: block; }
+.mt-label { grid-column: 1 / -1; text-align: center; font-family: var(--serif); font-size: 21px; font-weight: 600; color: #F2B8CC; margin: 6px 0 0; }
+.mt-sub { grid-column: 1 / -1; text-align: center; font-size: 13px; color: var(--text-2); margin: 0 8px; }
+.mt-card { display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 18px; border: 1px solid var(--line); background: var(--surface); }
+.mt-card .small { margin: 0; }
+.mt-dims { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.mt-dims li { display: grid; grid-template-columns: 118px minmax(0, 1fr) 26px; align-items: center; gap: 10px; font-size: 13px; }
+.mt-dims li.dim0 { opacity: .45; }
+.mt-dims i { font-style: normal; font-size: 9px; color: var(--rose); border: 1px solid rgba(229,146,178,.5); border-radius: 999px; padding: 0 5px; margin-left: 2px; }
+.mt-bar { height: 6px; border-radius: 3px; background: var(--surface-2); overflow: hidden; }
+.mt-bar span { display: block; height: 100%; border-radius: 3px; }
+.mt-dims b { font-family: var(--mono); font-size: 12px; text-align: right; font-weight: 500; }
+.mt-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.mt-mini { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 6px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); text-align: center; }
+.mt-mini .eyebrow { font-size: 9px; letter-spacing: .1em; color: var(--rose); }
+.mt-mini b { font-family: var(--mono); font-size: 22px; font-weight: 500; }
+.mt-mini span:not(.eyebrow) { font-size: 10px; color: var(--muted); line-height: 1.35; }
+.mt-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.mt-list li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; }
+.mt-list li > span:last-child { display: flex; flex-direction: column; gap: 2px; }
+.mt-list b { font-size: 13px; font-weight: 600; }
+.mt-list li > span:last-child > span { font-size: 12px; color: var(--text-2); }
+.mt-asp { display: flex; align-items: center; gap: 3px; color: var(--gold-2); font-size: 16px; }
+.mt-asp i { width: 14px; height: 2px; border-radius: 1px; background: var(--c); box-shadow: 0 0 6px var(--c); }
+.mt-card.good { border-color: rgba(143,179,224,.35); } .mt-card.bad { border-color: rgba(224,122,98,.35); }
+.mt-week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; height: 104px; align-items: end; }
+.mt-week span { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; height: 100%; }
+.mt-week i { width: 100%; max-width: 26px; border-radius: 6px 6px 3px 3px; background: linear-gradient(180deg, rgba(229,146,178,.7), rgba(229,146,178,.2)); }
+.mt-week .best i { background: linear-gradient(180deg, #F0D89A, rgba(240,216,154,.3)); box-shadow: 0 0 12px rgba(240,216,154,.4); }
+.mt-week b { font-size: 11px; font-weight: 500; color: var(--text-2); } .mt-week em { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.mt-week .best b { color: var(--gold-2); }
+.mt-form { display: flex; flex-direction: column; gap: 10px; }
+.seg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.seg2 button { min-height: 38px; border: none; border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-size: 13px; cursor: pointer; }
+.seg2 button[aria-pressed="true"] { background: rgba(229,146,178,.18); color: var(--text); font-weight: 600; }
+.btn.ghost { background: transparent; color: var(--rose); border: 1px solid rgba(229,146,178,.5); min-height: 46px; }
+.btn.ghost:disabled { opacity: .4; cursor: default; }
+
 </style>
 </head>
 <body>
@@ -4570,7 +4623,7 @@ function logoRing() {
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
-function save() { try { localStorage.setItem(KEY, JSON.stringify({ profile: state.profile })); } catch (e) { /* storage unavailable */ } }
+function save() { try { localStorage.setItem(KEY, JSON.stringify({ profile: state.profile, people: state.match.people })); } catch (e) { /* storage unavailable */ } }
 
 // ---------------- state ----------------
 const saved = load();
@@ -4585,7 +4638,7 @@ const state = {
   aspOpen: new Set(),
   weekSel: null,
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
-  match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
+  match: { sign: null, useDate: true, rel: 'love', name: '', day: 14, month: 2, yearBE: 2535, hour: 12, minute: 0, timeKnown: false, people: saved.people || [] },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
@@ -5254,43 +5307,162 @@ ${body}
 </main>`;
 }
 
-function viewMatch() {
-  const ch = state.chart, m = state.match;
-  const me = ch.planets[0].sign;
-  let theirPos = null;
-  if (m.useDate) {
-    const utc = localToUtc(m.yearBE - 543, m.month, m.day, 12, 0, { tz: 'Asia/Bangkok' });
-    theirPos = planetPositions(utc);
-    m.sign = signOf(theirPos.sun.lon);
+// ---------------- คู่ดวง (synastry + Thai day pairs + Chinese years) ----------------
+const REL = [
+  { id: 'love', th: 'คนรัก', ic: '♡', who: 'คนรัก', w: { emo: .25, spark: .25, talk: .15, stable: .2, values: .15 }, cat: 0 },
+  { id: 'crush', th: 'คนที่คุยอยู่', ic: '✧', who: 'เขา', w: { emo: .2, spark: .35, talk: .25, stable: .05, values: .15 }, cat: 0 },
+  { id: 'friend', th: 'เพื่อน', ic: '☺', who: 'เพื่อน', w: { emo: .3, spark: .05, talk: .35, stable: .1, values: .2 }, cat: 0 },
+  { id: 'biz', th: 'หุ้นส่วน · งาน', ic: '◈', who: 'หุ้นส่วน', w: { emo: .1, spark: 0, talk: .3, stable: .35, values: .25 }, cat: 1 },
+  { id: 'family', th: 'ครอบครัว', ic: '⌂', who: 'คนในครอบครัว', w: { emo: .4, spark: 0, talk: .2, stable: .25, values: .15 }, cat: 0 }
+];
+const DIMS = [
+  { id: 'emo', th: 'อารมณ์ ความเข้าใจ', col: '#A99BD9', pairs: [['moon', 'moon'], ['sun', 'moon'], ['moon', 'sun'], ['moon', 'venus'], ['venus', 'moon']] },
+  { id: 'talk', th: 'การสื่อสาร', col: '#7FC4B4', pairs: [['mercury', 'mercury'], ['mercury', 'sun'], ['sun', 'mercury'], ['mercury', 'moon'], ['moon', 'mercury']] },
+  { id: 'spark', th: 'แรงดึงดูด', col: '#E592B2', pairs: [['venus', 'mars'], ['mars', 'venus'], ['venus', 'venus'], ['mars', 'mars'], ['sun', 'venus'], ['venus', 'sun']] },
+  { id: 'stable', th: 'ความมั่นคงระยะยาว', col: '#D4AF63', pairs: [['saturn', 'sun'], ['sun', 'saturn'], ['saturn', 'moon'], ['moon', 'saturn'], ['saturn', 'venus'], ['venus', 'saturn'], ['jupiter', 'sun'], ['sun', 'jupiter']] },
+  { id: 'values', th: 'เป้าหมายชีวิต', col: '#E8845A', pairs: [['sun', 'sun'], ['jupiter', 'jupiter'], ['jupiter', 'moon'], ['moon', 'jupiter']] }
+];
+const DIM_TEXT = {
+  emo: ['เข้าใจความรู้สึกกันโดยไม่ต้องพูดมาก', 'ความต้องการทางใจต่างกัน ต้องบอกกันตรง ๆ'],
+  talk: ['คุยกันถูกคอ ความคิดไปทางเดียวกัน', 'สื่อสารคลาดกันง่าย ฟังให้จบก่อนตอบ'],
+  spark: ['เคมีแรง ดึงดูดกันเป็นธรรมชาติ', 'แรงดึงดูดมาพร้อมการปะทะ ระวังอารมณ์ร้อน'],
+  stable: ['ช่วยกันสร้างความมั่นคง อยู่ด้วยกันได้นาน', 'มีความกดดันหรือความคาดหวังต่อกัน ต้องให้พื้นที่กัน'],
+  values: ['มองเป้าหมายชีวิตไปทางเดียวกัน', 'เป้าหมายหรือวิธีใช้ชีวิตต่างกัน ต้องหาจุดร่วม']
+};
+// Thai birth-day pairs (Wongnai, general reading) — 1..8 = Sun..Sat, 8 = Wed night.
+const DAY_PAIR = { 1: { good: [6, 8], bad: [3] }, 2: { good: [5, 1], bad: [8] }, 3: { good: [4, 7], bad: [1] }, 4: { good: [6, 2], bad: [7] }, 5: { good: [2, 7], bad: [8] }, 6: { good: [1, 4], bad: [7] }, 7: { good: [3, 5], bad: [6] }, 8: { good: [1, 3], bad: [2] } };
+function thaiDayMatch(a, b) {
+  const pos = posOf(a, b), back = posOf(b, a);
+  let s = 60; const notes = [];
+  if (a === b) { s += 10; notes.push('เกิดวันเดียวกัน นิสัยและจังหวะชีวิตคล้ายกัน'); }
+  if (DAY_PAIR[a].good.includes(b)) { s += 20; notes.push(`ตำราคู่วันเกิด: คน${TH_PLANETS[a].day}เข้ากันดีกับคน${TH_PLANETS[b].day}`); }
+  if (DAY_PAIR[a].bad.includes(b)) { s -= 20; notes.push(`ตำราคู่วันเกิด: คน${TH_PLANETS[a].day}ควรระวังเมื่อคบกับคน${TH_PLANETS[b].day}`); }
+  if (a !== b) {
+    const tone = (p) => (p.id === 'kalakini' ? -20 : ['sri', 'det', 'montri'].includes(p.id) ? 12 : 4);
+    s += Math.round((tone(pos) + tone(back)) / 2);
+    notes.push(`ทักษา: ${TH_PLANETS[b].day}เป็น "${pos.th}" ของคุณ (${pos.use}) และคุณเป็น "${back.th}" ของเขา`);
   }
-  if (m.sign == null) m.sign = (me + 4) % 12;
-  const res = compatibility(me, m.sign, ch, theirPos);
-  const dash = Math.round((res.score / 100) * 326.7);
-  const maxDay = daysIn(m.month, m.yearBE);
+  return { score: Math.max(20, Math.min(98, s)), notes };
+}
+function chineseMatch(a, b) {
+  if (a === b) return { score: 72, th: 'ปีเดียวกัน', d: 'นิสัยคล้ายกัน เข้าใจกันง่าย แต่ดื้อพอกัน' };
+  if (a % 4 === b % 4) return { score: 92, th: 'สามประสาน', d: 'กลุ่มนักษัตรเดียวกัน ส่งเสริมกันทั้งงานและความรัก' };
+  if ((a + b) % 12 === 1) return { score: 88, th: 'หกประสาน (คู่มิตร)', d: 'คู่มิตรตามตำราจีน ช่วยเหลือกันและกัน' };
+  if (Math.abs(a - b) === 6) return { score: 40, th: 'คู่ชง', d: 'ขั้วตรงข้ามตามตำราจีน มักขัดแย้งกันตรง ๆ ต้องใจเย็น' };
+  if ((a + b) % 12 === 7) return { score: 55, th: 'คู่ขัด', d: 'มักมีเรื่องให้ระคายใจเล็ก ๆ น้อย ๆ' };
+  return { score: 66, th: 'เป็นกลาง', d: 'ไม่ส่งเสริมไม่ขัดกัน ขึ้นอยู่กับการปรับตัวของทั้งคู่' };
+}
+function theirProfile(m) {
+  return { name: m.name || '', day: +m.day, month: +m.month, yearBE: +m.yearBE, hour: +m.hour, minute: +m.minute, timeKnown: !!m.timeKnown, place: { name: 'กรุงเทพมหานคร', lat: 13.7563, lon: 100.5018, tz: 'Asia/Bangkok' } };
+}
+function synastry(me, them) {
+  const P = (c, id) => c.planets.find((p) => p.id === id);
+  const dims = {}, hits = [];
+  for (const d of DIMS) {
+    let s = 58;
+    for (const [x, y] of d.pairs) {
+      const a = P(me, x), b = P(them, y);
+      const asp = findAspect(a.lon, b.lon, 0.8);
+      if (!asp) continue;
+      const k = 1 - asp.off / (asp.orb * 0.8 + 0.01) * 0.5;
+      let v = asp.nature > 0 ? 13 : asp.nature < 0 ? (asp.id === 'opp' && d.id === 'spark' ? 5 : -9) : (x === 'saturn' || y === 'saturn' ? 3 : 9);
+      s += v * k;
+      hits.push({ dim: d, a, b, asp, v: v * k });
+    }
+    if (d.id === 'values') s += ((elementOf(P(me, 'sun').sign) - elementOf(P(them, 'sun').sign) + 4) % 2 === 0 ? 8 : -4);
+    dims[d.id] = Math.round(Math.max(20, Math.min(98, s)));
+  }
+  hits.sort((x, y) => Math.abs(y.v) - Math.abs(x.v));
+  return { dims, hits };
+}
+function matchResult() {
+  const m = state.match, ch = state.chart, rel = REL.find((r) => r.id === m.rel) || REL[0];
+  const mySign = ch.planets[0].sign;
+  if (!m.useDate) {
+    if (m.sign == null) m.sign = (mySign + 4) % 12;
+    const base = compatibility(mySign, m.sign);
+    return { rel, signOnly: true, score: base.score, base, theirSign: m.sign };
+  }
+  const tp = theirProfile(m), them = computeChart(tp);
+  const theirSign = them.planets[0].sign;
+  const base = compatibility(mySign, theirSign);
+  const syn = synastry(ch, them);
+  const dimScore = Object.entries(rel.w).reduce((a, [k, w]) => a + syn.dims[k] * w, 0);
+  const myDay = birthPlanet(state.profile), thDay = birthPlanet(tp);
+  const td = thaiDayMatch(myDay, thDay);
+  const cn = chineseMatch(nakshatOf(state.profile), nakshatOf(tp));
+  const score = Math.round(dimScore * 0.6 + base.score * 0.15 + td.score * 0.125 + cn.score * 0.125);
+  return { rel, signOnly: false, score, base, syn, td, cn, them, tp, theirSign, myDay, thDay };
+}
+const MATCH_LABEL = (s) => s >= 85 ? 'คู่สร้างคู่สม' : s >= 72 ? 'คู่เติมเต็ม' : s >= 60 ? 'คู่ที่ไปได้ดีถ้าเข้าใจกัน' : s >= 48 ? 'คู่ที่ต้องปรับจูน' : 'คู่ที่ต้องใช้ความอดทน';
+function matchWeek(r) {
+  const out = [], t0 = new Date();
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() + i, 12);
+    const a = daily(state.chart, d).scores[r.rel.cat].score, b = daily(r.them, d).scores[r.rel.cat].score;
+    out.push({ d, s: (a + b) / 2 });
+  }
+  return out;
+}
+function matchHTML(r) {
+  const m = state.match, ch = state.chart, mySign = ch.planets[0].sign;
+  const R = 54, C = 2 * Math.PI * R, dash = (r.score / 100) * C;
+  const who = esc(m.name || r.rel.who);
+  const hero = `<section class="mt-hero">
+<div class="mt-p"><span class="b3-m" style="--c:${EL_HEX[mySign % 4]}"><span class="sym">${SIGNS[mySign].glyph}&#xFE0E;</span></span><b>${esc(state.profile.name || 'คุณ')}</b><span>${SIGNS[mySign].th}${r.signOnly ? '' : ' · ' + TH_PLANETS[r.myDay].day.replace('วัน', '')}</span></div>
+<div class="mt-g"><svg viewBox="0 0 132 132" role="img" aria-label="เข้ากัน ${r.score}%"><defs><linearGradient id="mtg" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#E592B2"/><stop offset="1" stop-color="#F0D89A"/></linearGradient></defs>
+<circle cx="66" cy="66" r="${R}" fill="none" stroke="#2C261B" stroke-width="8"/><circle class="ring-arc" cx="66" cy="66" r="${R}" fill="none" stroke="url(#mtg)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${dash.toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 66 66)" style="--len:${dash.toFixed(1)};--c:${C.toFixed(1)}"/>
+<text x="66" y="66" text-anchor="middle" font-family="IBM Plex Mono" font-size="28" fill="#F1E6CF">${r.score}</text><text x="66" y="86" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" letter-spacing="2" fill="#A3967D">MATCH %</text></svg></div>
+<div class="mt-p"><span class="b3-m" style="--c:${EL_HEX[r.theirSign % 4]}"><span class="sym">${SIGNS[r.theirSign].glyph}&#xFE0E;</span></span><b>${who}</b><span>${SIGNS[r.theirSign].th}${r.signOnly ? '' : ' · ' + TH_PLANETS[r.thDay].day.replace('วัน', '')}</span></div>
+<p class="mt-label">${MATCH_LABEL(r.score)}</p><p class="mt-sub">${r.base.reading}</p></section>`;
+  if (r.signOnly) return hero + `<section class="mt-card"><span class="eyebrow" style="color:var(--rose)">ราศีอาทิตย์</span><p class="small">${r.base.tags.join(' · ')}</p><p class="small" style="color:var(--text-2)">เปิด "ใส่วันเกิด" เพื่อดูคะแนน 5 ด้าน คู่วันเกิดแบบไทย ปีนักษัตรจีน และวันดีของคู่นี้</p></section>`;
+  const good = r.syn.hits.filter((h) => h.v > 0).slice(0, 3), bad = r.syn.hits.filter((h) => h.v < 0).slice(0, 3);
+  const line = (h) => `<li><span class="mt-asp" style="--c:${h.dim.col}"><span class="sym">${h.a.glyph}&#xFE0E;</span><i></i><span class="sym">${h.b.glyph}&#xFE0E;</span></span><span><b>${h.a.th}ของคุณ ${h.asp.th} ${h.b.th}ของ${who}</b><span>${h.dim.th}: ${DIM_TEXT[h.dim.id][h.v > 0 ? 0 : 1]}</span></span></li>`;
+  const wk = matchWeek(r), best = wk.reduce((a, x) => (x.s > a.s ? x : a), wk[0]);
+  const DOW = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+  const L1 = luckOf(r.myDay), L2 = luckOf(r.thDay);
+  return hero + `
+<section class="mt-card"><h2 class="t-step-h"><span style="border-color:var(--rose);color:var(--rose)">✦</span>คะแนน 5 ด้าน</h2>
+<ul class="mt-dims">${DIMS.map((d) => `<li${r.rel.w[d.id] ? '' : ' class="dim0"'}><span>${d.th}${r.rel.w[d.id] >= .25 ? ' <i>สำคัญ</i>' : ''}</span><span class="mt-bar"><span style="width:${r.syn.dims[d.id]}%;background:${d.col};box-shadow:0 0 8px ${d.col}"></span></span><b>${r.syn.dims[d.id]}</b></li>`).join('')}</ul>
+<p class="small" style="font-size:11px">น้ำหนักแต่ละด้านปรับตามความสัมพันธ์ "${r.rel.th}"</p></section>
+<section class="mt-3">
+<div class="mt-mini"><span class="eyebrow">ราศีสากล</span><b>${r.base.score}</b><span>${SIGNS[mySign].th} × ${SIGNS[r.theirSign].th}</span><span>${r.base.tags[0]}</span></div>
+<div class="mt-mini"><span class="eyebrow">คู่วันเกิดไทย</span><b>${r.td.score}</b><span>${TH_PLANETS[r.myDay].day.replace('วัน', '')} × ${TH_PLANETS[r.thDay].day.replace('วัน', '')}</span><span>ทักษา + ตำราคู่วัน</span></div>
+<div class="mt-mini"><span class="eyebrow">นักษัตรจีน</span><b>${r.cn.score}</b><span>${NAKSHAT[nakshatOf(state.profile)]} × ${NAKSHAT[nakshatOf(r.tp)]}</span><span>${r.cn.th}</span></div></section>
+<section class="mt-card"><h2 class="t-step-h"><span style="border-color:var(--rose);color:var(--rose)">☯</span>ตำราไทยและจีนว่าอย่างไร</h2>
+${r.td.notes.map((n) => `<p class="small" style="color:var(--text)">• ${n}</p>`).join('')}<p class="small" style="color:var(--text)">• ปีนักษัตร ${r.cn.th}: ${r.cn.d}</p></section>
+${good.length ? `<section class="mt-card good"><h2 class="t-step-h"><span style="border-color:var(--harmony);color:var(--harmony)">+</span>จุดแข็งของคู่นี้</h2><ul class="mt-list">${good.map(line).join('')}</ul></section>` : ''}
+${bad.length ? `<section class="mt-card bad"><h2 class="t-step-h"><span style="border-color:var(--tension);color:var(--tension)">!</span>เรื่องที่ต้องระวัง</h2><ul class="mt-list">${bad.map(line).join('')}</ul></section>` : ''}
+<section class="mt-card"><h2 class="t-step-h"><span style="border-color:var(--rose);color:var(--rose)">◷</span>7 วันข้างหน้าของคู่นี้</h2>
+<div class="mt-week">${wk.map((x) => `<span class="${x === best ? 'best' : ''}"><i style="height:${Math.round(x.s * 18)}%"></i><b>${DOW[x.d.getDay()]}</b><em>${x.d.getDate()}</em></span>`).join('')}</div>
+<p class="small">วันที่ดาวหนุนทั้งสองคนมากที่สุดคือ <b style="color:var(--gold-2)">${['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'][best.d.getDay()]}ที่ ${best.d.getDate()} ${MONTHS_SHORT[best.d.getMonth()]}</b> เหมาะกับ${r.rel.id === 'biz' ? 'คุยงาน เซ็นสัญญา' : 'นัดเจอ คุยเรื่องสำคัญ'}</p></section>
+<section class="mt-card"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">◇</span>เคล็ดเสริมคู่</h2>
+<p class="small" style="color:var(--text)">• สีเสริมเสน่ห์ (ศรี) ของคุณ: ${TH_PLANETS[L1.money].color} · ของ${who}: ${TH_PLANETS[L2.money].color}</p>
+<p class="small" style="color:var(--text)">• ${r.rel.id === 'biz' ? 'ไหว้พระพิฆเนศหรือวัดกัลยาณมิตรก่อนเริ่มธุรกิจร่วมกัน' : 'ไหว้ขอพรความรักที่วัดโพธิ์หรือวัดระฆัง และทำบุญร่วมกันในวันเกิดของอีกฝ่าย'}</p>
+${chipsOf(r.rel.id === 'biz' ? ['ganesha', 'popular'] : ['metta-maha', 'uma'])}</section>
+${r.score < 55 ? remedyCard(remedyPlan({ planetNo: 6, topic: 'love', level: r.score < 45 ? 2 : 1, reason: `ดวงเข้ากัน ${r.score}% เสริมด้วยบุญของดาวศุกร์ ดาวแห่งความรักและความกลมเกลียว` })) : ''}`;
+}
+function viewMatch() {
+  const m = state.match, r = matchResult(), maxDay = daysIn(m.month, m.yearBE);
   return `<main class="screen" style="--accent:var(--rose)">
 ${pageHead('02', 'COMPATIBILITY', 'คู่ดวง', 'var(--rose)', 'match')}
-<section class="pair" aria-label="ผลเทียบดวง">
-<div class="s"><span class="gl glow-text" style="color:var(--gold)">${SIGNS[me].glyph}&#xFE0E;</span><span class="label" style="font-size:9px">YOU</span><span class="h2" style="font-size:16px">${SIGNS[me].th}</span></div>
-<div class="gauge"><svg role="img" aria-label="ความเข้ากัน ${res.score} เปอร์เซ็นต์" width="130" height="130" viewBox="0 0 130 130" fill="none">
-<circle cx="65" cy="65" r="52" stroke="#2C261B" stroke-width="5"/><circle cx="65" cy="65" r="52" stroke="#D98C86" stroke-width="5" stroke-linecap="round" stroke-dasharray="${dash} 327" transform="rotate(-90 65 65)"/>
-<circle cx="65" cy="65" r="60" stroke="#3D3424" stroke-width="0.6" stroke-dasharray="1 4"/></svg>
-<div class="num"><span class="mono" style="font-size:30px;font-weight:500;line-height:1">${res.score}</span><span class="label" style="font-size:9px">MATCH %</span></div></div>
-<div class="s"><span class="gl" style="color:var(--rose);text-shadow:0 0 14px rgba(217,140,134,.5)">${SIGNS[m.sign].glyph}&#xFE0E;</span><span class="label" style="font-size:9px">PARTNER</span><span class="h2" style="font-size:16px">${SIGNS[m.sign].th}</span></div>
-</section>
-<section class="card"><span class="eyebrow" style="color:var(--rose);letter-spacing:.2em">WHY</span>
-<p class="h2" style="font-size:17px">${res.reading}</p>
-<div class="tags">${res.tags.concat(res.links).map((t) => `<span class="tag">${t}</span>`).join('')}</div>
-${m.useDate ? '<p class="small">เทียบดาวอาทิตย์ จันทร์ ศุกร์ และอังคารของทั้งสองคน</p>' : ''}</section>
-${res.score < 55 ? remedyCard(remedyPlan({ planetNo: 6, topic: 'love', level: res.score < 40 ? 2 : 1, reason: `ดวงเข้ากัน ${res.score}% เสริมด้วยบุญของดาวศุกร์ ดาวแห่งความรัก` })) : ''}
-<section style="display:flex;flex-direction:column;gap:10px">
-<button type="button" class="check" aria-pressed="${m.useDate}" data-act="matchDate"><span class="box">${m.useDate ? '✓' : ''}</span>ใส่วันเกิดของอีกฝ่าย (แม่นกว่า)</button>
-${m.useDate ? `<div class="date-row">
+<div class="mt-rel" role="group" aria-label="ความสัมพันธ์">${REL.map((x) => `<button class="mt-relb" aria-pressed="${x.id === r.rel.id}" data-act="matchRel" data-v="${x.id}"><span>${x.ic}</span>${x.th}</button>`).join('')}</div>
+${m.people.length ? `<div class="mt-people"><span class="eyebrow">คนที่บันทึกไว้</span><div>${m.people.map((p, i) => `<span class="mt-pc"><button data-act="matchPick" data-i="${i}" aria-pressed="${m.name === p.name && m.useDate}">${esc(p.name)}</button><button class="x" data-act="matchDel" data-i="${i}" aria-label="ลบ ${esc(p.name)}">×</button></span>`).join('')}</div></div>` : ''}
+<section class="mt-form mt-card"><h2 class="t-step-h"><span style="border-color:var(--rose);color:var(--rose)">✎</span>เทียบดวงกับใคร</h2>
+<div class="seg2"><button aria-pressed="${m.useDate}" data-act="matchMode" data-v="date">ใส่วันเกิด (แม่นกว่า)</button><button aria-pressed="${!m.useDate}" data-act="matchMode" data-v="sign">รู้แค่ราศี</button></div>
+${m.useDate ? `<label class="field">ชื่อเล่น<input class="input" data-in="m.name" value="${esc(m.name || '')}" placeholder="เช่น ฝน" maxlength="20"></label>
+<div class="date-row">
 <label class="field">วัน<select class="select mono" data-in="m.day">${opts(range(1, maxDay).map((n) => [n, n]), Math.min(m.day, maxDay))}</select></label>
 <label class="field">เดือน<select class="select" data-in="m.month">${opts(MONTHS_TH.map((x, i) => [i + 1, x]), m.month)}</select></label>
-<label class="field">ปี พ.ศ.<select class="select mono" data-in="m.yearBE">${opts(range(2443, 2643).reverse().map((n) => [n, n]), m.yearBE)}</select></label></div>`
-    : `<h2 class="label">เลือกราศีของอีกฝ่าย</h2>
-<div class="sign-grid" role="radiogroup" aria-label="ราศีของอีกฝ่าย">${SIGNS.map((s, i) => `<button class="sign-btn${i === me ? ' me' : ''}" role="radio" aria-checked="${i === m.sign}" data-act="matchSign" data-i="${i}"><span class="gl" aria-hidden="true">${s.glyph}&#xFE0E;</span>${s.th}</button>`).join('')}</div>`}
-</section></main>`;
+<label class="field">ปี พ.ศ.<select class="select mono" data-in="m.yearBE">${opts(range(2443, 2643).reverse().map((n) => [n, n]), m.yearBE)}</select></label></div>
+<button type="button" class="check" aria-pressed="${!!m.timeKnown}" data-act="matchTime"><span class="box">${m.timeKnown ? '✓' : ''}</span>รู้เวลาเกิดของอีกฝ่าย</button>
+${m.timeKnown ? `<div class="date-row"><label class="field">ชั่วโมง<select class="select mono" data-in="m.hour">${opts(range(0, 23).map((n) => [n, pad(n)]), m.hour)}</select></label><label class="field">นาที<select class="select mono" data-in="m.minute">${opts(range(0, 59).map((n) => [n, pad(n)]), m.minute)}</select></label></div>` : ''}
+<button class="btn ghost" data-act="matchSave"${m.name ? '' : ' disabled'}>${m.people.some((p) => p.name === m.name) ? 'อัปเดตข้อมูลที่บันทึก' : 'บันทึกคนนี้ไว้ดูครั้งหน้า'}</button>`
+    : `<div class="sign-grid" role="radiogroup" aria-label="ราศีของอีกฝ่าย">${SIGNS.map((s, i) => `<button class="sign-btn${i === state.chart.planets[0].sign ? ' me' : ''}" role="radio" aria-checked="${i === m.sign}" data-act="matchSign" data-i="${i}"><span class="gl" aria-hidden="true">${s.glyph}&#xFE0E;</span>${s.th}</button>`).join('')}</div>`}
+</section>
+${matchHTML(r)}
+<p class="small" style="text-align:center;font-size:11px">คำนวณจากตำแหน่งดาวจริงของทั้งสองคน ร่วมกับตำราคู่วันเกิดไทยและปีนักษัตรจีน · เพื่อความเข้าใจกัน ไม่ใช่คำตัดสินความรัก</p>
+</main>`;
 }
 
 // ---------------- tarot (Rider–Waite–Smith, 78 cards) ----------------
@@ -6108,6 +6280,12 @@ document.addEventListener('click', (e) => {
     case 'chartTab': state.chartTab = i; break;
     case 'matchSign': state.match.sign = i; break;
     case 'matchDate': state.match.useDate = !state.match.useDate; break;
+    case 'matchMode': state.match.useDate = el.dataset.v === 'date'; break;
+    case 'matchRel': state.match.rel = el.dataset.v; break;
+    case 'matchTime': state.match.timeKnown = !state.match.timeKnown; break;
+    case 'matchPick': { const pp = state.match.people[i]; Object.assign(state.match, pp, { useDate: true }); break; }
+    case 'matchDel': state.match.people.splice(i, 1); save(); break;
+    case 'matchSave': { const mm = state.match; if (!mm.name) return; const rec = { name: mm.name, day: +mm.day, month: +mm.month, yearBE: +mm.yearBE, hour: +mm.hour, minute: +mm.minute, timeKnown: !!mm.timeKnown, rel: mm.rel }; const k = mm.people.findIndex((x) => x.name === mm.name); if (k >= 0) mm.people[k] = rec; else mm.people.push(rec); save(); toast('บันทึก ' + mm.name + ' แล้ว'); break; }
     case 'tarotTopic': state.tarot.topic = i; break;
     case 'tarotSpread': state.tarot.spread = i; break;
     case 'tarotWho': state.tarot.who = el.dataset.v; break;
@@ -6214,6 +6392,7 @@ document.addEventListener('input', (e) => {
   const key = e.target.dataset.in;
   if (!key) return;
   const v = e.target.value;
+  if (key === 'm.name') { state.match.name = v.trim(); const sb = document.querySelector('[data-act=matchSave]'); if (sb) sb.disabled = !state.match.name; return; }
   if (key === 'tarotQ') { state.tarot.q = v; return; }
   if (key === 'tarotOtherName') { state.tarot.other.name = v; return; }
   if (key === 'placeQuery') {
@@ -6242,6 +6421,7 @@ document.addEventListener('change', (e) => {
   const key = e.target.dataset.in;
   if (!key) return;
   const v = +e.target.value;
+  if (key === 'm.name') return;
   if (key.startsWith('m.')) { state.match[key.slice(2)] = v; render(); return; }
   if (key === 'nm.day') { state.num.day = v; const box = document.getElementById('num-results'); if (box) box.innerHTML = numResults(); return; }
   if (key.startsWith('t.')) { state.tarot.other[key.slice(2)] = v; render(); return; }
