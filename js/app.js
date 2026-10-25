@@ -5,6 +5,7 @@ import {
 } from './astro.js';
 import { PLACES, MONTHS_TH, MONTHS_SHORT, TAROT, TOPICS, LIFE_PATH, DIGITS, SUM_MEANING } from './data.js';
 import { starMap, logoRing } from './starmap.js';
+import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
@@ -53,6 +54,7 @@ const IC = {
   arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
   down: '<path d="M6 9l6 6 6-6"/>',
+  auspice: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
   search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'
 };
 const icon = (name, size = 20, sw = 1.4) => `<svg aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${IC[name]}</svg>`;
@@ -207,6 +209,7 @@ function viewHome() {
 ${bigThree(ch)}
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
+<section id="auspice-mini" aria-label="มงคลวันนี้">${auspiceMiniHTML()}</section>
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรระยะยาว</h2>
@@ -291,6 +294,102 @@ ${la.length ? `<ul class="asp-list">${items}</ul>` : '<p class="small">วัน
 </div>`;
 }
 
+// ---------------- Thai auspice: colours, numbers, ยามอัฏฐกาล ----------------
+const sw = (n, label) => `<span class="swatch"><i style="background:${TH_PLANETS[n].hex}"></i><span><b>${label}</b>${TH_PLANETS[n].color}</span></span>`;
+const hm = (d) => pad(d.getHours()) + ':' + pad(d.getMinutes());
+function personalLuck() {
+  const p = state.profile, bp = birthPlanet(p);
+  return { bp, me: luckOf(bp), lagna: thaiLagna(state.chart) };
+}
+function currentYams(now = new Date()) {
+  const { bp } = personalLuck();
+  const all = yams(now, bp);
+  const cur = all.find((y) => now >= y.start && now < y.end);
+  const nextGood = all.find((y) => y.end > now && y !== cur && y.pos.tone === 2) || all.find((y) => y.end > now && y.pos.tone === 2);
+  return { all, cur, nextGood };
+}
+function auspiceMiniHTML() {
+  if (!state.chart) return '';
+  const now = new Date(), today = dayColors(now), { me } = personalLuck(), { cur, nextGood } = currentYams(now);
+  const best = today.money !== me.avoid ? today.money : today.work;
+  return `<a class="card ausp-mini" href="#/auspice">
+<span style="display:flex;justify-content:space-between;align-items:center"><span class="eyebrow" style="letter-spacing:.2em;color:var(--amber)">มงคลวันนี้ · ${TH_PLANETS[today.owner].day}</span>${icon('next', 14, 1.5)}</span>
+<div class="ausp-row">
+<div class="ausp-col"><span class="small">สีเสริมดวงคุณ</span><span class="dot-row"><i style="background:${TH_PLANETS[best].hex}"></i><b>${TH_PLANETS[best].color.split(' ')[0]}</b></span></div>
+<div class="ausp-col"><span class="small">สีที่ควรเลี่ยง</span><span class="dot-row"><i style="background:${TH_PLANETS[me.avoid].hex}"></i><b>${TH_PLANETS[me.avoid].color.split(' ')[0]}</b></span></div>
+<div class="ausp-col"><span class="small">เลขมงคล</span><b class="mono" style="font-size:16px;color:var(--gold-2)">${me.numbers.slice(0, 3).join(' ')}</b></div>
+</div>
+<span class="small" style="color:var(--text)">${cur ? `ตอนนี้ยาม${cur.pos.th} (${hm(cur.start)}–${hm(cur.end)})` : ''}${nextGood ? ` · ยามดีถัดไป <b style="color:var(--gold-2)">${hm(nextGood.start)}</b> ยาม${nextGood.pos.th}` : ''}</span>
+</a>`;
+}
+
+function thaksaWheel(owner) {
+  const t = thaksa(owner), R = 112, c = 150;
+  const nodes = t.map((x, i) => {
+    const a = (i / 8) * Math.PI * 2 - Math.PI / 2, x0 = c + R * Math.cos(a), y0 = c + R * Math.sin(a);
+    const bad = x.id === 'kalakini', good = x.tone === 2;
+    return `<g><line x1="${c}" y1="${c}" x2="${x0.toFixed(1)}" y2="${y0.toFixed(1)}" stroke="#2C261B"/>
+<circle cx="${x0.toFixed(1)}" cy="${y0.toFixed(1)}" r="25" fill="#15120D" stroke="${bad ? '#E07A62' : good ? '#D4AF63' : '#3A3224'}" stroke-width="${good || bad ? 1.4 : 1}"/>
+<circle cx="${x0.toFixed(1)}" cy="${(y0 - 7).toFixed(1)}" r="5" fill="${TH_PLANETS[x.planet].hex}"/>
+<text x="${x0.toFixed(1)}" y="${(y0 + 6).toFixed(1)}" text-anchor="middle" font-size="10.5" fill="${bad ? '#E07A62' : good ? '#F0D89A' : '#C9BCA2'}" font-weight="600">${x.th}</text>
+<text x="${x0.toFixed(1)}" y="${(y0 + 17).toFixed(1)}" text-anchor="middle" font-size="8" fill="#A3967D">${TH_PLANETS[x.planet].th} ${x.planet}</text></g>`;
+  }).join('');
+  return `<svg viewBox="0 0 300 300" width="100%" style="max-width:320px;display:block;margin:0 auto" role="img" aria-label="ทักษาประจำตัว">
+<circle cx="${c}" cy="${c}" r="${R}" fill="none" stroke="#2C261B" stroke-dasharray="2 4"/>${nodes}
+<circle cx="${c}" cy="${c}" r="34" fill="#1B1711" stroke="#D4AF63"/><circle cx="${c}" cy="${c - 10}" r="6" fill="${TH_PLANETS[owner].hex}"/>
+<text x="${c}" y="${c + 8}" text-anchor="middle" font-size="11" fill="#F1E6CF" font-weight="600">${TH_PLANETS[owner].th}</text>
+<text x="${c}" y="${c + 20}" text-anchor="middle" font-size="8" fill="#A3967D">ดาวประจำตัว</text></svg>`;
+}
+
+function luckBlock(title, sub, L) {
+  return `<div class="card" style="gap:12px"><span style="display:flex;flex-direction:column;gap:2px"><span class="h2" style="font-size:17px">${title}</span><span class="small">${sub}</span></span>
+<div class="swatch-grid">${sw(L.money, 'การเงิน โชคลาภ')}${sw(L.work, 'การงาน')}${sw(L.patron, 'ผู้ใหญ่ อุปถัมภ์')}${sw(L.health, 'สุขภาพ')}</div>
+<div class="swatch-avoid">${sw(L.avoid, 'ควรเลี่ยง (กาลกิณี)')}</div>
+<p class="small">เลขถูกโฉลก <b class="mono" style="color:var(--gold-2);font-size:15px;letter-spacing:.1em">${L.numbers.join(' · ')}</b> · เลี่ยงเลข <b class="mono" style="color:var(--tension)">${L.avoid}</b></p></div>`;
+}
+
+function viewAuspice() {
+  const now = new Date(), p = state.profile, { bp, me, lagna } = personalLuck();
+  const today = dayColors(now), rel = posOf(bp, today.owner);
+  const { all, cur } = currentYams(now);
+  const lg = lagna ? luckOf(lagna.lord) : null;
+  const yamRow = (y) => {
+    const tone = y.pos.tone === 2 ? 'good' : y.pos.tone < 0 ? 'bad' : '';
+    const isCur = y === cur, past = y.end <= now;
+    return `<li class="yam ${tone}${isCur ? ' cur' : ''}${past ? ' past' : ''}"><span class="mono t">${hm(y.start)}</span>
+<span class="ydot" style="background:${TH_PLANETS[y.planet].hex}"></span>
+<span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span class="n">ยาม${y.pos.th} <span class="small">· ${TH_PLANETS[y.planet].th}</span>${isCur ? ' <span class="now">ตอนนี้</span>' : ''}</span><span class="small">${yamUse(y.pos)}</span></span></li>`;
+  };
+  return `<main class="screen" style="--accent:var(--amber)">
+${pageHead('06', 'AUSPICE', 'ฤกษ์และมงคล', 'var(--amber)', 'auspice', `<button class="back" data-act="go" data-to="home" aria-label="กลับหน้าหลัก" style="margin:0">${icon('back', 20, 1.5)}</button>`)}
+<section class="card" style="gap:6px">
+<span class="eyebrow" style="letter-spacing:.16em;color:var(--amber)">วันนี้ · ${TH_PLANETS[today.owner].day.toUpperCase()}</span>
+<p class="h2" style="font-size:19px">วันนี้เป็น "วัน${rel.th}" ของคุณ</p>
+<p class="small">${rel.tone === 2 ? 'วันส่งเสริม ' : rel.tone < 0 ? 'วันที่ควรระวัง ' : ''}เด่นเรื่อง${rel.use}${rel.tone < 0 ? ' เลี่ยงเริ่มเรื่องสำคัญ' : ''}</p>
+<h3 class="label" style="margin-top:8px">สีเสื้อมงคลวันนี้</h3>
+<div class="swatch-grid">${sw(today.money, 'การเงิน')}${sw(today.work, 'การงาน')}${sw(today.patron, 'ผู้ใหญ่')}${sw(today.people, 'เสน่ห์ คนรอบตัว')}</div>
+<div class="swatch-avoid">${sw(today.avoid, 'กาลกิณีของวัน')}${me.avoid !== today.avoid ? sw(me.avoid, 'กาลกิณีของคุณ') : ''}</div>
+</section>
+<section style="display:flex;flex-direction:column;gap:10px">
+<h2 class="label">ยามอัฏฐกาลวันนี้ · คำนวณกับดาวประจำตัวคุณ</h2>
+<div class="yam-tabs"><span>กลางวัน 06:00–18:00</span></div>
+<ul class="yam-list">${all.filter((y) => !y.night).map(yamRow).join('')}</ul>
+<div class="yam-tabs"><span>กลางคืน 18:00–06:00</span></div>
+<ul class="yam-list">${all.filter((y) => y.night).map(yamRow).join('')}</ul>
+<p class="small" style="font-size:11px">ยามละ 1 ชั่วโมงครึ่ง กลางวันเดินดาวทีละ 5 กลางคืนทีละ 4 · ยามศรี เดช มนตรี ของคุณ = ยามดี ยามกาลกิณี = ควรเลี่ยง</p>
+</section>
+<section style="display:flex;flex-direction:column;gap:10px">
+<h2 class="label">ทักษาประจำตัว · เกิด${TH_PLANETS[bp].day}${p.timeKnown ? '' : ' (ไม่ทราบเวลาเกิด ใช้เวลากลางวัน)'}</h2>
+${thaksaWheel(bp)}
+</section>
+${luckBlock('สีและเลขถูกโฉลกกับวันเกิด', `ตามทักษา ดาวประจำตัวคือ${TH_PLANETS[bp].th} (${bp})`, me)}
+${lg ? luckBlock(`สีและเลขถูกโฉลกกับลัคนา`, `ลัคนาแบบไทยราศี${SIGNS[lagna.sign].th} ${Math.floor(lagna.deg)}° เจ้าเรือนลัคนาคือดาว${TH_PLANETS[lagna.lord].th} (${lagna.lord})`, lg)
+    : '<div class="card"><p class="small">ใส่เวลาเกิดเพื่อดูสีและเลขถูกโฉลกกับลัคนา</p></div>'}
+${lagna && lagna.sign !== state.chart.firstSign ? `<p class="small" style="font-size:11px">หมายเหตุ: โหราศาสตร์ไทยใช้จักรราศีแบบนิรายนะ (ถอยราว ${Math.round(23.9)}°) ลัคนาแบบไทยจึงเป็นราศี${SIGNS[lagna.sign].th} ขณะที่ผังดาวสากลเป็นราศี${SIGNS[state.chart.firstSign].th}</p>` : ''}
+<p class="small" style="text-align:center;font-size:11px">ตามตำราทักษาและยามอัฏฐกาล เพื่อเป็นแนวทางเสริมความมั่นใจ</p>
+</main>`;
+}
+
 // ---------------- seven-day outlook ----------------
 const WEEKDAY_SHORT = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
 const WEEKDAY = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
@@ -345,6 +444,8 @@ function tickLive() {
   }
   lastSigns = snap;
   box.innerHTML = liveDailyHTML();
+  const am = document.getElementById('auspice-mini');
+  if (am) am.innerHTML = auspiceMiniHTML();
   const wk = document.getElementById('week');
   if (wk && weekCache && weekCache.key !== new Date().toDateString()) { state.weekSel = null; wk.innerHTML = weekHTML(); }
 }
@@ -678,7 +779,7 @@ function go(r) {
   try { history.replaceState(null, '', '#/' + r); } catch (e) { /* not allowed in some frames */ }
   render();
 }
-const VIEWS = { welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+const VIEWS = { auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
