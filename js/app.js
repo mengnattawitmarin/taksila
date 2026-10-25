@@ -10,6 +10,7 @@ import { natalProfile, sixthSense } from './profile.js';
 import { CARDS, drawCards, SPREADS, HOUSE_READ } from './tarot.js';
 import { mountGlobe, burnIncense, mountSiamsi, askMotion, randomDigit, thaiNum } from './luck.js';
 import { SIAMSI } from './siamsi.js';
+import { NUM_TOOLS, analyzeNumber, gradeOf, birthHexColor, reduceTo9 } from './numerology.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf } from './thai.js';
 
 // ---------------- storage ----------------
@@ -32,7 +33,7 @@ const state = {
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
-  num: { mode: 'phone', value: '' },
+  num: { mode: 'phone', values: {} },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
   ask: { topic: 0, messages: [] }
 };
@@ -969,44 +970,57 @@ function reduceNum(n, keepMaster) {
   while (n > 9 && !(keepMaster && (n === 11 || n === 22 || n === 33))) n = String(n).split('').reduce((a, b) => a + +b, 0);
   return n;
 }
+const NUM_ICONS = {
+  phone: '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10.5 18.5h3"/>',
+  plate: '<rect x="2.5" y="7" width="19" height="10" rx="2"/><path d="M6 12h3M11 12h7"/>',
+  id: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2.2"/><path d="M5.5 16c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4M14 10h5M14 13.5h4"/>',
+  house: '<path d="M3 11L12 4l9 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/>',
+  bank: '<path d="M3 9.5L12 4l9 5.5M4.5 9.5v8M9.5 9.5v8M14.5 9.5v8M19.5 9.5v8M3 20h18"/>',
+  hex: '<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><path d="M9 9.5l-1.5 5M12.5 9.5L11 14.5M8 11h5M7.5 13h5"/>'
+};
 function numResults() {
-  const v = state.num.value.replace(/[^0-9]/g, '');
-  if (!v) return '<p class="small">พิมพ์ตัวเลขเพื่อดูผลวิเคราะห์</p>';
-  const sum = v.split('').reduce((a, b) => a + +b, 0);
-  const red = reduceNum(sum, false);
-  const src = state.num.mode === 'phone' ? v.slice(-7) : v;
-  const pairs = [];
-  for (let i = 0; i < src.length - 1; i++) {
-    const a = +src[i], b = +src[i + 1];
-    const bad = [7, 8].includes(a) || [7, 8].includes(b);
-    const neutral = a === 0 || b === 0;
-    pairs.push({ n: src[i] + src[i + 1], bad, neutral, meaning: DIGITS[a] + ' + ' + DIGITS[b] });
+  const n = state.num, tool = NUM_TOOLS.find((t) => t.id === n.mode), v = n.values[n.mode] || '';
+  const r = analyzeNumber(n.mode, v);
+  if (!r) return `<p class="small num-empty">พิมพ์${tool.th}เพื่อดูผลวิเคราะห์</p>`;
+  if (n.mode === 'hex') {
+    return `<div class="card num-sum"><div class="ns-top">${r.color ? `<span class="hex-sw" style="background:${r.color}"></span>` : ''}<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="eyebrow" style="color:var(--teal)">HEX ${r.hex}</span><b class="ns-title">พลังเลข ${r.red}</b><span class="small">${r.meaning}</span></span></div>
+<div class="hex-row">${r.hex.split('').map((c, i) => `<span><b>${c}</b><i>${r.vals[i]}</i></span>`).join('')}</div>
+<p class="mono small" style="font-size:11px;margin:0">${r.vals.join(' + ')} = ${r.sum} → ${r.red}${r.decimal ? ` · ฐานสิบ ${r.decimal}` : ''}</p>
+${r.color ? `<p class="small" style="margin:0">สีนี้ให้พลังเลข ${r.red} ใช้เป็นสีพื้นหลังโทรศัพท์หรือสีแบรนด์เพื่อเสริมพลังด้านนี้</p>` : ''}</div>`;
   }
-  return `<p class="mono" style="font-size:13px;margin:0;color:var(--text-2)">SUM <span style="color:var(--teal)">${sum}</span> → ${red} · ${SUM_MEANING[red] || ''}</p>
-${pairs.length ? `<h2 class="label" style="margin-top:6px">PAIRS · คู่เลข${state.num.mode === 'phone' ? ' (7 หลักท้าย)' : ''}</h2>
-<div class="pairs">${pairs.map((p) => `<div class="${p.bad ? 'bad' : ''}"><div style="display:flex;justify-content:space-between;align-items:baseline"><span class="mono" style="font-size:22px">${p.n}</span><span class="mono" style="font-size:12px;font-weight:600;color:${p.bad ? 'var(--tension)' : p.neutral ? 'var(--muted)' : 'var(--teal)'}">${p.bad ? '!' : p.neutral ? '·' : '+'}</span></div><span class="small" style="font-size:11px">${p.meaning}</span></div>`).join('')}</div>` : ''}
-<p class="small">+ ส่งเสริม · ! ควรระวัง · · กลาง ๆ — ตามหลักเลขศาสตร์ไทยแบบทั่วไป เพื่อเป็นแนวทาง</p>`;
+  const [gTh, gL] = r.score != null ? gradeOf(r.score) : ['', ''];
+  const R = 30, C = 2 * Math.PI * R;
+  return `<div class="card num-sum"><div class="ns-top">
+${r.score != null ? `<svg class="ns-ring" viewBox="0 0 72 72" aria-label="คะแนน ${r.score}"><circle cx="36" cy="36" r="${R}" fill="none" stroke="#2C261B" stroke-width="6"/><circle class="ring-arc" cx="36" cy="36" r="${R}" fill="none" stroke="#7FC4B4" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(r.score / 100 * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 36 36)" style="--c:${C.toFixed(1)}"/><text x="36" y="40" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" fill="#F1E6CF">${r.score}</text></svg>` : ''}
+<span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span class="eyebrow" style="color:var(--teal)">ผลรวม ${r.sum} → ${r.red}${gL ? ' · เกรด ' + gL : ''}</span><b class="ns-title">${gTh || 'เลข ' + r.red}</b><span class="small" style="color:var(--text)">${r.meaning}</span></span></div>
+${r.notes.map((x) => `<p class="small ns-note">${x}</p>`).join('')}</div>
+${r.pairs.length ? `<h2 class="label" style="margin-top:4px">คู่เลข${r.pairNote ? ' · ' + r.pairNote : ''}</h2>
+<div class="pairs">${r.pairs.map((p) => `<div class="${p.bad ? 'bad' : ''}"><div style="display:flex;justify-content:space-between;align-items:baseline"><span class="mono" style="font-size:22px">${p.n}</span><span class="mono small" style="color:${p.bad ? 'var(--tension)' : p.neutral ? 'var(--muted)' : 'var(--teal)'}">${p.bad ? '!' : p.neutral ? '·' : '+'}</span></div><span class="small" style="font-size:11px">${p.meaning}</span></div>`).join('')}</div>
+<p class="small">+ ส่งเสริม · ! ควรระวัง · · กลาง ๆ — ตามหลักเลขศาสตร์ไทยแบบทั่วไป เพื่อเป็นแนวทาง</p>` : ''}`;
 }
 function viewNumbers() {
-  const p = state.profile;
-  let lp = '';
+  const p = state.profile, n = state.num, tool = NUM_TOOLS.find((t) => t.id === n.mode);
+  let lp = '', hexCard = '';
   if (p) {
     const ce = p.yearBE - 543;
     const digits = `${p.day}${p.month}${ce}`.split('').map(Number);
     const total = digits.reduce((a, b) => a + b, 0);
-    const n = reduceNum(total, true);
-    const [title, text] = LIFE_PATH[n] || LIFE_PATH[reduceNum(n, false)];
+    const num = reduceNum(total, true);
+    const [title, text] = LIFE_PATH[num] || LIFE_PATH[reduceNum(num, false)];
     lp = `<section class="card" style="flex-direction:row;gap:16px;align-items:center" aria-label="เลขชีวิตของคุณ">
-<div class="lp-ring"><span class="mono" style="font-size:30px;line-height:1">${n}</span><span class="mono" style="font-size:8px;letter-spacing:.14em;color:var(--teal)">LIFE PATH</span></div>
+<div class="lp-ring"><span class="mono" style="font-size:30px;line-height:1">${num}</span><span class="mono" style="font-size:8px;letter-spacing:.14em;color:var(--teal)">LIFE PATH</span></div>
 <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="h2" style="font-size:17px">${title}</span><span class="body" style="font-size:13px">${text}</span>
-<span class="mono small" style="font-size:10px">${digits.join('+')} = ${total}${total !== n ? ' → ' + n : ''}</span></div></section>`;
+<span class="mono small" style="font-size:10px">${digits.join('+')} = ${total}${total !== num ? ' → ' + num : ''}</span></div></section>`;
+    const col = birthHexColor(p);
+    hexCard = `<div class="birth-hex"><span class="hex-sw" style="background:${col}"></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span class="small" style="font-size:11px">สีฐาน 16 ประจำวันเกิด</span><b class="mono">${col.toUpperCase()}</b></span><span class="small" style="margin-left:auto;text-align:right;font-size:11px">วัน เดือน ปี<br>อ่านเป็นรหัสสี</span></div>`;
   }
-  const m = state.num.mode;
   return `<main class="screen" style="--accent:var(--teal)">
 ${pageHead('04', 'NUMEROLOGY', 'ศาสตร์ตัวเลข', 'var(--teal)', 'numbers')}
-${lp}
-<div class="seg" role="group" aria-label="ประเภทการวิเคราะห์"><button aria-pressed="${m === 'phone'}" data-act="numMode" data-v="phone">เบอร์โทร</button><button aria-pressed="${m === 'plate'}" data-act="numMode" data-v="plate">ทะเบียนรถ</button></div>
-<label class="field">${m === 'phone' ? 'เบอร์โทรศัพท์' : 'ทะเบียนรถ (ใช้เฉพาะตัวเลข)'}<input class="input mono" style="font-size:20px;letter-spacing:.1em" inputmode="${m === 'phone' ? 'tel' : 'text'}" data-in="numValue" value="${esc(state.num.value)}" placeholder="${m === 'phone' ? '08X-XXX-XXXX' : 'กข 1234'}"></label>
+${lp}${hexCard}
+<section class="t-step"><h2 class="t-step-h"><span style="border-color:var(--teal);color:var(--teal)">✦</span>เลือกสิ่งที่อยากดู</h2>
+<div class="num-tools">${NUM_TOOLS.map((t) => `<button class="num-tool" data-act="numMode" data-v="${t.id}" aria-pressed="${n.mode === t.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${NUM_ICONS[t.id]}</svg>${t.th}</button>`).join('')}</div></section>
+<label class="field">${tool.th}<input class="input mono num-input" inputmode="${tool.kind === 'digits' ? 'numeric' : 'text'}" autocomplete="off" maxlength="${tool.max + 4}" data-in="numValue" value="${esc(n.values[n.mode] || '')}" placeholder="${tool.ph}"></label>
+<p class="small" style="margin-top:-12px">${tool.hint}</p>
 <div id="num-results" style="display:flex;flex-direction:column;gap:10px">${numResults()}</div>
 </main>`;
 }
@@ -1391,11 +1405,12 @@ document.addEventListener('input', (e) => {
     return;
   }
   if (key === 'numValue') {
-    state.num.value = v;
+    state.num.values[state.num.mode] = v;
     const box = document.getElementById('num-results');
     if (box) box.innerHTML = numResults();
     return;
   }
+
   if (key === 'name') { state.draft.name = v; return; }
   if (key.startsWith('c.')) { state.draft.custom[key.slice(2)] = v; return; }
 });

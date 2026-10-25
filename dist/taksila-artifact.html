@@ -559,6 +559,25 @@ a:hover { color: var(--gold-2); }
 
 /* numerology */
 .lp-ring { flex: none; width: 76px; height: 76px; border-radius: 38px; border: 1px solid var(--teal); box-shadow: 0 0 20px rgba(127, 196, 180, 0.3), inset 0 0 14px rgba(127, 196, 180, 0.15); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.num-tools { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.num-tool { display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 70px; padding: 10px 4px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--text-2); font: inherit; font-size: 13px; cursor: pointer; transition: border-color .2s, box-shadow .2s; }
+.num-tool svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.num-tool[aria-pressed="true"] { border-color: var(--teal); color: #BDEBDF; background: rgba(127,196,180,.08); box-shadow: 0 0 16px rgba(127,196,180,.18); }
+.num-input { font-size: 22px; letter-spacing: .08em; }
+.num-empty { text-align: center; padding: 18px 0; }
+.num-sum { gap: 10px; background: radial-gradient(ellipse 60% 80% at 0% 0%, rgba(127,196,180,.12), transparent 70%), var(--surface); }
+.ns-top { display: flex; align-items: center; gap: 14px; }
+.ns-ring { flex: none; width: 72px; height: 72px; }
+.ns-title { font-family: var(--serif); font-size: 19px; color: var(--text); }
+.ns-note { margin: 0; padding: 8px 10px; border-radius: 8px; background: rgba(0,0,0,.25); }
+.hex-sw { flex: none; width: 52px; height: 52px; border-radius: 14px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.18), 0 6px 18px rgba(0,0,0,.4); }
+.hex-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.hex-row span { display: flex; flex-direction: column; align-items: center; min-width: 34px; padding: 6px 4px; border-radius: 8px; border: 1px solid var(--line); background: rgba(0,0,0,.2); }
+.hex-row b { font-family: var(--mono); font-size: 17px; color: var(--text); }
+.hex-row i { font-style: normal; font-family: var(--mono); font-size: 10px; color: var(--teal); }
+.birth-hex { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
+.birth-hex .hex-sw { width: 38px; height: 38px; border-radius: 10px; }
+.birth-hex b { font-size: 16px; color: var(--text); letter-spacing: .06em; }
 .pairs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .pairs > div { border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; background: var(--surface); border: 1px solid var(--line); }
 .pairs > div.bad { border-style: dashed; border-color: #6A3A30; }
@@ -2304,6 +2323,100 @@ const SUM_MEANING = {
   7: 'เลขแห่งความอดทน ต้องฝ่าอุปสรรค', 8: 'เลขแห่งความเปลี่ยนแปลง ขึ้นลงเร็ว', 9: 'เลขแห่งความสำเร็จและโชค'
 };
 
+// ---- js/numerology.js ----
+// Number readings: phone, plate, Thai ID card, house number, bank account, hexadecimal.
+// Pair rules follow common Thai numerology: digits 7 and 8 are "heavy", 0 is "empty".
+
+const reduceTo9 = (n) => { while (n > 9) n = String(n).split('').reduce((a, b) => a + +b, 0); return n; };
+const onlyDigits = (s) => (s || '').replace(/[^0-9]/g, '');
+
+const NUM_TOOLS = [
+  { id: 'phone', th: 'เบอร์มือถือ', hint: 'เช่น 081 234 5678', ph: '0812345678', kind: 'digits', max: 12 },
+  { id: 'plate', th: 'ทะเบียนรถ', hint: 'ใส่ทั้งตัวอักษรและเลขได้ ระบบใช้เฉพาะตัวเลข', ph: '1กข 1234', kind: 'text', max: 12 },
+  { id: 'id', th: 'บัตรประชาชน', hint: 'เลข 13 หลัก ประมวลผลในเครื่องเท่านั้น ไม่บันทึก ไม่ส่งออก', ph: '1 2345 67890 12 3', kind: 'digits', max: 17 },
+  { id: 'house', th: 'บ้านเลขที่', hint: 'เช่น 99/123 หรือห้อง 1205', ph: '99/123', kind: 'text', max: 16 },
+  { id: 'bank', th: 'บัญชีธนาคาร', hint: 'ใส่เลขบัญชี 10–12 หลัก', ph: '123-4-56789-0', kind: 'digits', max: 16 },
+  { id: 'hex', th: 'เลขฐาน 16', hint: 'ตัวเลข 0–9 และตัวอักษร A–F เช่น รหัสสี #C9A24E', ph: '#C9A24E', kind: 'hex', max: 16 }
+];
+
+const HOUSE_MEANING = {
+  1: 'บ้านของผู้นำ เจ้าของบ้านมีบารมี เหมาะทำธุรกิจที่บ้าน', 2: 'บ้านอบอุ่น คนในบ้านรักใคร่กัน เหมาะกับครอบครัว',
+  3: 'บ้านมีพลัง คึกคัก ขยันทำมาหากิน แต่ระวังการกระทบกระทั่ง', 4: 'บ้านแห่งการเรียนรู้ เหมาะกับนักเรียนและงานที่ใช้ความคิด',
+  5: 'บ้านที่ผู้ใหญ่เมตตา มั่นคง อยู่ได้ยาว', 6: 'บ้านสวยงาม การเงินดี อยู่แล้วมีความสุข',
+  7: 'บ้านที่ต้องอดทน ควรดูแลความสงบและสุขภาพของคนในบ้าน', 8: 'บ้านที่ชีวิตเปลี่ยนแปลงบ่อย ควรวางแผนการเงินให้รัดกุม',
+  9: 'บ้านมีสิริมงคล มีโชค สิ่งศักดิ์สิทธิ์คุ้มครอง'
+};
+const BANK_MEANING = {
+  1: 'เงินเข้าจากตำแหน่งงานและชื่อเสียง', 2: 'เงินมาจากความร่วมมือและคนรอบตัว', 3: 'เงินมาเร็วไปเร็ว ควรแยกบัญชีเก็บออม',
+  4: 'เงินจากการเจรจาและงานความคิด', 5: 'เงินจากผู้ใหญ่และความรู้ เหมาะเป็นบัญชีออม', 6: 'บัญชีที่การเงินดีที่สุด มีโชคเรื่องเงิน',
+  7: 'เก็บเงินยาก แต่ถ้าเก็บได้จะมั่นคงมาก', 8: 'เงินหมุนเวียนแรง ขึ้นลงเร็ว เหมาะเป็นบัญชีค้าขาย', 9: 'เงินจากโชคและบุญเก่า'
+};
+const PLATE_MEANING = {
+  1: 'รถพาไปสู่ตำแหน่งและงานใหญ่', 2: 'รถแห่งความราบรื่น เดินทางกับครอบครัวสบายใจ', 3: 'รถแรง ใจร้อนได้ ควรขับอย่างมีสติ',
+  4: 'รถของคนช่างคิด เดินทางไปเจรจาได้ผล', 5: 'รถที่ผู้ใหญ่คุ้มครอง ปลอดภัย', 6: 'รถนำโชค ค้าขายดี',
+  7: 'ควรตรวจสภาพรถสม่ำเสมอ และขับด้วยความอดทน', 8: 'รถที่พาไปพบความเปลี่ยนแปลง ควรระวังเป็นพิเศษ', 9: 'รถมีสิริมงคล เดินทางปลอดภัย'
+};
+const ID_MEANING = {
+  1: 'ชีวิตเด่นเรื่องความเป็นผู้นำและการตัดสินใจ', 2: 'ชีวิตเด่นเรื่องคนรอบตัวและความรัก', 3: 'ชีวิตเด่นเรื่องความกล้าและการลงมือ',
+  4: 'ชีวิตเด่นเรื่องสติปัญญาและการเรียนรู้', 5: 'ชีวิตเด่นเรื่องผู้ใหญ่อุปถัมภ์', 6: 'ชีวิตเด่นเรื่องการเงินและความสุข',
+  7: 'ชีวิตต้องฝ่าฟัน แต่เข้มแข็งกว่าคนทั่วไป', 8: 'ชีวิตมีขึ้นลง ปรับตัวเก่ง', 9: 'ชีวิตมีโชคและสิ่งศักดิ์สิทธิ์คุ้มครอง'
+};
+
+function pairList(src) {
+  const out = [];
+  for (let i = 0; i < src.length - 1; i++) {
+    const a = +src[i], b = +src[i + 1];
+    const bad = [7, 8].includes(a) || [7, 8].includes(b);
+    const neutral = !bad && (a === 0 || b === 0);
+    out.push({ n: src[i] + src[i + 1], bad, neutral, meaning: DIGITS[a] + ' + ' + DIGITS[b] });
+  }
+  return out;
+}
+function score(pairs, red) {
+  if (!pairs.length) return null;
+  const good = pairs.filter((p) => !p.bad && !p.neutral).length, mid = pairs.filter((p) => p.neutral).length;
+  let s = Math.round(((good + mid * 0.5) / pairs.length) * 85 + ([7, 8].includes(red) ? 0 : 15));
+  return Math.max(5, Math.min(100, s));
+}
+const gradeOf = (s) => s >= 85 ? ['ดีมาก', 'A'] : s >= 70 ? ['ดี', 'B'] : s >= 50 ? ['ปานกลาง', 'C'] : ['ควรพิจารณา', 'D'];
+
+// Thai national ID check digit: sum of first 12 digits times weights 13..2, then (11 - sum mod 11) mod 10.
+function idValid(d) {
+  if (d.length !== 13) return false;
+  let s = 0;
+  for (let i = 0; i < 12; i++) s += +d[i] * (13 - i);
+  return (11 - (s % 11)) % 10 === +d[12];
+}
+
+function analyzeNumber(tool, raw) {
+  if (tool === 'hex') return analyzeHex(raw);
+  const d = onlyDigits(raw);
+  if (!d) return null;
+  const sum = d.split('').reduce((a, b) => a + +b, 0), red = reduceTo9(sum);
+  const src = tool === 'phone' ? d.slice(-7) : tool === 'id' ? d.slice(-4) : d;
+  const pairs = pairList(src);
+  const sc = tool === 'id' ? null : score(pairs, red);
+  const meaning = tool === 'house' ? HOUSE_MEANING[red] : tool === 'bank' ? BANK_MEANING[red] : tool === 'plate' ? PLATE_MEANING[red] : tool === 'id' ? ID_MEANING[red] : SUM_MEANING[red];
+  const notes = [];
+  if (tool === 'phone' && d.length !== 10) notes.push('เบอร์มือถือไทยปกติมี 10 หลัก');
+  if (tool === 'id') notes.push(d.length !== 13 ? `ใส่แล้ว ${d.length} หลัก (ต้องมี 13 หลัก)` : idValid(d) ? 'เลขตรวจสอบหลักสุดท้ายถูกต้องตามรูปแบบบัตรประชาชนไทย' : 'หลักสุดท้ายไม่ตรงกับสูตรตรวจสอบ ลองเช็กว่าพิมพ์ครบถูกต้องหรือไม่');
+  return { digits: d, sum, red, meaning, pairs, score: sc, pairNote: tool === 'phone' ? '7 หลักท้าย' : tool === 'id' ? '4 หลักท้าย' : '', notes };
+}
+
+const HEX = '0123456789ABCDEF';
+function analyzeHex(raw) {
+  const h = (raw || '').toUpperCase().replace(/^0X/, '').replace(/[^0-9A-F]/g, '');
+  if (!h) return null;
+  const vals = h.split('').map((c) => HEX.indexOf(c));
+  const sum = vals.reduce((a, b) => a + b, 0), red = reduceTo9(sum);
+  const color = h.length === 6 ? '#' + h : h.length === 3 ? '#' + h.split('').map((c) => c + c).join('') : null;
+  const decimal = h.length <= 12 ? parseInt(h, 16).toLocaleString('en-US') : null;
+  return { hex: h, vals, sum, red, meaning: SUM_MEANING[red], color, decimal };
+}
+
+// The birth date written as DD MM YY reads as a six-digit hex colour.
+const birthHexColor = (p) => '#' + String(p.day).padStart(2, '0') + String(p.month).padStart(2, '0') + String((p.yearBE - 543) % 100).padStart(2, '0');
+
 // ---- js/starmap.js ----
 // Builds the animated star-map SVG from a computed natal chart.
 
@@ -2476,6 +2589,7 @@ function logoRing() {
 
 
 
+
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
@@ -2496,7 +2610,7 @@ const state = {
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: false, day: 1, month: 1, yearBE: 2540 },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
-  num: { mode: 'phone', value: '' },
+  num: { mode: 'phone', values: {} },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null },
   ask: { topic: 0, messages: [] }
 };
@@ -3433,44 +3547,57 @@ function reduceNum(n, keepMaster) {
   while (n > 9 && !(keepMaster && (n === 11 || n === 22 || n === 33))) n = String(n).split('').reduce((a, b) => a + +b, 0);
   return n;
 }
+const NUM_ICONS = {
+  phone: '<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10.5 18.5h3"/>',
+  plate: '<rect x="2.5" y="7" width="19" height="10" rx="2"/><path d="M6 12h3M11 12h7"/>',
+  id: '<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="8.5" cy="11" r="2.2"/><path d="M5.5 16c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4M14 10h5M14 13.5h4"/>',
+  house: '<path d="M3 11L12 4l9 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/>',
+  bank: '<path d="M3 9.5L12 4l9 5.5M4.5 9.5v8M9.5 9.5v8M14.5 9.5v8M19.5 9.5v8M3 20h18"/>',
+  hex: '<path d="M12 2.8l8 4.6v9.2l-8 4.6-8-4.6V7.4z"/><path d="M9 9.5l-1.5 5M12.5 9.5L11 14.5M8 11h5M7.5 13h5"/>'
+};
 function numResults() {
-  const v = state.num.value.replace(/[^0-9]/g, '');
-  if (!v) return '<p class="small">พิมพ์ตัวเลขเพื่อดูผลวิเคราะห์</p>';
-  const sum = v.split('').reduce((a, b) => a + +b, 0);
-  const red = reduceNum(sum, false);
-  const src = state.num.mode === 'phone' ? v.slice(-7) : v;
-  const pairs = [];
-  for (let i = 0; i < src.length - 1; i++) {
-    const a = +src[i], b = +src[i + 1];
-    const bad = [7, 8].includes(a) || [7, 8].includes(b);
-    const neutral = a === 0 || b === 0;
-    pairs.push({ n: src[i] + src[i + 1], bad, neutral, meaning: DIGITS[a] + ' + ' + DIGITS[b] });
+  const n = state.num, tool = NUM_TOOLS.find((t) => t.id === n.mode), v = n.values[n.mode] || '';
+  const r = analyzeNumber(n.mode, v);
+  if (!r) return `<p class="small num-empty">พิมพ์${tool.th}เพื่อดูผลวิเคราะห์</p>`;
+  if (n.mode === 'hex') {
+    return `<div class="card num-sum"><div class="ns-top">${r.color ? `<span class="hex-sw" style="background:${r.color}"></span>` : ''}<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="eyebrow" style="color:var(--teal)">HEX ${r.hex}</span><b class="ns-title">พลังเลข ${r.red}</b><span class="small">${r.meaning}</span></span></div>
+<div class="hex-row">${r.hex.split('').map((c, i) => `<span><b>${c}</b><i>${r.vals[i]}</i></span>`).join('')}</div>
+<p class="mono small" style="font-size:11px;margin:0">${r.vals.join(' + ')} = ${r.sum} → ${r.red}${r.decimal ? ` · ฐานสิบ ${r.decimal}` : ''}</p>
+${r.color ? `<p class="small" style="margin:0">สีนี้ให้พลังเลข ${r.red} ใช้เป็นสีพื้นหลังโทรศัพท์หรือสีแบรนด์เพื่อเสริมพลังด้านนี้</p>` : ''}</div>`;
   }
-  return `<p class="mono" style="font-size:13px;margin:0;color:var(--text-2)">SUM <span style="color:var(--teal)">${sum}</span> → ${red} · ${SUM_MEANING[red] || ''}</p>
-${pairs.length ? `<h2 class="label" style="margin-top:6px">PAIRS · คู่เลข${state.num.mode === 'phone' ? ' (7 หลักท้าย)' : ''}</h2>
-<div class="pairs">${pairs.map((p) => `<div class="${p.bad ? 'bad' : ''}"><div style="display:flex;justify-content:space-between;align-items:baseline"><span class="mono" style="font-size:22px">${p.n}</span><span class="mono" style="font-size:12px;font-weight:600;color:${p.bad ? 'var(--tension)' : p.neutral ? 'var(--muted)' : 'var(--teal)'}">${p.bad ? '!' : p.neutral ? '·' : '+'}</span></div><span class="small" style="font-size:11px">${p.meaning}</span></div>`).join('')}</div>` : ''}
-<p class="small">+ ส่งเสริม · ! ควรระวัง · · กลาง ๆ — ตามหลักเลขศาสตร์ไทยแบบทั่วไป เพื่อเป็นแนวทาง</p>`;
+  const [gTh, gL] = r.score != null ? gradeOf(r.score) : ['', ''];
+  const R = 30, C = 2 * Math.PI * R;
+  return `<div class="card num-sum"><div class="ns-top">
+${r.score != null ? `<svg class="ns-ring" viewBox="0 0 72 72" aria-label="คะแนน ${r.score}"><circle cx="36" cy="36" r="${R}" fill="none" stroke="#2C261B" stroke-width="6"/><circle class="ring-arc" cx="36" cy="36" r="${R}" fill="none" stroke="#7FC4B4" stroke-width="6" stroke-linecap="round" stroke-dasharray="${(r.score / 100 * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 36 36)" style="--c:${C.toFixed(1)}"/><text x="36" y="40" text-anchor="middle" font-family="IBM Plex Mono" font-size="15" fill="#F1E6CF">${r.score}</text></svg>` : ''}
+<span style="display:flex;flex-direction:column;gap:3px;min-width:0"><span class="eyebrow" style="color:var(--teal)">ผลรวม ${r.sum} → ${r.red}${gL ? ' · เกรด ' + gL : ''}</span><b class="ns-title">${gTh || 'เลข ' + r.red}</b><span class="small" style="color:var(--text)">${r.meaning}</span></span></div>
+${r.notes.map((x) => `<p class="small ns-note">${x}</p>`).join('')}</div>
+${r.pairs.length ? `<h2 class="label" style="margin-top:4px">คู่เลข${r.pairNote ? ' · ' + r.pairNote : ''}</h2>
+<div class="pairs">${r.pairs.map((p) => `<div class="${p.bad ? 'bad' : ''}"><div style="display:flex;justify-content:space-between;align-items:baseline"><span class="mono" style="font-size:22px">${p.n}</span><span class="mono small" style="color:${p.bad ? 'var(--tension)' : p.neutral ? 'var(--muted)' : 'var(--teal)'}">${p.bad ? '!' : p.neutral ? '·' : '+'}</span></div><span class="small" style="font-size:11px">${p.meaning}</span></div>`).join('')}</div>
+<p class="small">+ ส่งเสริม · ! ควรระวัง · · กลาง ๆ — ตามหลักเลขศาสตร์ไทยแบบทั่วไป เพื่อเป็นแนวทาง</p>` : ''}`;
 }
 function viewNumbers() {
-  const p = state.profile;
-  let lp = '';
+  const p = state.profile, n = state.num, tool = NUM_TOOLS.find((t) => t.id === n.mode);
+  let lp = '', hexCard = '';
   if (p) {
     const ce = p.yearBE - 543;
     const digits = `${p.day}${p.month}${ce}`.split('').map(Number);
     const total = digits.reduce((a, b) => a + b, 0);
-    const n = reduceNum(total, true);
-    const [title, text] = LIFE_PATH[n] || LIFE_PATH[reduceNum(n, false)];
+    const num = reduceNum(total, true);
+    const [title, text] = LIFE_PATH[num] || LIFE_PATH[reduceNum(num, false)];
     lp = `<section class="card" style="flex-direction:row;gap:16px;align-items:center" aria-label="เลขชีวิตของคุณ">
-<div class="lp-ring"><span class="mono" style="font-size:30px;line-height:1">${n}</span><span class="mono" style="font-size:8px;letter-spacing:.14em;color:var(--teal)">LIFE PATH</span></div>
+<div class="lp-ring"><span class="mono" style="font-size:30px;line-height:1">${num}</span><span class="mono" style="font-size:8px;letter-spacing:.14em;color:var(--teal)">LIFE PATH</span></div>
 <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span class="h2" style="font-size:17px">${title}</span><span class="body" style="font-size:13px">${text}</span>
-<span class="mono small" style="font-size:10px">${digits.join('+')} = ${total}${total !== n ? ' → ' + n : ''}</span></div></section>`;
+<span class="mono small" style="font-size:10px">${digits.join('+')} = ${total}${total !== num ? ' → ' + num : ''}</span></div></section>`;
+    const col = birthHexColor(p);
+    hexCard = `<div class="birth-hex"><span class="hex-sw" style="background:${col}"></span><span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span class="small" style="font-size:11px">สีฐาน 16 ประจำวันเกิด</span><b class="mono">${col.toUpperCase()}</b></span><span class="small" style="margin-left:auto;text-align:right;font-size:11px">วัน เดือน ปี<br>อ่านเป็นรหัสสี</span></div>`;
   }
-  const m = state.num.mode;
   return `<main class="screen" style="--accent:var(--teal)">
 ${pageHead('04', 'NUMEROLOGY', 'ศาสตร์ตัวเลข', 'var(--teal)', 'numbers')}
-${lp}
-<div class="seg" role="group" aria-label="ประเภทการวิเคราะห์"><button aria-pressed="${m === 'phone'}" data-act="numMode" data-v="phone">เบอร์โทร</button><button aria-pressed="${m === 'plate'}" data-act="numMode" data-v="plate">ทะเบียนรถ</button></div>
-<label class="field">${m === 'phone' ? 'เบอร์โทรศัพท์' : 'ทะเบียนรถ (ใช้เฉพาะตัวเลข)'}<input class="input mono" style="font-size:20px;letter-spacing:.1em" inputmode="${m === 'phone' ? 'tel' : 'text'}" data-in="numValue" value="${esc(state.num.value)}" placeholder="${m === 'phone' ? '08X-XXX-XXXX' : 'กข 1234'}"></label>
+${lp}${hexCard}
+<section class="t-step"><h2 class="t-step-h"><span style="border-color:var(--teal);color:var(--teal)">✦</span>เลือกสิ่งที่อยากดู</h2>
+<div class="num-tools">${NUM_TOOLS.map((t) => `<button class="num-tool" data-act="numMode" data-v="${t.id}" aria-pressed="${n.mode === t.id}"><svg viewBox="0 0 24 24" aria-hidden="true">${NUM_ICONS[t.id]}</svg>${t.th}</button>`).join('')}</div></section>
+<label class="field">${tool.th}<input class="input mono num-input" inputmode="${tool.kind === 'digits' ? 'numeric' : 'text'}" autocomplete="off" maxlength="${tool.max + 4}" data-in="numValue" value="${esc(n.values[n.mode] || '')}" placeholder="${tool.ph}"></label>
+<p class="small" style="margin-top:-12px">${tool.hint}</p>
 <div id="num-results" style="display:flex;flex-direction:column;gap:10px">${numResults()}</div>
 </main>`;
 }
@@ -3855,11 +3982,12 @@ document.addEventListener('input', (e) => {
     return;
   }
   if (key === 'numValue') {
-    state.num.value = v;
+    state.num.values[state.num.mode] = v;
     const box = document.getElementById('num-results');
     if (box) box.innerHTML = numResults();
     return;
   }
+
   if (key === 'name') { state.draft.name = v; return; }
   if (key.startsWith('c.')) { state.draft.custom[key.slice(2)] = v; return; }
 });
