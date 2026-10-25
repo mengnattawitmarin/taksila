@@ -1,8 +1,10 @@
 // ตักศิลา service worker: lets the app open offline and install to the home screen.
 // Strategy: network first for the app's own files (so updates arrive right away),
 // falling back to the cached copy when offline. Fonts are cache first.
-const CACHE = 'taksila-v17';
-const CORE = ['/', '/index.html', '/css/styles.css', '/js/app.js', '/js/astro.js', '/js/data.js', '/js/starmap.js', '/js/thai.js', '/js/auspice.js', '/js/profile.js', '/js/tarot.js', '/js/luck.js', '/js/siamsi.js', '/manifest.webmanifest', '/icons/icon-192.png'];
+const CACHE = 'taksila-v18';
+// Paths are relative to wherever the app is hosted (site root on Netlify, /taksila/ on GitHub Pages).
+const BASE = self.registration.scope;
+const CORE = ['', 'index.html', 'css/styles.css', 'js/app.js', 'js/astro.js', 'js/data.js', 'js/starmap.js', 'js/thai.js', 'js/auspice.js', 'js/profile.js', 'js/tarot.js', 'js/luck.js', 'js/siamsi.js', 'manifest.webmanifest', 'icons/icon-192.png'].map((p) => BASE + p);
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
@@ -23,9 +25,9 @@ self.addEventListener('fetch', (e) => {
     return;
   }
   if (url.origin !== location.origin) return;
-  const fresh = url.pathname.startsWith('/cards/') ? req : new Request(req, { cache: 'no-cache' });
+  const fresh = url.pathname.includes('/cards/') ? req : new Request(req, { cache: 'no-cache' });
   e.respondWith(fetch(fresh).then((res) => {
     if (res.ok) { const copy = res.clone(); caches.open(CACHE).then((c) => c.put(req, copy)); }
     return res;
-  }).catch(() => caches.match(req).then((hit) => hit || caches.match('/index.html'))));
+  }).catch(() => caches.match(req).then((hit) => hit || caches.match(BASE + 'index.html'))));
 });
