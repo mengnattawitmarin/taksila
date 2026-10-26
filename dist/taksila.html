@@ -966,6 +966,7 @@ a:hover { color: var(--gold-2); }
 .ora-luck em { width: 10px; height: 10px; border-radius: 50%; flex: none; box-shadow: 0 0 6px rgba(255,255,255,.2); }
 .ora-sheet .ora-luck { width: 100%; text-align: left; }
 .ora-v b { font-size: 30px; }
+.dh-intro { margin: -2px 0 0; color: var(--text-2); }
 
 </style>
 </head>
@@ -6455,14 +6456,8 @@ function liveDailyHTML() {
   };
   const mood = total >= 75 ? 'วันพลังดี' : total >= 55 ? 'วันกลาง ๆ ค่อนดี' : total >= 40 ? 'วันต้องใจเย็น' : 'วันพักเก็บแรง';
   return `<div class="card daily day-hero${open ? ' open' : ''}">
-<span class="dh-top"><span class="eyebrow" style="letter-spacing:.2em;display:flex;align-items:center;gap:8px"><span class="live-dot" aria-hidden="true"></span>ดวงวันนี้ · LIVE</span><span class="mono small" style="font-size:10px">อัปเดต ${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
-<div class="dh-main">
-<svg class="dh-rings" viewBox="0 0 128 128" role="img" aria-label="คะแนนดวงวันนี้ ${total} จาก 100">${dl.scores.map((x, k) => ring(k, x.score)).join('')}
-<text x="64" y="69" text-anchor="middle" font-family="IBM Plex Mono" font-size="17" font-weight="500" fill="#F1E6CF">${total}</text></svg>
-<div class="dh-side"><span class="dh-mood">${mood}</span>
-<ul class="dh-legend">${dl.scores.map((x, k) => `<li><i style="background:${RING_COL[k]}"></i><span>${x.name}</span><b>${x.score}/5</b></li>`).join('')}</ul></div>
-</div>
-<p class="dh-head">${headline}</p>
+<span class="dh-top"><span class="eyebrow" style="letter-spacing:.2em;display:flex;align-items:center;gap:8px"><span class="live-dot" aria-hidden="true"></span>เหตุผลจากดาววันนี้ · LIVE</span><span class="mono small" style="font-size:10px">อัปเดต ${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
+<p class="small dh-intro">ดาวที่กำลังส่งผลกับดวงของคุณ พร้อมบทสวดและทางแก้ประจำวัน</p>
 ${remedyChip(dailyRemedy(la, birthPlanet(state.profile), total))}
 ${heroRemedy()}
 <button class="drawer-toggle" data-act="liveToggle" data-closed="ดูเหตุผล ${la.length} มุมดาว" aria-expanded="${open}">
