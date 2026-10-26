@@ -205,7 +205,9 @@ function todayOracle() {
   const moon = `ดวงจันทร์ผ่านภพ ${d0.moonHouse} เรื่อง${HOUSES[d0.moonHouse - 1].split(' ').slice(0, 2).join(' ')}จะเด่นขึ้นมา`;
   const advice = best.score >= 4 ? `วันนี้เด่นเรื่อง${best.name} ลงมือได้เลย` : `วันนี้ค่อย ๆ ทำทีละเรื่อง`;
   const caution = worst.score <= 2 ? `ระวังเรื่อง${worst.name}` : '';
-  return { d0, dl, la, total, best, worst, lead, moon, advice, caution, date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]} · ${d0.phase.th}`, verdict: RATING_TH[d0.rating], col: ratingColor(d0.rating) };
+  const verdict = total >= 75 ? 'วันพลังดี' : total >= 55 ? 'วันกลาง ๆ ค่อนดี' : total >= 40 ? 'วันต้องใจเย็น' : 'วันพักเก็บแรง';
+  const col = total >= 75 ? 'var(--gold-2)' : total >= 55 ? '#F0D89A' : total >= 40 ? '#F0A08C' : 'var(--tension)';
+  return { d0, dl, la, total, best, worst, lead, moon, advice, caution, date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]} · ${d0.phase.th}`, verdict, col, luck: luckToday() };
 }
 function oracleRing(total, size = 74) {
   const R = 30, C = 2 * Math.PI * R, len = (total / 100) * C;
@@ -221,6 +223,8 @@ function oracleHeroA() {
 <p class="ora-lead">“${o.lead}”</p>
 <p class="ora-moon">☽ ${o.moon}</p>
 <div class="ora-cats">${o.dl.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
+<span class="ora-sub">มงคลประจำวัน</span>
+${luckCells(o.luck)}
 <button class="ora-more" data-act="oraMore">อ่านเหตุผลจากดาวทั้งหมด ↓</button>
 </section>`;
 }
@@ -229,6 +233,16 @@ function oracleBannerC() {
   return `<button class="ora ora-c" data-act="oraMore" aria-label="คำทำนายวันนี้">
 <span class="ora-c-l"><span class="ora-eye">คำทำนายวันนี้</span><b style="color:${o.col}">${o.verdict}</b></span>
 <span class="ora-c-r">${o.lead}</span></button>`;
+}
+// The opening sheet shows once per day, on the first home render after the app opens.
+let ORA_SHEET = null;
+function showOraSheet() {
+  if (ORA_SHEET !== null) return ORA_SHEET;
+  if (HERO_VAR === 'b') return (ORA_SHEET = true);
+  if (HERO_VAR === 'none') return (ORA_SHEET = false);
+  const key = new Date().toDateString();
+  try { ORA_SHEET = localStorage.getItem('taksila.oraDay') !== key; if (ORA_SHEET) localStorage.setItem('taksila.oraDay', key); } catch (e) { ORA_SHEET = false; }
+  return ORA_SHEET;
 }
 function oracleSheetB() {
   const o = todayOracle();
@@ -241,6 +255,7 @@ ${oracleRing(o.total, 120)}
 <p class="ora-moon" style="text-align:center">☽ ${o.moon}</p>
 <div class="ora-cats">${o.dl.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
 <p class="ora-moon" style="text-align:center">${o.advice}${o.caution ? ' · ' + o.caution : ''}</p>
+${luckCells(o.luck)}
 <button class="btn" data-act="oraClose">เข้าสู่หน้าหลัก</button></div></div>`;
 }
 
@@ -266,11 +281,10 @@ function viewHome() {
 <p class="hh-big3"><span>${SIGNS[ch.planets[0].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[0].sign].th}</span><span>${SIGNS[ch.planets[1].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[1].sign].th}</span>${ch.timeKnown ? `<span>ลัคนา ${SIGNS[signOf(ch.asc)].th}</span>` : ''}</p></div>
 <a class="hh-map" href="#/chart" aria-label="เปิดผังดาวกำเนิด">${starMap(ch, { id: 'home', label: 'ผังดาวกำเนิดของคุณ', size: 92 })}</a>
 </header>
-${HERO_VAR === 'a' ? oracleHeroA() : HERO_VAR === 'c' ? oracleBannerC() : ''}
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
-<section id="auspice-mini" aria-label="มงคลวันนี้">${auspiceMiniHTML()}</section>
+<div id="oracle-card">${oracleHeroA()}</div>
 <nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
-${HERO_VAR === 'b' ? oracleSheetB() : ''}<div id="install-slot">${installHTML()}</div>
+<div id="install-slot">${installHTML()}</div>
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรระยะยาว</h2>
@@ -394,6 +408,19 @@ function currentYams(now = new Date()) {
   const cur = all.find((y) => now >= y.start && now < y.end);
   const nextGood = all.find((y) => y.end > now && y !== cur && y.pos.tone === 2) || all.find((y) => y.end > now && y.pos.tone === 2);
   return { all, cur, nextGood };
+}
+function luckToday() {
+  const now = new Date(), today = dayColors(now), { me } = personalLuck(), { cur, nextGood } = currentYams(now);
+  const best = today.money !== me.avoid ? today.money : today.work;
+  const goodNow = cur && cur.pos.tone === 2;
+  return { best, avoid: me.avoid, nums: me.numbers.slice(0, 3), yamL: goodNow ? 'ตอนนี้ยามดี' : 'ยามดีถัดไป', yamV: goodNow ? 'ถึง ' + hm(cur.end) : nextGood ? hm(nextGood.start) : '–' };
+}
+function luckCells(k) {
+  return `<a class="ora-luck" href="#/auspice" aria-label="มงคลวันนี้">
+<span><i>สีเสริมดวง</i><b><em style="background:${TH_PLANETS[k.best].hex}"></em>${TH_PLANETS[k.best].color.split(' ')[0]}</b></span>
+<span><i>สีที่ควรเลี่ยง</i><b><em style="background:${TH_PLANETS[k.avoid].hex}"></em>${TH_PLANETS[k.avoid].color.split(' ')[0]}</b></span>
+<span><i>เลขมงคล</i><b class="mono">${k.nums.join(' ')}</b></span>
+<span><i>${k.yamL}</i><b class="mono">${k.yamV}</b></span></a>`;
 }
 function auspiceMiniHTML() {
   if (!state.chart) return '';
@@ -576,6 +603,8 @@ function tickLive() {
   }
   lastSigns = snap;
   box.innerHTML = liveDailyHTML();
+  const oc = document.getElementById('oracle-card');
+  if (oc) oc.innerHTML = oracleHeroA();
   const am = document.getElementById('auspice-mini');
   if (am) am.innerHTML = auspiceMiniHTML();
   const wk = document.getElementById('week');
@@ -1839,6 +1868,7 @@ function render() {
   const showNav = !['welcome', 'setup'].includes(r);
   root.innerHTML = view() + (showNav ? nav(r) : '');
   if (r === 'home') startLive(); else clearInterval(liveTimer);
+  if (r === 'home' && showOraSheet() && !document.getElementById('ora-sheet')) document.body.insertAdjacentHTML('beforeend', oracleSheetB());
   mountLuck();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
   document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด' }[r] || 'อ่านดวงจากดาวจริง');
@@ -2005,7 +2035,7 @@ document.addEventListener('click', (e) => {
     case 'ssReset': state.luck.ss = null; break;
     case 'ssMotion': askMotion().then((ok) => toast(ok ? 'พร้อมแล้ว เขย่ามือถือได้เลย' : 'เครื่องนี้ไม่รองรับการเขย่า ใช้วิธีกดค้างแทน')); return;
     case 'askChip': ask(el.dataset.q); return;
-    case 'oraClose': { const sh = document.getElementById('ora-sheet'); if (sh) { sh.classList.add('out'); setTimeout(() => sh.remove(), 400); } return; }
+    case 'oraClose': { ORA_SHEET = false; const sh = document.getElementById('ora-sheet'); if (sh) { sh.classList.add('out'); setTimeout(() => sh.remove(), 400); } return; }
     case 'oraMore': { e.preventDefault && e.preventDefault(); const t = document.getElementById('live-daily'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     case 'askPersona': state.ask.persona = el.dataset.v; break;
     case 'askClear': state.ask.messages = []; state.ask.ctx = null; break;
