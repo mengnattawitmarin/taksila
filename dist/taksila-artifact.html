@@ -924,6 +924,34 @@ a:hover { color: var(--gold-2); }
 .ang-core { gap: 4px; } .ang-core span:first-child { font-size: 11px; color: var(--muted); } .ang-core span:last-child { font-size: 13px; }
 .num-tool.angel { background: radial-gradient(ellipse 70% 100% at 50% 0%, rgba(127,196,180,.14), transparent 75%), var(--surface); }
 
+/* ---------- คำทำนายวันนี้ (preview variants) ---------- */
+.ora-eye { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: .16em; color: var(--gold); text-transform: uppercase; }
+.ora-a { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 16px 16px 14px; border-radius: 22px; border: 1px solid transparent; background: linear-gradient(var(--surface), var(--surface)) padding-box, linear-gradient(135deg, rgba(240,216,154,.7), rgba(229,146,178,.45), rgba(124,96,200,.45)) border-box; box-shadow: 0 10px 40px rgba(212,175,99,.10); overflow: hidden; }
+.ora-a::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 85% 0%, rgba(240,216,154,.14), transparent 70%), radial-gradient(ellipse 60% 60% at 0% 100%, rgba(124,96,200,.14), transparent 70%); pointer-events: none; }
+.ora-top { display: flex; align-items: center; gap: 12px; position: relative; }
+.ora-v { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ora-v b { font-family: var(--serif); font-size: 34px; font-weight: 700; line-height: 1.1; text-shadow: 0 0 22px currentColor; }
+.ora-v span { font-size: 13px; color: var(--text-2); }
+.ora-lead { position: relative; font-family: var(--serif); font-size: 17px; line-height: 1.55; color: var(--text); margin: 0; }
+.ora-moon { position: relative; font-size: 12.5px; color: var(--text-2); margin: 0; }
+.ora-cats { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.ora-cats span { display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 7px 2px; border-radius: 12px; background: var(--surface-2); font-size: 11px; color: var(--text-2); }
+.ora-cats i { width: 7px; height: 7px; border-radius: 50%; background: var(--c); box-shadow: 0 0 6px var(--c); }
+.ora-cats b { font-family: var(--mono); font-size: 15px; color: var(--text); font-weight: 500; }
+.ora-more { position: relative; align-self: center; background: none; border: none; color: var(--gold); font: inherit; font-size: 13px; cursor: pointer; padding: 4px 8px; }
+.ora-c { font: inherit; text-align: left; width: 100%; cursor: pointer; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; text-decoration: none; color: var(--text); border: 1px solid rgba(240,216,154,.45); background: linear-gradient(100deg, rgba(212,175,99,.20), rgba(124,96,200,.12) 60%, rgba(229,146,178,.10)), var(--surface); }
+.ora-c-l { display: flex; flex-direction: column; gap: 2px; padding-right: 12px; border-right: 1px solid var(--line-2); }
+.ora-c-l b { font-family: var(--serif); font-size: 22px; text-shadow: 0 0 16px currentColor; white-space: nowrap; }
+.ora-c-r { font-size: 14px; line-height: 1.5; }
+.ora-sheet { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 20px; background: radial-gradient(ellipse 80% 60% at 50% 20%, rgba(124,96,200,.30), transparent 70%), radial-gradient(ellipse 70% 50% at 50% 100%, rgba(212,175,99,.18), transparent 70%), rgba(9,7,14,.96); animation: oraIn .5s ease both; }
+.ora-sheet.out { animation: oraOut .4s ease both; }
+@keyframes oraIn { from { opacity: 0; } } @keyframes oraOut { to { opacity: 0; transform: scale(1.03); } }
+.ora-sheet-in { width: 100%; max-width: 380px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.ora-hi { font-family: var(--serif); font-size: 20px; margin: 0; color: var(--text); }
+.ora-big { font-family: var(--serif); font-size: 44px; line-height: 1.1; text-shadow: 0 0 30px currentColor; }
+.ora-sheet .ora-cats { width: 100%; }
+.ora-sheet .btn { margin-top: 6px; }
+
 </style>
 <div id="app" class="app"></div>
 <noscript>กรุณาเปิด JavaScript เพื่อใช้งานตักศิลา</noscript>
@@ -6231,6 +6259,59 @@ function greeting(now) {
   return h < 5 ? 'สวัสดียามดึก' : h < 10 ? 'สวัสดีตอนเช้า' : h < 12 ? 'สวัสดีตอนสาย' : h < 16 ? 'สวัสดีตอนบ่าย' : h < 19 ? 'สวัสดีตอนเย็น' : 'สวัสดียามค่ำ';
 }
 
+const ORA_COL = ['#E58FA8', '#D4AF63', '#6FC3B2', '#A99BD9'];
+// ---------- คำทำนายวันนี้ (home hero) ----------
+// Preview variants: ?hero=a (big card on top), ?hero=b (once-a-day opening sheet), ?hero=c (headline banner).
+const HERO_VAR = (() => { try { return new URLSearchParams(location.search).get('hero') || ''; } catch (e) { return ''; } })();
+function todayOracle() {
+  const ch = state.chart, now = new Date();
+  const d0 = weekData()[0], dl = daily(ch, now), la = liveAspects(ch, now);
+  const total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
+  const best = dl.scores.reduce((m, x) => (x.score > m.score ? x : m), dl.scores[0]);
+  const worst = dl.scores.reduce((m, x) => (x.score < m.score ? x : m), dl.scores[0]);
+  const lead = la[0] ? la[0].reason : dl.headline;
+  const moon = `ดวงจันทร์ผ่านภพ ${d0.moonHouse} เรื่อง${HOUSES[d0.moonHouse - 1].split(' ').slice(0, 2).join(' ')}จะเด่นขึ้นมา`;
+  const advice = best.score >= 4 ? `วันนี้เด่นเรื่อง${best.name} ลงมือได้เลย` : `วันนี้ค่อย ๆ ทำทีละเรื่อง`;
+  const caution = worst.score <= 2 ? `ระวังเรื่อง${worst.name}` : '';
+  return { d0, dl, la, total, best, worst, lead, moon, advice, caution, date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]} · ${d0.phase.th}`, verdict: RATING_TH[d0.rating], col: ratingColor(d0.rating) };
+}
+function oracleRing(total, size = 74) {
+  const R = 30, C = 2 * Math.PI * R, len = (total / 100) * C;
+  return `<svg class="ora-ring" width="${size}" height="${size}" viewBox="0 0 72 72" aria-label="คะแนนวันนี้ ${total}"><defs><linearGradient id="orag" x1="0" x2="1"><stop offset="0" stop-color="#E592B2"/><stop offset=".5" stop-color="#D4AF63"/><stop offset="1" stop-color="#7FC4B4"/></linearGradient></defs>
+<circle cx="36" cy="36" r="${R}" fill="none" stroke="#2C261B" stroke-width="6"/><circle class="ring-arc" cx="36" cy="36" r="${R}" fill="none" stroke="url(#orag)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${len.toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 36 36)" style="--len:${len.toFixed(1)};--c:${C.toFixed(1)}"/>
+<text x="36" y="41" text-anchor="middle" font-family="IBM Plex Mono" font-size="17" fill="#F1E6CF">${total}</text></svg>`;
+}
+function oracleHeroA() {
+  const o = todayOracle();
+  return `<section class="ora ora-a" aria-label="คำทำนายวันนี้">
+<span class="ora-eye"><span class="live-dot" aria-hidden="true"></span>คำทำนายวันนี้ · ${o.date}</span>
+<div class="ora-top"><div class="ora-v"><b style="color:${o.col}">${o.verdict}</b><span>${o.advice}${o.caution ? ' · ' + o.caution : ''}</span></div>${oracleRing(o.total)}</div>
+<p class="ora-lead">“${o.lead}”</p>
+<p class="ora-moon">☽ ${o.moon}</p>
+<div class="ora-cats">${o.dl.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
+<button class="ora-more" data-act="oraMore">อ่านเหตุผลจากดาวทั้งหมด ↓</button>
+</section>`;
+}
+function oracleBannerC() {
+  const o = todayOracle();
+  return `<button class="ora ora-c" data-act="oraMore" aria-label="คำทำนายวันนี้">
+<span class="ora-c-l"><span class="ora-eye">คำทำนายวันนี้</span><b style="color:${o.col}">${o.verdict}</b></span>
+<span class="ora-c-r">${o.lead}</span></button>`;
+}
+function oracleSheetB() {
+  const o = todayOracle();
+  return `<div class="ora-sheet" id="ora-sheet" role="dialog" aria-label="คำทำนายวันนี้"><div class="ora-sheet-in">
+<span class="ora-eye" style="justify-content:center">${o.date}</span>
+<p class="ora-hi">สวัสดี${greeting(new Date()).replace('สวัสดี', '')} คุณ${esc((state.profile.name || '').split(' ')[0])}</p>
+${oracleRing(o.total, 120)}
+<b class="ora-big" style="color:${o.col}">${o.verdict}</b>
+<p class="ora-lead" style="text-align:center">“${o.lead}”</p>
+<p class="ora-moon" style="text-align:center">☽ ${o.moon}</p>
+<div class="ora-cats">${o.dl.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
+<p class="ora-moon" style="text-align:center">${o.advice}${o.caution ? ' · ' + o.caution : ''}</p>
+<button class="btn" data-act="oraClose">เข้าสู่หน้าหลัก</button></div></div>`;
+}
+
 function viewHome() {
   const ch = state.chart, p = state.profile, now = new Date();
   const dl = daily(ch, now);
@@ -6253,10 +6334,11 @@ function viewHome() {
 <p class="hh-big3"><span>${SIGNS[ch.planets[0].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[0].sign].th}</span><span>${SIGNS[ch.planets[1].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[1].sign].th}</span>${ch.timeKnown ? `<span>ลัคนา ${SIGNS[signOf(ch.asc)].th}</span>` : ''}</p></div>
 <a class="hh-map" href="#/chart" aria-label="เปิดผังดาวกำเนิด">${starMap(ch, { id: 'home', label: 'ผังดาวกำเนิดของคุณ', size: 92 })}</a>
 </header>
+${HERO_VAR === 'a' ? oracleHeroA() : HERO_VAR === 'c' ? oracleBannerC() : ''}
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <section id="auspice-mini" aria-label="มงคลวันนี้">${auspiceMiniHTML()}</section>
 <nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
-<div id="install-slot">${installHTML()}</div>
+${HERO_VAR === 'b' ? oracleSheetB() : ''}<div id="install-slot">${installHTML()}</div>
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรระยะยาว</h2>
@@ -7991,6 +8073,8 @@ document.addEventListener('click', (e) => {
     case 'ssReset': state.luck.ss = null; break;
     case 'ssMotion': askMotion().then((ok) => toast(ok ? 'พร้อมแล้ว เขย่ามือถือได้เลย' : 'เครื่องนี้ไม่รองรับการเขย่า ใช้วิธีกดค้างแทน')); return;
     case 'askChip': ask(el.dataset.q); return;
+    case 'oraClose': { const sh = document.getElementById('ora-sheet'); if (sh) { sh.classList.add('out'); setTimeout(() => sh.remove(), 400); } return; }
+    case 'oraMore': { e.preventDefault && e.preventDefault(); const t = document.getElementById('live-daily'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     case 'askPersona': state.ask.persona = el.dataset.v; break;
     case 'askClear': state.ask.messages = []; state.ask.ctx = null; break;
     case 'askMic': startMic(el); return;

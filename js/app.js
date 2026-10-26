@@ -191,6 +191,59 @@ function greeting(now) {
   return h < 5 ? 'สวัสดียามดึก' : h < 10 ? 'สวัสดีตอนเช้า' : h < 12 ? 'สวัสดีตอนสาย' : h < 16 ? 'สวัสดีตอนบ่าย' : h < 19 ? 'สวัสดีตอนเย็น' : 'สวัสดียามค่ำ';
 }
 
+const ORA_COL = ['#E58FA8', '#D4AF63', '#6FC3B2', '#A99BD9'];
+// ---------- คำทำนายวันนี้ (home hero) ----------
+// Preview variants: ?hero=a (big card on top), ?hero=b (once-a-day opening sheet), ?hero=c (headline banner).
+const HERO_VAR = (() => { try { return new URLSearchParams(location.search).get('hero') || ''; } catch (e) { return ''; } })();
+function todayOracle() {
+  const ch = state.chart, now = new Date();
+  const d0 = weekData()[0], dl = daily(ch, now), la = liveAspects(ch, now);
+  const total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
+  const best = dl.scores.reduce((m, x) => (x.score > m.score ? x : m), dl.scores[0]);
+  const worst = dl.scores.reduce((m, x) => (x.score < m.score ? x : m), dl.scores[0]);
+  const lead = la[0] ? la[0].reason : dl.headline;
+  const moon = `ดวงจันทร์ผ่านภพ ${d0.moonHouse} เรื่อง${HOUSES[d0.moonHouse - 1].split(' ').slice(0, 2).join(' ')}จะเด่นขึ้นมา`;
+  const advice = best.score >= 4 ? `วันนี้เด่นเรื่อง${best.name} ลงมือได้เลย` : `วันนี้ค่อย ๆ ทำทีละเรื่อง`;
+  const caution = worst.score <= 2 ? `ระวังเรื่อง${worst.name}` : '';
+  return { d0, dl, la, total, best, worst, lead, moon, advice, caution, date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]} · ${d0.phase.th}`, verdict: RATING_TH[d0.rating], col: ratingColor(d0.rating) };
+}
+function oracleRing(total, size = 74) {
+  const R = 30, C = 2 * Math.PI * R, len = (total / 100) * C;
+  return `<svg class="ora-ring" width="${size}" height="${size}" viewBox="0 0 72 72" aria-label="คะแนนวันนี้ ${total}"><defs><linearGradient id="orag" x1="0" x2="1"><stop offset="0" stop-color="#E592B2"/><stop offset=".5" stop-color="#D4AF63"/><stop offset="1" stop-color="#7FC4B4"/></linearGradient></defs>
+<circle cx="36" cy="36" r="${R}" fill="none" stroke="#2C261B" stroke-width="6"/><circle class="ring-arc" cx="36" cy="36" r="${R}" fill="none" stroke="url(#orag)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${len.toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 36 36)" style="--len:${len.toFixed(1)};--c:${C.toFixed(1)}"/>
+<text x="36" y="41" text-anchor="middle" font-family="IBM Plex Mono" font-size="17" fill="#F1E6CF">${total}</text></svg>`;
+}
+function oracleHeroA() {
+  const o = todayOracle();
+  return `<section class="ora ora-a" aria-label="คำทำนายวันนี้">
+<span class="ora-eye"><span class="live-dot" aria-hidden="true"></span>คำทำนายวันนี้ · ${o.date}</span>
+<div class="ora-top"><div class="ora-v"><b style="color:${o.col}">${o.verdict}</b><span>${o.advice}${o.caution ? ' · ' + o.caution : ''}</span></div>${oracleRing(o.total)}</div>
+<p class="ora-lead">“${o.lead}”</p>
+<p class="ora-moon">☽ ${o.moon}</p>
+<div class="ora-cats">${o.dl.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
+<button class="ora-more" data-act="oraMore">อ่านเหตุผลจากดาวทั้งหมด ↓</button>
+</section>`;
+}
+function oracleBannerC() {
+  const o = todayOracle();
+  return `<button class="ora ora-c" data-act="oraMore" aria-label="คำทำนายวันนี้">
+<span class="ora-c-l"><span class="ora-eye">คำทำนายวันนี้</span><b style="color:${o.col}">${o.verdict}</b></span>
+<span class="ora-c-r">${o.lead}</span></button>`;
+}
+function oracleSheetB() {
+  const o = todayOracle();
+  return `<div class="ora-sheet" id="ora-sheet" role="dialog" aria-label="คำทำนายวันนี้"><div class="ora-sheet-in">
+<span class="ora-eye" style="justify-content:center">${o.date}</span>
+<p class="ora-hi">สวัสดี${greeting(new Date()).replace('สวัสดี', '')} คุณ${esc((state.profile.name || '').split(' ')[0])}</p>
+${oracleRing(o.total, 120)}
+<b class="ora-big" style="color:${o.col}">${o.verdict}</b>
+<p class="ora-lead" style="text-align:center">“${o.lead}”</p>
+<p class="ora-moon" style="text-align:center">☽ ${o.moon}</p>
+<div class="ora-cats">${o.dl.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
+<p class="ora-moon" style="text-align:center">${o.advice}${o.caution ? ' · ' + o.caution : ''}</p>
+<button class="btn" data-act="oraClose">เข้าสู่หน้าหลัก</button></div></div>`;
+}
+
 function viewHome() {
   const ch = state.chart, p = state.profile, now = new Date();
   const dl = daily(ch, now);
@@ -213,10 +266,11 @@ function viewHome() {
 <p class="hh-big3"><span>${SIGNS[ch.planets[0].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[0].sign].th}</span><span>${SIGNS[ch.planets[1].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[1].sign].th}</span>${ch.timeKnown ? `<span>ลัคนา ${SIGNS[signOf(ch.asc)].th}</span>` : ''}</p></div>
 <a class="hh-map" href="#/chart" aria-label="เปิดผังดาวกำเนิด">${starMap(ch, { id: 'home', label: 'ผังดาวกำเนิดของคุณ', size: 92 })}</a>
 </header>
+${HERO_VAR === 'a' ? oracleHeroA() : HERO_VAR === 'c' ? oracleBannerC() : ''}
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <section id="auspice-mini" aria-label="มงคลวันนี้">${auspiceMiniHTML()}</section>
 <nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
-<div id="install-slot">${installHTML()}</div>
+${HERO_VAR === 'b' ? oracleSheetB() : ''}<div id="install-slot">${installHTML()}</div>
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2 class="label">TRANSITS · ดาวจรระยะยาว</h2>
@@ -1951,6 +2005,8 @@ document.addEventListener('click', (e) => {
     case 'ssReset': state.luck.ss = null; break;
     case 'ssMotion': askMotion().then((ok) => toast(ok ? 'พร้อมแล้ว เขย่ามือถือได้เลย' : 'เครื่องนี้ไม่รองรับการเขย่า ใช้วิธีกดค้างแทน')); return;
     case 'askChip': ask(el.dataset.q); return;
+    case 'oraClose': { const sh = document.getElementById('ora-sheet'); if (sh) { sh.classList.add('out'); setTimeout(() => sh.remove(), 400); } return; }
+    case 'oraMore': { e.preventDefault && e.preventDefault(); const t = document.getElementById('live-daily'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     case 'askPersona': state.ask.persona = el.dataset.v; break;
     case 'askClear': state.ask.messages = []; state.ask.ctx = null; break;
     case 'askMic': startMic(el); return;
