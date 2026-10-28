@@ -1133,4 +1133,4 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .mt-invite { display: flex; flex-direction: column; gap: 4px; text-align: left; width: 100%; padding: 14px; border-radius: 16px; font: inherit; color: var(--text); cursor: pointer; border: 1px dashed rgba(229,146,178,.6); background: rgba(229,146,178,.08); }
 .mt-invite b { color: #F2BBD0; font-size: 15px; }
 .mt-invite span { font-size: 12px; color: var(--text-2); }
-.pr-report { align-self: center; font-size: 12px; color: var(--muted); }
+.pr-report { align-self: center; font: inherit; font-size: 12px; color: var(--muted); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 8px; }

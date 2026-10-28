@@ -1138,7 +1138,7 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .mt-invite { display: flex; flex-direction: column; gap: 4px; text-align: left; width: 100%; padding: 14px; border-radius: 16px; font: inherit; color: var(--text); cursor: pointer; border: 1px dashed rgba(229,146,178,.6); background: rgba(229,146,178,.08); }
 .mt-invite b { color: #F2BBD0; font-size: 15px; }
 .mt-invite span { font-size: 12px; color: var(--text-2); }
-.pr-report { align-self: center; font-size: 12px; color: var(--muted); }
+.pr-report { align-self: center; font: inherit; font-size: 12px; color: var(--muted); background: none; border: 0; text-decoration: underline; cursor: pointer; padding: 8px; }
 
 </style>
 <div id="app" class="app"></div>
@@ -8748,7 +8748,7 @@ ${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตั�
 <span class="pr-count">สวด ${pr.count} จบ${pr.cat === 'day' ? ' · ตามกำลังดาวประจำวัน' : ''}</span></section>
 <section class="pr-text${pr.heart ? ' heart' : ''}">${prayerText(pr)}</section>
 <section class="pr-counter" id="pr-counter">${counterHTML(pr)}</section>
-<a class="pr-report" href="${reportLink(pr)}" target="_blank" rel="noopener">พบตัวบทผิด? แจ้งเราได้ที่นี่</a>
+<button class="pr-report" data-act="prReport">พบตัวบทผิด? แจ้งทาง LINE (ไอดี Mengfrog)</button>
 <p class="small" style="text-align:center;font-size:11px">ตั้งนะโม 3 จบก่อนสวด · สวดด้วยใจสงบ ความหมายเป็นสรุปสั้นเพื่อความเข้าใจ</p>
 </main>`;
   }
@@ -8865,7 +8865,7 @@ ${pageHead('10', 'PRIVACY · PDPA', 'ความเป็นส่วนตั�
 <p class="small">กฎหมายให้สิทธิเจ้าของข้อมูล เช่น ขอรับทราบรายละเอียด ขอเข้าถึงหรือรับสำเนา ขอแก้ไข ขอลบ ขอระงับหรือคัดค้านการใช้ ขอโอนข้อมูล และถอนความยินยอม เพราะข้อมูลอยู่ในเครื่องคุณเอง คุณใช้สิทธิเหล่านี้ได้ทันที: ดูและแก้ไขได้ที่ "ข้อมูลเกิด" และลบทั้งหมดได้ด้วยปุ่มด้านล่าง</p></section>
 <section class="card pv-del"><b>ลบข้อมูลทั้งหมดในเครื่องนี้</b><span class="small">ลบวันเกิด คนที่บันทึก สมุดฝัน และการตั้งค่าทั้งหมดของตักศิลาในเบราว์เซอร์นี้ ย้อนกลับไม่ได้</span>
 ${state.pvConfirm ? `<div class="pv-row"><button class="btn pv-danger" data-act="pvWipe">ยืนยัน ลบทั้งหมด</button><button class="link-btn" data-act="pvCancel">ยกเลิก</button></div>` : `<button class="btn btn-line pv-danger-o" data-act="pvAsk">ลบข้อมูลทั้งหมด</button>`}</section>
-<p class="small" style="font-size:11px">ติดต่อหรือแจ้งปัญหา: <a href="https://github.com/mengnattawitmarin/taksila/issues" target="_blank" rel="noopener" style="color:var(--gold)">หน้าแจ้งปัญหาของโครงการ</a> · ปรับปรุงล่าสุด 28 ต.ค. 2569</p>
+<p class="small" style="font-size:11px">ติดต่อหรือขอใช้สิทธิ์เรื่องข้อมูล: LINE <a href="${LINE_URL}" target="_blank" rel="noopener" style="color:var(--gold)">ไอดี Mengfrog</a> · ปรับปรุงล่าสุด 28 ต.ค. 2569</p>
 </main>`;
 }
 const LOCK_NOTE = '<p class="lock-note">🔒 ประมวลผลในเครื่องนี้เท่านั้น ไม่บันทึก ไม่ส่งออก · <a href="#/privacy">ความเป็นส่วนตัว</a></p>';
@@ -9090,11 +9090,12 @@ ${pageHead('13', 'ABOUT', 'เกี่ยวกับตักศิลา', 'v
 <section class="card pv-hero"><b>ดูดวงจากดาวจริง ผสานศาสตร์ไทยและสากล</b><span class="small">ตักศิลาคำนวณตำแหน่งดาว ณ เวลาและสถานที่เกิดของคุณ แล้วอ่านร่วมกับโหราศาสตร์ไทย ทักษา เลขศาสตร์ ไพ่ และปฏิทินจันทรคติ ทุกอย่างทำงานในเครื่องของคุณ ใช้ฟรี</span></section>
 <section class="pv"><h2 class="label">แหล่งข้อมูลและวิธีคำนวณ</h2><ul>${src.map(([a, b]) => `<li><b>${a}</b> ${b}</li>`).join('')}</ul></section>
 <section class="pv"><h2 class="label">ข้อควรรู้</h2><p class="small">คำทำนาย คาถา และความเชื่อในแอปมีไว้เป็นกำลังใจและแนวทาง ไม่ใช่คำแนะนำทางการแพทย์ กฎหมาย หรือการเงิน การตัดสินใจสำคัญควรใช้วิจารณญาณของคุณเอง</p></section>
-<div class="ask-links"><a href="#/privacy" class="ask-link">🔒 ความเป็นส่วนตัว</a><a href="https://github.com/mengnattawitmarin/taksila/issues" target="_blank" rel="noopener" class="ask-link">✉ แจ้งปัญหา / เสนอแนะ</a></div>
+<div class="ask-links"><a href="#/privacy" class="ask-link">🔒 ความเป็นส่วนตัว</a><a href="${LINE_URL}" target="_blank" rel="noopener" class="ask-link">💬 แจ้งปัญหา / เสนอแนะทาง LINE</a></div>
 <p class="small" style="font-size:11px">ตักศิลา · ปรับปรุงล่าสุด 28 ต.ค. 2569</p>
 </main>`;
 }
-const reportLink = (pr) => `https://github.com/mengnattawitmarin/taksila/issues/new?title=${encodeURIComponent('แจ้งตัวบทผิด: ' + pr.th)}&body=${encodeURIComponent(`บทสวด: ${pr.th} (${pr.id})\nบรรทัดที่ผิด:\nที่ถูกควรเป็น:\nแหล่งอ้างอิง (ถ้ามี):`)}`;
+const LINE_ID = 'Mengfrog', LINE_URL = 'https://line.me/ti/p/~Mengfrog';
+const reportText = (pr) => `แจ้งตัวบทผิดในตักศิลา\nบทสวด: ${pr.th} (${pr.id})\nบรรทัดที่ผิด:\nที่ถูกควรเป็น:\nแหล่งอ้างอิง (ถ้ามี):`;
 
 const VIEWS = { calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
@@ -9290,6 +9291,12 @@ document.addEventListener('click', (e) => {
       if (!navigator.geolocation) { toast('เครื่องนี้หาตำแหน่งไม่ได้'); return; }
       toast('กำลังหาตำแหน่งของคุณ…');
       navigator.geolocation.getCurrentPosition((pos) => { state.map.me = { lat: pos.coords.latitude, lon: pos.coords.longitude }; state.map.sel = null; if (route() === 'map') render(); }, () => toast('ยังไม่ได้รับอนุญาตให้ใช้ตำแหน่ง'), { timeout: 10000, maximumAge: 600000 });
+      return;
+    }
+    case 'prReport': {
+      const pr = prOf(state.prayer.open), txt = reportText(pr);
+      const open = () => window.open(LINE_URL, '_blank', 'noopener');
+      if (navigator.clipboard) navigator.clipboard.writeText(txt).then(() => { toast('คัดลอกข้อความแจ้งแล้ว วางในแชต LINE ได้เลย'); open(); }, open); else open();
       return;
     }
     case 'dailyShare': dailyImage().then((b) => shareBlob(b, `taksila-today-${Date.now()}.png`, 'ดวงวันนี้จากตักศิลา')); return;
