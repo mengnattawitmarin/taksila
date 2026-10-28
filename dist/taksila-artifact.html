@@ -1091,6 +1091,37 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .th-t i { font-style: normal; font-size: 10px; color: var(--muted); }
 .th-del { flex: none; width: 44px; background: none; border: 0; border-left: 1px solid var(--line); color: var(--muted); cursor: pointer; }
 
+/* ---- แผนที่มู ---- */
+.mu-map-wrap { position: relative; border-radius: 18px; overflow: hidden; border: 1px solid var(--line-2); }
+.mu-map { height: 300px; background: #14110C; z-index: 0; }
+.mu-map .leaflet-tile-pane { filter: brightness(.72) saturate(.65) sepia(.25) hue-rotate(-8deg); }
+.mu-map.fail { display: grid; place-items: center; padding: 56px 20px 20px; text-align: center; color: var(--muted); font-size: 13px; height: auto; min-height: 120px; }
+.mu-map .leaflet-control-attribution { background: rgba(13,11,8,.7); color: var(--muted); font-size: 9px; }
+.mu-map .leaflet-control-attribution a { color: var(--gold); }
+.mu-near { position: absolute; top: 10px; right: 10px; z-index: 500; min-height: 36px; padding: 0 12px; border-radius: 99px; border: 1px solid rgba(240,216,154,.5); background: rgba(13,11,8,.85); color: var(--gold-2); font: inherit; font-size: 13px; cursor: pointer; }
+.mu-cats { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+.mu-cats .chip { min-height: 36px; }
+.mu-cats .small-chip { min-height: 32px; font-size: 12px; padding: 0 10px; }
+.mu-blood { display: flex; flex-direction: column; gap: 3px; padding: 12px 14px; border-radius: 14px; text-decoration: none; color: var(--text); border: 1px solid rgba(229,103,90,.5); background: linear-gradient(90deg, rgba(229,103,90,.18), rgba(229,103,90,.05)); }
+.mu-blood span { font-size: 12px; color: var(--text-2); }
+.mu-list { display: flex; flex-direction: column; gap: 8px; }
+.mu-card { --c: var(--gold); border: 1px solid var(--line); border-radius: 14px; background: var(--surface); padding: 4px 12px 10px; display: flex; flex-direction: column; gap: 6px; }
+.mu-card.open { border-color: color-mix(in srgb, var(--c) 55%, var(--line)); background: linear-gradient(180deg, color-mix(in srgb, var(--c) 8%, var(--surface)), var(--surface)); }
+.mu-head { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; background: none; border: 0; padding: 0; font: inherit; color: var(--text); text-align: left; cursor: pointer; }
+.mu-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 8px var(--c); }
+.mu-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.mu-t b { font-size: 15px; }
+.mu-t span { font-size: 12px; color: var(--muted); }
+.mu-card.open .chev { transform: rotate(180deg); }
+.mu-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.mu-tags span { font-size: 10.5px; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line-2); color: var(--text-2); }
+.mu-tags span.w { border-color: rgba(229,146,178,.4); color: #F2BBD0; }
+.mu-body { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+.mu-god { margin: 0; color: var(--gold-2); font-size: 14px; }
+.mu-how { margin: 0; color: var(--text-2); }
+.mu-btns { display: flex; gap: 8px; }
+.mu-btns .btn { flex: 1; min-height: 44px; font-size: 14px; }
+
 </style>
 <div id="app" class="app"></div>
 <noscript>กรุณาเปิด JavaScript เพื่อใช้งานตักศิลา</noscript>
@@ -6186,11 +6217,11 @@ function remedyPlan({ planetNo = 1, topic = 'bad', level = 2, reason = '' } = {}
     { ic: '⌂', k: 'ไหว้พระ', t: `พระพุทธรูป${m.buddha}`, d: `พระประจำวัน${m.day} ไหว้ได้ที่วัดใกล้บ้านที่มีพระประจำวันครบ 8 ปาง` }
   ];
   const tp = templesFor(topic).length ? templesFor(topic) : templesFor('any');
-  steps.push({ ic: '⛩', k: 'วัดแนะนำ', t: tp.map((x) => x.th).join(' · '), d: tp.map((x) => `${x.th}: ${x.wish}`).join(' / ') });
-  if (level >= 2) steps.push({ ...RITES.release, k: 'เสริม', t: RITES.release.th });
+  steps.push({ ic: '⛩', k: 'วัดแนะนำ', map: 'temple', t: tp.map((x) => x.th).join(' · '), d: tp.map((x) => `${x.th}: ${x.wish}`).join(' / ') });
+  if (level >= 2) steps.push({ ...RITES.release, k: 'เสริม', t: RITES.release.th, map: 'release' });
   if (planetNo === 8 || planetNo === 7) steps.push({ ...RITES.rahu, k: 'สะเดาะเคราะห์', t: RITES.rahu.th });
-  if (level >= 3) { steps.push({ ...RITES.coffin, k: 'เคราะห์หนัก', t: RITES.coffin.th }); steps.push({ ...RITES.suebchata, k: 'ต่ออายุ', t: RITES.suebchata.th }); }
-  if (topic === 'health') steps.push({ ...RITES.blood, k: 'สุขภาพ', t: RITES.blood.th });
+  if (level >= 3) { steps.push({ ...RITES.coffin, k: 'เคราะห์หนัก', t: RITES.coffin.th, map: 'found' }); steps.push({ ...RITES.suebchata, k: 'ต่ออายุ', t: RITES.suebchata.th }); }
+  if (topic === 'health') steps.push({ ...RITES.blood, k: 'สุขภาพ', t: RITES.blood.th, map: 'blood' });
   steps.push({ ...RITES.khama, k: 'ทุกวัน', t: RITES.khama.th });
   return { title: `ทางแก้${TOPIC_TH[topic] ? 'เรื่อง' + TOPIC_TH[topic] : 'ดวง'}`, reason, level, steps };
 }
@@ -6306,6 +6337,71 @@ function dreamLookup(text) {
   return best;
 }
 
+// ---- js/places.js ----
+// แผนที่มู: places to pay respect, make merit, release fish, donate and give blood.
+// Our own short descriptions (common knowledge, paraphrased). Coordinates are approximate pins for the in-app map;
+// the "นำทาง" button searches Google Maps by name and province, so navigation always uses Google's real location.
+// k: categories · wish: what people ask for · chant: a prayer id in prayer.js
+const MU_CATS = [
+  { id: 'all', th: 'ทั้งหมด', col: '#D4AF63' },
+  { id: 'geji', th: 'เกจิดัง', col: '#E58A3A' },
+  { id: 'temple', th: 'ไหว้พระ ทำบุญ', col: '#F0D89A' },
+  { id: 'wish', th: 'ขอพรดัง', col: '#E592B2' },
+  { id: 'release', th: 'ปล่อยปลา', col: '#6FC3B2' },
+  { id: 'found', th: 'มูลนิธิ', col: '#A99BD9' },
+  { id: 'blood', th: 'บริจาคโลหิต', col: '#E5675A' }
+];
+const MU_WISH = { money: 'เงิน โชคลาภ', work: 'การงาน', love: 'ความรัก', study: 'การเรียน สอบ', child: 'ขอลูก', health: 'สุขภาพ', safe: 'แคล้วคลาด', chong: 'แก้ชง', bad: 'สะเดาะเคราะห์', luck: 'เสี่ยงโชค' };
+const BLOOD_LINK = 'https://www.blooddonationthai.com';
+const MU_PLACES = [
+  // ---------- กรุงเทพฯ: ไหว้พระ 9 วัด และศาลดัง ----------
+  { id: 'wat-phrakaew', th: 'วัดพระแก้ว', full: 'วัดพระศรีรัตนศาสดาราม', prov: 'กรุงเทพฯ', lat: 13.7516, lon: 100.4927, k: ['temple', 'wish'], wish: ['work', 'safe'], god: 'พระแก้วมรกต', story: 'วัดในพระบรมมหาราชวัง ประดิษฐานพระพุทธรูปคู่บ้านคู่เมือง คนนิยมมาขอพรเรื่องความมั่นคงในชีวิตและหน้าที่การงาน', how: 'แต่งกายสุภาพ ไหว้พระแก้วมรกตแล้วสวดอิติปิโส เปิดช่วงเช้าถึงบ่าย', chant: 'itipiso' },
+  { id: 'wat-pho', th: 'วัดโพธิ์', full: 'วัดพระเชตุพนวิมลมังคลาราม', prov: 'กรุงเทพฯ', lat: 13.7465, lon: 100.4930, k: ['temple', 'wish'], wish: ['love', 'health', 'bad'], god: 'พระพุทธไสยาส (พระนอน)', story: 'วัดพระนอนองค์ใหญ่ คนนิยมหยอดเหรียญลงบาตร 108 ใบเพื่อสะเดาะเคราะห์ และขอพรเรื่องความรักกับสุขภาพ', how: 'แลกเหรียญหยอดบาตร 108 ใบรอบวิหารพระนอน อธิษฐานทีละใบ', chant: 'metta-all' },
+  { id: 'wat-arun', th: 'วัดอรุณ', full: 'วัดอรุณราชวราราม', prov: 'กรุงเทพฯ', lat: 13.7437, lon: 100.4889, k: ['temple', 'wish'], wish: ['work', 'luck'], god: 'พระปรางค์ และพระพุทธธรรมิศราช', story: 'วัดแห่งรุ่งอรุณ คนเชื่อว่ามาไหว้แล้วชีวิตจะรุ่งเรืองเหมือนแสงตอนเช้า เหมาะกับคนเริ่มงานหรือธุรกิจใหม่', how: 'ไหว้พระประธานในอุโบสถ แล้วเดินชมพระปรางค์ ช่วงเย็นวิวสวยมาก', chant: 'itipiso' },
+  { id: 'wat-saket', th: 'วัดสระเกศ (ภูเขาทอง)', full: 'วัดสระเกศราชวรมหาวิหาร', prov: 'กรุงเทพฯ', lat: 13.7538, lon: 100.5067, k: ['temple', 'wish'], wish: ['study', 'work'], god: 'พระบรมสารีริกธาตุบนยอดภูเขาทอง', story: 'ขึ้นบันไดไปไหว้พระบรมสารีริกธาตุบนยอดภูเขาทอง คนเชื่อว่าช่วยให้ชีวิตก้าวหน้าเหมือนได้ขึ้นที่สูง', how: 'เดินขึ้นบันไดวนรอบภูเขา ตีระฆังขอพรระหว่างทาง', chant: 'itipiso' },
+  { id: 'wat-suthat', th: 'วัดสุทัศน์', full: 'วัดสุทัศนเทพวราราม', prov: 'กรุงเทพฯ', lat: 13.7510, lon: 100.5012, k: ['temple', 'wish'], wish: ['study', 'work'], god: 'พระศรีศากยมุนี', story: 'อยู่ติดเสาชิงช้า คนนิยมขอพรเรื่องการเรียน การสอบ และหน้าที่การงานให้ราบรื่น', how: 'ไหว้พระศรีศากยมุนีในพระวิหารหลวง', chant: 'itipiso' },
+  { id: 'wat-bowon', th: 'วัดบวรนิเวศ', full: 'วัดบวรนิเวศวิหาร', prov: 'กรุงเทพฯ', lat: 13.7604, lon: 100.4996, k: ['temple', 'wish'], wish: ['work', 'safe'], god: 'พระพุทธชินสีห์', story: 'วัดที่พระมหากษัตริย์หลายพระองค์เคยผนวช คนนิยมขอพรให้ชีวิตประสบความสำเร็จ', how: 'ไหว้พระพุทธชินสีห์ในพระอุโบสถ', chant: 'itipiso' },
+  { id: 'wat-rakhang', th: 'วัดระฆัง', full: 'วัดระฆังโฆสิตาราม', prov: 'กรุงเทพฯ', lat: 13.7550, lon: 100.4855, k: ['geji', 'temple', 'wish'], wish: ['love', 'work', 'luck'], god: 'สมเด็จพระพุฒาจารย์ (โต พรหมรังสี)', story: 'วัดของสมเด็จโต ผู้รจนาพระคาถาชินบัญชร คนนิยมมาขอพรเรื่องชื่อเสียง เมตตามหานิยม และตีระฆังขอพร', how: 'กราบรูปเหมือนสมเด็จโต สวดชินบัญชร แล้วตีระฆังหน้าวัด', chant: 'chinabanchon' },
+  { id: 'wat-kalaya', th: 'วัดกัลยาณมิตร', full: 'วัดกัลยาณมิตรวรมหาวิหาร', prov: 'กรุงเทพฯ', lat: 13.7397, lon: 100.4915, k: ['temple', 'wish', 'release'], wish: ['money', 'luck'], god: 'หลวงพ่อโต (ซำปอฮุดกง)', story: 'พระพุทธรูปองค์ใหญ่ที่คนไทยเชื้อสายจีนนับถือมาก ขอพรเรื่องค้าขายและโชคลาภ ริมวัดติดแม่น้ำเจ้าพระยา', how: 'ถวายผ้าห่มองค์หลวงพ่อโต แล้วอธิษฐานเรื่องการค้า', chant: 'ts-trade' },
+  { id: 'wat-chana', th: 'วัดชนะสงคราม', full: 'วัดชนะสงครามราชวรมหาวิหาร', prov: 'กรุงเทพฯ', lat: 13.7604, lon: 100.4953, k: ['temple', 'wish'], wish: ['safe', 'work', 'bad'], god: 'พระพุทธนรสีห์ไตรโลกชิต', story: 'ชื่อวัดสื่อถึงชัยชนะ คนนิยมขอพรให้ชนะอุปสรรค คดีความ และการแข่งขัน', how: 'ไหว้พระประธานแล้วอธิษฐานให้ผ่านอุปสรรค', chant: 'itipiso' },
+  { id: 'lak-mueang', th: 'ศาลหลักเมือง', full: 'ศาลหลักเมืองกรุงเทพมหานคร', prov: 'กรุงเทพฯ', lat: 13.7527, lon: 100.4940, k: ['wish'], wish: ['work', 'money', 'safe'], god: 'เสาหลักเมือง และเทพารักษ์ทั้งห้า', story: 'ศูนย์รวมจิตใจของคนกรุงเทพฯ คนนิยมไหว้ขอพรเมื่อเริ่มงานใหม่ ย้ายบ้าน หรือเปิดกิจการ', how: 'ไหว้เสาหลักเมือง แล้วไหว้เทพารักษ์ทั้งห้าในศาล', chant: 'itipiso' },
+  { id: 'erawan', th: 'ศาลท่านท้าวมหาพรหม (เอราวัณ)', prov: 'กรุงเทพฯ', lat: 13.7443, lon: 100.5404, k: ['wish'], wish: ['money', 'work', 'luck'], god: 'พระพรหม', story: 'ศาลพระพรหมกลางแยกราชประสงค์ ทั้งคนไทยและต่างชาติมาขอพร ถ้าสมหวังนิยมแก้บนด้วยการรำถวาย', how: 'ไหว้ให้ครบทั้งสี่พักตร์ เวียนตามเข็มนาฬิกา', chant: 'brahma' },
+  { id: 'trimurti', th: 'ศาลพระตรีมูรติ', prov: 'กรุงเทพฯ (เซ็นทรัลเวิลด์)', lat: 13.7468, lon: 100.5394, k: ['wish'], wish: ['love'], god: 'พระตรีมูรติ', story: 'ศาลยอดนิยมของคนขอพรเรื่องความรัก นิยมถวายกุหลาบแดงและธูปแดง', how: 'ถวายกุหลาบแดง ธูปแดง เทียนแดง ช่วงเย็นวันพฤหัสคนนิยมมาก', chant: 'shiva' },
+  { id: 'ganesha-cw', th: 'ศาลพระพิฆเนศ เซ็นทรัลเวิลด์', prov: 'กรุงเทพฯ', lat: 13.7466, lon: 100.5398, k: ['wish'], wish: ['work', 'study', 'money'], god: 'พระพิฆเนศ', story: 'อยู่ใกล้ศาลพระตรีมูรติ ขอพรเรื่องความสำเร็จ งานศิลปะ และการเริ่มต้นสิ่งใหม่', how: 'ถวายขนมหวาน ผลไม้ ดอกดาวเรือง', chant: 'ganesha-full' },
+  { id: 'wat-khaek', th: 'วัดแขก สีลม', full: 'วัดพระศรีมหาอุมาเทวี', prov: 'กรุงเทพฯ', lat: 13.7238, lon: 100.5225, k: ['wish'], wish: ['love', 'money', 'child'], god: 'พระแม่อุมาเทวี', story: 'เทวาลัยฮินดูเก่าแก่ย่านสีลม คนนิยมขอพรเรื่องครอบครัว ความรัก และขอลูก', how: 'ถวายพวงมาลัยดาวเรือง ผลไม้ และนม ถอดรองเท้าก่อนเข้า', chant: 'uma' },
+  { id: 'leng-noei-yi', th: 'วัดมังกรกมลาวาส (เล่งเน่ยยี่)', prov: 'กรุงเทพฯ (เยาวราช)', lat: 13.7428, lon: 100.5101, k: ['wish', 'temple'], wish: ['chong', 'bad', 'money'], god: 'องค์ไท้ส่วยเอี๊ย และเทพเจ้าจีน', story: 'วัดจีนเก่าแก่ของเยาวราช ช่วงตรุษจีนคนปีชงนิยมมาไหว้แก้ชงและสะเดาะเคราะห์', how: 'ซื้อชุดไหว้แก้ชง เขียนชื่อวันเกิด ไหว้ตามลำดับที่วัดแนะนำ', chant: 'itipiso' },
+  { id: 'chao-pho-suea', th: 'ศาลเจ้าพ่อเสือ', prov: 'กรุงเทพฯ (ถนนตะนาว)', lat: 13.7543, lon: 100.4985, k: ['wish'], wish: ['chong', 'work', 'money'], god: 'เจ้าพ่อเสือ (ตั่วเหล่าเอี๊ย)', story: 'ศาลเจ้าจีนดังใกล้เสาชิงช้า ขอพรเรื่องการงาน อำนาจ และแก้ชง', how: 'ไหว้ด้วยหมูสามชั้นและไข่ ตามธรรมเนียมจีน', chant: 'itipiso' },
+  { id: 'mae-nak', th: 'ศาลแม่นาคพระโขนง', full: 'วัดมหาบุศย์', prov: 'กรุงเทพฯ (อ่อนนุช)', lat: 13.7140, lon: 100.6020, k: ['wish'], wish: ['love', 'safe', 'luck'], god: 'แม่นาคพระโขนง', story: 'ศาลในตำนานรักของแม่นาค คนนิยมขอเรื่องความรัก การเกณฑ์ทหาร และเสี่ยงโชค', how: 'ถวายชุดไทย ของเล่นเด็ก หรือพวงมาลัย', chant: 'metta-all' },
+  // ---------- เกจิดังทั่วไทย ----------
+  { id: 'wat-paknam', th: 'วัดปากน้ำภาษีเจริญ', prov: 'กรุงเทพฯ', lat: 13.7216, lon: 100.4718, k: ['geji', 'temple', 'release'], wish: ['safe', 'health'], god: 'หลวงพ่อสด จนฺทสโร (หลวงพ่อวัดปากน้ำ)', story: 'วัดของหลวงพ่อสดผู้เผยแผ่วิชชาธรรมกาย ริมคลองภาษีเจริญ คนนิยมไหว้รูปเหมือนและพระมหาเจดีย์', how: 'ไหว้รูปเหมือนหลวงพ่อสด ขึ้นชมพระมหาเจดีย์ ให้อาหารปลาที่ท่าน้ำ', chant: 'itipiso' },
+  { id: 'wat-praduchimphli', th: 'วัดประดู่ฉิมพลี', prov: 'กรุงเทพฯ (ภาษีเจริญ)', lat: 13.7180, lon: 100.4700, k: ['geji'], wish: ['safe', 'money'], god: 'หลวงปู่โต๊ะ อินฺทสุวณฺโณ', story: 'วัดของหลวงปู่โต๊ะ เกจิดังสายเมตตา คนนิยมมากราบรูปเหมือนและสวดคาถาแก้วสารพัดนึก', how: 'กราบรูปเหมือนหลวงปู่โต๊ะ แล้วสวดคาถาของท่าน', chant: 'lp-toh' },
+  { id: 'wat-nang', th: 'วัดหนังราชวรวิหาร', prov: 'กรุงเทพฯ (จอมทอง)', lat: 13.7139, lon: 100.4512, k: ['geji'], wish: ['safe', 'work'], god: 'หลวงปู่เอี่ยม', story: 'วัดของหลวงปู่เอี่ยม ต้นตำรับพระคาถามงกุฎพระพุทธเจ้า', how: 'กราบรูปเหมือนหลวงปู่เอี่ยม สวดคาถามงกุฎพระพุทธเจ้า 9 จบ', chant: 'lp-iam' },
+  { id: 'wat-sake', th: 'วัดสะแก', prov: 'พระนครศรีอยุธยา', lat: 14.3750, lon: 100.5870, k: ['geji'], wish: ['safe', 'bad'], god: 'หลวงปู่ดู่ พฺรหฺมปญฺโญ', story: 'วัดของหลวงปู่ดู่ ผู้สอนให้ภาวนาพระคาถาพระมหาจักรพรรดิ', how: 'กราบรูปเหมือนหลวงปู่ดู่ นั่งสมาธิสั้น ๆ แล้วสวดพระคาถาพระมหาจักรพรรดิ', chant: 'lp-doo' },
+  { id: 'wat-thasung', th: 'วัดท่าซุง', full: 'วัดจันทาราม (ท่าซุง)', prov: 'อุทัยธานี', lat: 15.3690, lon: 100.0560, k: ['geji', 'temple'], wish: ['money', 'safe'], god: 'หลวงพ่อฤาษีลิงดำ (พระราชพรหมยาน)', story: 'วัดของหลวงพ่อฤาษีลิงดำ มีปราสาทแก้วและวิหารแก้วงดงาม เป็นที่มาของหนังสือสมบัติพ่อให้', how: 'กราบรูปเหมือนหลวงพ่อในปราสาทแก้ว สวดคาถาเงินล้าน', chant: 'ngoenlan' },
+  { id: 'wat-huaimongkol', th: 'วัดห้วยมงคล', prov: 'ประจวบคีรีขันธ์ (หัวหิน)', lat: 12.5300, lon: 99.8350, k: ['geji', 'wish'], wish: ['safe', 'luck'], god: 'องค์หลวงปู่ทวดองค์ใหญ่', story: 'รูปเหมือนหลวงปู่ทวดขนาดใหญ่ คนนิยมลอดท้องช้างและขอพรเรื่องแคล้วคลาด', how: 'ไหว้หลวงปู่ทวด ลอดท้องช้างตามความเชื่อ สวดคาถาหลวงปู่ทวด', chant: 'lp-thuad' },
+  { id: 'wat-changhai', th: 'วัดช้างให้', prov: 'ปัตตานี', lat: 6.7930, lon: 101.1400, k: ['geji', 'temple'], wish: ['safe'], god: 'หลวงปู่ทวด เหยียบน้ำทะเลจืด', story: 'วัดสำคัญที่ผูกกับตำนานหลวงปู่ทวด เป็นต้นทางความศรัทธาของพระเครื่องหลวงปู่ทวด', how: 'กราบรูปเหมือนหลวงปู่ทวด ตรวจสอบสถานการณ์การเดินทางในพื้นที่ก่อนไป', chant: 'lp-thuad' },
+  { id: 'wat-khaosarika', th: 'วัดเขาสาริกา', prov: 'ลพบุรี', lat: 14.8600, lon: 100.7600, k: ['geji'], wish: ['money', 'luck'], god: 'หลวงพ่อกบ', story: 'วัดบนเขาของหลวงพ่อกบ เกจิดังสายเมตตาและโชคลาภของลพบุรี', how: 'กราบรูปเหมือนหลวงพ่อกบ แล้วสวดคาถาของท่าน', chant: 'lp-kob' },
+  { id: 'wat-banrai', th: 'วัดบ้านไร่', prov: 'นครราชสีมา (ด่านขุนทด)', lat: 15.2120, lon: 101.9840, k: ['geji', 'temple'], wish: ['money', 'luck'], god: 'หลวงพ่อคูณ ปริสุทฺโธ', story: 'วัดของหลวงพ่อคูณ มีวิหารเทพวิทยาคมกลางน้ำที่สวยงาม คนนิยมมาขอพรเรื่องเงินทองและความสำเร็จ', how: 'ไหว้รูปเหมือนหลวงพ่อคูณในวิหาร สวดคาถาของท่าน', chant: 'lp-koon' },
+  { id: 'wat-bangphra', th: 'วัดบางพระ', prov: 'นครปฐม', lat: 13.8960, lon: 100.1640, k: ['geji'], wish: ['safe'], god: 'หลวงพ่อเปิ่น', story: 'วัดของหลวงพ่อเปิ่น ดังเรื่องสักยันต์และพิธีไหว้ครูประจำปี', how: 'กราบรูปเหมือนหลวงพ่อเปิ่น ถ้าจะสักยันต์ควรศึกษาข้อห้ามก่อน', chant: 'itipiso' },
+  { id: 'wat-sothon', th: 'วัดโสธร', full: 'วัดโสธรวรารามวรวิหาร', prov: 'ฉะเชิงเทรา', lat: 13.6762, lon: 101.0698, k: ['wish', 'temple'], wish: ['money', 'work', 'luck'], god: 'หลวงพ่อพุทธโสธร', story: 'พระพุทธรูปศักดิ์สิทธิ์ของภาคตะวันออก คนนิยมบนบานเรื่องงาน เงิน และสอบ แก้บนด้วยไข่ต้มหรือละคร', how: 'ไหว้หลวงพ่อโสธรในอุโบสถ ถ้าบนไว้แล้วสมหวังให้แก้บนตามที่ตั้งใจ', chant: 'sothorn' },
+  { id: 'wat-saman', th: 'วัดสมานรัตนาราม', prov: 'ฉะเชิงเทรา', lat: 13.7180, lon: 101.1140, k: ['wish'], wish: ['money', 'work', 'love'], god: 'พระพิฆเนศปางนอน และหนูบริวาร', story: 'พระพิฆเนศองค์ใหญ่ปางนอนสีชมพู คนนิยมกระซิบขอพรที่หูหนูบริวาร โดยหนูแต่ละสีรับคำขอแต่ละวัน', how: 'กระซิบขอพรที่หูหนูประจำวันเกิดแล้วปิดหูอีกข้าง ถวายผลไม้และขนมหวาน', chant: 'ganesha-wish' },
+  { id: 'wat-raikhing', th: 'วัดไร่ขิง', prov: 'นครปฐม (สามพราน)', lat: 13.7430, lon: 100.2700, k: ['temple', 'wish', 'release'], wish: ['health', 'safe', 'money'], god: 'หลวงพ่อวัดไร่ขิง', story: 'พระพุทธรูปศักดิ์สิทธิ์ริมแม่น้ำท่าจีน ท่าน้ำหน้าวัดคนนิยมให้อาหารปลาและปล่อยปลา', how: 'ไหว้หลวงพ่อวัดไร่ขิง แล้วไปปล่อยปลาหรือให้อาหารปลาที่ท่าน้ำ', chant: 'itipiso' },
+  { id: 'doi-suthep', th: 'วัดพระธาตุดอยสุเทพ', prov: 'เชียงใหม่', lat: 18.8048, lon: 98.9216, k: ['temple', 'wish'], wish: ['work', 'safe'], god: 'พระบรมสารีริกธาตุ (พระธาตุประจำปีมะแม)', story: 'พระธาตุคู่เมืองเชียงใหม่ ขึ้นบันไดนาค 306 ขั้น เป็นพระธาตุประจำปีเกิดของคนปีมะแม', how: 'เวียนเทียนรอบพระธาตุตามเข็มนาฬิกา 3 รอบ', chant: 'itipiso' },
+  { id: 'that-phanom', th: 'พระธาตุพนม', prov: 'นครพนม', lat: 16.9423, lon: 104.7236, k: ['temple', 'wish'], wish: ['safe', 'health'], god: 'พระอุรังคธาตุ (พระธาตุประจำปีวอก)', story: 'พระธาตุศักดิ์สิทธิ์ของสองฝั่งโขง เป็นพระธาตุประจำปีเกิดของคนปีวอก', how: 'ไหว้พระธาตุ แล้วเดินชมริมโขง', chant: 'itipiso' },
+  // ---------- ปล่อยปลา ----------
+  { id: 'tha-tien', th: 'ท่าน้ำวัดอรุณ–ท่าเตียน', prov: 'กรุงเทพฯ', lat: 13.7457, lon: 100.4905, k: ['release'], wish: ['health', 'bad'], god: 'แม่น้ำเจ้าพระยา', story: 'ท่าน้ำริมเจ้าพระยาย่านวัดโพธิ์และวัดอรุณ เดินทางสะดวก ทำบุญไหว้พระแล้วปล่อยปลาต่อได้', how: 'ปล่อยปลาพื้นถิ่นที่อยู่ในน้ำไหลได้ เช่น ปลาตะเพียน ปลาสวาย ห้ามปล่อยปลาต่างถิ่น', chant: 'metta-all' },
+  // ---------- มูลนิธิ ----------
+  { id: 'ruamkatanyu', th: 'มูลนิธิร่วมกตัญญู', prov: 'กรุงเทพฯ', lat: 13.7700, lon: 100.5500, k: ['found'], wish: ['bad', 'health'], god: 'บริจาคโลงศพ ช่วยเก็บศพไร้ญาติ', story: 'มูลนิธิกู้ภัยที่รับบริจาคโลงศพให้ผู้เสียชีวิตไร้ญาติ ตามความเชื่อช่วยต่ออายุและผ่อนเคราะห์หนักให้เบา', how: 'โทรสอบถามช่องทางบริจาค หรือบริจาคที่สำนักงานมูลนิธิ ขอใบอนุโมทนาไว้ลดหย่อนภาษีได้', chant: 'kruadnam' },
+  { id: 'poh-teck-tung', th: 'มูลนิธิป่อเต็กตึ๊ง', prov: 'กรุงเทพฯ (พลับพลาไชย)', lat: 13.7355, lon: 100.5150, k: ['found'], wish: ['bad', 'health'], god: 'บริจาคโลงศพ ช่วยผู้ประสบภัย', story: 'มูลนิธิการกุศลเก่าแก่ของคนไทยเชื้อสายจีน ช่วยเหลือผู้ยากไร้ ผู้ประสบภัย และบริจาคโลงศพ', how: 'บริจาคได้ที่สำนักงานใหญ่ ใกล้ศาลเจ้าไต้ฮงกงที่คนนิยมไหว้ควบคู่กัน', chant: 'kruadnam' },
+  { id: 'babies-home', th: 'สถานสงเคราะห์เด็กอ่อนพญาไท', prov: 'กรุงเทพฯ (ราชวิถี)', lat: 13.7700, lon: 100.5360, k: ['found'], wish: ['child', 'love'], god: 'ทำบุญเด็กเล็กกำพร้า', story: 'ดูแลเด็กเล็กที่ขาดผู้ดูแล รับบริจาคนมผง ผ้าอ้อม ของใช้เด็ก และเงิน', how: 'โทรสอบถามของที่ต้องการก่อนไป บางวันเปิดให้เลี้ยงอาหารกลางวันเด็ก', chant: 'metta-all' },
+  { id: 'school-blind', th: 'โรงเรียนสอนคนตาบอดกรุงเทพ', full: 'มูลนิธิช่วยคนตาบอดแห่งประเทศไทย ในพระบรมราชินูปถัมภ์', prov: 'กรุงเทพฯ (ราชเทวี)', lat: 13.7660, lon: 100.5390, k: ['found'], wish: ['study', 'health'], god: 'ทำบุญเพื่อคนพิการทางการเห็น', story: 'ดูแลการศึกษาของเด็กพิการทางการเห็น รับบริจาคทุนการศึกษาและอุปกรณ์', how: 'บริจาคทุนการศึกษาหรือสนับสนุนอาหารกลางวัน ติดต่อมูลนิธิก่อน', chant: 'metta-all' },
+  { id: 'disabled-found', th: 'มูลนิธิอนุเคราะห์คนพิการ', full: 'มูลนิธิอนุเคราะห์คนพิการ ในพระราชูปถัมภ์ของสมเด็จพระศรีนครินทราบรมราชชนนี', prov: 'นนทบุรี (ปากเกร็ด)', lat: 13.9130, lon: 100.4980, k: ['found'], wish: ['health', 'bad'], god: 'ทำบุญเพื่อคนพิการทางร่างกาย', story: 'ช่วยเหลือคนพิการด้านอุปกรณ์ การฟื้นฟู และอาชีพ', how: 'บริจาคเงินหรืออุปกรณ์ เช่น รถเข็น ติดต่อมูลนิธิก่อน', chant: 'metta-all' },
+  { id: 'sos-children', th: 'มูลนิธิหมู่บ้านเด็กโสสะ', full: 'มูลนิธิหมู่บ้านเด็กโสสะแห่งประเทศไทย ในพระบรมราชินูปถัมภ์', prov: 'กรุงเทพฯ และหลายจังหวัด', lat: 13.8300, lon: 100.6500, k: ['found'], wish: ['child', 'love'], god: 'ทำบุญเพื่อเด็กที่ขาดครอบครัว', story: 'ดูแลเด็กกำพร้าและเด็กที่ขาดการดูแลให้เติบโตในรูปแบบครอบครัว มีหมู่บ้านในหลายจังหวัด', how: 'บริจาคหรืออุปการะเด็กรายเดือน ติดต่อมูลนิธิ', chant: 'metta-all' },
+  // ---------- บริจาคโลหิต ----------
+  { id: 'blood-center', th: 'ศูนย์บริการโลหิตแห่งชาติ สภากาชาดไทย', prov: 'กรุงเทพฯ (ถนนอังรีดูนังต์)', lat: 13.7372, lon: 100.5358, k: ['blood'], wish: ['health', 'bad'], god: 'บริจาคโลหิต อวัยวะ และดวงตา', story: 'จุดรับบริจาคหลักของประเทศ เลือดหนึ่งถุงช่วยชีวิตคนได้จริง ตามความเชื่อถือเป็นทานที่ต่ออายุ', how: 'พักผ่อนให้พอ กินอาหารก่อนไป พกบัตรประชาชน โทร 0 2263 9600 หรือดูจุดรับบริจาคล่าสุดที่เว็บไซต์ศูนย์ฯ', chant: 'metta-all' }
+];
+const muPlaceById = (id) => MU_PLACES.find((p) => p.id === id);
+
 // ---- js/forecast.js ----
 // Unified daily forecast: one score per day that every screen shares (home card, opening sheet, 7-day strip).
 // It weighs five readings of the same day:
@@ -6315,6 +6411,7 @@ function dreamLookup(text) {
 //   เลข 10%    numerology "personal day" (birth day + month + today's date)
 //   จันทรคติ 5% the Thai lunar day (ข้างขึ้น/แรม, วันพระ, ฤกษ์ใหญ่, อุปราคา)
 // It also turns the reading into plain-language advice that links to other rooms of the app.
+
 
 
 
@@ -6455,7 +6552,8 @@ function adviceFor(fc, w) {
   // Family focus: the Moon in the 4th (Western or Thai) or a บริวาร day.
   if (fc.westMoonHouse === 4 || fc.thaiMoonHouse === 4 || fc.pos.id === 'boriwan') {
     const t = TEMPLES[seed % TEMPLES.length];
-    out.push({ tone: 1, text: `วันนี้ควรใช้เวลากับครอบครัว ลองชวนที่บ้านไปไหว้พระที่${t.th} ขอพรเรื่อง${t.wish}`, link: { href: '#/prayer', label: 'บทสวดก่อนไปวัด' } });
+    const pl = MU_PLACES.find((x) => x.th.includes(t.th.replace(/^วัด/, '')));
+    out.push({ tone: 1, text: `วันนี้ควรใช้เวลากับครอบครัว ลองชวนที่บ้านไปไหว้พระที่${t.th} ขอพรเรื่อง${t.wish}`, link: pl ? { href: 'map:' + pl.id, label: 'ดูในแผนที่มู' } : { href: '#/prayer', label: 'บทสวดก่อนไปวัด' } });
   }
   if (fc.pos.id === 'kalakini') {
     const av = luckOf(fc.birthPlanet).avoid;
@@ -6699,6 +6797,7 @@ function logoRing() {
 
 
 
+
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
@@ -6721,6 +6820,7 @@ const state = {
   tarot: { topic: 0, spread: 3, histAll: false, logged: false, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
+  map: { cat: 'all', wish: null, sel: null, me: null },
   pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null, tree: { tied: false, digits: null, done: false, kind: null }, hist: [] },
@@ -6757,7 +6857,8 @@ const IC = {
   more: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><circle cx="16.75" cy="16.75" r="3.25"/>',
   dream: '<path d="M14.5 4.5a7 7 0 1 0 5 11.4A7.5 7.5 0 0 1 14.5 4.5z"/><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6z"/>',
   privacy: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><rect x="9.5" y="10.5" width="5" height="4.5" rx="1"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/>',
-  setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'
+  setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  map: '<path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z"/><path d="M12 6.5l.9 2 2.1.3-1.5 1.5.4 2.1-1.9-1-1.9 1 .4-2.1-1.5-1.5 2.1-.3z"/>'
 };
 const icon = (name, size = 20, sw = 1.4) => `<svg aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${IC[name]}</svg>`;
 
@@ -6897,7 +6998,7 @@ function todayOracle() {
   return { d0, fc, total: fc.total, scores: fc.scores, advice: fc.advice, lun, lunLine, holyLine, special, events: lun ? lun.events : [],
     date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]}`, verdict: VERDICT[fc.rating], col: VERDICT_COL[fc.rating], luck: luckToday() };
 }
-const advHref = (l) => l.href.startsWith('prayer:') ? `href="#/prayer" data-act="openPrayer" data-v="${l.href.slice(7)}"` : `href="${l.href}"`;
+const advHref = (l) => l.href.startsWith('map:') ? `href="#/map" data-act="mapOpen" data-v="${l.href.slice(4)}"` : l.href.startsWith('prayer:') ? `href="#/prayer" data-act="openPrayer" data-v="${l.href.slice(7)}"` : `href="${l.href}"`;
 function adviceHTML(list) {
   return `<ul class="ora-adv">${list.map((a) => `<li class="${a.tone < 0 ? 'neg' : a.tone > 0 ? 'pos' : ''}"><i aria-hidden="true">${a.tone < 0 ? '!' : '✓'}</i><span>${a.text}${a.link ? ` <a class="ora-go" ${advHref(a.link)}>${a.link.label} ›</a>` : ''}</span></li>`).join('')}</ul>`;
 }
@@ -6975,7 +7076,8 @@ function viewHome() {
     ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
     ['prayer', 'บทสวด', 'แก้ดวง เสริมดวง', 'var(--gold-2)'],
     ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
-    ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)']
+    ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'],
+    ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)']
   ];
   return `<main class="screen home">
 <header class="home-head">
@@ -6986,7 +7088,7 @@ function viewHome() {
 </header>
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <div id="oracle-card">${oracleHeroA()}</div>
-<nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}<button class="oracle" data-act="moreOpen" style="--c:var(--muted)"><span class="sigil">${icon('more', 20)}</span><span class="n">เพิ่มเติม</span></button></nav>
+<nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
 <div id="install-slot">${installHTML()}</div>
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
@@ -8260,7 +8362,7 @@ const CAT_TOPIC = ['love', 'work', 'money', 'health'];
 function remedyCard(plan, open = false) {
   return `<section class="rm-card sense${open ? ' open' : ''} lv${plan.level}">
 <button class="rm-head" data-act="senseToggle" aria-expanded="${open}"><span class="rm-ic">☸</span><span class="rm-t"><b>${plan.title}</b><span>${plan.reason}</span></span><span class="rm-n">${plan.steps.length} วิธี</span><span class="chev">${icon('down', 14, 1.6)}</span></button>
-<div class="fold"><div class="fold-in"><ol class="rm-steps">${plan.steps.map((s) => `<li><span class="rm-si">${s.ic}</span><span class="rm-sb"><span class="rm-k">${s.k}</span><b>${s.t}</b>${s.d && s.d !== s.t ? `<span>${s.d}</span>` : ''}${s.chant ? `<a href="#/prayer" data-act="openPrayer" data-v="${s.chant}" class="rm-go">เปิดบทสวด ›</a>` : ''}${s.src ? `<i>ที่มา: ${s.src}</i>` : ''}</span></li>`).join('')}</ol>
+<div class="fold"><div class="fold-in"><ol class="rm-steps">${plan.steps.map((s) => `<li><span class="rm-si">${s.ic}</span><span class="rm-sb"><span class="rm-k">${s.k}</span><b>${s.t}</b>${s.d && s.d !== s.t ? `<span>${s.d}</span>` : ''}${s.chant ? `<a href="#/prayer" data-act="openPrayer" data-v="${s.chant}" class="rm-go">เปิดบทสวด ›</a>` : ''}${s.map ? `<a href="#/map" data-act="mapCat" data-v="${s.map}" class="rm-go">ดูสถานที่ในแผนที่มู ›</a>` : ''}${s.src ? `<i>ที่มา: ${s.src}</i>` : ''}</span></li>`).join('')}</ol>
 <p class="rm-foot">ทำเท่าที่สะดวกและตามกำลังทรัพย์ ทุกข้อเป็นความเชื่อตามประเพณีไทย ที่ได้ผลแน่นอนคือใจที่สงบลงและความดีที่ได้ทำ</p></div></div></section>`;
 }
 // What troubles the person right now: a hard transit from a heavy planet, or a low day score.
@@ -8567,7 +8669,7 @@ ${ws.some((w) => w.kind === 'care') ? remedyCard(remedyPlan({ planetNo: 7, topic
 // ---------------- router ----------------
 // Routes live in memory (and are mirrored to the URL hash when the host allows it),
 // so the app also works inside sandboxed frames that ignore hash changes.
-const NEEDS_PROFILE = ['dream', 'home', 'chart', 'match', 'ask'];
+const NEEDS_PROFILE = ['map', 'dream', 'home', 'chart', 'match', 'ask'];
 // Opening the app always starts at home. Home-screen shortcuts pass ?go=<room> to open a room directly.
 let current = (() => { try { return new URLSearchParams(location.search).get('go') || ''; } catch (e) { return ''; } })();
 try { history.replaceState(null, '', location.pathname); } catch (e) { /* not allowed in some frames */ }
@@ -8662,7 +8764,7 @@ const ROOMS = [
   ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
   ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
   ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
-  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
+  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
   ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)']
 ];
 const NAV_ROUTES = ['home', 'chart', 'tarot', 'numbers', 'luck'];
@@ -8744,7 +8846,104 @@ ${state.pvConfirm ? `<div class="pv-row"><button class="btn pv-danger" data-act=
 }
 const LOCK_NOTE = '<p class="lock-note">🔒 ประมวลผลในเครื่องนี้เท่านั้น ไม่บันทึก ไม่ส่งออก · <a href="#/privacy">ความเป็นส่วนตัว</a></p>';
 
-const VIEWS = { dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- แผนที่มู ----------------
+const LEAFLET = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/';
+let leafletState = 'idle'; // idle | loading | ready | failed
+function ensureLeaflet(cb) {
+  if (window.L && window.L.map) { leafletState = 'ready'; cb(); return; }
+  if (leafletState === 'failed') { cb(); return; }
+  if (leafletState === 'loading') { setTimeout(() => ensureLeaflet(cb), 300); return; }
+  leafletState = 'loading';
+  const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = LEAFLET + 'leaflet.min.css'; document.head.appendChild(css);
+  const js = document.createElement('script'); js.src = LEAFLET + 'leaflet.min.js';
+  const fail = () => { leafletState = 'failed'; cb(); };
+  const timer = setTimeout(fail, 9000);
+  js.onload = () => { clearTimeout(timer); leafletState = window.L ? 'ready' : 'failed'; cb(); };
+  js.onerror = () => { clearTimeout(timer); fail(); };
+  document.head.appendChild(js);
+}
+const muCat = (id) => MU_CATS.find((c) => c.id === id) || MU_CATS[0];
+const gmapsDir = (p) => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.th + ' ' + p.prov.replace(/\s*\(.*\)/, ''))}`;
+const gmapsFind = (p) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.full || p.th) + ' ' + p.prov.replace(/\s*\(.*\)/, ''))}`;
+function kmBetween(a, b) {
+  const R = 6371, r = Math.PI / 180, dLat = (b.lat - a.lat) * r, dLon = (b.lon - a.lon) * r;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+function muList() {
+  const m = state.map;
+  let list = MU_PLACES.filter((p) => (m.cat === 'all' || p.k.includes(m.cat)) && (!m.wish || p.wish.includes(m.wish)));
+  if (m.me) list = list.map((p) => ({ ...p, km: kmBetween(m.me, p) })).sort((a, b) => a.km - b.km);
+  return list;
+}
+function muCardHTML(p, open) {
+  const pr = p.chant ? prayerById(p.chant) : null, c = muCat(p.k[0]);
+  return `<article class="mu-card${open ? ' open' : ''}" id="mu-${p.id}" style="--c:${c.col}">
+<button class="mu-head" data-act="muSel" data-v="${p.id}" aria-expanded="${open}"><span class="mu-dot" aria-hidden="true"></span>
+<span class="mu-t"><b>${p.th}</b><span>${p.prov}${p.km != null ? ` · ${p.km < 10 ? p.km.toFixed(1) : Math.round(p.km)} กม.` : ''}</span></span><span class="chev">${icon('down', 16, 1.6)}</span></button>
+<div class="mu-tags">${p.k.map((k) => `<span>${muCat(k).th}</span>`).join('')}${p.wish.slice(0, 3).map((w) => `<span class="w">${MU_WISH[w]}</span>`).join('')}</div>
+${open ? `<div class="mu-body">${p.full && p.full !== p.th ? `<p class="small" style="margin:0">${p.full}</p>` : ''}
+<p class="mu-god">✦ ${p.god}</p><p class="body" style="font-size:14px;margin:0">${p.story}</p><p class="small mu-how">วิธีไหว้ / สิ่งที่ควรรู้: ${p.how}</p>
+<div class="mu-btns"><a class="btn" href="${gmapsDir(p)}" target="_blank" rel="noopener">นำทาง</a><a class="btn btn-line" href="${gmapsFind(p)}" target="_blank" rel="noopener">ดูใน Google Maps</a></div>
+<div class="ask-links">${pr ? `<a href="#/prayer" data-act="openPrayer" data-v="${pr.id}" class="ask-link">☸ ${pr.th}</a>` : ''}${p.k.includes('blood') ? `<a href="${BLOOD_LINK}" target="_blank" rel="noopener" class="ask-link">♥ จุดรับบริจาควันนี้ (สภากาชาดไทย)</a>` : ''}</div></div>` : ''}
+</article>`;
+}
+function muListHTML() {
+  const list = muList(), sel = state.map.sel;
+  return list.length ? list.map((p) => muCardHTML(p, p.id === sel)).join('') : '<p class="small">ยังไม่มีสถานที่ในหมวดนี้</p>';
+}
+function viewMap() {
+  const m = state.map;
+  return `<main class="screen" style="--accent:var(--amber)">
+${pageHead('11', 'MU MAP', 'แผนที่มู', 'var(--amber)', 'map')}
+<div class="mu-map-wrap"><div id="mu-map" class="mu-map" aria-label="แผนที่สถานที่มู"></div><button class="mu-near" data-act="muNear">${m.me ? '◉ ใกล้ฉัน' : '◎ ใกล้ฉัน'}</button></div>
+<div class="mu-cats hscroll">${MU_CATS.map((c) => `<button class="chip" style="--accent:${c.col}" data-act="muCat" data-v="${c.id}" aria-pressed="${m.cat === c.id}">${c.th}</button>`).join('')}</div>
+${m.cat === 'wish' || m.wish ? `<div class="mu-cats hscroll">${Object.entries(MU_WISH).map(([k, t]) => `<button class="chip small-chip" data-act="muWish" data-v="${k}" aria-pressed="${m.wish === k}">${t}</button>`).join('')}</div>` : ''}
+${m.cat === 'blood' ? `<a class="mu-blood" href="${BLOOD_LINK}" target="_blank" rel="noopener"><b>♥ ดูจุดรับบริจาคโลหิตล่าสุด</b><span>หน่วยเคลื่อนที่เปลี่ยนทุกวัน ดูตารางที่เว็บไซต์ศูนย์บริการโลหิตแห่งชาติ สภากาชาดไทย</span></a>` : ''}
+<section id="mu-list" class="mu-list">${muListHTML()}</section>
+<p class="small" style="font-size:11px">หมุดบนแผนที่เป็นตำแหน่งโดยประมาณ ปุ่มนำทางจะค้นชื่อสถานที่ใน Google Maps ให้ตรงตำแหน่งจริง · ข้อมูลเรื่องเล่าและการขอพรเป็นความเชื่อ · แผนที่ © ผู้ร่วมพัฒนา OpenStreetMap</p>
+</main>`;
+}
+let muMap = null, muLayer = null;
+function mountMap() {
+  const el = document.getElementById('mu-map');
+  if (!el) { muMap = null; return; }
+  document.querySelectorAll('.mu-cats').forEach((row) => { const on = row.querySelector('[aria-pressed="true"]'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; });
+  ensureLeaflet(() => {
+    if (!document.body.contains(el)) return;
+    if (muMap) { try { muMap.remove(); } catch (e) {} muMap = null; muLayer = null; }
+    if (leafletState !== 'ready') { el.classList.add('fail'); el.innerHTML = '<p>แผนที่โหลดไม่ได้ตอนนี้ (ต้องต่ออินเทอร์เน็ต) ใช้รายการด้านล่างและปุ่มนำทางแทนได้</p>'; return; }
+    const L = window.L;
+    muMap = L.map(el, { zoomControl: false, attributionControl: true }).setView([13.75, 100.52], 11);
+    L.control.zoom({ position: 'bottomright' }).addTo(muMap);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '© OpenStreetMap' }).addTo(muMap);
+    drawPins();
+  });
+}
+function drawPins() {
+  if (!muMap) return;
+  const L = window.L, m = state.map;
+  if (muLayer) muLayer.remove();
+  muLayer = L.layerGroup().addTo(muMap);
+  const list = muList();
+  for (const p of list) {
+    const c = muCat(m.cat !== 'all' && p.k.includes(m.cat) ? m.cat : p.k[0]);
+    L.circleMarker([p.lat, p.lon], { radius: p.id === m.sel ? 10 : 7, color: '#0D0B08', weight: 2, fillColor: c.col, fillOpacity: 0.95 })
+      .addTo(muLayer).bindTooltip(p.th, { direction: 'top' }).on('click', () => muSelect(p.id, true));
+  }
+  if (m.me) L.circleMarker([m.me.lat, m.me.lon], { radius: 8, color: '#fff', weight: 3, fillColor: '#5E92DA', fillOpacity: 1 }).addTo(muLayer).bindTooltip('คุณอยู่ที่นี่');
+  const sel = m.sel && list.find((p) => p.id === m.sel);
+  if (sel) muMap.setView([sel.lat, sel.lon], Math.max(muMap.getZoom(), 13));
+  else if (list.length) muMap.fitBounds(L.latLngBounds(list.map((p) => [p.lat, p.lon]).concat(m.me ? [[m.me.lat, m.me.lon]] : [])), { padding: [24, 24], maxZoom: 13 });
+}
+function muRefresh() { const box = document.getElementById('mu-list'); if (box) box.innerHTML = muListHTML(); drawPins(); }
+function muSelect(id, scroll) {
+  state.map.sel = state.map.sel === id && !scroll ? null : id;
+  muRefresh();
+  if (scroll) { const c = document.getElementById('mu-' + id); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+}
+
+const VIEWS = { map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -8756,8 +8955,9 @@ function render() {
   if (r === 'home') startLive(); else clearInterval(liveTimer);
   if (r === 'home' && showOraSheet() && !document.getElementById('ora-sheet')) document.body.insertAdjacentHTML('beforeend', oracleSheetB());
   mountLuck();
+  if (r === 'map') mountMap();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -8775,6 +8975,8 @@ document.addEventListener('click', (e) => {
     closeMore();
     if (el && el.dataset.act === 'chartTab') state.chartTab = +el.dataset.i;
     if (el && el.dataset.act === 'openPrayer') { state.prayer.open = el.dataset.v; state.prayer.back = route(); }
+    if (el && el.dataset.act === 'mapOpen') Object.assign(state.map, { cat: 'all', wish: null, sel: el.dataset.v });
+    if (el && el.dataset.act === 'mapCat') Object.assign(state.map, { cat: el.dataset.v, wish: null, sel: null });
     go(link.getAttribute('href').slice(2));
     return;
   }
@@ -8928,6 +9130,15 @@ document.addEventListener('click', (e) => {
     case 'ssReset': state.luck.ss = null; break;
     case 'ssMotion': askMotion().then((ok) => toast(ok ? 'พร้อมแล้ว เขย่ามือถือได้เลย' : 'เครื่องนี้ไม่รองรับการเขย่า ใช้วิธีกดค้างแทน')); return;
     case 'askChip': ask(el.dataset.q); return;
+    case 'muCat': Object.assign(state.map, { cat: el.dataset.v, wish: el.dataset.v === 'wish' ? state.map.wish : null, sel: null }); break;
+    case 'muWish': state.map.wish = state.map.wish === el.dataset.v ? null : el.dataset.v; state.map.cat = 'wish'; state.map.sel = null; break;
+    case 'muSel': muSelect(el.dataset.v, false); return;
+    case 'muNear': {
+      if (!navigator.geolocation) { toast('เครื่องนี้หาตำแหน่งไม่ได้'); return; }
+      toast('กำลังหาตำแหน่งของคุณ…');
+      navigator.geolocation.getCurrentPosition((pos) => { state.map.me = { lat: pos.coords.latitude, lon: pos.coords.longitude }; state.map.sel = null; if (route() === 'map') render(); }, () => toast('ยังไม่ได้รับอนุญาตให้ใช้ตำแหน่ง'), { timeout: 10000, maximumAge: 600000 });
+      return;
+    }
     case 'moreOpen': { if (!document.getElementById('more-sheet')) document.body.insertAdjacentHTML('beforeend', moreSheetHTML()); return; }
     case 'moreClose': closeMore(); return;
     case 'dreamPick': state.dream.sel = el.dataset.v; state.dream.saved = false; break;

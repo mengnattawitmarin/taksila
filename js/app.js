@@ -16,6 +16,7 @@ import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, ch
 import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
 import { forecastDay, aspectEffect, ingressEffect } from './forecast.js';
 import { nextHolyDay, upcomingSpecial } from './lunar.js';
+import { MU_PLACES, MU_CATS, MU_WISH, BLOOD_LINK } from './places.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf, dayPlanet } from './thai.js';
 
 // ---------------- storage ----------------
@@ -40,6 +41,7 @@ const state = {
   tarot: { topic: 0, spread: 3, histAll: false, logged: false, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
+  map: { cat: 'all', wish: null, sel: null, me: null },
   pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null, tree: { tied: false, digits: null, done: false, kind: null }, hist: [] },
@@ -76,7 +78,8 @@ const IC = {
   more: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><circle cx="16.75" cy="16.75" r="3.25"/>',
   dream: '<path d="M14.5 4.5a7 7 0 1 0 5 11.4A7.5 7.5 0 0 1 14.5 4.5z"/><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6z"/>',
   privacy: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><rect x="9.5" y="10.5" width="5" height="4.5" rx="1"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/>',
-  setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'
+  setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  map: '<path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z"/><path d="M12 6.5l.9 2 2.1.3-1.5 1.5.4 2.1-1.9-1-1.9 1 .4-2.1-1.5-1.5 2.1-.3z"/>'
 };
 const icon = (name, size = 20, sw = 1.4) => `<svg aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${IC[name]}</svg>`;
 
@@ -216,7 +219,7 @@ function todayOracle() {
   return { d0, fc, total: fc.total, scores: fc.scores, advice: fc.advice, lun, lunLine, holyLine, special, events: lun ? lun.events : [],
     date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]}`, verdict: VERDICT[fc.rating], col: VERDICT_COL[fc.rating], luck: luckToday() };
 }
-const advHref = (l) => l.href.startsWith('prayer:') ? `href="#/prayer" data-act="openPrayer" data-v="${l.href.slice(7)}"` : `href="${l.href}"`;
+const advHref = (l) => l.href.startsWith('map:') ? `href="#/map" data-act="mapOpen" data-v="${l.href.slice(4)}"` : l.href.startsWith('prayer:') ? `href="#/prayer" data-act="openPrayer" data-v="${l.href.slice(7)}"` : `href="${l.href}"`;
 function adviceHTML(list) {
   return `<ul class="ora-adv">${list.map((a) => `<li class="${a.tone < 0 ? 'neg' : a.tone > 0 ? 'pos' : ''}"><i aria-hidden="true">${a.tone < 0 ? '!' : '✓'}</i><span>${a.text}${a.link ? ` <a class="ora-go" ${advHref(a.link)}>${a.link.label} ›</a>` : ''}</span></li>`).join('')}</ul>`;
 }
@@ -294,7 +297,8 @@ function viewHome() {
     ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
     ['prayer', 'บทสวด', 'แก้ดวง เสริมดวง', 'var(--gold-2)'],
     ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
-    ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)']
+    ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'],
+    ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)']
   ];
   return `<main class="screen home">
 <header class="home-head">
@@ -305,7 +309,7 @@ function viewHome() {
 </header>
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <div id="oracle-card">${oracleHeroA()}</div>
-<nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}<button class="oracle" data-act="moreOpen" style="--c:var(--muted)"><span class="sigil">${icon('more', 20)}</span><span class="n">เพิ่มเติม</span></button></nav>
+<nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
 <div id="install-slot">${installHTML()}</div>
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
@@ -1579,7 +1583,7 @@ const CAT_TOPIC = ['love', 'work', 'money', 'health'];
 function remedyCard(plan, open = false) {
   return `<section class="rm-card sense${open ? ' open' : ''} lv${plan.level}">
 <button class="rm-head" data-act="senseToggle" aria-expanded="${open}"><span class="rm-ic">☸</span><span class="rm-t"><b>${plan.title}</b><span>${plan.reason}</span></span><span class="rm-n">${plan.steps.length} วิธี</span><span class="chev">${icon('down', 14, 1.6)}</span></button>
-<div class="fold"><div class="fold-in"><ol class="rm-steps">${plan.steps.map((s) => `<li><span class="rm-si">${s.ic}</span><span class="rm-sb"><span class="rm-k">${s.k}</span><b>${s.t}</b>${s.d && s.d !== s.t ? `<span>${s.d}</span>` : ''}${s.chant ? `<a href="#/prayer" data-act="openPrayer" data-v="${s.chant}" class="rm-go">เปิดบทสวด ›</a>` : ''}${s.src ? `<i>ที่มา: ${s.src}</i>` : ''}</span></li>`).join('')}</ol>
+<div class="fold"><div class="fold-in"><ol class="rm-steps">${plan.steps.map((s) => `<li><span class="rm-si">${s.ic}</span><span class="rm-sb"><span class="rm-k">${s.k}</span><b>${s.t}</b>${s.d && s.d !== s.t ? `<span>${s.d}</span>` : ''}${s.chant ? `<a href="#/prayer" data-act="openPrayer" data-v="${s.chant}" class="rm-go">เปิดบทสวด ›</a>` : ''}${s.map ? `<a href="#/map" data-act="mapCat" data-v="${s.map}" class="rm-go">ดูสถานที่ในแผนที่มู ›</a>` : ''}${s.src ? `<i>ที่มา: ${s.src}</i>` : ''}</span></li>`).join('')}</ol>
 <p class="rm-foot">ทำเท่าที่สะดวกและตามกำลังทรัพย์ ทุกข้อเป็นความเชื่อตามประเพณีไทย ที่ได้ผลแน่นอนคือใจที่สงบลงและความดีที่ได้ทำ</p></div></div></section>`;
 }
 // What troubles the person right now: a hard transit from a heavy planet, or a low day score.
@@ -1886,7 +1890,7 @@ ${ws.some((w) => w.kind === 'care') ? remedyCard(remedyPlan({ planetNo: 7, topic
 // ---------------- router ----------------
 // Routes live in memory (and are mirrored to the URL hash when the host allows it),
 // so the app also works inside sandboxed frames that ignore hash changes.
-const NEEDS_PROFILE = ['dream', 'home', 'chart', 'match', 'ask'];
+const NEEDS_PROFILE = ['map', 'dream', 'home', 'chart', 'match', 'ask'];
 // Opening the app always starts at home. Home-screen shortcuts pass ?go=<room> to open a room directly.
 let current = (() => { try { return new URLSearchParams(location.search).get('go') || ''; } catch (e) { return ''; } })();
 try { history.replaceState(null, '', location.pathname); } catch (e) { /* not allowed in some frames */ }
@@ -1981,7 +1985,7 @@ const ROOMS = [
   ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
   ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
   ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
-  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
+  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
   ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)']
 ];
 const NAV_ROUTES = ['home', 'chart', 'tarot', 'numbers', 'luck'];
@@ -2063,7 +2067,104 @@ ${state.pvConfirm ? `<div class="pv-row"><button class="btn pv-danger" data-act=
 }
 const LOCK_NOTE = '<p class="lock-note">🔒 ประมวลผลในเครื่องนี้เท่านั้น ไม่บันทึก ไม่ส่งออก · <a href="#/privacy">ความเป็นส่วนตัว</a></p>';
 
-const VIEWS = { dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- แผนที่มู ----------------
+const LEAFLET = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/';
+let leafletState = 'idle'; // idle | loading | ready | failed
+function ensureLeaflet(cb) {
+  if (window.L && window.L.map) { leafletState = 'ready'; cb(); return; }
+  if (leafletState === 'failed') { cb(); return; }
+  if (leafletState === 'loading') { setTimeout(() => ensureLeaflet(cb), 300); return; }
+  leafletState = 'loading';
+  const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = LEAFLET + 'leaflet.min.css'; document.head.appendChild(css);
+  const js = document.createElement('script'); js.src = LEAFLET + 'leaflet.min.js';
+  const fail = () => { leafletState = 'failed'; cb(); };
+  const timer = setTimeout(fail, 9000);
+  js.onload = () => { clearTimeout(timer); leafletState = window.L ? 'ready' : 'failed'; cb(); };
+  js.onerror = () => { clearTimeout(timer); fail(); };
+  document.head.appendChild(js);
+}
+const muCat = (id) => MU_CATS.find((c) => c.id === id) || MU_CATS[0];
+const gmapsDir = (p) => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(p.th + ' ' + p.prov.replace(/\s*\(.*\)/, ''))}`;
+const gmapsFind = (p) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((p.full || p.th) + ' ' + p.prov.replace(/\s*\(.*\)/, ''))}`;
+function kmBetween(a, b) {
+  const R = 6371, r = Math.PI / 180, dLat = (b.lat - a.lat) * r, dLon = (b.lon - a.lon) * r;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+function muList() {
+  const m = state.map;
+  let list = MU_PLACES.filter((p) => (m.cat === 'all' || p.k.includes(m.cat)) && (!m.wish || p.wish.includes(m.wish)));
+  if (m.me) list = list.map((p) => ({ ...p, km: kmBetween(m.me, p) })).sort((a, b) => a.km - b.km);
+  return list;
+}
+function muCardHTML(p, open) {
+  const pr = p.chant ? prayerById(p.chant) : null, c = muCat(p.k[0]);
+  return `<article class="mu-card${open ? ' open' : ''}" id="mu-${p.id}" style="--c:${c.col}">
+<button class="mu-head" data-act="muSel" data-v="${p.id}" aria-expanded="${open}"><span class="mu-dot" aria-hidden="true"></span>
+<span class="mu-t"><b>${p.th}</b><span>${p.prov}${p.km != null ? ` · ${p.km < 10 ? p.km.toFixed(1) : Math.round(p.km)} กม.` : ''}</span></span><span class="chev">${icon('down', 16, 1.6)}</span></button>
+<div class="mu-tags">${p.k.map((k) => `<span>${muCat(k).th}</span>`).join('')}${p.wish.slice(0, 3).map((w) => `<span class="w">${MU_WISH[w]}</span>`).join('')}</div>
+${open ? `<div class="mu-body">${p.full && p.full !== p.th ? `<p class="small" style="margin:0">${p.full}</p>` : ''}
+<p class="mu-god">✦ ${p.god}</p><p class="body" style="font-size:14px;margin:0">${p.story}</p><p class="small mu-how">วิธีไหว้ / สิ่งที่ควรรู้: ${p.how}</p>
+<div class="mu-btns"><a class="btn" href="${gmapsDir(p)}" target="_blank" rel="noopener">นำทาง</a><a class="btn btn-line" href="${gmapsFind(p)}" target="_blank" rel="noopener">ดูใน Google Maps</a></div>
+<div class="ask-links">${pr ? `<a href="#/prayer" data-act="openPrayer" data-v="${pr.id}" class="ask-link">☸ ${pr.th}</a>` : ''}${p.k.includes('blood') ? `<a href="${BLOOD_LINK}" target="_blank" rel="noopener" class="ask-link">♥ จุดรับบริจาควันนี้ (สภากาชาดไทย)</a>` : ''}</div></div>` : ''}
+</article>`;
+}
+function muListHTML() {
+  const list = muList(), sel = state.map.sel;
+  return list.length ? list.map((p) => muCardHTML(p, p.id === sel)).join('') : '<p class="small">ยังไม่มีสถานที่ในหมวดนี้</p>';
+}
+function viewMap() {
+  const m = state.map;
+  return `<main class="screen" style="--accent:var(--amber)">
+${pageHead('11', 'MU MAP', 'แผนที่มู', 'var(--amber)', 'map')}
+<div class="mu-map-wrap"><div id="mu-map" class="mu-map" aria-label="แผนที่สถานที่มู"></div><button class="mu-near" data-act="muNear">${m.me ? '◉ ใกล้ฉัน' : '◎ ใกล้ฉัน'}</button></div>
+<div class="mu-cats hscroll">${MU_CATS.map((c) => `<button class="chip" style="--accent:${c.col}" data-act="muCat" data-v="${c.id}" aria-pressed="${m.cat === c.id}">${c.th}</button>`).join('')}</div>
+${m.cat === 'wish' || m.wish ? `<div class="mu-cats hscroll">${Object.entries(MU_WISH).map(([k, t]) => `<button class="chip small-chip" data-act="muWish" data-v="${k}" aria-pressed="${m.wish === k}">${t}</button>`).join('')}</div>` : ''}
+${m.cat === 'blood' ? `<a class="mu-blood" href="${BLOOD_LINK}" target="_blank" rel="noopener"><b>♥ ดูจุดรับบริจาคโลหิตล่าสุด</b><span>หน่วยเคลื่อนที่เปลี่ยนทุกวัน ดูตารางที่เว็บไซต์ศูนย์บริการโลหิตแห่งชาติ สภากาชาดไทย</span></a>` : ''}
+<section id="mu-list" class="mu-list">${muListHTML()}</section>
+<p class="small" style="font-size:11px">หมุดบนแผนที่เป็นตำแหน่งโดยประมาณ ปุ่มนำทางจะค้นชื่อสถานที่ใน Google Maps ให้ตรงตำแหน่งจริง · ข้อมูลเรื่องเล่าและการขอพรเป็นความเชื่อ · แผนที่ © ผู้ร่วมพัฒนา OpenStreetMap</p>
+</main>`;
+}
+let muMap = null, muLayer = null;
+function mountMap() {
+  const el = document.getElementById('mu-map');
+  if (!el) { muMap = null; return; }
+  document.querySelectorAll('.mu-cats').forEach((row) => { const on = row.querySelector('[aria-pressed="true"]'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; });
+  ensureLeaflet(() => {
+    if (!document.body.contains(el)) return;
+    if (muMap) { try { muMap.remove(); } catch (e) {} muMap = null; muLayer = null; }
+    if (leafletState !== 'ready') { el.classList.add('fail'); el.innerHTML = '<p>แผนที่โหลดไม่ได้ตอนนี้ (ต้องต่ออินเทอร์เน็ต) ใช้รายการด้านล่างและปุ่มนำทางแทนได้</p>'; return; }
+    const L = window.L;
+    muMap = L.map(el, { zoomControl: false, attributionControl: true }).setView([13.75, 100.52], 11);
+    L.control.zoom({ position: 'bottomright' }).addTo(muMap);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: '© OpenStreetMap' }).addTo(muMap);
+    drawPins();
+  });
+}
+function drawPins() {
+  if (!muMap) return;
+  const L = window.L, m = state.map;
+  if (muLayer) muLayer.remove();
+  muLayer = L.layerGroup().addTo(muMap);
+  const list = muList();
+  for (const p of list) {
+    const c = muCat(m.cat !== 'all' && p.k.includes(m.cat) ? m.cat : p.k[0]);
+    L.circleMarker([p.lat, p.lon], { radius: p.id === m.sel ? 10 : 7, color: '#0D0B08', weight: 2, fillColor: c.col, fillOpacity: 0.95 })
+      .addTo(muLayer).bindTooltip(p.th, { direction: 'top' }).on('click', () => muSelect(p.id, true));
+  }
+  if (m.me) L.circleMarker([m.me.lat, m.me.lon], { radius: 8, color: '#fff', weight: 3, fillColor: '#5E92DA', fillOpacity: 1 }).addTo(muLayer).bindTooltip('คุณอยู่ที่นี่');
+  const sel = m.sel && list.find((p) => p.id === m.sel);
+  if (sel) muMap.setView([sel.lat, sel.lon], Math.max(muMap.getZoom(), 13));
+  else if (list.length) muMap.fitBounds(L.latLngBounds(list.map((p) => [p.lat, p.lon]).concat(m.me ? [[m.me.lat, m.me.lon]] : [])), { padding: [24, 24], maxZoom: 13 });
+}
+function muRefresh() { const box = document.getElementById('mu-list'); if (box) box.innerHTML = muListHTML(); drawPins(); }
+function muSelect(id, scroll) {
+  state.map.sel = state.map.sel === id && !scroll ? null : id;
+  muRefresh();
+  if (scroll) { const c = document.getElementById('mu-' + id); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+}
+
+const VIEWS = { map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -2075,8 +2176,9 @@ function render() {
   if (r === 'home') startLive(); else clearInterval(liveTimer);
   if (r === 'home' && showOraSheet() && !document.getElementById('ora-sheet')) document.body.insertAdjacentHTML('beforeend', oracleSheetB());
   mountLuck();
+  if (r === 'map') mountMap();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -2094,6 +2196,8 @@ document.addEventListener('click', (e) => {
     closeMore();
     if (el && el.dataset.act === 'chartTab') state.chartTab = +el.dataset.i;
     if (el && el.dataset.act === 'openPrayer') { state.prayer.open = el.dataset.v; state.prayer.back = route(); }
+    if (el && el.dataset.act === 'mapOpen') Object.assign(state.map, { cat: 'all', wish: null, sel: el.dataset.v });
+    if (el && el.dataset.act === 'mapCat') Object.assign(state.map, { cat: el.dataset.v, wish: null, sel: null });
     go(link.getAttribute('href').slice(2));
     return;
   }
@@ -2247,6 +2351,15 @@ document.addEventListener('click', (e) => {
     case 'ssReset': state.luck.ss = null; break;
     case 'ssMotion': askMotion().then((ok) => toast(ok ? 'พร้อมแล้ว เขย่ามือถือได้เลย' : 'เครื่องนี้ไม่รองรับการเขย่า ใช้วิธีกดค้างแทน')); return;
     case 'askChip': ask(el.dataset.q); return;
+    case 'muCat': Object.assign(state.map, { cat: el.dataset.v, wish: el.dataset.v === 'wish' ? state.map.wish : null, sel: null }); break;
+    case 'muWish': state.map.wish = state.map.wish === el.dataset.v ? null : el.dataset.v; state.map.cat = 'wish'; state.map.sel = null; break;
+    case 'muSel': muSelect(el.dataset.v, false); return;
+    case 'muNear': {
+      if (!navigator.geolocation) { toast('เครื่องนี้หาตำแหน่งไม่ได้'); return; }
+      toast('กำลังหาตำแหน่งของคุณ…');
+      navigator.geolocation.getCurrentPosition((pos) => { state.map.me = { lat: pos.coords.latitude, lon: pos.coords.longitude }; state.map.sel = null; if (route() === 'map') render(); }, () => toast('ยังไม่ได้รับอนุญาตให้ใช้ตำแหน่ง'), { timeout: 10000, maximumAge: 600000 });
+      return;
+    }
     case 'moreOpen': { if (!document.getElementById('more-sheet')) document.body.insertAdjacentHTML('beforeend', moreSheetHTML()); return; }
     case 'moreClose': closeMore(); return;
     case 'dreamPick': state.dream.sel = el.dataset.v; state.dream.saved = false; break;

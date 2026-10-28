@@ -143,11 +143,11 @@ export function remedyPlan({ planetNo = 1, topic = 'bad', level = 2, reason = ''
     { ic: '⌂', k: 'ไหว้พระ', t: `พระพุทธรูป${m.buddha}`, d: `พระประจำวัน${m.day} ไหว้ได้ที่วัดใกล้บ้านที่มีพระประจำวันครบ 8 ปาง` }
   ];
   const tp = templesFor(topic).length ? templesFor(topic) : templesFor('any');
-  steps.push({ ic: '⛩', k: 'วัดแนะนำ', t: tp.map((x) => x.th).join(' · '), d: tp.map((x) => `${x.th}: ${x.wish}`).join(' / ') });
-  if (level >= 2) steps.push({ ...RITES.release, k: 'เสริม', t: RITES.release.th });
+  steps.push({ ic: '⛩', k: 'วัดแนะนำ', map: 'temple', t: tp.map((x) => x.th).join(' · '), d: tp.map((x) => `${x.th}: ${x.wish}`).join(' / ') });
+  if (level >= 2) steps.push({ ...RITES.release, k: 'เสริม', t: RITES.release.th, map: 'release' });
   if (planetNo === 8 || planetNo === 7) steps.push({ ...RITES.rahu, k: 'สะเดาะเคราะห์', t: RITES.rahu.th });
-  if (level >= 3) { steps.push({ ...RITES.coffin, k: 'เคราะห์หนัก', t: RITES.coffin.th }); steps.push({ ...RITES.suebchata, k: 'ต่ออายุ', t: RITES.suebchata.th }); }
-  if (topic === 'health') steps.push({ ...RITES.blood, k: 'สุขภาพ', t: RITES.blood.th });
+  if (level >= 3) { steps.push({ ...RITES.coffin, k: 'เคราะห์หนัก', t: RITES.coffin.th, map: 'found' }); steps.push({ ...RITES.suebchata, k: 'ต่ออายุ', t: RITES.suebchata.th }); }
+  if (topic === 'health') steps.push({ ...RITES.blood, k: 'สุขภาพ', t: RITES.blood.th, map: 'blood' });
   steps.push({ ...RITES.khama, k: 'ทุกวัน', t: RITES.khama.th });
   return { title: `ทางแก้${TOPIC_TH[topic] ? 'เรื่อง' + TOPIC_TH[topic] : 'ดวง'}`, reason, level, steps };
 }

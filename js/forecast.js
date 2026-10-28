@@ -11,6 +11,7 @@ import { TH_PLANETS, posOf, dayPlanet, birthPlanet, thaiLagna, ayanamsa, luckOf 
 import { thaiLunar } from './lunar.js';
 import { reduceTo9 } from './numerology.js';
 import { TEMPLES } from './remedy.js';
+import { MU_PLACES } from './places.js';
 
 export const FC_WEIGHTS = { west: 0.4, thai: 0.25, thaksa: 0.2, num: 0.1, lunar: 0.05 };
 export const TH_HOUSE = ['ตนุ', 'กดุมภะ', 'สหัชชะ', 'พันธุ', 'ปุตตะ', 'อริ', 'ปัตนิ', 'มรณะ', 'ศุภะ', 'กัมมะ', 'ลาภะ', 'วินาศ'];
@@ -147,7 +148,8 @@ function adviceFor(fc, w) {
   // Family focus: the Moon in the 4th (Western or Thai) or a บริวาร day.
   if (fc.westMoonHouse === 4 || fc.thaiMoonHouse === 4 || fc.pos.id === 'boriwan') {
     const t = TEMPLES[seed % TEMPLES.length];
-    out.push({ tone: 1, text: `วันนี้ควรใช้เวลากับครอบครัว ลองชวนที่บ้านไปไหว้พระที่${t.th} ขอพรเรื่อง${t.wish}`, link: { href: '#/prayer', label: 'บทสวดก่อนไปวัด' } });
+    const pl = MU_PLACES.find((x) => x.th.includes(t.th.replace(/^วัด/, '')));
+    out.push({ tone: 1, text: `วันนี้ควรใช้เวลากับครอบครัว ลองชวนที่บ้านไปไหว้พระที่${t.th} ขอพรเรื่อง${t.wish}`, link: pl ? { href: 'map:' + pl.id, label: 'ดูในแผนที่มู' } : { href: '#/prayer', label: 'บทสวดก่อนไปวัด' } });
   }
   if (fc.pos.id === 'kalakini') {
     const av = luckOf(fc.birthPlanet).avoid;
