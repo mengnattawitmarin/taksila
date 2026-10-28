@@ -1,10 +1,10 @@
 // ตักศิลา service worker: lets the app open offline and install to the home screen.
 // Strategy: network first for the app's own files (so updates arrive right away),
 // falling back to the cached copy when offline. Fonts are cache first.
-const CACHE = 'taksila-v35';
+const CACHE = 'taksila-v36';
 // Paths are relative to wherever the app is hosted (site root on Netlify, /taksila/ on GitHub Pages).
 const BASE = self.registration.scope;
-const CORE = ['', 'index.html', 'css/styles.css', 'js/app.js', 'js/astro.js', 'js/data.js', 'js/starmap.js', 'js/thai.js', 'js/auspice.js', 'js/profile.js', 'js/tarot.js', 'js/luck.js', 'js/siamsi.js', 'js/numerology.js', 'js/prayer.js', 'js/remedy.js', 'js/insight.js', 'manifest.webmanifest', 'icons/icon-192.png'].map((p) => BASE + p);
+const CORE = ['', 'index.html', 'css/styles.css', 'js/app.js', 'js/astro.js', 'js/data.js', 'js/starmap.js', 'js/thai.js', 'js/auspice.js', 'js/profile.js', 'js/tarot.js', 'js/luck.js', 'js/siamsi.js', 'js/numerology.js', 'js/prayer.js', 'js/remedy.js', 'js/insight.js', 'js/lunar.js', 'js/forecast.js', 'manifest.webmanifest', 'icons/icon-192.png'].map((p) => BASE + p);
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));

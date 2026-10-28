@@ -14,6 +14,8 @@ import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, t
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
 import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
+import { forecastDay, aspectEffect, ingressEffect } from './forecast.js';
+import { nextHolyDay, upcomingSpecial } from './lunar.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf, dayPlanet } from './thai.js';
 
 // ---------------- storage ----------------
@@ -195,19 +197,30 @@ const ORA_COL = ['#E58FA8', '#D4AF63', '#6FC3B2', '#A99BD9'];
 // ---------- คำทำนายวันนี้ (home hero) ----------
 // Preview variants: ?hero=a (big card on top), ?hero=b (once-a-day opening sheet), ?hero=c (headline banner).
 const HERO_VAR = (() => { try { return new URLSearchParams(location.search).get('hero') || ''; } catch (e) { return ''; } })();
+const VERDICT = ['', 'วันพักเก็บแรง', 'วันต้องใจเย็น', 'วันกลาง ๆ', 'วันพลังดี', 'วันพลังดีมาก'];
+const VERDICT_COL = ['', 'var(--tension)', '#F0A08C', '#F0D89A', 'var(--gold-2)', 'var(--gold-2)'];
 function todayOracle() {
-  const ch = state.chart, now = new Date();
-  const d0 = weekData()[0], dl = daily(ch, now), la = liveAspects(ch, now);
-  const total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
-  const best = dl.scores.reduce((m, x) => (x.score > m.score ? x : m), dl.scores[0]);
-  const worst = dl.scores.reduce((m, x) => (x.score < m.score ? x : m), dl.scores[0]);
-  const lead = la[0] ? la[0].reason : dl.headline;
-  const moon = `ดวงจันทร์ผ่านภพ ${d0.moonHouse} เรื่อง${HOUSES[d0.moonHouse - 1].split(' ').slice(0, 2).join(' ')}จะเด่นขึ้นมา`;
-  const advice = best.score >= 4 ? `วันนี้เด่นเรื่อง${best.name} ลงมือได้เลย` : `วันนี้ค่อย ๆ ทำทีละเรื่อง`;
-  const caution = worst.score <= 2 ? `ระวังเรื่อง${worst.name}` : '';
-  const verdict = total >= 75 ? 'วันพลังดี' : total >= 55 ? 'วันกลาง ๆ ค่อนดี' : total >= 40 ? 'วันต้องใจเย็น' : 'วันพักเก็บแรง';
-  const col = total >= 75 ? 'var(--gold-2)' : total >= 55 ? '#F0D89A' : total >= 40 ? '#F0A08C' : 'var(--tension)';
-  return { d0, dl, la, total, best, worst, lead, moon, advice, caution, date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]} · ${d0.phase.th}`, verdict, col, luck: luckToday() };
+  const now = new Date(), d0 = weekData()[0], fc = d0.fc;
+  const lun = fc.lunar, nh = nextHolyDay(now);
+  const lunLine = lun ? lun.full : d0.phase.th;
+  const holyLine = lun && lun.holy ? 'วันนี้วันพระ' : nh ? `วันพระถัดไป ${WEEKDAY_SHORT[nh.date.getDay()]}. ${nh.date.getDate()} ${MONTHS_SHORT[nh.date.getMonth()]}${nh.inDays === 1 ? ' (พรุ่งนี้)' : ` (อีก ${nh.inDays} วัน)`}` : '';
+  const special = upcomingSpecial(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1), 30).filter((e) => e.k !== 'merit' || e.th === 'วันลอยกระทง')[0];
+  return { d0, fc, total: fc.total, scores: fc.scores, advice: fc.advice, lun, lunLine, holyLine, special, events: lun ? lun.events : [],
+    date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]}`, verdict: VERDICT[fc.rating], col: VERDICT_COL[fc.rating], luck: luckToday() };
+}
+const advHref = (l) => l.href.startsWith('prayer:') ? `href="#/prayer" data-act="openPrayer" data-v="${l.href.slice(7)}"` : `href="${l.href}"`;
+function adviceHTML(list) {
+  return `<ul class="ora-adv">${list.map((a) => `<li class="${a.tone < 0 ? 'neg' : a.tone > 0 ? 'pos' : ''}"><i aria-hidden="true">${a.tone < 0 ? '!' : '✓'}</i><span>${a.text}${a.link ? ` <a class="ora-go" ${advHref(a.link)}>${a.link.label} ›</a>` : ''}</span></li>`).join('')}</ul>`;
+}
+function lunarRowHTML(o) {
+  const ev = o.events.map((e) => `<span class="ora-ev ${e.k}">${e.th}</span>`).join('');
+  const nxt = o.special ? `<span class="ora-next">ถัดไป · ${o.special.th} ${o.special.date.getDate()} ${MONTHS_SHORT[o.special.date.getMonth()]}</span>` : '';
+  return `<div class="ora-lun"><span class="ora-lun-d">${moonIcon(o.d0.phase, 8)}<b>${o.lunLine}</b></span>${o.lun && o.lun.holy ? '<span class="ora-ev holy">วันพระ</span>' : `<span class="ora-hol">${o.holyLine}</span>`}${ev}${nxt}</div>`;
+}
+function sourcesHTML(fc) {
+  return `<details class="ora-src"><summary>อ่านจาก 5 ศาสตร์ <span>${fc.sources.map((x) => `<em style="--v:${x.score}%"></em>`).join('')}</span></summary>
+<ul>${fc.sources.map((x) => `<li><span class="os-h"><b>${x.th}</b><span class="mono">${x.score} · น้ำหนัก ${Math.round(x.w * 100)}%</span></span><span class="os-bar"><span style="width:${x.score}%"></span></span><span class="small">${x.note}</span></li>`).join('')}</ul>
+<p class="small">คะแนนรวม = ค่าเฉลี่ยถ่วงน้ำหนักของทั้ง 5 ศาสตร์ ใช้ตัวเดียวกันทั้งแอป (หน้าแรก แถบ 7 วัน และหน้าต้อนรับ)</p></details>`;
 }
 function oracleRing(total, size = 74) {
   const R = 30, C = 2 * Math.PI * R, len = (total / 100) * C;
@@ -219,13 +232,14 @@ function oracleHeroA() {
   const o = todayOracle();
   return `<section class="ora ora-a" aria-label="คำทำนายวันนี้">
 <span class="ora-eye"><span class="live-dot" aria-hidden="true"></span>คำทำนายวันนี้ · ${o.date}</span>
-<div class="ora-top"><div class="ora-v"><b style="color:${o.col}">${o.verdict}</b><span>${o.advice}${o.caution ? ' · ' + o.caution : ''}</span></div>${oracleRing(o.total)}</div>
-<p class="ora-lead">“${o.lead}”</p>
-<p class="ora-moon">☽ ${o.moon}</p>
-<div class="ora-cats">${o.dl.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
+${lunarRowHTML(o)}
+<div class="ora-top"><div class="ora-v"><b style="color:${o.col}">${o.verdict}</b><span>รวมโหราศาสตร์สากล ไทย ทักษา เลข และจันทรคติ</span></div>${oracleRing(o.total)}</div>
+${adviceHTML(o.advice)}
+<div class="ora-cats">${o.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
+${sourcesHTML(o.fc)}
 <span class="ora-sub">มงคลประจำวัน</span>
 ${luckCells(o.luck)}
-<button class="ora-more" data-act="oraMore">อ่านเหตุผลจากดาวทั้งหมด ↓</button>
+<button class="ora-more" data-act="oraMore">ดูดาวที่ส่งผลวันนี้ ↓</button>
 </section>`;
 }
 function oracleBannerC() {
@@ -248,13 +262,12 @@ function oracleSheetB() {
   const o = todayOracle();
   return `<div class="ora-sheet" id="ora-sheet" role="dialog" aria-label="คำทำนายวันนี้"><div class="ora-sheet-in">
 <span class="ora-eye" style="justify-content:center">${o.date}</span>
-<p class="ora-hi">สวัสดี${greeting(new Date()).replace('สวัสดี', '')} คุณ${esc((state.profile.name || '').split(' ')[0])}</p>
-${oracleRing(o.total, 120)}
+<p class="ora-hi">${greeting(new Date())} คุณ${esc((state.profile.name || '').split(' ')[0])}</p>
+${oracleRing(o.total, 112)}
 <b class="ora-big" style="color:${o.col}">${o.verdict}</b>
-<p class="ora-lead" style="text-align:center">“${o.lead}”</p>
-<p class="ora-moon" style="text-align:center">☽ ${o.moon}</p>
-<div class="ora-cats">${o.dl.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
-<p class="ora-moon" style="text-align:center">${o.advice}${o.caution ? ' · ' + o.caution : ''}</p>
+${lunarRowHTML(o)}
+${adviceHTML(o.advice)}
+<div class="ora-cats">${o.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
 ${luckCells(o.luck)}
 <button class="btn" data-act="oraClose">เข้าสู่หน้าหลัก</button></div></div>`;
 }
@@ -322,6 +335,7 @@ function when(d, now = new Date()) {
   const hm = pad(d.getHours()) + ':' + pad(d.getMinutes());
   return diff === 0 ? 'วันนี้ ' + hm : diff === 1 ? 'พรุ่งนี้ ' + hm : `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${hm}`;
 }
+const fxBadge = (fx) => `<span class="fx-b ${fx.tone > 0 ? 'pos' : fx.tone < 0 ? 'neg' : 'mid'}">${fx.badge}</span>`;
 const natureColor = (n) => n > 0 ? 'var(--harmony)' : n < 0 ? 'var(--tension)' : 'var(--gold-2)';
 
 const aspKey = (x) => `${x.mover.id}-${x.asp.id}-${x.target.id}`;
@@ -339,17 +353,17 @@ function liveDailyHTML() {
   const timing = (x) => x.applying ? (x.exactAt ? `แม่นยำสุด ${when(x.exactAt, now)}` : 'ส่งผลหลายสัปดาห์') : 'กำลังคลายตัว';
   const trio = (x) => `<span class="sym">${x.mover.glyph}&#xFE0E;</span><span class="sym" style="color:${natureColor(x.asp.nature)}">${ASPECT_GLYPH[x.asp.id]}&#xFE0E;</span>${targetGlyph(x.target)}`;
   const items = la.map((x) => {
-    const m = x.mover, t = x.target, col = natureColor(x.asp.nature), k = aspKey(x);
+    const m = x.mover, t = x.target, col = natureColor(x.asp.nature), k = aspKey(x), fx = aspectEffect(x);
     const pct = Math.round(Math.min(1, x.strength / 1.6) * 100);
     const isOpen = state.aspOpen.has(k);
     return `<li class="asp${isOpen ? ' open' : ''}" style="--c:${col}">
 <button class="asp-head" data-act="aspToggle" data-k="${k}" aria-expanded="${isOpen}">
 <span class="asp-glyphs" aria-hidden="true">${trio(x)}</span>
-<span class="asp-title"><span>${pname(m.id, m.th)}${x.asp.th}${pname(t.id, t.th)}</span><span class="mono">${timing(x)}</span></span>
+<span class="asp-title"><span>${pname(m.id, m.th)}${x.asp.th}${pname(t.id, t.th)} ${fxBadge(fx)}</span><span class="fx-line">${fx.text}</span><span class="mono">${timing(x)}</span></span>
 <span class="chev">${icon('down', 16, 1.6)}</span>
 </button>
 <div class="fold"><div class="fold-in"><div class="asp-body">
-<p class="body" style="font-size:14px">${x.reason}</p>
+<p class="body" style="font-size:14px">ในเชิงโหราศาสตร์ ${x.reason}</p>
 <p class="small" style="color:${col}">${x.advice}</p>
 <dl class="asp-facts">
 <div><dt>ดาวจร</dt><dd>${SIGNS[m.sign].th} ${fmtDeg(m.lon)}${m.retro ? ' (ถอยหลัง)' : ''} · ภพ ${m.house}</dd></div>
@@ -358,21 +372,13 @@ function liveDailyHTML() {
 <div><dt>น้ำหนัก</dt><dd><span class="tr-bar" role="img" aria-label="${pct}%"><span style="width:${pct}%;background:${col}"></span></span></dd></div>
 </dl></div></div></div></li>`;
   }).join('');
-  const nextEvents = up.slice(0, 4).map((e) => `<li><span class="sym" style="color:var(--gold-2)">${PLANETS.find((p) => p.id === e.id).glyph}&#xFE0E;</span>
-<span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:14px">${pname(e.id, PLANETS.find((p) => p.id === e.id).th)}เข้าราศี${SIGNS[e.sign].th}</span><span class="small">ภพ ${e.house} · ${HOUSES[e.house - 1]}</span></span>
-<span class="mono" style="font-size:10px;color:var(--gold);white-space:nowrap">${when(e.at, now)}</span></li>`).join('');
-  const RING_COL = ['#E58FA8', '#D4AF63', '#6FC3B2', '#A99BD9'];
-  const total = Math.round(dl.scores.reduce((x, y) => x + y.score, 0) / dl.scores.length * 20);
-  const ring = (k, sc) => {
-    const r = 57 - k * 10, C = 2 * Math.PI * r, len = (sc / 5) * C;
-    return `<circle cx="64" cy="64" r="${r}" fill="none" stroke="${RING_COL[k]}" stroke-opacity=".16" stroke-width="7"/>
-<circle class="ring-arc" cx="64" cy="64" r="${r}" fill="none" stroke="${RING_COL[k]}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${len.toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 64 64)" style="--len:${len.toFixed(1)};--c:${C.toFixed(1)}"/>`;
-  };
-  const mood = total >= 75 ? 'วันพลังดี' : total >= 55 ? 'วันกลาง ๆ ค่อนดี' : total >= 40 ? 'วันต้องใจเย็น' : 'วันพักเก็บแรง';
+  const nextEvents = up.slice(0, 4).map((e) => { const fx = ingressEffect(e); return `<li><span class="sym" style="color:var(--gold-2)">${PLANETS.find((p) => p.id === e.id).glyph}&#xFE0E;</span>
+<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px">${pname(e.id, PLANETS.find((p) => p.id === e.id).th)}เข้าราศี${SIGNS[e.sign].th} ${fxBadge(fx)}</span><span class="small">${fx.text}</span><span class="small" style="font-size:11px">ภพ ${e.house} · ${HOUSES[e.house - 1]}</span></span>
+<span class="mono" style="font-size:10px;color:var(--gold);white-space:nowrap">${when(e.at, now)}</span></li>`; }).join('');
   return `<div class="card daily day-hero${open ? ' open' : ''}">
 <span class="dh-top"><span class="eyebrow" style="letter-spacing:.2em;display:flex;align-items:center;gap:8px"><span class="live-dot" aria-hidden="true"></span>เหตุผลจากดาววันนี้ · LIVE</span><span class="mono small" style="font-size:10px">อัปเดต ${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
 <p class="small dh-intro">ดาวที่กำลังส่งผลกับดวงของคุณ พร้อมบทสวดและทางแก้ประจำวัน</p>
-${remedyChip(dailyRemedy(la, birthPlanet(state.profile), total))}
+${remedyChip(dailyRemedy(la, birthPlanet(state.profile), weekData()[0].fc.total))}
 ${heroRemedy()}
 <button class="drawer-toggle" data-act="liveToggle" data-closed="ดูเหตุผล ${la.length} มุมดาว" aria-expanded="${open}">
 <span class="peek" aria-hidden="true">${la.slice(0, 3).map((x) => `<span class="peek-chip">${trio(x)}</span>`).join('')}</span>
@@ -556,23 +562,28 @@ function moonIcon(ph, r = 7) {
 let weekCache = null;
 function weekData() {
   const now = new Date(), key = now.toDateString();
-  if (!weekCache || weekCache.key !== key || weekCache.chart !== state.chart) weekCache = { key, chart: state.chart, days: weekAhead(state.chart, now) };
+  if (!weekCache || weekCache.key !== key || weekCache.chart !== state.chart || weekCache.profile !== state.profile) {
+    const days = weekAhead(state.chart, now).map((w) => { const fc = forecastDay(state.chart, state.profile, w); return { ...w, fc, rating: fc.rating }; });
+    weekCache = { key, chart: state.chart, profile: state.profile, days };
+  }
   return weekCache.days;
 }
 function weekHTML() {
   const days = weekData(), sel = state.weekSel;
   const strip = days.map((d, i) => `<button class="day${sel === i ? ' sel' : ''}" data-act="weekDay" data-i="${i}" aria-pressed="${sel === i}" aria-label="${WEEKDAY[d.date.getDay()]} ${d.date.getDate()} ${RATING_TH[d.rating]}">
-<span class="wd">${i === 0 ? 'วันนี้' : WEEKDAY_SHORT[d.date.getDay()]}</span><span class="dn">${d.date.getDate()}</span>${moonIcon(d.phase)}
+<span class="wd">${i === 0 ? 'วันนี้' : WEEKDAY_SHORT[d.date.getDay()]}</span><span class="dn">${d.date.getDate()}</span>${moonIcon(d.phase)}${d.fc.lunar && (d.fc.lunar.holy || d.fc.lunar.events.length) ? `<span class="wk-holy${d.fc.lunar.events.length ? ' ev' : ''}">${d.fc.lunar.events.length ? '★' : 'พระ'}</span>` : ''}
 <span class="dots" aria-hidden="true">${[1, 2, 3, 4, 5].map((n) => `<i style="background:${n <= d.rating ? ratingColor(d.rating) : 'var(--line)'}"></i>`).join('')}</span></button>`).join('');
   let detail = '';
   if (sel != null) {
     const d = days[sel];
     detail = `<div class="card day-detail">
-<span class="eyebrow" style="letter-spacing:.14em">${WEEKDAY[d.date.getDay()].toUpperCase()} ${d.date.getDate()} ${MONTHS_SHORT[d.date.getMonth()]} · ${d.phase.th}</span>
-<p class="h2" style="font-size:18px;color:${ratingColor(d.rating)}">${RATING_TH[d.rating]}</p>
+<span class="eyebrow" style="letter-spacing:.14em">${WEEKDAY[d.date.getDay()].toUpperCase()} ${d.date.getDate()} ${MONTHS_SHORT[d.date.getMonth()]} · ${d.fc.lunar ? d.fc.lunar.full : d.phase.th}</span>
+<p class="h2" style="font-size:18px;color:${ratingColor(d.rating)}">${RATING_TH[d.rating]} <span class="mono" style="font-size:12px;color:var(--muted)">${d.fc.total}/100</span></p>
+${d.fc.lunar && (d.fc.lunar.holy || d.fc.lunar.events.length) ? `<div class="ora-lun">${d.fc.lunar.holy ? '<span class="ora-ev holy">วันพระ</span>' : ''}${d.fc.lunar.events.map((e) => `<span class="ora-ev ${e.k}">${e.th}</span>`).join('')}</div>` : ''}
+${adviceHTML(d.fc.advice.slice(0, 2))}
 <p class="small">ดวงจันทร์อยู่ราศี${SIGNS[d.moonSign].th} ผ่านภพ ${d.moonHouse} ของคุณ เรื่อง${HOUSES[d.moonHouse - 1]}จะเด่นขึ้นมาในวันนี้ · ${d.phase.name}</p>
 ${d.top.length ? `<ul class="day-asp">${d.top.map((x) => `<li style="--c:${natureColor(x.asp.nature)}"><span class="asp-glyphs" aria-hidden="true"><span class="sym">${x.mover.glyph}&#xFE0E;</span><span class="sym" style="color:var(--c)">${ASPECT_GLYPH[x.asp.id]}&#xFE0E;</span>${targetGlyph(x.target)}</span>
-<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600">${pname(x.mover.id, x.mover.th)}${x.asp.th}${pname(x.target.id, x.target.th)}</span><span class="small">${x.reason}</span></span></li>`).join('')}</ul>` : '<p class="small">ดาวเคลื่อนเร็วไม่ทำมุมสำคัญ เป็นวันเรียบ ๆ เหมาะกับงานประจำ</p>'}
+<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600">${pname(x.mover.id, x.mover.th)}${x.asp.th}${pname(x.target.id, x.target.th)} ${fxBadge(aspectEffect(x))}</span><span class="small">${aspectEffect(x).text}</span></span></li>`).join('')}</ul>` : '<p class="small">ดาวเคลื่อนเร็วไม่ทำมุมสำคัญ เป็นวันเรียบ ๆ เหมาะกับงานประจำ</p>'}
 </div>`;
   }
   return `<h2 class="label" style="display:flex;justify-content:space-between"><span>7 วันข้างหน้า</span><span class="mono" style="font-size:10px;letter-spacing:.1em">กดดูรายวัน</span></h2>
@@ -1464,7 +1475,7 @@ function remedyCard(plan, open = false) {
 // What troubles the person right now: a hard transit from a heavy planet, or a low day score.
 function troubleNow() {
   const ch = state.chart, now = new Date(), bp = birthPlanet(state.profile);
-  const dl = daily(ch, now), total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
+  const fc = weekData()[0].fc, dl = { scores: fc.scores }, total = fc.total;
   const r = dailyRemedy(liveAspects(ch, now, { n: 6, exact: false }), bp, total);
   const tr = transits(ch, now), heavy = tr.find((t) => t.level === 'HIGH' && t.id !== 'jupiter');
   let planetNo = r.kind === 'แก้' ? CHANT_PLANET[r.id] : heavy ? PLANET_NO[heavy.id] : bp;
@@ -1822,8 +1833,7 @@ ${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตั�
 <p class="small" style="text-align:center;font-size:11px">ตั้งนะโม 3 จบก่อนสวด · สวดด้วยใจสงบ ความหมายเป็นสรุปสั้นเพื่อความเข้าใจ</p>
 </main>`;
   }
-  const L = luckOf(bp), dl = daily(state.chart, new Date());
-  const total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
+  const L = luckOf(bp), total = weekData()[0].fc.total;
   const today = dailyRemedy(liveAspects(state.chart, new Date(), { n: 6, exact: false }), bp, total);
   const recs = [{ id: birthChant(bp), kind: 'เสริม', reason: `บทประจำวันเกิดของคุณ (${TH_PLANETS[bp].day})` }];
   if (today.id !== recs[0].id) recs.unshift(today);

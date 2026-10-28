@@ -21,16 +21,13 @@ export const EVENTS = [
 const DAY_NAME = (n) => TH_PLANETS[n].day;
 const nm = (id, th) => id === 'sun' ? 'ดวงอาทิตย์' : id === 'moon' ? 'ดวงจันทร์' : id === 'asc' ? 'ลัคนา' : 'ดาว' + th;
 
-// Approximate วันพระ: ขึ้น/แรม 8 ค่ำ, ขึ้น 15 ค่ำ, and the last day of the waning half.
+// วันพระ from the Thai lunar calendar (falls back to the astronomical phase outside the table).
 function holyDay(date) {
   const ph = lunarPhase(date);
+  if (ph.thai) return ph.thai.holy;
   if (ph.day === 8) return true;
   if (ph.waxing && ph.day === 15) return true;
-  if (!ph.waxing && ph.day >= 14) {
-    const next = lunarPhase(new Date(date.getTime() + 86400000));
-    return next.waxing;
-  }
-  return false;
+  return !ph.waxing && ph.day >= 14 && lunarPhase(new Date(date.getTime() + 86400000)).waxing;
 }
 
 export function findAuspicious(chart, person, eventId, { days = 60, start = new Date(), partner = null } = {}) {

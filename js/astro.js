@@ -3,6 +3,7 @@
 // (accuracy around 1–2 arc-minutes for planets, a few arc-minutes for the Moon,
 // valid roughly 1900–2100). Longitudes are tropical, geocentric, equinox of date.
 
+import { thaiLunar } from './lunar.js';
 const RAD = Math.PI / 180;
 const sind = (x) => Math.sin(x * RAD);
 const cosd = (x) => Math.cos(x * RAD);
@@ -485,15 +486,21 @@ export function liveAspects(chart, now = new Date(), { n = 6, exact = true, only
 }
 
 // Moon phase as a Thai lunar day (tithi): 12 degrees of Moon-Sun elongation per day.
-// Astronomical approximation; the official Thai calendar can differ by a day.
 export function lunarPhase(date) {
   const d = dayNumber(date);
   const el = rev(lonAt('moon', d) - lonAt('sun', d));
+  const lit = (1 - Math.cos(el * Math.PI / 180)) / 2;
+  // Official Thai calendar first (ปฏิทินหลวง); the astronomical estimate is only a fallback outside its table.
+  const tl = thaiLunar(date);
+  if (tl) {
+    const name = tl.newMoon ? 'จันทร์ดับ' : tl.fullMoon ? 'จันทร์เต็มดวง' : tl.waxing ? 'ข้างขึ้น' : 'ข้างแรม';
+    return { elongation: el, waxing: tl.waxing, day: tl.day, th: tl.th, name, lit, thai: tl };
+  }
   const waxing = el < 180;
   const day = Math.min(15, Math.floor((waxing ? el : el - 180) / 12) + 1);
   const th = (waxing ? 'ขึ้น ' : 'แรม ') + day + ' ค่ำ';
   const name = el < 12 || el >= 348 ? 'จันทร์ดับ' : Math.abs(el - 180) < 12 ? 'จันทร์เต็มดวง' : waxing ? 'ข้างขึ้น' : 'ข้างแรม';
-  return { elongation: el, waxing, day, th, name, lit: (1 - Math.cos(el * Math.PI / 180)) / 2 };
+  return { elongation: el, waxing, day, th, name, lit };
 }
 
 // Seven-day outlook, sampled at local noon each day. Fast planets drive the day-to-day changes.
@@ -509,7 +516,7 @@ export function weekAhead(chart, start = new Date()) {
     let tone = 0;
     for (const x of fast) tone += x.strength * (x.asp.nature === 0 ? 0.4 : x.asp.nature);
     const rating = Math.max(1, Math.min(5, Math.round(3.2 + 2 * Math.tanh(tone / 4))));
-    out.push({ date: d, scores: dl.scores, avg, rating, moonSign: signOf(moonLon), moonHouse: chart.houseOf(moonLon), phase: lunarPhase(d), top: fast.slice(0, 3) });
+    out.push({ date: d, scores: dl.scores, avg, rating, tone, moonSign: signOf(moonLon), moonHouse: chart.houseOf(moonLon), phase: lunarPhase(d), top: fast.slice(0, 3) });
   }
   return out;
 }

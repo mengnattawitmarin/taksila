@@ -968,6 +968,51 @@ a:hover { color: var(--gold-2); }
 .ora-v b { font-size: 30px; }
 .dh-intro { margin: -2px 0 0; color: var(--text-2); }
 
+/* ---- unified forecast: lunar row, advice, sources, effect badges ---- */
+.ora-lun { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); }
+.ora-lun-d { display: inline-flex; align-items: center; gap: 6px; }
+.ora-lun-d b { font-weight: 500; color: var(--text); }
+.ora-hol { color: var(--muted); }
+.ora-hol::before, .ora-next::before { content: '·'; margin-right: 6px; color: var(--line-2); }
+.ora-next { color: var(--muted); font-size: 11.5px; }
+.ora-ev { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px; font-size: 11px; border: 1px solid var(--line-2); color: var(--text); background: var(--surface-2); }
+.ora-ev.holy { border-color: rgba(240,216,154,.55); color: var(--gold-2); background: rgba(212,175,99,.12); }
+.ora-ev.big, .ora-ev.merit { border-color: rgba(240,216,154,.55); color: #F6E3B0; background: linear-gradient(90deg, rgba(212,175,99,.25), rgba(212,175,99,.08)); }
+.ora-ev.luck { border-color: rgba(169,155,217,.6); color: #D5CCF5; background: rgba(124,96,200,.18); }
+.ora-ev.sky { border-color: rgba(229,146,178,.6); color: #F6C3D5; background: rgba(229,146,178,.14); }
+.ora-adv { position: relative; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.ora-adv li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; font-size: 14px; line-height: 1.55; color: var(--text); }
+.ora-adv i { font-style: normal; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 700; margin-top: 2px; background: rgba(111,195,178,.16); color: var(--harmony); }
+.ora-adv li.neg i { background: rgba(240,160,140,.16); color: var(--tension); }
+.ora-go { white-space: nowrap; color: var(--gold-2); text-decoration: none; font-size: 12.5px; border-bottom: 1px dotted rgba(240,216,154,.5); }
+.ora-src { position: relative; border-radius: 14px; border: 1px solid var(--line); background: rgba(13,11,8,.3); }
+.ora-src summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; font-size: 12.5px; color: var(--text-2); }
+.ora-src summary::-webkit-details-marker { display: none; }
+.ora-src summary::after { content: '▾'; color: var(--gold); font-size: 11px; }
+.ora-src[open] summary::after { content: '▴'; }
+.ora-src summary > span { margin-left: auto; display: flex; gap: 3px; align-items: flex-end; height: 16px; }
+.ora-src summary em { width: 6px; height: var(--v); min-height: 3px; border-radius: 2px; background: linear-gradient(var(--gold-2), var(--gold)); }
+.ora-src ul { list-style: none; margin: 0; padding: 0 12px 4px; display: flex; flex-direction: column; gap: 10px; }
+.ora-src li { display: flex; flex-direction: column; gap: 4px; }
+.os-h { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.os-h .mono { font-size: 10.5px; color: var(--muted); }
+.os-bar { height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.os-bar span { display: block; height: 100%; background: linear-gradient(90deg, #E592B2, #D4AF63, #7FC4B4); }
+.ora-src > p { margin: 0; padding: 4px 12px 12px; font-size: 11px; }
+.ora-sheet .ora-lun { justify-content: center; }
+.ora-sheet .ora-adv { width: 100%; }
+.wk-holy { font-size: 9px; line-height: 1; padding: 2px 4px; border-radius: 6px; color: var(--gold-2); background: rgba(212,175,99,.14); }
+.wk-holy.ev { color: #F6E3B0; background: rgba(212,175,99,.3); }
+.fx-b { display: inline-block; vertical-align: 1px; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; margin-left: 4px; font-family: var(--sans, inherit); }
+.fx-b.pos { color: var(--harmony); background: rgba(111,195,178,.15); }
+.fx-b.neg { color: var(--tension); background: rgba(240,160,140,.15); }
+.fx-b.mid { color: var(--gold-2); background: rgba(212,175,99,.14); }
+.fx-line { font-size: 12.5px; color: var(--text-2); line-height: 1.45; white-space: normal; }
+.day-detail .ora-adv li { font-size: 13.5px; }
+/* the home live card reuses .asp but needs a stacked layout (chart page .asp is a 3-column grid) */
+.day-hero .asp { display: block; padding: 2px 12px; }
+.day-hero .asp-body { padding-left: 0; }
+
 </style>
 </head>
 <body>
@@ -976,11 +1021,113 @@ a:hover { color: var(--gold-2); }
 <script>
 (function () {
 "use strict";
+// ---- js/lunar.js ----
+// ปฏิทินจันทรคติไทย (ขึ้น/แรม ค่ำ เดือน, วันพระ, วันสำคัญ) for 2024–2040.
+// The table was generated with the Suriyayatra (สุริยยาตร์) rules as implemented by the open-source
+// pythaidate library (github.com/hmmbug/pythaidate) and checked against official Buddhist holidays:
+// อาสาฬหบูชา 1 ส.ค. 2566 (เดือน 8 หลัง), มาฆบูชา 12 ก.พ. 2568, วิสาขบูชา 11 พ.ค. 2568, ออกพรรษา 7 ต.ค. 2568,
+// มาฆบูชา 3 มี.ค. 2569, วิสาขบูชา 31 พ.ค. 2569, ออกพรรษา 26 ต.ค. 2569.
+// Months are letters a–l (เดือนอ้าย … เดือนสิบสอง), L = เดือนแปดหลัง (อธิกมาส). LUN_LEN: 9 = 29 วัน, 0 = 30 วัน.
+const LUN_START = 10; // days after 2024-01-01 of the first month start
+const LUN_MONTHS = 'bcdefghijklabcdefghijklabcdefghLijklabcdefghijklabcdefghijklabcdefghLijklabcdefghijklabcdefghLijklabcdefghijklabcdefghijklabcdefghLijklabcdefghijklabcdefghijklabcdefghLijklabcdefghijklabcdefghijklabcdefghLijkla';
+const LUN_LEN = '09090909090909090009090909090900909090909090909090909090909090909090090909090900090909090909009090909090909090909090909090909090900909090909000909090909090909090909090090909090909090909090900090909090909009090';
+const LUN_BASE = Date.UTC(2024, 0, 1);
+const LUN_MONTH_TH = ['', 'อ้าย', 'ยี่', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+const monthNo = (c) => (c === 'L' ? 88 : c.charCodeAt(0) - 96);
+const lunMonthName = (m) => (m === 88 ? 'เดือน 8 หลัง' : m <= 2 ? 'เดือน' + LUN_MONTH_TH[m] : 'เดือน ' + m);
+
+// Solar & lunar eclipses visible from Thailand (time.now, Nakhon Nayok).
+const ECLIPSES = [
+  ['2026-03-03', 'จันทรุปราคา'], ['2027-08-02', 'สุริยุปราคาบางส่วน'], ['2028-07-07', 'จันทรุปราคาเงามัว'],
+  ['2028-07-22', 'สุริยุปราคาบางส่วน'], ['2028-12-31', 'จันทรุปราคาบางส่วน'], ['2029-12-21', 'จันทรุปราคาเงามัว'],
+  ['2030-06-16', 'จันทรุปราคาเต็มดวง'], ['2030-12-10', 'จันทรุปราคาเงามัว'], ['2031-05-21', 'สุริยุปราคาบางส่วน'],
+  ['2032-04-25', 'จันทรุปราคาบางส่วน'], ['2032-10-19', 'จันทรุปราคาบางส่วน'], ['2032-11-03', 'สุริยุปราคาบางส่วน'],
+  ['2033-04-15', 'จันทรุปราคาเต็มดวง'], ['2033-10-08', 'จันทรุปราคาเงามัว'], ['2034-04-04', 'จันทรุปราคาบางส่วน'],
+  ['2034-08-29', 'จันทรุปราคาเงามัว'], ['2035-02-22', 'จันทรุปราคาเงามัว'], ['2035-03-24', 'จันทรุปราคาเงามัว'],
+  ['2035-08-19', 'จันทรุปราคาเงามัว'], ['2035-09-02', 'สุริยุปราคาบางส่วน'], ['2036-02-12', 'จันทรุปราคาเงามัว']
+];
+const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+// Month index containing day number n (days after 2024-01-01), via the cumulative month starts.
+let LUN_STARTS = null;
+function lunStarts() {
+  if (LUN_STARTS) return LUN_STARTS;
+  LUN_STARTS = [LUN_START];
+  for (let i = 0; i < LUN_LEN.length; i++) LUN_STARTS.push(LUN_STARTS[i] + (LUN_LEN[i] === '0' ? 30 : 29));
+  return LUN_STARTS;
+}
+// Does a เดือน 8 หลัง come before the next เดือนอ้าย, scanning from month index i?
+function leapAhead(i) {
+  for (let k = i; k < LUN_MONTHS.length; k++) { if (LUN_MONTHS[k] === 'L') return true; if (k > i && LUN_MONTHS[k] === 'a') return false; }
+  return false;
+}
+
+// Thai lunar date for a local calendar day. Returns null outside the table.
+function thaiLunar(date) {
+  const n = Math.round((Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) - LUN_BASE) / 86400000);
+  const st = lunStarts();
+  if (n < st[0] || n >= st[st.length - 1]) return null;
+  let i = 0;
+  while (st[i + 1] <= n) i++;
+  const len = st[i + 1] - st[i], d = n - st[i] + 1, m = monthNo(LUN_MONTHS[i]);
+  const waxing = d <= 15, day = waxing ? d : d - 15;
+  const holy = d === 8 || d === 15 || d === 23 || d === len;
+  const kon = !holy && (d === 7 || d === 14 || d === 22 || d === len - 1);
+  const wd = date.getDay();
+  const ev = [];
+  const fm = d === 15;
+  // วันพระใหญ่ (Buddhist holy days). In a leap-month year the Visakha and Asalha days move one month later,
+  // and Makha moves to เดือน 4 when the coming year has a เดือน 8 หลัง.
+  if (fm && ((m === 3 && !leapAhead(i)) || (m === 4 && leapAhead(i)))) ev.push({ k: 'big', th: 'วันมาฆบูชา' });
+  if (fm && ((m === 6 && !leapAhead(i)) || (m === 7 && leapAhead(i - 1)))) ev.push({ k: 'big', th: 'วันวิสาขบูชา' });
+  if (d === 23 && ((m === 6 && !leapAhead(i)) || (m === 7 && leapAhead(i - 1)))) ev.push({ k: 'big', th: 'วันอัฏฐมีบูชา' });
+  const asalhaMonth = (m === 8 && LUN_MONTHS[i + 1] !== 'L') || m === 88;
+  if (fm && asalhaMonth) ev.push({ k: 'big', th: 'วันอาสาฬหบูชา' });
+  if (d === 16 && asalhaMonth) ev.push({ k: 'big', th: 'วันเข้าพรรษา' });
+  if (fm && m === 11) ev.push({ k: 'big', th: 'วันออกพรรษา' });
+  if (d === 16 && m === 11) ev.push({ k: 'merit', th: 'ตักบาตรเทโว' });
+  if (fm && m === 12) ev.push({ k: 'merit', th: 'วันลอยกระทง' });
+  if (d === len && m === 10) ev.push({ k: 'merit', th: 'วันสารทไทย' });
+  // ฤกษ์ใหญ่ตามความเชื่อ
+  if (wd === 6 && m === 5 && d === 5) ev.push({ k: 'luck', th: 'เสาร์ 5', note: 'วันเสาร์ ขึ้น 5 ค่ำ เดือน 5 ฤกษ์ใหญ่ที่นิยมปลุกเสกและเสริมดวง' });
+  if (wd === 1 && fm) ev.push({ k: 'luck', th: 'จันทร์ซ้อนจันทร์', note: 'วันจันทร์ตรงกับจันทร์เพ็ญ นิยมไหว้พระจันทร์ ขอพรเรื่องเสน่ห์ เมตตา และความสงบใจ' });
+  const ecl = ECLIPSES.find((e) => e[0] === isoOf(date));
+  if (ecl) ev.push({ k: 'sky', th: ecl[1], note: 'ปรากฏการณ์บนฟ้า คนไทยนิยมสวดมนต์ ทำบุญ และงดเริ่มเรื่องใหญ่ในวันนี้' });
+  const mn = date.getMonth() + 1, dn = date.getDate();
+  if (mn === 4 && dn >= 13 && dn <= 15) ev.push({ k: 'merit', th: 'สงกรานต์' });
+  return {
+    month: m, day, waxing, d, len, holy, kon, events: ev, monthTh: lunMonthName(m),
+    th: `${waxing ? 'ขึ้น' : 'แรม'} ${day} ค่ำ`, full: `${waxing ? 'ขึ้น' : 'แรม'} ${day} ค่ำ ${lunMonthName(m)}`,
+    newMoon: d === len, fullMoon: fm
+  };
+}
+
+// The next วันพระ on or after a date (within 16 days).
+function nextHolyDay(from = new Date()) {
+  for (let i = 0; i < 17; i++) {
+    const d = new Date(from.getFullYear(), from.getMonth(), from.getDate() + i);
+    const l = thaiLunar(d);
+    if (l && l.holy) return { date: d, lunar: l, inDays: i };
+  }
+  return null;
+}
+// Upcoming special days (วันพระใหญ่, ฤกษ์ใหญ่, อุปราคา) within `days`.
+function upcomingSpecial(from = new Date(), days = 60) {
+  const out = [];
+  for (let i = 0; i <= days; i++) {
+    const d = new Date(from.getFullYear(), from.getMonth(), from.getDate() + i);
+    const l = thaiLunar(d);
+    if (l) for (const e of l.events) out.push({ date: d, inDays: i, ...e, lunar: l });
+  }
+  return out;
+}
+
 // ---- js/astro.js ----
 // Taksila astro engine — dependency-free.
 // Planet positions follow Paul Schlyter's "How to compute planetary positions"
 // (accuracy around 1–2 arc-minutes for planets, a few arc-minutes for the Moon,
 // valid roughly 1900–2100). Longitudes are tropical, geocentric, equinox of date.
+
 
 const RAD = Math.PI / 180;
 const sind = (x) => Math.sin(x * RAD);
@@ -1464,15 +1611,21 @@ function liveAspects(chart, now = new Date(), { n = 6, exact = true, only = null
 }
 
 // Moon phase as a Thai lunar day (tithi): 12 degrees of Moon-Sun elongation per day.
-// Astronomical approximation; the official Thai calendar can differ by a day.
 function lunarPhase(date) {
   const d = dayNumber(date);
   const el = rev(lonAt('moon', d) - lonAt('sun', d));
+  const lit = (1 - Math.cos(el * Math.PI / 180)) / 2;
+  // Official Thai calendar first (ปฏิทินหลวง); the astronomical estimate is only a fallback outside its table.
+  const tl = thaiLunar(date);
+  if (tl) {
+    const name = tl.newMoon ? 'จันทร์ดับ' : tl.fullMoon ? 'จันทร์เต็มดวง' : tl.waxing ? 'ข้างขึ้น' : 'ข้างแรม';
+    return { elongation: el, waxing: tl.waxing, day: tl.day, th: tl.th, name, lit, thai: tl };
+  }
   const waxing = el < 180;
   const day = Math.min(15, Math.floor((waxing ? el : el - 180) / 12) + 1);
   const th = (waxing ? 'ขึ้น ' : 'แรม ') + day + ' ค่ำ';
   const name = el < 12 || el >= 348 ? 'จันทร์ดับ' : Math.abs(el - 180) < 12 ? 'จันทร์เต็มดวง' : waxing ? 'ข้างขึ้น' : 'ข้างแรม';
-  return { elongation: el, waxing, day, th, name, lit: (1 - Math.cos(el * Math.PI / 180)) / 2 };
+  return { elongation: el, waxing, day, th, name, lit };
 }
 
 // Seven-day outlook, sampled at local noon each day. Fast planets drive the day-to-day changes.
@@ -1488,7 +1641,7 @@ function weekAhead(chart, start = new Date()) {
     let tone = 0;
     for (const x of fast) tone += x.strength * (x.asp.nature === 0 ? 0.4 : x.asp.nature);
     const rating = Math.max(1, Math.min(5, Math.round(3.2 + 2 * Math.tanh(tone / 4))));
-    out.push({ date: d, scores: dl.scores, avg, rating, moonSign: signOf(moonLon), moonHouse: chart.houseOf(moonLon), phase: lunarPhase(d), top: fast.slice(0, 3) });
+    out.push({ date: d, scores: dl.scores, avg, rating, tone, moonSign: signOf(moonLon), moonHouse: chart.houseOf(moonLon), phase: lunarPhase(d), top: fast.slice(0, 3) });
   }
   return out;
 }
@@ -1686,16 +1839,13 @@ const EVENTS = [
 const DAY_NAME = (n) => TH_PLANETS[n].day;
 const nm = (id, th) => id === 'sun' ? 'ดวงอาทิตย์' : id === 'moon' ? 'ดวงจันทร์' : id === 'asc' ? 'ลัคนา' : 'ดาว' + th;
 
-// Approximate วันพระ: ขึ้น/แรม 8 ค่ำ, ขึ้น 15 ค่ำ, and the last day of the waning half.
+// วันพระ from the Thai lunar calendar (falls back to the astronomical phase outside the table).
 function holyDay(date) {
   const ph = lunarPhase(date);
+  if (ph.thai) return ph.thai.holy;
   if (ph.day === 8) return true;
   if (ph.waxing && ph.day === 15) return true;
-  if (!ph.waxing && ph.day >= 14) {
-    const next = lunarPhase(new Date(date.getTime() + 86400000));
-    return next.waxing;
-  }
-  return false;
+  return !ph.waxing && ph.day >= 14 && lunarPhase(new Date(date.getTime() + 86400000)).waxing;
 }
 
 function findAuspicious(chart, person, eventId, { days = 60, start = new Date(), partner = null } = {}) {
@@ -5910,6 +6060,205 @@ function dreamLookup(text) {
   return best;
 }
 
+// ---- js/forecast.js ----
+// Unified daily forecast: one score per day that every screen shares (home card, opening sheet, 7-day strip).
+// It weighs five readings of the same day:
+//   สากล 40%   Western transits to the natal chart (aspects of the fast planets + the four life areas)
+//   ไทย 25%    Thai sidereal transits counted from the Thai ลัคนา (ภพตนุ … วินาศ): Moon, Jupiter, Saturn, Mars
+//   ทักษา 20%  the day planet's ทักษา position from the person's birth-day planet
+//   เลข 10%    numerology "personal day" (birth day + month + today's date)
+//   จันทรคติ 5% the Thai lunar day (ข้างขึ้น/แรม, วันพระ, ฤกษ์ใหญ่, อุปราคา)
+// It also turns the reading into plain-language advice that links to other rooms of the app.
+
+
+
+
+
+const FC_WEIGHTS = { west: 0.4, thai: 0.25, thaksa: 0.2, num: 0.1, lunar: 0.05 };
+const TH_HOUSE = ['ตนุ', 'กดุมภะ', 'สหัชชะ', 'พันธุ', 'ปุตตะ', 'อริ', 'ปัตนิ', 'มรณะ', 'ศุภะ', 'กัมมะ', 'ลาภะ', 'วินาศ'];
+const TH_HOUSE_USE = ['ตัวเอง', 'เงินทอง', 'พี่น้อง การติดต่อ', 'บ้าน ครอบครัว', 'ความรัก ลูก', 'ศัตรู สุขภาพ', 'คู่ครอง หุ้นส่วน', 'เรื่องไม่คาดคิด', 'โชค ผู้ใหญ่', 'การงาน', 'ลาภ รายได้', 'ความสูญเสีย'];
+// Moon's sidereal house from the Thai ลัคนา: the classic good (ศุภะ ลาภะ ปุตตะ กดุมภะ กัมมะ) and hard (อริ มรณะ วินาศ) houses.
+const MOON_TH = [60, 70, 60, 60, 72, 38, 62, 35, 75, 70, 80, 40];
+const PDAY_TH = ['', 'เริ่มต้นสิ่งใหม่', 'ร่วมมือ ประสานงาน', 'พบปะ สื่อสาร สร้างสรรค์', 'ลงแรง จัดระเบียบ', 'เปลี่ยนแปลง เดินทาง', 'ครอบครัว ความรัก ดูแลคนอื่น', 'พักใจ ทบทวน ภาวนา', 'เงิน อำนาจ ผลงาน', 'ปิดงานเก่า ให้อภัย ทำบุญ'];
+const PDAY_SC = [0, 70, 55, 68, 58, 65, 66, 50, 72, 56];
+const CAT_KEY = ['love', 'work', 'money', 'health'];
+
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const digitSum = (n) => String(n).split('').reduce((a, b) => a + +b, 0);
+const sid = (id, d) => ((lonOf(id, d) - ayanamsa(d)) % 360 + 360) % 360;
+// House (1–12) of a sidereal longitude counted whole-sign from a sign index.
+const houseFrom = (lon, sign) => ((Math.floor(lon / 30) - sign + 12) % 12) + 1;
+
+// Base sign for Thai transits: ลัคนา if the birth time is known, otherwise the natal Sun's sidereal sign.
+function thaiBase(chart) {
+  const lg = thaiLagna(chart);
+  if (lg) return { sign: lg.sign, by: 'ลัคนา' };
+  const sun = chart.planets.find((p) => p.id === 'sun');
+  return { sign: Math.floor((((sun.lon - ayanamsa(chart.utc)) % 360) + 360) % 360 / 30), by: 'ราศีเกิด' };
+}
+
+function personalDay(profile, date) {
+  const n = reduceTo9(digitSum(profile.day) + digitSum(profile.month) + digitSum(date.getFullYear()) + digitSum(date.getMonth() + 1) + digitSum(date.getDate()));
+  return { n, th: PDAY_TH[n], score: PDAY_SC[n] };
+}
+
+// w is one entry of weekAhead(): { date, scores, tone, top, moonHouse, ... }.
+function forecastDay(chart, profile, w) {
+  const d = w.date;
+  // 1. Western
+  const catAvg = w.scores.reduce((a, s) => a + s.score, 0) / w.scores.length;
+  const west = Math.round(0.55 * ((catAvg - 1) / 4) * 100 + 0.45 * (50 + 40 * Math.tanh((w.tone || 0) / 4)));
+  const lead = w.top && w.top[0];
+  // 2. Thai sidereal transits from the ลัคนา
+  const base = thaiBase(chart);
+  const mH = houseFrom(sid('moon', d), base.sign), jH = houseFrom(sid('jupiter', d), base.sign);
+  const sH = houseFrom(sid('saturn', d), base.sign), maH = houseFrom(sid('mars', d), base.sign);
+  let thai = MOON_TH[mH - 1];
+  const thaiNotes = [`จันทร์จรภพ${TH_HOUSE[mH - 1]} (${TH_HOUSE_USE[mH - 1]})`];
+  if ([2, 5, 7, 9, 11].includes(jH)) { thai += 6; thaiNotes.push(`พฤหัสจรภพ${TH_HOUSE[jH - 1]}หนุน`); }
+  if ([1, 4, 8, 12].includes(sH)) { thai -= 8; thaiNotes.push(sH === 1 ? 'เสาร์จรทับลัคนา' : `เสาร์จรภพ${TH_HOUSE[sH - 1]}`); }
+  if ([1, 8].includes(maH)) { thai -= 4; thaiNotes.push(`อังคารจรภพ${TH_HOUSE[maH - 1]}`); }
+  thai = clamp(thai, 15, 95);
+  // 3. ทักษา of the day
+  const bp = birthPlanet(profile), dp = dayPlanet(d.getFullYear(), d.getMonth() + 1, d.getDate(), 12, false);
+  const pos = posOf(bp, dp);
+  const thaksa = pos.id === 'kalakini' ? 28 : pos.tone === 2 ? 82 : 62;
+  // 4. Numerology personal day
+  const pd = personalDay(profile, d);
+  // 5. Thai lunar day
+  const lun = thaiLunar(d);
+  let lunar = 55;
+  const lunNotes = [];
+  if (lun) {
+    if (lun.waxing) lunar += 6;
+    if (lun.newMoon) { lunar -= 6; lunNotes.push('จันทร์ดับ'); }
+    if (lun.holy) lunNotes.push('วันพระ');
+    for (const e of lun.events) { lunNotes.push(e.th); lunar += e.k === 'sky' ? -8 : 10; }
+  }
+  lunar = clamp(lunar, 20, 90);
+  const total = Math.round(west * FC_WEIGHTS.west + thai * FC_WEIGHTS.thai + thaksa * FC_WEIGHTS.thaksa + pd.score * FC_WEIGHTS.num + lunar * FC_WEIGHTS.lunar);
+  const rating = total >= 72 ? 5 : total >= 61 ? 4 : total >= 49 ? 3 : total >= 39 ? 2 : 1;
+
+  // Life areas: Western scores, nudged by the ทักษา position and the Thai Moon house.
+  const bump = { love: 0, work: 0, money: 0, health: 0 };
+  ({ sri: () => bump.money++, mula: () => bump.money++, det: () => bump.work++, montri: () => bump.work++, utsaha: () => bump.work++, ayu: () => bump.health++, boriwan: () => bump.love++ }[pos.id] || (() => {}))();
+  if (pos.id === 'kalakini') for (const k of CAT_KEY) bump[k]--;
+  if ([2, 11].includes(mH)) bump.money++;
+  if (mH === 10) bump.work++;
+  if ([5, 7].includes(mH)) bump.love++;
+  if ([6, 8, 12].includes(mH)) bump.health--;
+  const scores = w.scores.map((s, k) => ({ name: s.name, key: CAT_KEY[k], score: clamp(s.score + clamp(bump[CAT_KEY[k]], -1, 1), 1, 5) }));
+
+  const sources = [
+    { k: 'west', th: 'โหราศาสตร์สากล', score: west, w: FC_WEIGHTS.west, note: lead ? `${lead.mover.th === 'อาทิตย์' ? 'ดวงอาทิตย์' : lead.mover.th === 'จันทร์' ? 'ดวงจันทร์' : 'ดาว' + lead.mover.th}จร${lead.asp.th}${lead.target.id === 'asc' ? 'ลัคนา' : lead.target.th === 'อาทิตย์' ? 'ดวงอาทิตย์' : lead.target.th === 'จันทร์' ? 'ดวงจันทร์' : 'ดาว' + lead.target.th}กำเนิด` : 'ดาวเร็วไม่ทำมุมสำคัญ' },
+    { k: 'thai', th: 'โหราศาสตร์ไทย', score: thai, w: FC_WEIGHTS.thai, note: `${thaiNotes.join(' · ')} นับจาก${base.by}${SIGNS[base.sign].th}` },
+    { k: 'thaksa', th: 'ทักษา', score: thaksa, w: FC_WEIGHTS.thaksa, note: `${TH_PLANETS[dp].day}เป็นวัน${pos.th}ของคนเกิด${TH_PLANETS[bp].day}` },
+    { k: 'num', th: 'เลขศาสตร์', score: pd.score, w: FC_WEIGHTS.num, note: `เลขวันส่วนตัว ${pd.n} · ${pd.th}` },
+    { k: 'lunar', th: 'จันทรคติ', score: lunar, w: FC_WEIGHTS.lunar, note: lun ? `${lun.full}${lunNotes.length ? ' · ' + lunNotes.join(' · ') : ''}` : '' }
+  ];
+  const fc = { date: d, total, rating, scores, sources, lunar: lun, pos, dayPlanet: dp, birthPlanet: bp, pday: pd, thaiMoonHouse: mH, westMoonHouse: w.moonHouse, lead };
+  fc.advice = adviceFor(fc, w);
+  return fc;
+}
+
+// ---------- plain-language advice ----------
+const advPick = (arr, seed) => arr[seed % arr.length];
+const ADV_GOOD = {
+  love: [
+    ['วันนี้เหมาะบอกความในใจ หรือชวนคนสำคัญไปกินข้าวเย็นด้วยกัน', '#/match', 'ดูดวงคู่'],
+    ['เสน่ห์แรงกว่าปกติ ใครโสดลองเปิดใจคุยกับคนใหม่ ใครมีคู่ลองเซอร์ไพรส์เล็ก ๆ', '#/match', 'ดูดวงคู่']
+  ],
+  work: [
+    ['งานที่ค้างไว้ลงมือวันนี้คืบหน้าเร็ว ลองเสนอไอเดียกับหัวหน้าหรือลูกค้าได้เลย', '#/auspice', 'หายามดีวันนี้'],
+    ['มีคนเห็นฝีมือ เหมาะนัดคุยงาน สัมภาษณ์ หรือส่งงานสำคัญ', '#/auspice', 'หายามดีวันนี้']
+  ],
+  money: [
+    ['มีจังหวะเงินเข้า เหมาะเจรจาซื้อขาย ปิดการขาย หรือทวงเงินที่ค้างอยู่', '#/luck', 'ดูเลขนำโชค'],
+    ['โชคเรื่องเงินมาแบบเล็ก ๆ น่ารัก ๆ ลองเสี่ยงโชคพอสนุก แต่อย่าลงเกินตัว', '#/luck', 'ดูเลขนำโชค']
+  ],
+  health: [
+    ['ร่างกายสดชื่น เหมาะออกกำลังกาย เดินเล่น หรือเริ่มกินอาหารดี ๆ', '', ''],
+    ['พลังกายดี เหมาะทำธุระนอกบ้านหรือไปเที่ยวใกล้ ๆ', '', '']
+  ]
+};
+const ADV_BAD = {
+  love: [['อารมณ์ปะทะกันง่าย ฟังให้จบก่อนตอบ เลี่ยงทะเลาะเรื่องเล็ก', 'prayer:metta-all', 'สวดแผ่เมตตา']],
+  work: [['ยังไม่ควรเซ็นสัญญาหรือตัดสินใจเรื่องใหญ่ ตรวจงานซ้ำอีกรอบก่อนส่ง', 'prayer:khama', 'สวดขอขมา ตั้งสติ']],
+  money: [['ระวังเงินออกไม่รู้ตัว งดช้อปของไม่จำเป็น และอย่าให้ใครยืมเงินวันนี้', 'prayer:ts-trade', 'คาถาค้าขาย']],
+  health: [['วันนี้ไม่ควรเดินทางไกล ถ้าต้องออกไปทำงานก็ขับรถช้า ๆ ระวังตัว และพักผ่อนให้พอ', 'prayer:ts-safe', 'คาถาแคล้วคลาด']]
+};
+const linkOf = (href, label) => (href ? { href, label } : null);
+
+function adviceFor(fc, w) {
+  const seed = fc.date.getDate() + fc.date.getMonth() * 31;
+  const out = [];
+  const lun = fc.lunar;
+  // Special days first: they are what people plan around.
+  if (lun) {
+    const big = lun.events.find((e) => e.k === 'big' || e.k === 'merit');
+    const luck = lun.events.find((e) => e.k === 'luck');
+    const sky = lun.events.find((e) => e.k === 'sky');
+    if (sky) out.push({ tone: -1, text: `วันนี้มี${sky.th} ${sky.note}`, link: { href: 'prayer:itipiso', label: 'สวดอิติปิโส' } });
+    if (luck) out.push({ tone: 1, text: `วันนี้${luck.th} ${luck.note}`, link: { href: '#/prayer', label: 'ไปห้องบทสวด' } });
+    if (big) out.push({ tone: 1, text: `วันนี้${big.th} ชวนครอบครัวไปทำบุญ เวียนเทียน หรือสวดมนต์ที่บ้านก็ได้บุญเต็มที่`, link: { href: '#/prayer', label: 'บทสวดวันพระ' } });
+    else if (lun.holy) out.push({ tone: 1, text: `วันนี้วันพระ (${lun.th}) ใส่บาตรตอนเช้า หรือสวดมนต์ก่อนนอน บุญส่งผลเต็มที่`, link: { href: '#/prayer', label: 'บทสวดวันพระ' } });
+  }
+  const sorted = [...fc.scores].sort((a, b) => b.score - a.score);
+  const best = sorted[0], worst = sorted[sorted.length - 1];
+  if (best.score >= 4) { const g = advPick(ADV_GOOD[best.key], seed); out.push({ tone: 1, text: g[0], link: linkOf(g[1], g[2]) }); }
+  // Family focus: the Moon in the 4th (Western or Thai) or a บริวาร day.
+  if (fc.westMoonHouse === 4 || fc.thaiMoonHouse === 4 || fc.pos.id === 'boriwan') {
+    const t = TEMPLES[seed % TEMPLES.length];
+    out.push({ tone: 1, text: `วันนี้ควรใช้เวลากับครอบครัว ลองชวนที่บ้านไปไหว้พระที่${t.th} ขอพรเรื่อง${t.wish}`, link: { href: '#/prayer', label: 'บทสวดก่อนไปวัด' } });
+  }
+  if (fc.pos.id === 'kalakini') {
+    const av = luckOf(fc.birthPlanet).avoid;
+    out.push({ tone: -1, text: `วันนี้ตรงกับวันกาลกิณีของคุณ เลี่ยงใส่สี${TH_PLANETS[av].color.split(' ')[0]} และยังไม่ควรเริ่มเรื่องใหม่`, link: { href: '#/auspice', label: 'ดูวันดีถัดไป' } });
+  }
+  if (worst.score <= 2) { const b = advPick(ADV_BAD[worst.key], seed); out.push({ tone: -1, text: b[0], link: linkOf(b[1], b[2]) }); }
+  if (fc.total < 45 && out.filter((x) => x.tone < 0).length < 2) out.push({ tone: -1, text: 'พลังวันนี้ต่ำ เหมาะพักเก็บแรง อยู่บ้านดูหนังสนุก ๆ หรือทำงานที่ถนัด ยังไม่ต้องรีบตัดสินใจ', link: null });
+  if (!out.length) out.push({ tone: 0, text: `วันเรียบ ๆ ทำงานประจำให้เสร็จ เลขวันนี้เน้น${fc.pday.th}`, link: null });
+  return out.slice(0, 3);
+}
+
+// ---------- effects of aspects and sign changes, in everyday words ----------
+const FX_AREA = {
+  sun: 'ตัวเองและเป้าหมาย', moon: 'อารมณ์และคนในบ้าน', mercury: 'การพูด การเรียน เอกสาร', venus: 'ความรักและเรื่องเงิน',
+  mars: 'พลังกายและความกล้า', jupiter: 'โชคและผู้ใหญ่', saturn: 'งานและความรับผิดชอบ', asc: 'สุขภาพและภาพลักษณ์',
+  uranus: 'ความอิสระ', neptune: 'ความฝันและสัญชาตญาณ', pluto: 'เรื่องที่ฝังลึกในใจ'
+};
+const FX_TEXT = {
+  moon: ['อารมณ์ดี ใจเย็น คุยเรื่อง{a}ได้ราบรื่น', 'อารมณ์แกว่งง่าย อ่อนไหวเรื่อง{a} อย่าเก็บคำพูดใครมาคิดมาก', 'ความรู้สึกเรื่อง{a}เด่นขึ้นมา ทำตามใจได้แต่พอดี'],
+  sun: ['มีคนเห็นความสามารถ เรื่อง{a}เด่นและมั่นใจขึ้น', 'อีโก้ชนกันง่าย เรื่อง{a}อาจมีคนขัด ใจเย็นแล้วค่อยพูด', 'เรื่อง{a}ได้รับความสนใจเต็มที่ เหมาะเริ่มอะไรใหม่'],
+  mercury: ['พูดอะไรคนก็เข้าใจ เหมาะเจรจาและคุยเรื่อง{a}', 'สื่อสารผิดพลาดง่าย เรื่อง{a}อาจเข้าใจกันผิด อ่านข้อความให้ดีก่อนส่ง', 'ความคิดเรื่อง{a}แล่นเร็ว จดไอเดียไว้'],
+  venus: ['มีเสน่ห์ คนรอบข้างใจดีด้วย เรื่อง{a}ราบรื่น อาจมีของขวัญหรือเงินเข้า', 'อยากได้อยากมีจนใช้เงินเกินตัว หรืองอนกันเรื่องเล็กในเรื่อง{a}', 'ความสุขและความรักเข้ามาที่เรื่อง{a}'],
+  mars: ['มีพลังลุย ทำเรื่อง{a}เสร็จไว', 'ใจร้อน หงุดหงิดง่าย ระวังทะเลาะหรืออุบัติเหตุเล็ก ๆ ในเรื่อง{a}', 'พลังพุ่งแรงที่เรื่อง{a} ใช้ทำงานหนักได้แต่อย่าวู่วาม'],
+  jupiter: ['โชคเข้าข้าง มีผู้ใหญ่ช่วยเรื่อง{a}', 'มองโลกดีเกินไป ระวังรับปากเกินตัวในเรื่อง{a}', 'โอกาสใหญ่เข้ามาที่เรื่อง{a} รีบรับไว้'],
+  saturn: ['ทำอะไรมั่นคง ผู้ใหญ่ไว้ใจ เรื่อง{a}ค่อย ๆ เป็นรูปเป็นร่าง', 'รู้สึกหนัก เหนื่อย ติดขัดเรื่อง{a} ต้องอดทนและทำทีละขั้น', 'เรื่อง{a}ถูกทดสอบ ต้องจริงจังและรับผิดชอบ'],
+  uranus: ['มีเรื่องใหม่ ๆ น่าตื่นเต้นเข้ามาในเรื่อง{a}', 'มีเรื่องเปลี่ยนกะทันหันในเรื่อง{a} เผื่อแผนสำรองไว้', 'เรื่อง{a}เปลี่ยนแบบไม่ทันตั้งตัว'],
+  neptune: ['สัญชาตญาณดี รู้สึกอะไรมักแม่นในเรื่อง{a}', 'สับสน หลงเชื่อง่ายเรื่อง{a} ระวังถูกหลอก', 'เรื่อง{a}คลุมเครือ ใช้ใจมากกว่าเหตุผล'],
+  pluto: ['มีพลังเปลี่ยนตัวเองเรื่อง{a}ให้ดีขึ้น', 'มีแรงกดดันหรือการชิงอำนาจในเรื่อง{a}', 'เรื่อง{a}กำลังเปลี่ยนจากข้างใน']
+};
+const BENEFIC = ['sun', 'moon', 'mercury', 'venus', 'jupiter'];
+function aspectEffect(x) {
+  const m = x.mover.id, n = x.asp.nature;
+  const i = n > 0 ? 0 : n < 0 ? 1 : 2;
+  const tone = n !== 0 ? n : BENEFIC.includes(m) ? 1 : ['uranus', 'neptune'].includes(m) ? 0 : -1;
+  const text = (FX_TEXT[m] || FX_TEXT.moon)[i].replace('{a}', FX_AREA[x.target.id] || 'ชีวิต');
+  return { tone, badge: tone > 0 ? 'ดี' : tone < 0 ? 'ท้าทาย' : 'ผสม', text };
+}
+const SIGN_STYLE = ['กล้า ใจร้อน อยากเริ่มก่อนใคร', 'ใจเย็น ชอบความสบาย ของกินของใช้ดี ๆ', 'ช่างพูด อยากรู้ ติดต่อคนเยอะ', 'อ่อนโยน คิดถึงบ้านและครอบครัว',
+  'มั่นใจ อยากเด่น ใจกว้าง', 'ละเอียด จัดระเบียบ ใส่ใจสุขภาพ', 'อ่อนหวาน รักความสวยงาม อยากมีคู่', 'ลึกซึ้ง เก็บความรู้สึก จริงจัง',
+  'ร่าเริง อยากเที่ยว อยากเรียนรู้', 'จริงจัง ขยันทำงาน มองระยะยาว', 'คิดต่าง เป็นตัวของตัวเอง เข้าสังคมเก่ง', 'อ่อนไหว ใจบุญ ช่างฝัน'];
+const ING_DOMAIN = { moon: 'อารมณ์ของคนช่วง 2 วันนี้', sun: 'บรรยากาศทั้งเดือน', mercury: 'วิธีพูดและคิดช่วงนี้', venus: 'ความรักและการใช้เงินช่วงนี้', mars: 'พลังและการลงมือช่วงนี้', jupiter: 'โชคช่วงปีนี้', saturn: 'บทเรียนช่วงหลายปีนี้' };
+function ingressEffect(e) {
+  const good = [1, 2, 5, 9, 10, 11].includes(e.house), hard = [6, 8, 12].includes(e.house);
+  let tone = good ? 1 : hard ? -1 : 0;
+  if (['mars', 'saturn'].includes(e.id) && [1, 7, 8, 12].includes(e.house)) tone = -1;
+  const text = `${ING_DOMAIN[e.id] || 'พลังช่วงนี้'}จะออกแนว${SIGN_STYLE[e.sign]} และส่งผลกับเรื่อง${HOUSES[e.house - 1]}ของคุณ`;
+  return { tone, badge: tone > 0 ? 'ดี' : tone < 0 ? 'ระวัง' : 'กลาง', text };
+}
+
 // ---- js/starmap.js ----
 // Builds the animated star-map SVG from a computed natal chart.
 
@@ -6102,6 +6451,8 @@ function logoRing() {
 
 
 
+
+
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
@@ -6281,19 +6632,30 @@ const ORA_COL = ['#E58FA8', '#D4AF63', '#6FC3B2', '#A99BD9'];
 // ---------- คำทำนายวันนี้ (home hero) ----------
 // Preview variants: ?hero=a (big card on top), ?hero=b (once-a-day opening sheet), ?hero=c (headline banner).
 const HERO_VAR = (() => { try { return new URLSearchParams(location.search).get('hero') || ''; } catch (e) { return ''; } })();
+const VERDICT = ['', 'วันพักเก็บแรง', 'วันต้องใจเย็น', 'วันกลาง ๆ', 'วันพลังดี', 'วันพลังดีมาก'];
+const VERDICT_COL = ['', 'var(--tension)', '#F0A08C', '#F0D89A', 'var(--gold-2)', 'var(--gold-2)'];
 function todayOracle() {
-  const ch = state.chart, now = new Date();
-  const d0 = weekData()[0], dl = daily(ch, now), la = liveAspects(ch, now);
-  const total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
-  const best = dl.scores.reduce((m, x) => (x.score > m.score ? x : m), dl.scores[0]);
-  const worst = dl.scores.reduce((m, x) => (x.score < m.score ? x : m), dl.scores[0]);
-  const lead = la[0] ? la[0].reason : dl.headline;
-  const moon = `ดวงจันทร์ผ่านภพ ${d0.moonHouse} เรื่อง${HOUSES[d0.moonHouse - 1].split(' ').slice(0, 2).join(' ')}จะเด่นขึ้นมา`;
-  const advice = best.score >= 4 ? `วันนี้เด่นเรื่อง${best.name} ลงมือได้เลย` : `วันนี้ค่อย ๆ ทำทีละเรื่อง`;
-  const caution = worst.score <= 2 ? `ระวังเรื่อง${worst.name}` : '';
-  const verdict = total >= 75 ? 'วันพลังดี' : total >= 55 ? 'วันกลาง ๆ ค่อนดี' : total >= 40 ? 'วันต้องใจเย็น' : 'วันพักเก็บแรง';
-  const col = total >= 75 ? 'var(--gold-2)' : total >= 55 ? '#F0D89A' : total >= 40 ? '#F0A08C' : 'var(--tension)';
-  return { d0, dl, la, total, best, worst, lead, moon, advice, caution, date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]} · ${d0.phase.th}`, verdict, col, luck: luckToday() };
+  const now = new Date(), d0 = weekData()[0], fc = d0.fc;
+  const lun = fc.lunar, nh = nextHolyDay(now);
+  const lunLine = lun ? lun.full : d0.phase.th;
+  const holyLine = lun && lun.holy ? 'วันนี้วันพระ' : nh ? `วันพระถัดไป ${WEEKDAY_SHORT[nh.date.getDay()]}. ${nh.date.getDate()} ${MONTHS_SHORT[nh.date.getMonth()]}${nh.inDays === 1 ? ' (พรุ่งนี้)' : ` (อีก ${nh.inDays} วัน)`}` : '';
+  const special = upcomingSpecial(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1), 30).filter((e) => e.k !== 'merit' || e.th === 'วันลอยกระทง')[0];
+  return { d0, fc, total: fc.total, scores: fc.scores, advice: fc.advice, lun, lunLine, holyLine, special, events: lun ? lun.events : [],
+    date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]}`, verdict: VERDICT[fc.rating], col: VERDICT_COL[fc.rating], luck: luckToday() };
+}
+const advHref = (l) => l.href.startsWith('prayer:') ? `href="#/prayer" data-act="openPrayer" data-v="${l.href.slice(7)}"` : `href="${l.href}"`;
+function adviceHTML(list) {
+  return `<ul class="ora-adv">${list.map((a) => `<li class="${a.tone < 0 ? 'neg' : a.tone > 0 ? 'pos' : ''}"><i aria-hidden="true">${a.tone < 0 ? '!' : '✓'}</i><span>${a.text}${a.link ? ` <a class="ora-go" ${advHref(a.link)}>${a.link.label} ›</a>` : ''}</span></li>`).join('')}</ul>`;
+}
+function lunarRowHTML(o) {
+  const ev = o.events.map((e) => `<span class="ora-ev ${e.k}">${e.th}</span>`).join('');
+  const nxt = o.special ? `<span class="ora-next">ถัดไป · ${o.special.th} ${o.special.date.getDate()} ${MONTHS_SHORT[o.special.date.getMonth()]}</span>` : '';
+  return `<div class="ora-lun"><span class="ora-lun-d">${moonIcon(o.d0.phase, 8)}<b>${o.lunLine}</b></span>${o.lun && o.lun.holy ? '<span class="ora-ev holy">วันพระ</span>' : `<span class="ora-hol">${o.holyLine}</span>`}${ev}${nxt}</div>`;
+}
+function sourcesHTML(fc) {
+  return `<details class="ora-src"><summary>อ่านจาก 5 ศาสตร์ <span>${fc.sources.map((x) => `<em style="--v:${x.score}%"></em>`).join('')}</span></summary>
+<ul>${fc.sources.map((x) => `<li><span class="os-h"><b>${x.th}</b><span class="mono">${x.score} · น้ำหนัก ${Math.round(x.w * 100)}%</span></span><span class="os-bar"><span style="width:${x.score}%"></span></span><span class="small">${x.note}</span></li>`).join('')}</ul>
+<p class="small">คะแนนรวม = ค่าเฉลี่ยถ่วงน้ำหนักของทั้ง 5 ศาสตร์ ใช้ตัวเดียวกันทั้งแอป (หน้าแรก แถบ 7 วัน และหน้าต้อนรับ)</p></details>`;
 }
 function oracleRing(total, size = 74) {
   const R = 30, C = 2 * Math.PI * R, len = (total / 100) * C;
@@ -6305,13 +6667,14 @@ function oracleHeroA() {
   const o = todayOracle();
   return `<section class="ora ora-a" aria-label="คำทำนายวันนี้">
 <span class="ora-eye"><span class="live-dot" aria-hidden="true"></span>คำทำนายวันนี้ · ${o.date}</span>
-<div class="ora-top"><div class="ora-v"><b style="color:${o.col}">${o.verdict}</b><span>${o.advice}${o.caution ? ' · ' + o.caution : ''}</span></div>${oracleRing(o.total)}</div>
-<p class="ora-lead">“${o.lead}”</p>
-<p class="ora-moon">☽ ${o.moon}</p>
-<div class="ora-cats">${o.dl.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
+${lunarRowHTML(o)}
+<div class="ora-top"><div class="ora-v"><b style="color:${o.col}">${o.verdict}</b><span>รวมโหราศาสตร์สากล ไทย ทักษา เลข และจันทรคติ</span></div>${oracleRing(o.total)}</div>
+${adviceHTML(o.advice)}
+<div class="ora-cats">${o.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
+${sourcesHTML(o.fc)}
 <span class="ora-sub">มงคลประจำวัน</span>
 ${luckCells(o.luck)}
-<button class="ora-more" data-act="oraMore">อ่านเหตุผลจากดาวทั้งหมด ↓</button>
+<button class="ora-more" data-act="oraMore">ดูดาวที่ส่งผลวันนี้ ↓</button>
 </section>`;
 }
 function oracleBannerC() {
@@ -6334,13 +6697,12 @@ function oracleSheetB() {
   const o = todayOracle();
   return `<div class="ora-sheet" id="ora-sheet" role="dialog" aria-label="คำทำนายวันนี้"><div class="ora-sheet-in">
 <span class="ora-eye" style="justify-content:center">${o.date}</span>
-<p class="ora-hi">สวัสดี${greeting(new Date()).replace('สวัสดี', '')} คุณ${esc((state.profile.name || '').split(' ')[0])}</p>
-${oracleRing(o.total, 120)}
+<p class="ora-hi">${greeting(new Date())} คุณ${esc((state.profile.name || '').split(' ')[0])}</p>
+${oracleRing(o.total, 112)}
 <b class="ora-big" style="color:${o.col}">${o.verdict}</b>
-<p class="ora-lead" style="text-align:center">“${o.lead}”</p>
-<p class="ora-moon" style="text-align:center">☽ ${o.moon}</p>
-<div class="ora-cats">${o.dl.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
-<p class="ora-moon" style="text-align:center">${o.advice}${o.caution ? ' · ' + o.caution : ''}</p>
+${lunarRowHTML(o)}
+${adviceHTML(o.advice)}
+<div class="ora-cats">${o.scores.map((x, k) => `<span style="--c:${ORA_COL[k]}"><i></i>${x.name}<b>${x.score}</b></span>`).join('')}</div>
 ${luckCells(o.luck)}
 <button class="btn" data-act="oraClose">เข้าสู่หน้าหลัก</button></div></div>`;
 }
@@ -6408,6 +6770,7 @@ function when(d, now = new Date()) {
   const hm = pad(d.getHours()) + ':' + pad(d.getMinutes());
   return diff === 0 ? 'วันนี้ ' + hm : diff === 1 ? 'พรุ่งนี้ ' + hm : `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${hm}`;
 }
+const fxBadge = (fx) => `<span class="fx-b ${fx.tone > 0 ? 'pos' : fx.tone < 0 ? 'neg' : 'mid'}">${fx.badge}</span>`;
 const natureColor = (n) => n > 0 ? 'var(--harmony)' : n < 0 ? 'var(--tension)' : 'var(--gold-2)';
 
 const aspKey = (x) => `${x.mover.id}-${x.asp.id}-${x.target.id}`;
@@ -6425,17 +6788,17 @@ function liveDailyHTML() {
   const timing = (x) => x.applying ? (x.exactAt ? `แม่นยำสุด ${when(x.exactAt, now)}` : 'ส่งผลหลายสัปดาห์') : 'กำลังคลายตัว';
   const trio = (x) => `<span class="sym">${x.mover.glyph}&#xFE0E;</span><span class="sym" style="color:${natureColor(x.asp.nature)}">${ASPECT_GLYPH[x.asp.id]}&#xFE0E;</span>${targetGlyph(x.target)}`;
   const items = la.map((x) => {
-    const m = x.mover, t = x.target, col = natureColor(x.asp.nature), k = aspKey(x);
+    const m = x.mover, t = x.target, col = natureColor(x.asp.nature), k = aspKey(x), fx = aspectEffect(x);
     const pct = Math.round(Math.min(1, x.strength / 1.6) * 100);
     const isOpen = state.aspOpen.has(k);
     return `<li class="asp${isOpen ? ' open' : ''}" style="--c:${col}">
 <button class="asp-head" data-act="aspToggle" data-k="${k}" aria-expanded="${isOpen}">
 <span class="asp-glyphs" aria-hidden="true">${trio(x)}</span>
-<span class="asp-title"><span>${pname(m.id, m.th)}${x.asp.th}${pname(t.id, t.th)}</span><span class="mono">${timing(x)}</span></span>
+<span class="asp-title"><span>${pname(m.id, m.th)}${x.asp.th}${pname(t.id, t.th)} ${fxBadge(fx)}</span><span class="fx-line">${fx.text}</span><span class="mono">${timing(x)}</span></span>
 <span class="chev">${icon('down', 16, 1.6)}</span>
 </button>
 <div class="fold"><div class="fold-in"><div class="asp-body">
-<p class="body" style="font-size:14px">${x.reason}</p>
+<p class="body" style="font-size:14px">ในเชิงโหราศาสตร์ ${x.reason}</p>
 <p class="small" style="color:${col}">${x.advice}</p>
 <dl class="asp-facts">
 <div><dt>ดาวจร</dt><dd>${SIGNS[m.sign].th} ${fmtDeg(m.lon)}${m.retro ? ' (ถอยหลัง)' : ''} · ภพ ${m.house}</dd></div>
@@ -6444,21 +6807,13 @@ function liveDailyHTML() {
 <div><dt>น้ำหนัก</dt><dd><span class="tr-bar" role="img" aria-label="${pct}%"><span style="width:${pct}%;background:${col}"></span></span></dd></div>
 </dl></div></div></div></li>`;
   }).join('');
-  const nextEvents = up.slice(0, 4).map((e) => `<li><span class="sym" style="color:var(--gold-2)">${PLANETS.find((p) => p.id === e.id).glyph}&#xFE0E;</span>
-<span style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-size:14px">${pname(e.id, PLANETS.find((p) => p.id === e.id).th)}เข้าราศี${SIGNS[e.sign].th}</span><span class="small">ภพ ${e.house} · ${HOUSES[e.house - 1]}</span></span>
-<span class="mono" style="font-size:10px;color:var(--gold);white-space:nowrap">${when(e.at, now)}</span></li>`).join('');
-  const RING_COL = ['#E58FA8', '#D4AF63', '#6FC3B2', '#A99BD9'];
-  const total = Math.round(dl.scores.reduce((x, y) => x + y.score, 0) / dl.scores.length * 20);
-  const ring = (k, sc) => {
-    const r = 57 - k * 10, C = 2 * Math.PI * r, len = (sc / 5) * C;
-    return `<circle cx="64" cy="64" r="${r}" fill="none" stroke="${RING_COL[k]}" stroke-opacity=".16" stroke-width="7"/>
-<circle class="ring-arc" cx="64" cy="64" r="${r}" fill="none" stroke="${RING_COL[k]}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${len.toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 64 64)" style="--len:${len.toFixed(1)};--c:${C.toFixed(1)}"/>`;
-  };
-  const mood = total >= 75 ? 'วันพลังดี' : total >= 55 ? 'วันกลาง ๆ ค่อนดี' : total >= 40 ? 'วันต้องใจเย็น' : 'วันพักเก็บแรง';
+  const nextEvents = up.slice(0, 4).map((e) => { const fx = ingressEffect(e); return `<li><span class="sym" style="color:var(--gold-2)">${PLANETS.find((p) => p.id === e.id).glyph}&#xFE0E;</span>
+<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px">${pname(e.id, PLANETS.find((p) => p.id === e.id).th)}เข้าราศี${SIGNS[e.sign].th} ${fxBadge(fx)}</span><span class="small">${fx.text}</span><span class="small" style="font-size:11px">ภพ ${e.house} · ${HOUSES[e.house - 1]}</span></span>
+<span class="mono" style="font-size:10px;color:var(--gold);white-space:nowrap">${when(e.at, now)}</span></li>`; }).join('');
   return `<div class="card daily day-hero${open ? ' open' : ''}">
 <span class="dh-top"><span class="eyebrow" style="letter-spacing:.2em;display:flex;align-items:center;gap:8px"><span class="live-dot" aria-hidden="true"></span>เหตุผลจากดาววันนี้ · LIVE</span><span class="mono small" style="font-size:10px">อัปเดต ${pad(now.getHours())}:${pad(now.getMinutes())}</span></span>
 <p class="small dh-intro">ดาวที่กำลังส่งผลกับดวงของคุณ พร้อมบทสวดและทางแก้ประจำวัน</p>
-${remedyChip(dailyRemedy(la, birthPlanet(state.profile), total))}
+${remedyChip(dailyRemedy(la, birthPlanet(state.profile), weekData()[0].fc.total))}
 ${heroRemedy()}
 <button class="drawer-toggle" data-act="liveToggle" data-closed="ดูเหตุผล ${la.length} มุมดาว" aria-expanded="${open}">
 <span class="peek" aria-hidden="true">${la.slice(0, 3).map((x) => `<span class="peek-chip">${trio(x)}</span>`).join('')}</span>
@@ -6642,23 +6997,28 @@ function moonIcon(ph, r = 7) {
 let weekCache = null;
 function weekData() {
   const now = new Date(), key = now.toDateString();
-  if (!weekCache || weekCache.key !== key || weekCache.chart !== state.chart) weekCache = { key, chart: state.chart, days: weekAhead(state.chart, now) };
+  if (!weekCache || weekCache.key !== key || weekCache.chart !== state.chart || weekCache.profile !== state.profile) {
+    const days = weekAhead(state.chart, now).map((w) => { const fc = forecastDay(state.chart, state.profile, w); return { ...w, fc, rating: fc.rating }; });
+    weekCache = { key, chart: state.chart, profile: state.profile, days };
+  }
   return weekCache.days;
 }
 function weekHTML() {
   const days = weekData(), sel = state.weekSel;
   const strip = days.map((d, i) => `<button class="day${sel === i ? ' sel' : ''}" data-act="weekDay" data-i="${i}" aria-pressed="${sel === i}" aria-label="${WEEKDAY[d.date.getDay()]} ${d.date.getDate()} ${RATING_TH[d.rating]}">
-<span class="wd">${i === 0 ? 'วันนี้' : WEEKDAY_SHORT[d.date.getDay()]}</span><span class="dn">${d.date.getDate()}</span>${moonIcon(d.phase)}
+<span class="wd">${i === 0 ? 'วันนี้' : WEEKDAY_SHORT[d.date.getDay()]}</span><span class="dn">${d.date.getDate()}</span>${moonIcon(d.phase)}${d.fc.lunar && (d.fc.lunar.holy || d.fc.lunar.events.length) ? `<span class="wk-holy${d.fc.lunar.events.length ? ' ev' : ''}">${d.fc.lunar.events.length ? '★' : 'พระ'}</span>` : ''}
 <span class="dots" aria-hidden="true">${[1, 2, 3, 4, 5].map((n) => `<i style="background:${n <= d.rating ? ratingColor(d.rating) : 'var(--line)'}"></i>`).join('')}</span></button>`).join('');
   let detail = '';
   if (sel != null) {
     const d = days[sel];
     detail = `<div class="card day-detail">
-<span class="eyebrow" style="letter-spacing:.14em">${WEEKDAY[d.date.getDay()].toUpperCase()} ${d.date.getDate()} ${MONTHS_SHORT[d.date.getMonth()]} · ${d.phase.th}</span>
-<p class="h2" style="font-size:18px;color:${ratingColor(d.rating)}">${RATING_TH[d.rating]}</p>
+<span class="eyebrow" style="letter-spacing:.14em">${WEEKDAY[d.date.getDay()].toUpperCase()} ${d.date.getDate()} ${MONTHS_SHORT[d.date.getMonth()]} · ${d.fc.lunar ? d.fc.lunar.full : d.phase.th}</span>
+<p class="h2" style="font-size:18px;color:${ratingColor(d.rating)}">${RATING_TH[d.rating]} <span class="mono" style="font-size:12px;color:var(--muted)">${d.fc.total}/100</span></p>
+${d.fc.lunar && (d.fc.lunar.holy || d.fc.lunar.events.length) ? `<div class="ora-lun">${d.fc.lunar.holy ? '<span class="ora-ev holy">วันพระ</span>' : ''}${d.fc.lunar.events.map((e) => `<span class="ora-ev ${e.k}">${e.th}</span>`).join('')}</div>` : ''}
+${adviceHTML(d.fc.advice.slice(0, 2))}
 <p class="small">ดวงจันทร์อยู่ราศี${SIGNS[d.moonSign].th} ผ่านภพ ${d.moonHouse} ของคุณ เรื่อง${HOUSES[d.moonHouse - 1]}จะเด่นขึ้นมาในวันนี้ · ${d.phase.name}</p>
 ${d.top.length ? `<ul class="day-asp">${d.top.map((x) => `<li style="--c:${natureColor(x.asp.nature)}"><span class="asp-glyphs" aria-hidden="true"><span class="sym">${x.mover.glyph}&#xFE0E;</span><span class="sym" style="color:var(--c)">${ASPECT_GLYPH[x.asp.id]}&#xFE0E;</span>${targetGlyph(x.target)}</span>
-<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600">${pname(x.mover.id, x.mover.th)}${x.asp.th}${pname(x.target.id, x.target.th)}</span><span class="small">${x.reason}</span></span></li>`).join('')}</ul>` : '<p class="small">ดาวเคลื่อนเร็วไม่ทำมุมสำคัญ เป็นวันเรียบ ๆ เหมาะกับงานประจำ</p>'}
+<span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span style="font-size:14px;font-weight:600">${pname(x.mover.id, x.mover.th)}${x.asp.th}${pname(x.target.id, x.target.th)} ${fxBadge(aspectEffect(x))}</span><span class="small">${aspectEffect(x).text}</span></span></li>`).join('')}</ul>` : '<p class="small">ดาวเคลื่อนเร็วไม่ทำมุมสำคัญ เป็นวันเรียบ ๆ เหมาะกับงานประจำ</p>'}
 </div>`;
   }
   return `<h2 class="label" style="display:flex;justify-content:space-between"><span>7 วันข้างหน้า</span><span class="mono" style="font-size:10px;letter-spacing:.1em">กดดูรายวัน</span></h2>
@@ -7550,7 +7910,7 @@ function remedyCard(plan, open = false) {
 // What troubles the person right now: a hard transit from a heavy planet, or a low day score.
 function troubleNow() {
   const ch = state.chart, now = new Date(), bp = birthPlanet(state.profile);
-  const dl = daily(ch, now), total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
+  const fc = weekData()[0].fc, dl = { scores: fc.scores }, total = fc.total;
   const r = dailyRemedy(liveAspects(ch, now, { n: 6, exact: false }), bp, total);
   const tr = transits(ch, now), heavy = tr.find((t) => t.level === 'HIGH' && t.id !== 'jupiter');
   let planetNo = r.kind === 'แก้' ? CHANT_PLANET[r.id] : heavy ? PLANET_NO[heavy.id] : bp;
@@ -7908,8 +8268,7 @@ ${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตั�
 <p class="small" style="text-align:center;font-size:11px">ตั้งนะโม 3 จบก่อนสวด · สวดด้วยใจสงบ ความหมายเป็นสรุปสั้นเพื่อความเข้าใจ</p>
 </main>`;
   }
-  const L = luckOf(bp), dl = daily(state.chart, new Date());
-  const total = Math.round(dl.scores.reduce((a, x) => a + x.score, 0) / dl.scores.length * 20);
+  const L = luckOf(bp), total = weekData()[0].fc.total;
   const today = dailyRemedy(liveAspects(state.chart, new Date(), { n: 6, exact: false }), bp, total);
   const recs = [{ id: birthChant(bp), kind: 'เสริม', reason: `บทประจำวันเกิดของคุณ (${TH_PLANETS[bp].day})` }];
   if (today.id !== recs[0].id) recs.unshift(today);
