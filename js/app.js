@@ -1921,14 +1921,16 @@ function malaSVG(n, done) {
   return `<svg class="mala" viewBox="0 0 120 120" aria-hidden="true">${dots}</svg>`;
 }
 function prayerText(pr) {
-  return pr.blocks.map((b) => `${b.note ? `<p class="pr-note">${b.note}</p>` : ''}${b.lines ? `<div class="pr-stanza">${b.n ? `<span class="pr-n">${thaiNum(b.n)}</span>` : ''}<div>${b.lines.map((l) => `<p>${l}</p>`).join('')}</div></div>` : ''}${b.p ? `<p class="pr-prose">${b.p}</p>` : ''}${b.go ? `<a href="#/prayer" class="ask-link" data-act="openPrayer" data-v="${b.go}" style="align-self:center">เปิด${prayerById(b.go).th} ›</a>` : ''}`).join('');
+  return pr.blocks.map((b) => `${b.note ? `<p class="pr-note">${b.note}</p>` : ''}${b.lines ? `<div class="pr-stanza">${b.n ? `<span class="pr-n">${thaiNum(b.n)}</span>` : ''}<div>${b.lines.map((l) => `<p>${l.replace('{deva}', 'พระ' + TH_PLANETS[birthPlanet(state.profile)].th)}</p>`).join('')}</div></div>` : ''}${b.p ? `<p class="pr-prose">${b.p}</p>` : ''}${b.go ? `<a href="#/prayer" class="ask-link" data-act="openPrayer" data-v="${b.go}" style="align-self:center">เปิด${prayerById(b.go).th} ›</a>` : ''}`).join('');
 }
-const QUICK_CHANTS = [['metta-all', 'แผ่เมตตา', '♡'], ['metta-self', 'เมตตาตนเอง', '☺'], ['kruadnam', 'กรวดน้ำ', '≈'], ['khama', 'ขอขมา', '☸'], ['ts-popular', 'คนนิยม', '✿'], ['ts-trade', 'ค้าขายดี', '◈'], ['ts-talk', 'การเจรจา', '❝'], ['ts-safe', 'แคล้วคลาด', '➶'], ['ts-lightning', 'กันฟ้าผ่า', 'ϟ'], ['ts-ghost', 'ป้องกันผี', '☾'], ['ts-dog', 'กันสุนัข', '⚑'], ['ts-snake', 'ป้องกันงู', '§']];
+// The birth-day deva chant is recited as many times as the birth planet's strength (กำลังพระเคราะห์), like the day chants.
+const prOf = (id) => id === 'deva-birth' && state.profile ? { ...prayerById(id), count: prayerById(birthChant(birthPlanet(state.profile))).count, cat: 'day' } : prayerById(id);
+const QUICK_CHANTS = [['metta-all', 'แผ่เมตตา', '♡'], ['metta-self', 'เมตตาตนเอง', '☺'], ['kruadnam', 'กรวดน้ำ', '≈'], ['khama', 'ขอขมา', '☸'], ['ts-popular', 'คนนิยม', '✿'], ['ts-trade', 'ค้าขายดี', '◈'], ['ts-talk', 'การเจรจา', '❝'], ['ts-safe', 'แคล้วคลาด', '➶'], ['ts-lightning', 'กันฟ้าผ่า', 'ϟ'], ['ts-ghost', 'ป้องกันผี', '☾'], ['ts-dog', 'กันสุนัข', '⚑'], ['ts-snake', 'ป้องกันงู', '§'], ['itipiso', 'อิติปิโส', '☸'], ['itipiso-rev', 'อิติปิโสถอยหลัง', '↺'], ['itipiso-8', 'อิติปิโส 8 ทิศ', '✳'], ['lp-iam', 'มงกุฎพระพุทธเจ้า', '♔'], ['deva-birth', 'เทวดาประจำตัว', '✧'], ['chinabanchon', 'ชินบัญชร', '❖'], ['ngoenlan', 'คาถาเงินล้าน', '¤'], ['siwali', 'พระสีวลี', '◎']];
 function viewPrayer() {
   const st = state.prayer, bp = birthPlanet(state.profile);
   const head = pageHead('07', 'PRAYER', 'บทสวดมนต์', 'var(--gold-2)', 'prayer', st.open ? `<button class="back" data-act="prayerBack" aria-label="กลับ" style="margin:0">${icon('back', 20, 1.5)}</button>` : '');
   if (st.open) {
-    const pr = prayerById(st.open), done = st.counts[pr.id] || 0;
+    const pr = prOf(st.open), done = st.counts[pr.id] || 0;
     const cat = PRAYER_CATS.find((c) => c.id === pr.cat);
     return `<main class="screen pr-screen">
 ${head}
@@ -1948,6 +1950,7 @@ ${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตั�
   const recs = [{ id: birthChant(bp), kind: 'เสริม', reason: `บทประจำวันเกิดของคุณ (${TH_PLANETS[bp].day})` }];
   if (today.id !== recs[0].id) recs.unshift(today);
   recs.push({ id: devaOfDay(bp), kind: 'บูชา', reason: `เทพประจำวันเกิดตามคติฮินดู (${TH_PLANETS[bp].day})` });
+  recs.push({ id: 'deva-birth', kind: 'บูชา', reason: `เทวดานพเคราะห์ประจำตัวของคนเกิด${TH_PLANETS[bp].day} คือพระ${TH_PLANETS[bp].th}` });
   const pu = st.purpose ? purposeById(st.purpose) : null;
   const list = pu ? pu.items.map(prayerById) : PRAYERS.filter((p) => st.cat === 'all' || p.cat === st.cat);
   return `<main class="screen">
@@ -2214,9 +2217,9 @@ document.addEventListener('click', (e) => {
     case 'prayerCat': state.prayer.cat = el.dataset.v; break;
     case 'prayerPurpose': state.prayer.purpose = el.dataset.v || null; break;
     case 'prayerBack': { const b = state.prayer.back; state.prayer.open = null; state.prayer.back = null; if (b && b !== 'prayer') { go(b); return; } break; }
-    case 'prayerReset': state.prayer.counts[state.prayer.open] = 0; { const c = document.getElementById('pr-counter'); if (c) c.innerHTML = counterHTML(prayerById(state.prayer.open)); } return;
+    case 'prayerReset': state.prayer.counts[state.prayer.open] = 0; { const c = document.getElementById('pr-counter'); if (c) c.innerHTML = counterHTML(prOf(state.prayer.open)); } return;
     case 'prayerTap': {
-      const pr = prayerById(state.prayer.open), c0 = state.prayer.counts[pr.id] || 0;
+      const pr = prOf(state.prayer.open), c0 = state.prayer.counts[pr.id] || 0;
       if (c0 >= pr.count) return;
       state.prayer.counts[pr.id] = c0 + 1;
       if (navigator.vibrate) navigator.vibrate(c0 + 1 >= pr.count ? [30, 50, 80] : 12);
