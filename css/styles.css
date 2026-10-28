@@ -1002,3 +1002,56 @@ a:hover { color: var(--gold-2); }
 /* the home live card reuses .asp but needs a stacked layout (chart page .asp is a 3-column grid) */
 .day-hero .asp { display: block; padding: 2px 12px; }
 .day-hero .asp-body { padding-left: 0; }
+
+/* ---- bottom nav "เพิ่มเติม" + rooms sheet ---- */
+.nav-more { flex: 1 1 0; min-width: 0; white-space: nowrap; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-height: 52px; background: none; border: 0; font: inherit; color: var(--muted); font-size: 10.5px; font-weight: 500; cursor: pointer; }
+.nav-more.on { color: var(--gold-2); box-shadow: inset 0 2px 0 var(--gold); }
+.nav-more.on svg { filter: drop-shadow(0 0 6px rgba(240,216,154,.7)); }
+.more-sheet { position: fixed; inset: 0; z-index: 70; display: flex; align-items: flex-end; justify-content: center; }
+.more-bg { position: absolute; inset: 0; border: 0; background: rgba(6,5,10,.72); backdrop-filter: blur(3px); animation: oraIn .25s ease both; cursor: pointer; }
+.more-in { position: relative; width: 100%; max-width: 430px; padding: 8px 16px calc(20px + env(safe-area-inset-bottom)); border-radius: 22px 22px 0 0; border-top: 1px solid rgba(240,216,154,.35); background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,96,200,.18), transparent 70%), #12100C; animation: moreUp .3s cubic-bezier(.2,.8,.2,1) both; display: flex; flex-direction: column; gap: 6px; }
+@keyframes moreUp { from { transform: translateY(40%); opacity: 0; } to { transform: none; opacity: 1; } }
+.more-grip { align-self: center; width: 40px; height: 4px; border-radius: 4px; background: var(--line-2); }
+.more-h { display: flex; justify-content: space-between; align-items: center; }
+.more-h b { font-family: var(--serif); font-size: 18px; }
+.more-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.more-t { --c: var(--gold); display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 12px 4px 10px; border-radius: 14px; border: 1px solid var(--line); background: linear-gradient(180deg, color-mix(in srgb, var(--c) 9%, var(--surface)), var(--surface)); text-decoration: none; color: var(--text); text-align: center; }
+.more-t .sigil { color: var(--c); width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--c) 40%, transparent); }
+.more-t b { font-size: 13.5px; font-weight: 600; }
+.more-t span:last-child { font-size: 10.5px; color: var(--muted); }
+.more-t[aria-current="page"] { border-color: var(--gold); }
+.oracle-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+.oracle-grid .oracle { font: inherit; cursor: pointer; padding: 9px 2px 8px; }
+.oracle-grid .oracle .n { font-size: 12px; }
+.oracle-grid .oracle .sigil { width: 32px; height: 32px; }
+
+/* ---- dream room ---- */
+.dr-seg button { font-size: 13px; min-height: 40px; }
+.dr-g { display: flex; flex-direction: column; gap: 8px; }
+.dr-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.dr-chips .chip { min-height: 34px; padding: 0 12px; }
+.dr-res { border-radius: 16px; border-color: rgba(169,155,217,.45); background: radial-gradient(ellipse 80% 70% at 100% 0%, rgba(124,96,200,.2), transparent 70%), var(--surface); }
+.dr-res.warn { border-color: rgba(240,160,140,.45); }
+.dr-time { margin: 0; color: var(--text-2); }
+.dr-nums { display: flex; flex-direction: column; gap: 6px; }
+.dr-nums > div { display: flex; flex-wrap: wrap; gap: 6px; }
+.dr-nums b { font-size: 18px; padding: 4px 12px; border-radius: 10px; background: rgba(212,175,99,.14); color: var(--gold-2); font-weight: 500; }
+.dr-nums.mine b { background: rgba(111,195,178,.12); color: var(--harmony); font-size: 15px; }
+.dr-fix { margin: 0; color: #F0A08C; }
+button.ask-link { background: none; font: inherit; font-size: 12px; cursor: pointer; }
+.dr-log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.dr-log li { display: flex; gap: 12px; align-items: center; border-bottom: 1px solid var(--line); }
+.dr-log .mono { font-size: 11px; color: var(--muted); width: 54px; }
+
+/* ---- privacy ---- */
+.pv-hero { border-radius: 16px; border-color: rgba(111,195,178,.45); background: radial-gradient(ellipse 80% 70% at 100% 0%, rgba(111,195,178,.14), transparent 70%), var(--surface); }
+.pv-hero b, .pv-del b { font-family: var(--serif); font-size: 18px; }
+.pv { display: flex; flex-direction: column; gap: 6px; }
+.pv ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.6; color: var(--text-2); }
+.pv ul b { color: var(--text); }
+.pv-del { border-radius: 16px; }
+.pv-row { display: flex; gap: 12px; align-items: center; }
+.pv-danger { background: var(--tension); }
+.pv-danger-o { color: var(--tension); border-color: rgba(240,160,140,.5); min-height: 46px; }
+.lock-note { margin: -6px 0 0; font-size: 11.5px; color: var(--harmony); }
+.lock-note a { color: var(--harmony); }

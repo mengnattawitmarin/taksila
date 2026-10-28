@@ -39,6 +39,8 @@ const state = {
   match: { sign: null, useDate: true, rel: 'love', name: '', day: 14, month: 2, yearBE: 2535, hour: 12, minute: 0, timeKnown: false, people: saved.people || [] },
   tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
+  dream: { q: '', sel: null, time: 'dawn', saved: false },
+  pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null, tree: { tied: false, digits: null, done: false, kind: null }, hist: [] },
   ask: { messages: [], persona: 'thai', ctx: null, pending: false }
@@ -70,7 +72,11 @@ const IC = {
   user: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
   down: '<path d="M6 9l6 6 6-6"/>',
   auspice: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
-  search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>'
+  search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  more: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><circle cx="16.75" cy="16.75" r="3.25"/>',
+  dream: '<path d="M14.5 4.5a7 7 0 1 0 5 11.4A7.5 7.5 0 0 1 14.5 4.5z"/><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6z"/>',
+  privacy: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><rect x="9.5" y="10.5" width="5" height="4.5" rx="1"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/>',
+  setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>'
 };
 const icon = (name, size = 20, sw = 1.4) => `<svg aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${IC[name]}</svg>`;
 
@@ -80,12 +86,13 @@ function pageHead(n, code, title, color, iconName, extra = '') {
 }
 
 const NAV = [
-  ['home', 'หน้าหลัก', 'home'], ['chart', 'ผังดาว', 'chart'], ['match', 'คู่ดวง', 'match'],
-  ['tarot', 'ไพ่', 'tarot'], ['numbers', 'ตัวเลข', 'numbers'], ['luck', 'โชคลาภ', 'luck']
+  ['home', 'หน้าหลัก', 'home'], ['chart', 'ผังดาว', 'chart'], ['tarot', 'ไพ่', 'tarot'],
+  ['numbers', 'ตัวเลข', 'numbers'], ['luck', 'โชคลาภ', 'luck']
 ];
 function nav(route) {
+  const elsewhere = !NAV.some(([r]) => r === route);
   return `<nav class="nav" aria-label="เมนูหลัก">${NAV.map(([r, label, ic]) =>
-    `<a href="#/${r}"${r === route ? ' aria-current="page"' : ''}>${icon(ic)}<span>${label}</span></a>`).join('')}</nav>`;
+    `<a href="#/${r}"${r === route ? ' aria-current="page"' : ''}>${icon(ic)}<span>${label}</span></a>`).join('')}<button class="nav-more${elsewhere ? ' on' : ''}" data-act="moreOpen" aria-haspopup="dialog">${icon('more')}<span>เพิ่มเติม</span></button></nav>`;
 }
 
 // ---------------- screens ----------------
@@ -137,6 +144,7 @@ function viewSetup() {
 <button class="back" data-act="go" data-to="${state.profile ? 'home' : 'welcome'}" aria-label="ย้อนกลับ">${icon('back', 20, 1.5)}</button>
 <div style="display:flex;flex-direction:column;gap:2px"><span class="eyebrow">BIRTH DATA</span><h1 class="h1" style="font-size:23px">ข้อมูลกำเนิด</h1></div>
 </header>
+<p class="lock-note">🔒 เก็บไว้ในเครื่องนี้เท่านั้น ไม่ส่งไปเซิร์ฟเวอร์ · <a href="#/privacy">ความเป็นส่วนตัว</a></p>
 <label class="field">ชื่อที่ให้เรียก<input class="input" data-in="name" value="${esc(d.name)}" placeholder="เช่น มีนา" autocomplete="nickname"></label>
 
 <section style="display:flex;flex-direction:column;gap:8px">
@@ -285,7 +293,8 @@ function viewHome() {
     ['luck', 'โชคลาภ', 'ปิงปอง ธูป', 'var(--amber)'],
     ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
     ['prayer', 'บทสวด', 'แก้ดวง เสริมดวง', 'var(--gold-2)'],
-    ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)']
+    ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
+    ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)']
   ];
   return `<main class="screen home">
 <header class="home-head">
@@ -296,7 +305,7 @@ function viewHome() {
 </header>
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
 <div id="oracle-card">${oracleHeroA()}</div>
-<nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
+<nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}<button class="oracle" data-act="moreOpen" style="--c:var(--muted)"><span class="sigil">${icon('more', 20)}</span><span class="n">เพิ่มเติม</span></button></nav>
 <div id="install-slot">${installHTML()}</div>
 <section id="live-daily" aria-label="ดวงรายวันแบบสด">${liveDailyHTML()}</section>
 <section style="display:flex;flex-direction:column;gap:10px">
@@ -1304,9 +1313,9 @@ ${tool.kind === 'name' ? `<div class="nm-form">
 <label class="field">นามสกุล<input class="input" data-in="nmLast" value="${esc(n.last)}" placeholder="ไม่บังคับ" autocomplete="off" maxlength="40"></label>
 <div class="nm-opts"><div class="seg" role="group" aria-label="เพศ">${[['', 'ไม่ระบุ'], ['f', 'หญิง'], ['m', 'ชาย']].map(([v, t]) => `<button aria-pressed="${n.gender === v}" data-act="nmGender" data-v="${v}">${t}</button>`).join('')}</div>
 <label class="field" style="flex:1">วันเกิดเจ้าของชื่อ<select class="select" data-in="nm.day">${[[0, state.profile ? 'ของฉัน (' + TH_PLANETS[birthPlanet(state.profile)].day + ')' : 'ไม่ระบุ'], ...[1, 2, 3, 4, 8, 5, 6, 7].map((k) => [k, TH_PLANETS[k].day])].map(([v, t]) => `<option value="${v}"${v === n.day ? ' selected' : ''}>${t}</option>`).join('')}</select></label></div></div>
-<p class="small" style="margin-top:-12px">${tool.hint}</p>`
+<p class="small" style="margin-top:-12px">${tool.hint}</p>${LOCK_NOTE}`
     : `<label class="field">${tool.th}<input class="input mono num-input" inputmode="${tool.kind === 'digits' ? 'numeric' : 'text'}" autocomplete="off" maxlength="${tool.max + 4}" data-in="numValue" value="${esc(n.values[n.mode] || '')}" placeholder="${tool.ph}"></label>
-<p class="small" style="margin-top:-12px">${tool.hint}</p>`}
+<p class="small" style="margin-top:-12px">${tool.hint}</p>${LOCK_NOTE}`}
 <div id="num-results" style="display:flex;flex-direction:column;gap:10px">${numResults()}</div>
 </main>`;
 }
@@ -1776,7 +1785,7 @@ ${ws.some((w) => w.kind === 'care') ? remedyCard(remedyPlan({ planetNo: 7, topic
 // ---------------- router ----------------
 // Routes live in memory (and are mirrored to the URL hash when the host allows it),
 // so the app also works inside sandboxed frames that ignore hash changes.
-const NEEDS_PROFILE = ['home', 'chart', 'match', 'ask'];
+const NEEDS_PROFILE = ['dream', 'home', 'chart', 'match', 'ask'];
 // Opening the app always starts at home. Home-screen shortcuts pass ?go=<room> to open a room directly.
 let current = (() => { try { return new URLSearchParams(location.search).get('go') || ''; } catch (e) { return ''; } })();
 try { history.replaceState(null, '', location.pathname); } catch (e) { /* not allowed in some frames */ }
@@ -1862,7 +1871,95 @@ function counterHTML(pr) {
 <div class="pr-ctrl"><span class="small">${full ? 'ครบแล้ว สาธุ' : 'แตะวงกลมทุกครั้งที่สวดจบหนึ่งรอบ'}</span>${done ? '<button class="link-btn" data-act="prayerReset">เริ่มนับใหม่</button>' : ''}</div>`;
 }
 
-const VIEWS = { prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- เพิ่มเติม: every room in one sheet ----------------
+const ROOMS = [
+  ['chart', 'ผังดาว', 'ดวงกำเนิด', 'var(--gold)'], ['match', 'คู่ดวง', 'เทียบสองคน', 'var(--rose)'],
+  ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
+  ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
+  ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
+  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
+  ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)']
+];
+const NAV_ROUTES = ['home', 'chart', 'tarot', 'numbers', 'luck'];
+function moreSheetHTML() {
+  return `<div class="more-sheet" id="more-sheet" role="dialog" aria-label="ห้องทั้งหมด"><button class="more-bg" data-act="moreClose" aria-label="ปิด"></button>
+<div class="more-in"><span class="more-grip" aria-hidden="true"></span><div class="more-h"><b>ห้องทั้งหมดในตักศิลา</b><button class="ic-x" data-act="moreClose">ปิด</button></div>
+<nav class="more-grid">${ROOMS.map(([r, t, s, c]) => `<a href="#/${r}" class="more-t" style="--c:${c}"${route() === r ? ' aria-current="page"' : ''}><span class="sigil">${icon(r, 20)}</span><b>${t}</b><span>${s}</span></a>`).join('')}</nav></div></div>`;
+}
+function closeMore() { const m = document.getElementById('more-sheet'); if (m) m.remove(); }
+
+// ---------------- ทำนายฝัน ----------------
+const DREAM_GROUPS = [
+  ['สัตว์', ['งูรัดหรือพันตัว', 'งูกัด', 'งูเข้าบ้าน', 'งูไล่', 'งูเหลือม', 'งูเห่า', 'งูจงอาง', 'เห็นงู', 'พญานาค', 'ช้าง', 'จระเข้', 'เต่า', 'เสือ', 'แมว', 'ปลา', 'หมา']],
+  ['คน', ['เด็ก', 'ตั้งท้อง', 'คลอดลูก', 'อุ้มเด็ก', 'แฟนเก่า', 'พระ', 'ผี', 'คนตาย']],
+  ['ร่างกาย', ['ฟันหลุด', 'ฟันบนหลุด', 'ฟันล่างหลุด', 'ฟันหลุดทั้งปาก', 'ตัดผม', 'เลือด', 'เปลือยกาย']],
+  ['เงินทอง สิ่งของ', ['ทอง', 'เงิน', 'ถูกหวย', 'ปืน', 'เครื่องบิน', 'อุจจาระ']],
+  ['เหตุการณ์', ['ไฟไหม้', 'จมน้ำ', 'น้ำท่วม', 'น้ำท่วมบ้าน', 'ตกจากที่สูง', 'ถูกไล่ล่า', 'ฆ่างู']]
+];
+// Folk belief on when the dream came (Shopee Blog: ทำนายฝัน). Shown as belief only.
+const DREAM_TIMES = [
+  ['day', 'กลางวัน', 'ตามความเชื่อ ฝันกลางวันมาจากความคิดของเราเอง มักไม่เป็นจริง'],
+  ['eve', 'หัวค่ำ 18–22 น.', 'ตามความเชื่อ ฝันช่วงหัวค่ำจะส่งผลราว 6 เดือนข้างหน้า'],
+  ['night', 'ดึก 22–02 น.', 'ตามความเชื่อ ฝันช่วงดึกจะส่งผลภายใน 1–3 เดือน'],
+  ['dawn', 'ใกล้รุ่ง 02 น.–เช้า', 'ตามความเชื่อ ฝันใกล้รุ่งแม่นที่สุด ส่งผลเร็วภายใน 3–15 วัน']
+];
+const DREAM_KEY = 'taksila.dreams';
+function dreamLog() { try { return JSON.parse(localStorage.getItem(DREAM_KEY)) || []; } catch (e) { return []; } }
+const dreamByTh = (th) => DREAMS.find((d) => d.th === th);
+function dreamResultHTML(d) {
+  const st = state.dream, bp = birthPlanet(state.profile), L = luckOf(bp);
+  const tm = DREAM_TIMES.find((x) => x[0] === st.time);
+  const warn = /ระวัง|เคราะห์|อุบัติเหตุ|ขัดแย้ง|ดวงตก/.test(d.d);
+  return `<section class="card dr-res${warn ? ' warn' : ''}" aria-live="polite">
+<span class="eyebrow">ฝันเห็น</span><h2 class="h2" style="margin:0">${d.th}</h2>
+<p class="body" style="font-size:15px;margin:0">${d.d}</p>
+${tm ? `<p class="small dr-time">🕰 ${tm[2]}</p>` : ''}
+${d.n.length ? `<div class="dr-nums"><span class="small">เลขตามตำรา</span><div>${d.n.map((n) => `<b class="mono">${n}</b>`).join('')}</div></div>` : ''}
+<div class="dr-nums mine"><span class="small">เลขมงคลของคุณ (ทักษาคนเกิด${TH_PLANETS[bp].day})</span><div>${L.numbers.map((n) => `<b class="mono">${n}</b>`).join('')}</div></div>
+${warn ? `<p class="small dr-fix">ฝันเตือน: ตามความเชื่อให้ตักบาตรเช้าวันรุ่งขึ้นแล้วกรวดน้ำ หรือสวดแผ่เมตตาก่อนนอน ให้ร้ายกลายเป็นดี</p>` : ''}
+<div class="ask-links"><a href="#/prayer" data-act="openPrayer" data-v="${warn ? 'metta-all' : 'chinabanchon'}" class="ask-link">☸ ${warn ? 'สวดแผ่เมตตาก่อนนอน' : 'สวดชินบัญชรเสริมดวง'}</a><a href="#/luck" class="ask-link">🎲 ไปห้องโชคลาภ</a><button class="ask-link" data-act="dreamSave">${st.saved ? '✓ บันทึกแล้ว' : '📓 บันทึกลงสมุดฝัน'}</button></div>
+<p class="small" style="font-size:11px;margin:0">ที่มา: ${d.src} · ความฝันเป็นความเชื่อ ใช้เป็นกำลังใจหรือความบันเทิง</p></section>`;
+}
+function viewDream() {
+  const st = state.dream;
+  const found = st.sel ? dreamByTh(st.sel) : st.q.trim() ? dreamLookup(st.q) : null;
+  const log = dreamLog();
+  return `<main class="screen" style="--accent:var(--violet)">
+${pageHead('09', 'DREAMS', 'ทำนายฝัน', 'var(--violet)', 'dream')}
+<label class="field">เมื่อคืนฝันว่าอะไร<input class="input" data-in="dreamQ" value="${esc(st.q)}" placeholder="เช่น ฝันเห็นงูรัด ฝันฟันหลุด" autocomplete="off" maxlength="80"></label>
+<div class="seg dr-seg" role="group" aria-label="ฝันตอนไหน">${DREAM_TIMES.map(([k, t]) => `<button aria-pressed="${st.time === k}" data-act="dreamTime" data-v="${k}">${t.split(' ')[0]}</button>`).join('')}</div>
+<div id="dream-out">${found ? dreamResultHTML(found) : st.q.trim() ? '<p class="small">ยังไม่มีฝันนี้ในตำรา ลองพิมพ์สั้น ๆ เช่น "งู" "ฟัน" "คนตาย" หรือแตะเลือกด้านล่าง</p>' : ''}</div>
+${DREAM_GROUPS.map(([g, list]) => `<section class="dr-g"><h2 class="label">${g}</h2><div class="dr-chips">${list.map((th) => `<button class="chip" data-act="dreamPick" data-v="${th}" aria-pressed="${st.sel === th}">${th}</button>`).join('')}</div></section>`).join('')}
+${log.length ? `<section class="dr-g"><h2 class="label" style="display:flex;justify-content:space-between"><span>สมุดฝันของฉัน</span><button class="link-btn" style="min-height:0;font-size:12px" data-act="dreamClear">ล้าง</button></h2>
+<ul class="dr-log">${log.map((x) => `<li><span class="mono">${x.date}</span><button class="link-btn" data-act="dreamPick" data-v="${x.th}">${x.th}</button></li>`).join('')}</ul></section>` : ''}
+<p class="small" style="font-size:11px">🔒 สมุดฝันเก็บไว้ในเครื่องนี้เท่านั้น ไม่ส่งออกไปที่ใด</p>
+</main>`;
+}
+
+// ---------------- ความเป็นส่วนตัว (PDPA) ----------------
+function viewPrivacy() {
+  return `<main class="screen" style="--accent:var(--teal)">
+${pageHead('10', 'PRIVACY · PDPA', 'ความเป็นส่วนตัว', 'var(--teal)', 'privacy')}
+<section class="card pv-hero"><b>ข้อมูลของคุณอยู่ในเครื่องคุณเท่านั้น</b><span class="small">ตักศิลาไม่มีเซิร์ฟเวอร์เก็บข้อมูลผู้ใช้ ไม่มีระบบสมาชิก ไม่ติดตามการใช้งาน และไม่ขายหรือแบ่งปันข้อมูลให้ใคร การคำนวณดวงทั้งหมดทำในเครื่องของคุณ</span></section>
+<section class="pv"><h2 class="label">เก็บอะไรบ้าง และเก็บที่ไหน</h2><ul>
+<li><b>ชื่อเล่น วัน เวลา และสถานที่เกิด</b> ใช้คำนวณผังดาวและทักษา เก็บในหน่วยความจำของเบราว์เซอร์ในเครื่องนี้ (localStorage)</li>
+<li><b>คนที่บันทึกไว้ในห้องคู่ดวง และสมุดฝัน</b> เก็บในเครื่องนี้เช่นกัน</li>
+<li><b>เลขบัตรประชาชน เลขบัญชี เบอร์โทร ทะเบียนรถ ชื่อที่วิเคราะห์</b> คำนวณทันทีในเครื่อง <u>ไม่บันทึก ไม่ส่งออก</u> ปิดแอปแล้วหายไป</li>
+</ul></section>
+<section class="pv"><h2 class="label">สิ่งที่ออกจากเครื่องของคุณ</h2><ul>
+<li>ตอนเปิดแอป เบราว์เซอร์จะโหลดไฟล์แอปจาก GitHub Pages และโหลดฟอนต์จาก Google Fonts ผู้ให้บริการเหล่านี้อาจเห็นข้อมูลทางเทคนิค เช่น หมายเลข IP ตามนโยบายของเขา แต่ไม่ได้รับข้อมูลดวงหรือตัวเลขที่คุณกรอก</li>
+<li>เมื่อกดแชร์ รูปหรือข้อความจะถูกส่งไปยังแอปที่คุณเลือกเอง</li>
+</ul></section>
+<section class="pv"><h2 class="label">สิทธิของคุณตาม พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562</h2>
+<p class="small">กฎหมายให้สิทธิเจ้าของข้อมูล เช่น ขอรับทราบรายละเอียด ขอเข้าถึงหรือรับสำเนา ขอแก้ไข ขอลบ ขอระงับหรือคัดค้านการใช้ ขอโอนข้อมูล และถอนความยินยอม เพราะข้อมูลอยู่ในเครื่องคุณเอง คุณใช้สิทธิเหล่านี้ได้ทันที: ดูและแก้ไขได้ที่ "ข้อมูลเกิด" และลบทั้งหมดได้ด้วยปุ่มด้านล่าง</p></section>
+<section class="card pv-del"><b>ลบข้อมูลทั้งหมดในเครื่องนี้</b><span class="small">ลบวันเกิด คนที่บันทึก สมุดฝัน และการตั้งค่าทั้งหมดของตักศิลาในเบราว์เซอร์นี้ ย้อนกลับไม่ได้</span>
+${state.pvConfirm ? `<div class="pv-row"><button class="btn pv-danger" data-act="pvWipe">ยืนยัน ลบทั้งหมด</button><button class="link-btn" data-act="pvCancel">ยกเลิก</button></div>` : `<button class="btn btn-line pv-danger-o" data-act="pvAsk">ลบข้อมูลทั้งหมด</button>`}</section>
+<p class="small" style="font-size:11px">ติดต่อหรือแจ้งปัญหา: <a href="https://github.com/mengnattawitmarin/taksila/issues" target="_blank" rel="noopener" style="color:var(--gold)">หน้าแจ้งปัญหาของโครงการ</a> · ปรับปรุงล่าสุด 28 ต.ค. 2569</p>
+</main>`;
+}
+const LOCK_NOTE = '<p class="lock-note">🔒 ประมวลผลในเครื่องนี้เท่านั้น ไม่บันทึก ไม่ส่งออก · <a href="#/privacy">ความเป็นส่วนตัว</a></p>';
+
+const VIEWS = { dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -1875,7 +1972,7 @@ function render() {
   if (r === 'home' && showOraSheet() && !document.getElementById('ora-sheet')) document.body.insertAdjacentHTML('beforeend', oracleSheetB());
   mountLuck();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -1890,6 +1987,7 @@ document.addEventListener('click', (e) => {
   const el = e.target.closest('[data-act]');
   if (link) {
     e.preventDefault();
+    closeMore();
     if (el && el.dataset.act === 'chartTab') state.chartTab = +el.dataset.i;
     if (el && el.dataset.act === 'openPrayer') { state.prayer.open = el.dataset.v; state.prayer.back = route(); }
     go(link.getAttribute('href').slice(2));
@@ -2039,6 +2137,23 @@ document.addEventListener('click', (e) => {
     case 'ssReset': state.luck.ss = null; break;
     case 'ssMotion': askMotion().then((ok) => toast(ok ? 'พร้อมแล้ว เขย่ามือถือได้เลย' : 'เครื่องนี้ไม่รองรับการเขย่า ใช้วิธีกดค้างแทน')); return;
     case 'askChip': ask(el.dataset.q); return;
+    case 'moreOpen': { if (!document.getElementById('more-sheet')) document.body.insertAdjacentHTML('beforeend', moreSheetHTML()); return; }
+    case 'moreClose': closeMore(); return;
+    case 'dreamPick': state.dream.sel = el.dataset.v; state.dream.saved = false; break;
+    case 'dreamTime': state.dream.time = el.dataset.v; break;
+    case 'dreamSave': {
+      const d = state.dream.sel ? dreamByTh(state.dream.sel) : dreamLookup(state.dream.q);
+      if (d && !state.dream.saved) { const now = new Date(); const log = [{ date: `${now.getDate()} ${MONTHS_SHORT[now.getMonth()]}`, th: d.th }, ...dreamLog()].slice(0, 30); try { localStorage.setItem(DREAM_KEY, JSON.stringify(log)); } catch (er) {} state.dream.saved = true; toast('บันทึกลงสมุดฝันแล้ว'); }
+      break;
+    }
+    case 'dreamClear': try { localStorage.removeItem(DREAM_KEY); } catch (er) {} break;
+    case 'pvAsk': state.pvConfirm = true; break;
+    case 'pvCancel': state.pvConfirm = false; break;
+    case 'pvWipe': {
+      try { Object.keys(localStorage).filter((k) => k.startsWith('taksila')).forEach((k) => localStorage.removeItem(k)); } catch (er) {}
+      state.profile = null; state.chart = null; state.match.people = []; state.pvConfirm = false; weekCache = null;
+      toast('ลบข้อมูลทั้งหมดในเครื่องแล้ว'); go('welcome'); return;
+    }
     case 'oraClose': { ORA_SHEET = false; const sh = document.getElementById('ora-sheet'); if (sh) { sh.classList.add('out'); setTimeout(() => sh.remove(), 400); } return; }
     case 'oraMore': { e.preventDefault && e.preventDefault(); const t = document.getElementById('live-daily'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     case 'askPersona': state.ask.persona = el.dataset.v; break;
@@ -2079,6 +2194,12 @@ document.addEventListener('input', (e) => {
   const v = e.target.value;
   if (key === 'm.name') { state.match.name = v.trim(); const sb = document.querySelector('[data-act=matchSave]'); if (sb) sb.disabled = !state.match.name; return; }
   if (key === 'tarotQ') { state.tarot.q = v; return; }
+  if (key === 'dreamQ') {
+    state.dream.q = v; state.dream.sel = null; state.dream.saved = false;
+    const out = document.getElementById('dream-out'), d = v.trim() ? dreamLookup(v) : null;
+    if (out) out.innerHTML = d ? dreamResultHTML(d) : v.trim() ? '<p class="small">ยังไม่มีฝันนี้ในตำรา ลองพิมพ์สั้น ๆ เช่น "งู" "ฟัน" "คนตาย" หรือแตะเลือกด้านล่าง</p>' : '';
+    return;
+  }
   if (key === 'tarotOtherName') { state.tarot.other.name = v; return; }
   if (key === 'placeQuery') {
     state.placeQuery = v;
