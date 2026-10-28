@@ -15,7 +15,7 @@ import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceT
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
 import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
 import { forecastDay, aspectEffect, ingressEffect } from './forecast.js';
-import { nextHolyDay, upcomingSpecial } from './lunar.js';
+import { nextHolyDay, upcomingSpecial, thaiLunar } from './lunar.js';
 import { MU_PLACES, MU_CATS, MU_WISH, BLOOD_LINK } from './places.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf, dayPlanet } from './thai.js';
 
@@ -79,6 +79,8 @@ const IC = {
   dream: '<path d="M14.5 4.5a7 7 0 1 0 5 11.4A7.5 7.5 0 0 1 14.5 4.5z"/><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6z"/>',
   privacy: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><rect x="9.5" y="10.5" width="5" height="4.5" rx="1"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/>',
   setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><circle cx="12" cy="14.5" r="2.2"/>',
+  about: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
   map: '<path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z"/><path d="M12 6.5l.9 2 2.1.3-1.5 1.5.4 2.1-1.9-1-1.9 1 .4-2.1-1.5-1.5 2.1-.3z"/>'
 };
 const icon = (name, size = 20, sw = 1.4) => `<svg aria-hidden="true" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${IC[name]}</svg>`;
@@ -207,6 +209,7 @@ function greeting(now) {
 const ORA_COL = ['#E58FA8', '#D4AF63', '#6FC3B2', '#A99BD9'];
 // ---------- คำทำนายวันนี้ (home hero) ----------
 // Preview variants: ?hero=a (big card on top), ?hero=b (once-a-day opening sheet), ?hero=c (headline banner).
+const INVITE_RAW = (() => { try { return new URLSearchParams(location.search).get('inv'); } catch (e) { return null; } })();
 const HERO_VAR = (() => { try { return new URLSearchParams(location.search).get('hero') || ''; } catch (e) { return ''; } })();
 const VERDICT = ['', 'วันพักเก็บแรง', 'วันต้องใจเย็น', 'วันกลาง ๆ', 'วันพลังดี', 'วันพลังดีมาก'];
 const VERDICT_COL = ['', 'var(--tension)', '#F0A08C', '#F0D89A', 'var(--gold-2)', 'var(--gold-2)'];
@@ -250,6 +253,7 @@ ${adviceHTML(o.advice)}
 ${sourcesHTML(o.fc)}
 <span class="ora-sub">มงคลประจำวัน</span>
 ${luckCells(o.luck)}
+<div class="ora-acts"><a class="ora-go" href="#/calendar">ปฏิทินวันพระ ›</a><button class="ora-go ora-sh" data-act="dailyShare">แชร์ดวงวันนี้ ↗</button></div>
 <button class="ora-more" data-act="oraMore">ดูดาวที่ส่งผลวันนี้ ↓</button>
 </section>`;
 }
@@ -959,6 +963,7 @@ ${m.timeKnown ? `<div class="date-row"><label class="field">ชั่วโม�
     : `<div class="sign-grid" role="radiogroup" aria-label="ราศีของอีกฝ่าย">${SIGNS.map((s, i) => `<button class="sign-btn${i === state.chart.planets[0].sign ? ' me' : ''}" role="radio" aria-checked="${i === m.sign}" data-act="matchSign" data-i="${i}"><span class="gl" aria-hidden="true">${s.glyph}&#xFE0E;</span>${s.th}</button>`).join('')}</div>`}
 </section>
 ${matchHTML(r)}
+<button class="mt-invite" data-act="inviteShare"><b>ชวนเขามาดูคู่ดวงกับเรา ↗</b><span>ส่งลิงก์ให้เพื่อนหรือแฟน เปิดแล้วเห็นวันเกิดของคุณพร้อมเทียบดวงทันที · ลิงก์มีวันเกิดของคุณ ส่งให้คนที่ไว้ใจเท่านั้น</span></button>
 <p class="small" style="text-align:center;font-size:11px">คำนวณจากตำแหน่งดาวจริงของทั้งสองคน ร่วมกับตำราคู่วันเกิดไทยและปีนักษัตรจีน · เพื่อความเข้าใจกัน ไม่ใช่คำตัดสินความรัก</p>
 </main>`;
 }
@@ -1946,6 +1951,7 @@ ${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตั�
 <span class="pr-count">สวด ${pr.count} จบ${pr.cat === 'day' ? ' · ตามกำลังดาวประจำวัน' : ''}</span></section>
 <section class="pr-text${pr.heart ? ' heart' : ''}">${prayerText(pr)}</section>
 <section class="pr-counter" id="pr-counter">${counterHTML(pr)}</section>
+<a class="pr-report" href="${reportLink(pr)}" target="_blank" rel="noopener">พบตัวบทผิด? แจ้งเราได้ที่นี่</a>
 <p class="small" style="text-align:center;font-size:11px">ตั้งนะโม 3 จบก่อนสวด · สวดด้วยใจสงบ ความหมายเป็นสรุปสั้นเพื่อความเข้าใจ</p>
 </main>`;
   }
@@ -1985,8 +1991,8 @@ const ROOMS = [
   ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
   ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
   ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
-  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
-  ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)']
+  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'ปฏิทินวันพระ', 'วันพระ ฤกษ์ใหญ่', 'var(--gold-2)'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
+  ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)'], ['about', 'เกี่ยวกับ', 'แหล่งอ้างอิง', 'var(--gold)']
 ];
 const NAV_ROUTES = ['home', 'chart', 'tarot', 'numbers', 'luck'];
 function moreSheetHTML() {
@@ -2164,7 +2170,136 @@ function muSelect(id, scroll) {
   if (scroll) { const c = document.getElementById('mu-' + id); if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
 }
 
-const VIEWS = { map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- ปฏิทินพระ: วันพระ วันโกน วันสำคัญ ----------------
+const HOLY_CHANTS = [['itipiso', 'อิติปิโส'], ['metta-all', 'แผ่เมตตา'], ['kruadnam', 'กรวดน้ำ']];
+function viewCalendar() {
+  const now = new Date(), rows = [];
+  for (let i = 0; i < 75; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i), l = thaiLunar(d);
+    if (!l) continue;
+    if (l.holy || l.kon || l.events.length) rows.push({ d, l, i });
+  }
+  let lastMonth = -1;
+  return `<main class="screen" style="--accent:var(--gold-2)">
+${pageHead('12', 'HOLY DAYS', 'ปฏิทินวันพระ', 'var(--gold-2)', 'calendar')}
+<p class="small" style="margin:0">ตามปฏิทินจันทรคติไทย (ปฏิทินหลวง) 75 วันข้างหน้า วันโกนคือวันก่อนวันพระ เหมาะเตรียมของใส่บาตร</p>
+<ul class="cal-list">${rows.map(({ d, l, i }) => {
+    const head = d.getMonth() !== lastMonth ? `<li class="cal-m">${MONTHS_TH[d.getMonth()]} ${d.getFullYear() + 543}</li>` : '';
+    lastMonth = d.getMonth();
+    const big = l.events.some((e) => e.k === 'big' || e.k === 'luck' || e.k === 'sky');
+    return `${head}<li class="cal-r${l.holy ? ' holy' : ''}${big ? ' big' : ''}"><span class="cal-d"><b>${d.getDate()}</b><i>${WEEKDAY_SHORT[d.getDay()]}</i></span>
+<span class="cal-b"><span class="cal-t">${l.holy ? 'วันพระ' : l.kon ? 'วันโกน' : ''}${l.events.map((e) => `<span class="ora-ev ${e.k}">${e.th}</span>`).join('')}</span><span class="small">${l.full}${i === 0 ? ' · วันนี้' : i === 1 ? ' · พรุ่งนี้' : ` · อีก ${i} วัน`}</span>
+${l.holy || big ? `<span class="ask-links">${(l.events.find((e) => e.k === 'sky') ? [['itipiso-8', 'อิติปิโส 8 ทิศ']] : HOLY_CHANTS).map(([id, t]) => `<a href="#/prayer" data-act="openPrayer" data-v="${id}" class="ask-link">☸ ${t}</a>`).join('')}</span>` : ''}</span></li>`;
+  }).join('')}</ul>
+</main>`;
+}
+
+// ---------------- แชร์การ์ดดวงวันนี้เป็นรูป ----------------
+async function dailyImage() {
+  const o = todayOracle(), W = 1080, H = 1350;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const x = cv.getContext('2d');
+  const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#1C1530'); g.addColorStop(.55, '#0F0C12'); g.addColorStop(1, '#1E170C'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  for (let k = 0; k < 80; k++) { x.fillStyle = `rgba(240,216,154,${0.12 + (k % 5) * 0.07})`; x.beginPath(); x.arc((k * 397) % W, (k * 271) % H, 1 + (k % 3), 0, 7); x.fill(); }
+  const F = (w, s) => `${w} ${s}px "IBM Plex Sans Thai", "Taviraj", sans-serif`;
+  x.textAlign = 'center';
+  x.fillStyle = '#D4AF63'; x.font = F(500, 28); x.fillText(`ตักศิลา · คำทำนายวันนี้`, W / 2, 90);
+  x.fillStyle = '#B9AD94'; x.font = F(400, 30); x.fillText(`${o.date} · ${o.lunLine}`, W / 2, 140);
+  // ring
+  const cx = W / 2, cy = 330, R = 120;
+  x.lineWidth = 22; x.strokeStyle = '#2C261B'; x.beginPath(); x.arc(cx, cy, R, 0, 7); x.stroke();
+  const rg = x.createLinearGradient(cx - R, 0, cx + R, 0); rg.addColorStop(0, '#E592B2'); rg.addColorStop(.5, '#D4AF63'); rg.addColorStop(1, '#7FC4B4');
+  x.strokeStyle = rg; x.lineCap = 'round'; x.beginPath(); x.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + 2 * Math.PI * o.total / 100); x.stroke();
+  x.fillStyle = '#F1E6CF'; x.font = F(500, 78); x.fillText(String(o.total), cx, cy + 26);
+  x.fillStyle = '#F6E3B0'; x.font = F(700, 76); x.fillText(o.verdict, W / 2, 560);
+  if (o.events.length) { x.fillStyle = '#E9C9F0'; x.font = F(500, 32); x.fillText(o.events.map((e) => e.th).join(' · '), W / 2, 612); }
+  x.textAlign = 'left'; x.font = F(400, 34); let y = 690;
+  for (const a of o.advice) {
+    x.fillStyle = a.tone < 0 ? '#F0A08C' : '#7FC4B4'; x.fillText(a.tone < 0 ? '!' : '✓', 110, y);
+    x.fillStyle = '#EDE3CC';
+    const words = thaiChunks(a.text).split(/([\s​]+)/); let line = '', lines = 0;
+    for (const w of words) { if (x.measureText(line + w).width > 820 && line) { x.fillText(line, 160, y); y += 48; line = w.trimStart(); lines++; if (lines >= 2) break; } else line += w; }
+    if (lines < 2 && line) { x.fillText(line, 160, y); y += 48; }
+    y += 22;
+  }
+  // categories
+  const cw = 200, gap = (W - 4 * cw) / 5, top = Math.max(y + 10, 1010);
+  o.scores.forEach((s, k) => {
+    const bx = gap + k * (cw + gap);
+    x.fillStyle = 'rgba(255,255,255,.05)'; x.beginPath(); x.roundRect ? x.roundRect(bx, top, cw, 130, 22) : x.rect(bx, top, cw, 130); x.fill();
+    x.textAlign = 'center'; x.fillStyle = ORA_COL[k]; x.font = F(500, 28); x.fillText(s.name, bx + cw / 2, top + 50);
+    x.fillStyle = '#F1E6CF'; x.font = F(500, 50); x.fillText(String(s.score), bx + cw / 2, top + 108);
+  });
+  x.fillStyle = '#B9AD94'; x.font = F(400, 28);
+  x.fillText(`สีเสริมดวง ${TH_PLANETS[o.luck.best].color.split(' ')[0]} · เลขมงคล ${o.luck.nums.join(' ')}`, W / 2, top + 200);
+  x.fillStyle = '#8F836C'; x.font = F(400, 24); x.fillText('ดูดวงของคุณเองฟรีที่ตักศิลา · mengnattawitmarin.github.io/taksila', W / 2, H - 40);
+  return new Promise((res) => { try { cv.toBlob((b) => res(b), 'image/png'); } catch (e) { res(null); } });
+}
+async function shareBlob(blob, name, title) {
+  if (!blob) { toast('สร้างรูปไม่สำเร็จ'); return; }
+  const file = new File([blob], name, { type: 'image/png' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  toast('บันทึกรูปแล้ว ส่งต่อได้เลย');
+}
+
+// ---------------- ชวนเพื่อนมาดูคู่ดวง ----------------
+const APP_URL = 'https://mengnattawitmarin.github.io/taksila/';
+function inviteLink() {
+  const p = state.profile;
+  const data = { n: (p.name || '').split(' ')[0] || 'เพื่อน', d: p.day, m: p.month, y: p.yearBE, h: p.timeKnown ? p.hour : null, i: p.timeKnown ? p.minute : null };
+  const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(data)))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return `${APP_URL}?go=match&inv=${b64}`;
+}
+async function shareInvite() {
+  const url = inviteLink(), text = `มาดูคู่ดวงกับ${(state.profile.name || '').split(' ')[0] || 'เรา'}ในตักศิลากัน ใส่วันเกิดของคุณแล้วจะเห็นว่าเราเข้ากันแค่ไหน`;
+  if (navigator.share) { try { await navigator.share({ title: 'ชวนดูคู่ดวง', text, url }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+  try { await navigator.clipboard.writeText(text + '\n' + url); toast('คัดลอกลิงก์แล้ว วางในแชตได้เลย'); } catch (e) { prompt('คัดลอกลิงก์นี้', url); }
+}
+// Read an invite (?inv=) once: save the inviter as a person in คู่ดวง and preselect them.
+(function readInvite() {
+  const inv = INVITE_RAW;
+  if (!inv) return;
+  try {
+    const j = JSON.parse(decodeURIComponent(escape(atob(inv.replace(/-/g, '+').replace(/_/g, '/')))));
+    const rec = { name: String(j.n || 'เพื่อน').slice(0, 20), day: +j.d, month: +j.m, yearBE: +j.y, hour: j.h == null ? 12 : +j.h, minute: j.i == null ? 0 : +j.i, timeKnown: j.h != null, rel: 'love' };
+    if (!(rec.day >= 1 && rec.day <= 31 && rec.month >= 1 && rec.month <= 12 && rec.yearBE > 2400)) return;
+    const k = state.match.people.findIndex((x) => x.name === rec.name);
+    if (k >= 0) state.match.people[k] = rec; else state.match.people.push(rec);
+    Object.assign(state.match, rec, { useDate: true });
+    save();
+  } catch (e) { /* bad link: ignore */ }
+})();
+
+// ---------------- เกี่ยวกับตักศิลา ----------------
+function viewAbout() {
+  const src = [
+    ['ตำแหน่งดาว', 'คำนวณในเครื่องด้วยสูตรดาราศาสตร์ (แม่นยำในช่วงปี 1900–2100)'],
+    ['ปฏิทินจันทรคติไทย', 'ระบบสุริยยาตร์ตามที่ไลบรารีโอเพนซอร์ส pythaidate อธิบายไว้ ตรวจกับวันสำคัญทางศาสนาที่ประกาศจริง'],
+    ['อุปราคา', 'ตาราง time.now สำหรับประเทศไทย'],
+    ['ไพ่ทาโรต์', 'สำรับ Rider–Waite–Smith (ภาพปี 1909 สาธารณสมบัติ) ความหมายตาม A. E. Waite เขียนใหม่เป็นภาษาไทย'],
+    ['บทสวดมนต์', 'ตรวจตัวบทอย่างน้อย 2 แหล่ง และระบุที่มาในหน้าบทสวดทุกบท'],
+    ['ทักษา ยามอัฏฐกาล ฤกษ์', 'หลักโหราศาสตร์ไทยแบบดั้งเดิม'],
+    ['ทำนายฝัน', 'สรุปจากบทความความเชื่อไทย ระบุที่มาทุกข้อ'],
+    ['แผนที่มู', 'ข้อมูลเขียนเอง แผนที่ © OpenStreetMap นำทางด้วย Google Maps'],
+    ['บริจาคโลหิต', 'ศูนย์บริการโลหิตแห่งชาติ สภากาชาดไทย']
+  ];
+  return `<main class="screen" style="--accent:var(--gold)">
+${pageHead('13', 'ABOUT', 'เกี่ยวกับตักศิลา', 'var(--gold)', 'about')}
+<section class="card pv-hero"><b>ดูดวงจากดาวจริง ผสานศาสตร์ไทยและสากล</b><span class="small">ตักศิลาคำนวณตำแหน่งดาว ณ เวลาและสถานที่เกิดของคุณ แล้วอ่านร่วมกับโหราศาสตร์ไทย ทักษา เลขศาสตร์ ไพ่ และปฏิทินจันทรคติ ทุกอย่างทำงานในเครื่องของคุณ ใช้ฟรี</span></section>
+<section class="pv"><h2 class="label">แหล่งข้อมูลและวิธีคำนวณ</h2><ul>${src.map(([a, b]) => `<li><b>${a}</b> ${b}</li>`).join('')}</ul></section>
+<section class="pv"><h2 class="label">ข้อควรรู้</h2><p class="small">คำทำนาย คาถา และความเชื่อในแอปมีไว้เป็นกำลังใจและแนวทาง ไม่ใช่คำแนะนำทางการแพทย์ กฎหมาย หรือการเงิน การตัดสินใจสำคัญควรใช้วิจารณญาณของคุณเอง</p></section>
+<div class="ask-links"><a href="#/privacy" class="ask-link">🔒 ความเป็นส่วนตัว</a><a href="https://github.com/mengnattawitmarin/taksila/issues" target="_blank" rel="noopener" class="ask-link">✉ แจ้งปัญหา / เสนอแนะ</a></div>
+<p class="small" style="font-size:11px">ตักศิลา · ปรับปรุงล่าสุด 28 ต.ค. 2569</p>
+</main>`;
+}
+const reportLink = (pr) => `https://github.com/mengnattawitmarin/taksila/issues/new?title=${encodeURIComponent('แจ้งตัวบทผิด: ' + pr.th)}&body=${encodeURIComponent(`บทสวด: ${pr.th} (${pr.id})\nบรรทัดที่ผิด:\nที่ถูกควรเป็น:\nแหล่งอ้างอิง (ถ้ามี):`)}`;
+
+const VIEWS = { calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -2178,7 +2313,7 @@ function render() {
   mountLuck();
   if (r === 'map') mountMap();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -2360,6 +2495,8 @@ document.addEventListener('click', (e) => {
       navigator.geolocation.getCurrentPosition((pos) => { state.map.me = { lat: pos.coords.latitude, lon: pos.coords.longitude }; state.map.sel = null; if (route() === 'map') render(); }, () => toast('ยังไม่ได้รับอนุญาตให้ใช้ตำแหน่ง'), { timeout: 10000, maximumAge: 600000 });
       return;
     }
+    case 'dailyShare': dailyImage().then((b) => shareBlob(b, `taksila-today-${Date.now()}.png`, 'ดวงวันนี้จากตักศิลา')); return;
+    case 'inviteShare': shareInvite(); return;
     case 'moreOpen': { if (!document.getElementById('more-sheet')) document.body.insertAdjacentHTML('beforeend', moreSheetHTML()); return; }
     case 'moreClose': closeMore(); return;
     case 'dreamPick': state.dream.sel = el.dataset.v; state.dream.saved = false; break;
