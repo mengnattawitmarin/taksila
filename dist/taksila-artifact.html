@@ -337,7 +337,7 @@ a:hover { color: var(--gold-2); }
 .who-opt[aria-pressed="true"], .t-sp[aria-pressed="true"] { border-color: var(--violet); background: linear-gradient(180deg, rgba(124,96,200,.22), rgba(124,96,200,.06)); box-shadow: 0 0 22px rgba(169,155,217,.22), inset 0 0 0 1px rgba(169,155,217,.25); }
 .who-opt[aria-pressed="true"]::after, .t-sp[aria-pressed="true"]::after { content: '✓'; position: absolute; top: 10px; right: 12px; width: 18px; height: 18px; border-radius: 9px; background: var(--violet); color: #15121D; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 .who-card { display: flex; flex-direction: column; gap: 10px; padding: 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); }
-.t-pick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.t-pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .sp-mini { width: 44px; height: 36px; margin-bottom: 6px; fill: rgba(169,155,217,.12); stroke: #8E80C4; stroke-width: 1.2; }
 .t-sp[aria-pressed="true"] .sp-mini { fill: rgba(240,216,154,.18); stroke: #F0D89A; }
 .topic-pick { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
@@ -1060,6 +1060,36 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .pv-danger-o { color: var(--tension); border-color: rgba(240,160,140,.5); min-height: 46px; }
 .lock-note { margin: -6px 0 0; font-size: 11.5px; color: var(--harmony); }
 .lock-note a { color: var(--harmony); }
+
+/* ---- tarot: featured 12-house spread, house readings, share, history ---- */
+.t-feat { position: relative; display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 14px; align-items: center; width: 100%; padding: 14px; border-radius: 20px; text-align: left; font: inherit; color: var(--text); cursor: pointer; border: 1px solid transparent; background: linear-gradient(var(--surface), var(--surface)) padding-box, linear-gradient(135deg, rgba(169,155,217,.8), rgba(240,216,154,.6), rgba(229,146,178,.5)) border-box; box-shadow: 0 10px 34px rgba(124,96,200,.18); overflow: hidden; }
+.t-feat::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 15% 50%, rgba(124,96,200,.25), transparent 70%); pointer-events: none; }
+.t-feat[aria-pressed="true"] { box-shadow: 0 0 0 2px rgba(240,216,154,.5), 0 10px 34px rgba(124,96,200,.3); }
+.tf-wheel { position: relative; width: 118px; height: 118px; }
+.tf-wheel i { position: absolute; width: 17px; height: 28px; transform: translate(-50%, -50%) rotate(calc(var(--k) * 30deg - 15deg)); border-radius: 3px; overflow: hidden; box-shadow: 0 0 6px rgba(240,216,154,.25); animation: tfIn .6s ease both; animation-delay: calc(var(--k) * 50ms); }
+@keyframes tfIn { from { opacity: 0; transform: translate(-50%, -50%) scale(.4); } }
+.tf-wheel b { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--serif); font-size: 30px; color: var(--gold-2); text-shadow: 0 0 18px rgba(240,216,154,.6); }
+.tf-t { position: relative; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.tf-t b { font-family: var(--serif); font-size: 24px; line-height: 1.15; }
+.tf-t > span:last-child { font-size: 12.5px; line-height: 1.5; color: var(--text-2); }
+.tf-badge { align-self: flex-start; font-size: 10.5px; padding: 2px 8px; border-radius: 99px; color: #1A1428; background: linear-gradient(90deg, #F0D89A, #D4AF63); font-weight: 600; }
+.r-house { border-left: 3px solid var(--line-2); padding-left: 10px; font-size: 15px !important; color: var(--text); }
+.r-house.pos { border-color: var(--harmony); } .r-house.neg { border-color: var(--tension); } .r-house.mid { border-color: var(--gold); }
+.t-share { display: flex; gap: 8px; }
+.t-share[hidden] { display: none; }
+.t-share .btn { flex: 1; font-size: 14px; }
+.th-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.th-list li { display: flex; align-items: stretch; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); overflow: hidden; }
+.th-open { flex: 1; min-width: 0; display: flex; gap: 12px; align-items: center; padding: 10px 12px; background: none; border: 0; font: inherit; color: var(--text); text-align: left; cursor: pointer; }
+.th-cards { display: flex; flex: none; }
+.th-cards img { width: 26px; height: 44px; object-fit: cover; border-radius: 3px; border: 1px solid rgba(212,175,99,.5); background: #1E1830; }
+.th-cards img + img { margin-left: -10px; }
+.th-cards img.rev { transform: rotate(180deg); }
+.th-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.th-t b { font-size: 14px; }
+.th-t span { font-size: 12px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.th-t i { font-style: normal; font-size: 10px; color: var(--muted); }
+.th-del { flex: none; width: 44px; background: none; border: 0; border-left: 1px solid var(--line); color: var(--muted); cursor: pointer; }
 
 </style>
 <div id="app" class="app"></div>
@@ -2434,6 +2464,53 @@ const HOUSE_READ = [
   { th: 'ลาภะ', short: 'ลาภผล', q: 'ลาภผล รายได้พิเศษ และมิตรสหาย', use: 'work' },
   { th: 'วินาศ', short: 'สูญเสีย ปล่อยวาง', q: 'ความสูญเสีย สิ่งซ่อนเร้น และการปล่อยวาง', use: 'up' }
 ];
+
+// ---------- reading a card inside one of the 12 Thai houses ----------
+// The card's energy (its first keyword, upright/reversed lean, suit, major or minor) is read through
+// the subject of the house it falls in, so a card in กดุมภะ talks about money, in ปัตนิ about the partner.
+// Templates per house: [good, mixed, hard]; {k} is the card's keyword.
+const HOUSE_FX = [
+  ['ช่วงนี้ตัวคุณเปล่งพลัง{k} คนรอบข้างเห็นได้ชัด มั่นใจขึ้นและสุขภาพดี', 'ตัวคุณกำลังอยู่ในโหมด{k} ยังลังเลอยู่บ้าง ให้เวลาตัวเองตั้งหลัก', 'พลัง{k}ทำให้คุณเหนื่อยหรือสับสนกับตัวเอง ดูแลสุขภาพกายใจก่อนเรื่องอื่น'],
+  ['เรื่องเงินได้พลัง{k} มีเงินเข้า หรือเห็นช่องทางหารายได้ชัดขึ้น', 'เงินเข้าออกพอ ๆ กัน มาในแบบ{k} ระวังเงินเข้ามือซ้ายออกมือขวา จดรายจ่ายไว้', 'การเงินสะดุดเพราะ{k} ชะลอการใช้เงินก้อนใหญ่ อย่าให้ยืม อย่าลงทุนตามคนอื่น'],
+  ['พี่น้องและเพื่อนฝูงนำ{k}มาให้ การติดต่อ เจรจา เดินทางใกล้ลื่นไหล', 'การคุยกับพี่น้องหรือเพื่อนยังไม่ลงตัว เรื่องอยู่ในช่วง{k} พูดให้ชัดแล้วจะเข้าใจกัน', 'ระวังคำพูดหรือข่าวลือในกลุ่มเพื่อนและพี่น้อง พลัง{k}ทำให้สื่อสารผิดง่าย'],
+  ['บ้านอบอุ่น ครอบครัวได้พลัง{k} เหมาะทำเรื่องบ้าน ที่ดิน ย้ายหรือแต่งบ้าน', 'ในบ้านมีเรื่อง{k}ให้จัดการ ใช้เวลากับพ่อแม่มากขึ้นแล้วจะคลี่คลาย', 'บรรยากาศในบ้านตึงเพราะ{k} อย่าเพิ่งตัดสินใจเรื่องบ้านที่ดิน ดูแลสุขภาพพ่อแม่'],
+  ['ความรักสนุก มีเสน่ห์ เรื่องลูกและงานสร้างสรรค์ได้พลัง{k}', 'หัวใจอยากได้{k} แต่ยังไม่ชัด ลองทำกิจกรรมสนุก ๆ ด้วยกันดู', 'ระวังรักหวือหวาหรือเสียเงินกับความสนุก พลัง{k}เตือนให้ใช้ใจอย่างมีสติ'],
+  ['เอาชนะคู่แข่งและปัญหาได้ด้วย{k} สุขภาพฟื้นตัว ลูกน้องช่วยงานดี', 'มีคนแข่งหรืองานจุกจิกในแบบ{k} ทำทีละเรื่อง อย่าพักผ่อนน้อย', 'ระวังศัตรูแฝงและโรคภัย พลัง{k}บอกให้ตรวจร่างกายและเลี่ยงการปะทะ'],
+  ['คู่ครองหรือหุ้นส่วนนำ{k}มาให้ ความสัมพันธ์ไปต่อได้ดี คนโสดมีลุ้นเจอคนใช่', 'ความสัมพันธ์อยู่ในช่วง{k} ต้องคุยกันตรง ๆ ว่าแต่ละฝ่ายต้องการอะไร', 'ความสัมพันธ์หรือหุ้นส่วนเจอเรื่อง{k} อย่าเพิ่งผูกมัดหรือเซ็นอะไรร่วมกัน'],
+  ['การเปลี่ยนแปลงครั้งนี้ดีกับคุณ ({k}) อาจได้เงินจากคนอื่น มรดก หรือมีสิ่งลี้ลับช่วย', 'กำลังผ่านช่วงเปลี่ยนผ่านแบบ{k} ปล่อยของเก่าแล้วของใหม่จะมา', 'มีเรื่องไม่คาดฝันแบบ{k} ระวังอุบัติเหตุและหนี้สินร่วม ทำบุญเสริมไว้'],
+  ['ผู้ใหญ่เมตตา บุญหนุน การเรียนหรือการเดินทางไกลได้พลัง{k}', 'ใจอยากหาที่พึ่ง เรื่องอยู่ในช่วง{k} ไปทำบุญไหว้พระแล้วทางจะชัดขึ้น', 'ผู้ใหญ่หรือความเชื่ออาจยังไม่เข้าข้าง ({k}) ระวังการเดินทางไกลและคำสัญญา'],
+  ['การงานรุ่งด้วยพลัง{k} มีโอกาสเลื่อนขั้นหรือได้รับการยอมรับ', 'งานอยู่ในช่วง{k} ยังต้องพิสูจน์ตัวเอง ทำต่อเนื่องแล้วจะเห็นผล', 'งานมีแรงกดดันเพราะ{k} อย่าเพิ่งลาออกหรือเปลี่ยนงานตอนอารมณ์ร้อน'],
+  ['มีลาภลอย รายได้พิเศษ หรือเพื่อนช่วยด้วยพลัง{k}', 'ลาภมาแบบ{k} ไม่มากแต่สม่ำเสมอ เครือข่ายเพื่อนจะพาโอกาสมา', 'ลาภยังไม่มา ({k}) ระวังเพื่อนชวนลงทุนหรือเสี่ยงโชคเกินตัว'],
+  ['การปล่อยวางนำ{k}มาให้ ทำบุญ ทำสมาธิแล้วใจสงบ ของหายอาจได้คืน', 'มีเรื่องค้างในใจแบบ{k} เขียนออกมาหรือสวดมนต์ก่อนนอนจะเบาลง', 'ระวังการสูญเสียหรือถูกหักหลังเพราะ{k} เก็บของมีค่าให้ดี และทำบุญอุทิศส่วนกุศล']
+];
+const SUIT_FLAVOR = { w: 'ต้องใช้ความกล้าและลงมือเอง', c: 'ขึ้นกับใจและความรู้สึกเป็นหลัก', s: 'ต้องใช้ความคิดและตัดสินใจให้เด็ดขาด', p: 'จะเห็นผลเป็นเงินหรือสิ่งที่จับต้องได้' };
+// Well-known card-in-house readings (upright), written for this app.
+const HOUSE_OVR = {
+  'p02:2': 'เงินเข้ามือซ้ายออกมือขวา หมุนเงินเก่งแต่เก็บไม่อยู่ แยกบัญชีเงินเก็บออกจากเงินใช้',
+  'p04:2': 'เก็บเงินเก่ง ฐานะมั่นคง แต่ระวังกำเงินแน่นจนพลาดโอกาสดี ๆ',
+  'p09:2': 'เงินพอใช้ อยู่สบาย ผลจากความขยันที่สะสมมาเริ่มออกดอกผล',
+  'p10:4': 'ทรัพย์สินของครอบครัวมั่นคง มีเรื่องมรดก บ้าน หรือที่ดินที่ส่งต่อกันในบ้าน',
+  'c10:4': 'ครอบครัวสุขสมบูรณ์ คนในบ้านรักใคร่กัน เหมาะจัดงานรวมญาติ',
+  'c02:7': 'เจอคนที่ใจตรงกัน หรือคู่เดิมกลับมาเข้าใจกันดี เป็นไพ่คู่ครองที่ดีมาก',
+  'm06:7': 'ความรักถึงจุดตัดสินใจ ถ้าเลือกด้วยใจจริงจะได้คู่ที่ใช่',
+  'm10:11': 'โชคชะตาหมุนมาหา มีลาภลอยหรือโอกาสที่ไม่คาดคิด',
+  'm16:4': 'บ้านมีเรื่องเปลี่ยนแปลงฉับพลัน อาจต้องซ่อมแซมหรือย้าย ตั้งสติแล้วจะผ่านไปได้',
+  'm13:8': 'การเปลี่ยนผ่านครั้งใหญ่ ปิดฉากเรื่องเก่าเพื่อเริ่มบทใหม่ที่ดีกว่า',
+  'm17:2': 'การเงินค่อย ๆ ฟื้นหลังช่วงเหนื่อย มีความหวังเรื่องรายได้ใหม่ เงินมาจากงานที่ใช้ความคิดสร้างสรรค์',
+  'm19:10': 'งานสว่างไสว ผลงานเป็นที่ประจักษ์ เหมาะนำเสนอและขอเลื่อนตำแหน่ง',
+  'm21:9': 'ได้เดินทางไกลหรือเรียนต่อสำเร็จ บุญเก่าส่งผลเต็มที่',
+  's03:7': 'ระวังความเจ็บปวดในความรัก การนอกใจ หรือคำพูดที่บาดใจกัน',
+  'w08:3': 'ข่าวด่วน การติดต่อรวดเร็ว มีเดินทางใกล้แบบกะทันหัน',
+  'p08:10': 'งานต้องใช้ฝีมือและความละเอียด ยิ่งฝึกยิ่งได้เงินดีขึ้น'
+};
+function houseMeaning(card, rev, h) {
+  const tone = rev ? (card.yes === 1 ? 0 : -1) : card.yes;
+  const k = card.kw.split(' · ')[0];
+  const ovr = !rev && HOUSE_OVR[`${card.code}:${h + 1}`];
+  const lead = ovr || HOUSE_FX[h][tone > 0 ? 0 : tone < 0 ? 2 : 1].replace('{k}', k);
+  const note = card.major ? 'เป็นไพ่ชุดใหญ่ เรื่องนี้คือบทสำคัญของชะตาช่วงนี้' : `ไพ่ชุด${card.suitInfo.th}บอกว่าเรื่องนี้${SUIT_FLAVOR[card.suit]}`;
+  return { tone, lead, note };
+}
 
 // ---- js/luck.js ----
 // Interactive pieces for the luck room: a ping-pong lottery globe with real physics,
@@ -6518,7 +6595,7 @@ const state = {
   weekSel: null,
   ausp: { tab: 0, event: 'wedding', days: 60, partner: 0, open: 0 },
   match: { sign: null, useDate: true, rel: 'love', name: '', day: 14, month: 2, yearBE: 2535, hour: 12, minute: 0, timeKnown: false, people: saved.people || [] },
-  tarot: { topic: 0, spread: 2, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
+  tarot: { topic: 0, spread: 3, histAll: false, logged: false, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
   pvConfirm: false,
@@ -7502,8 +7579,9 @@ function tarotReading(d, i, spread) {
     field = h.use; houseSign = tFirst() == null ? null : (tFirst() + i) % 12; q = h.q;
     head = `ภพ${h.th} · เรื่อง${h.q}`;
   }
-  const main = d.rev ? c.rev : (field === 'up' ? c.up : c[field]);
-  const extra = d.rev ? `ถ้าแก้จุดนี้ได้ พลังของไพ่จะกลับมา: ${field === 'up' ? c.up : c[field]}` : (field !== 'up' ? c.up : '');
+  const hm = spread.house ? houseMeaning(c, d.rev, i) : null;
+  const main = hm ? hm.lead : d.rev ? c.rev : (field === 'up' ? c.up : c[field]);
+  const extra = hm ? `${hm.note} · ความหมายทั่วไปของไพ่: ${d.rev ? c.rev : c.up}` : d.rev ? `ถ้าแก้จุดนี้ได้ พลังของไพ่จะกลับมา: ${field === 'up' ? c.up : c[field]}` : (field !== 'up' ? c.up : '');
   const links = cardLink(c, houseSign);
   return `<article class="reading">
 <img class="r-img${d.rev ? ' rev' : ''}" src="${c.img}" alt="" loading="lazy">
@@ -7512,7 +7590,7 @@ function tarotReading(d, i, spread) {
 <h3 class="h2" style="font-size:18px">${spread.house ? `พบ${HOUSE_READ[i].short}: ` : head + ': '}${c.th}</h3>
 <span class="mono" style="font-size:10px;color:var(--muted)">${c.en}${spread.house ? ' · ' + head : ''}</span>
 <span class="r-kw">${c.kw}</span>
-<p class="body" style="font-size:14px">${main}</p>
+<p class="body${hm ? ' r-house ' + (hm.tone > 0 ? 'pos' : hm.tone < 0 ? 'neg' : 'mid') : ''}" style="font-size:14px">${hm ? `<span class="fx-b ${hm.tone > 0 ? 'pos' : hm.tone < 0 ? 'neg' : 'mid'}">${hm.tone > 0 ? 'ดี' : hm.tone < 0 ? 'ระวัง' : 'กลาง ๆ'}</span> ` : ''}${main}</p>
 ${extra ? `<p class="small" style="color:var(--text-2)">${extra}</p>` : ''}
 <p class="r-pic">ในภาพ: ${c.pic}</p>
 <p class="r-astro">${cardAstro(c)}</p>
@@ -7648,7 +7726,10 @@ ${o.known ? `<div class="dob-row"><label class="field">วัน<select class="s
       '<rect x="1.5" y="8" width="12" height="20" rx="2"/><rect x="16" y="6" width="12" height="20" rx="2" transform="translate(0 2)"/><rect x="30.5" y="8" width="12" height="20" rx="2"/>',
       `<circle cx="22" cy="18" r="9" opacity=".5"/>${Array.from({ length: 12 }, (_, k) => { const a = (195 + k * 30) * Math.PI / 180; return `<rect x="${(22 + 14.5 * Math.cos(a) - 1.6).toFixed(1)}" y="${(18 - 14.5 * Math.sin(a) - 2.6).toFixed(1)}" width="3.2" height="5.2" rx=".6"/>`; }).join('')}`
     ];
-    const spreads = `<div class="t-pick">${SPREADS.map((x, i) => `<button class="t-sp" data-act="tarotSpread" data-i="${i}" aria-pressed="${i === t.spread}">
+    const spreads = `<button class="t-feat" data-act="tarotSpread" data-i="3" aria-pressed="${t.spread === 3}">
+<span class="tf-wheel" aria-hidden="true">${Array.from({ length: 12 }, (_, k) => { const a = (195 + k * 30) * Math.PI / 180; return `<i style="left:${(50 + 40 * Math.cos(a)).toFixed(1)}%;top:${(50 - 40 * Math.sin(a)).toFixed(1)}%;--k:${k}">${CARD_BACK}</i>`; }).join('')}<b>12</b></span>
+<span class="tf-t"><span class="tf-badge">แนะนำ · ละเอียดที่สุด</span><b>ไพ่ 12 ภพ</b><span>วางไพ่ลงบนภพทั้ง 12 ตามโหราศาสตร์ไทย ตีความแต่ละใบตามเรื่องของภพ เงิน งาน ความรัก บ้าน ครบทุกด้านในครั้งเดียว</span></span></button>
+<div class="t-pick">${SPREADS.slice(0, 3).map((x, i) => `<button class="t-sp" data-act="tarotSpread" data-i="${i}" aria-pressed="${i === t.spread}">
 <svg class="sp-mini" viewBox="0 0 44 36" aria-hidden="true">${MINI[i]}</svg><b>${x.th}</b><span>${x.sub}</span></button>`).join('')}</div>`;
     const TOPIC_IC = [
       '<path d="M12 3l2.2 6.8H21l-5.5 4 2.1 6.7L12 16.4l-5.6 4.1 2.1-6.7L3 9.8h6.8z"/>',
@@ -7663,11 +7744,12 @@ ${o.known ? `<div class="dob-row"><label class="field">วัน<select class="s
 <div class="t-stars" aria-hidden="true">${Array.from({ length: 26 }, (_, k) => `<i style="left:${(k * 37) % 100}%;top:${(k * 53) % 100}%;animation-delay:${(k % 7) * 0.4}s"></i>`).join('')}</div>
 <div class="deck-stack" aria-hidden="true">${Array.from({ length: n }, (_, k) => `<span style="--k:${k};--m:${(n - 1) / 2}">${CARD_BACK}</span>`).join('')}</div>
 <p class="t-hero-cap">ตั้งจิตให้นิ่ง แล้วเลือกวิธีเปิดไพ่</p></div>
-${step(1, 'ดูให้ใคร', who)}
-${step(2, 'วิธีเปิดไพ่', spreads)}
+${step(1, 'วิธีเปิดไพ่', spreads)}
+${step(2, 'ดูให้ใคร', who)}
 ${spread.house ? `<p class="small t-note">เปิดไพ่ 12 ใบลงบนภพทั้ง 12 ตามหลักโหราศาสตร์ไทย เริ่มจากภพตนุ (ตัวเรา)${tFirst() != null ? ` ที่ราศี${SIGNS[tFirst()].th}${t.who === 'me' ? ' ซึ่งเป็นลัคนาของคุณ' : ` (ราศีเกิดของ${tSubj()})`}` : ''} ไปจนถึงภพวินาศ</p>`
     : step(3, 'เรื่องที่อยากรู้', topics) + step(4, 'คำถามในใจ <small>ไม่บังคับ</small>', question)}
-<button class="btn t-cta" data-act="tarotDraw"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>สับไพ่ แล้วเลือกเอง ${spread.pos.length} ใบ</button>`;
+<button class="btn t-cta" data-act="tarotDraw"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg>สับไพ่ แล้วเลือกเอง ${spread.pos.length} ใบ</button>
+${tarotHistHTML()}`;
   } else {
     const all = t.flipped.length === t.cards.length;
     const grid = spread.house
@@ -7676,6 +7758,7 @@ ${spread.house ? `<p class="small t-note">เปิดไพ่ 12 ใบลง�
     body = `${forChip()}${t.q && !spread.house ? `<p class="small" style="text-align:center">“${esc(t.q)}”</p>` : ''}
 ${grid}
 <div id="tarot-reading">${tarotReadingArea()}</div>
+<div class="t-share" id="t-share"${all ? '' : ' hidden'}><button class="btn" data-act="tarotSave">${icon('down', 18, 1.8)}บันทึกรูป</button><button class="btn btn-line" data-act="tarotShare">แชร์ให้เพื่อนช่วยอ่าน</button></div>
 <div style="display:flex;gap:8px">${!all ? '<button class="btn" data-act="tarotAll" style="flex:1">เปิดทั้งหมด</button>' : ''}<button class="btn btn-line" data-act="tarotReset" style="flex:1">สับไพ่ใหม่</button></div>`;
   }
   return `<main class="screen" style="--accent:var(--violet)">
@@ -7683,6 +7766,101 @@ ${pageHead('03', 'TAROT', 'ไพ่ทาโรต์', 'var(--violet)', 'tarot
 ${body}
 <p class="small" style="text-align:center;font-size:11px">สำรับ Rider–Waite–Smith 78 ใบ ภาพวาดต้นฉบับของ Pamela Colman Smith (1909) · ความหมายตามตำรา A. E. Waite</p>
 </main>`;
+}
+
+// ---------- tarot history & share image ----------
+function tarotDone() { tarotLogSave(); const sh = document.getElementById('t-share'); if (sh) sh.hidden = false; }
+const TAROT_LOG = 'taksila.tarotHist';
+function tarotLog() { try { return JSON.parse(localStorage.getItem(TAROT_LOG)) || []; } catch (e) { return []; } }
+function tarotLogSave() {
+  const t = state.tarot;
+  if (t.logged || !t.cards || t.flipped.length < t.cards.length) return;
+  t.logged = true;
+  const rec = { ts: Date.now(), sp: t.spread, q: t.q, topic: t.topic, who: t.who, other: t.who === 'other' ? { ...t.other } : null, cards: t.cards.map((d) => [d.i, d.rev ? 1 : 0]) };
+  try { localStorage.setItem(TAROT_LOG, JSON.stringify([rec, ...tarotLog()].slice(0, 40))); } catch (e) {}
+}
+const tDate = (ts) => { const d = new Date(ts); return `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${String(d.getFullYear() + 543).slice(2)} · ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+function tarotHistHTML() {
+  const log = tarotLog();
+  if (!log.length) return '';
+  return `<section class="t-step"><h2 class="t-step-h"><span>☰</span>ประวัติการเปิดไพ่ <small>${log.length} ครั้ง · เก็บในเครื่องนี้</small></h2>
+<ul class="th-list">${log.slice(0, state.tarot.histAll ? 40 : 5).map((r, k) => `<li><button class="th-open" data-act="tarotHist" data-i="${k}">
+<span class="th-cards">${r.cards.slice(0, 3).map(([ci, rv]) => `<img src="${CARDS[ci].img}" alt=""${rv ? ' class="rev"' : ''} loading="lazy">`).join('')}</span>
+<span class="th-t"><b>${SPREADS[r.sp].th}${r.who === 'other' && r.other && r.other.name ? ' · ให้' + esc(r.other.name) : ''}</b><span>${r.q ? '“' + esc(r.q) + '”' : r.cards.slice(0, 3).map(([ci]) => CARDS[ci].th).join(' · ')}</span><i class="mono">${tDate(r.ts)}</i></span></button>
+<button class="th-del" data-act="tarotHistDel" data-i="${k}" aria-label="ลบ">✕</button></li>`).join('')}</ul>
+${log.length > 5 && !state.tarot.histAll ? '<button class="link-btn" data-act="tarotHistAll" style="align-self:center">ดูทั้งหมด</button>' : ''}</section>`;
+}
+function tarotHistOpen(k) {
+  const r = tarotLog()[k];
+  if (!r) return;
+  Object.assign(state.tarot, { spread: r.sp, q: r.q || '', topic: r.topic || 0, who: r.who === 'other' && r.other ? 'other' : 'me', deck: null, picks: [], sel: 0, logged: true, histTs: r.ts,
+    cards: r.cards.map(([i, rv]) => ({ i, rev: !!rv })), flipped: r.cards.map((_, n) => n) });
+  if (r.other) state.tarot.other = { ...r.other };
+}
+
+// Share card: draws the reading on a 1080×1350 canvas. Card pictures are drawn when the browser allows it;
+// otherwise (e.g. opened from a local file) the card names are drawn instead.
+function wrapText(ctx, text, x, y, maxW, lh, maxLines = 3) {
+  const words = text.split(/([\s\u200b]+)/);
+  let line = '', n = 0;
+  const parts = [];
+  for (const w of words) {
+    if (ctx.measureText(line + w).width > maxW && line) { parts.push(line); line = w.trimStart(); } else line += w;
+  }
+  if (line) parts.push(line);
+  for (const p of parts.slice(0, maxLines)) { ctx.fillText(p, x, y + n * lh); n++; }
+  return y + n * lh;
+}
+// Thai has no spaces between words; break long Thai runs at a character budget.
+const thaiChunks = (s) => s.replace(/(.{14,}?)(?=[ก-ฮ][ก-ฮ])/g, '$1​');
+function loadImg(src) { return new Promise((res) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => res(null); im.src = src; }); }
+async function tarotImage(withPics = true) {
+  const t = state.tarot, sp = SPREADS[t.spread], W = 1080, H = 1350;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const x = cv.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#1A1428'); g.addColorStop(.5, '#0D0B10'); g.addColorStop(1, '#16110A'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  for (let k = 0; k < 70; k++) { x.fillStyle = `rgba(240,216,154,${0.15 + (k % 5) * 0.08})`; x.beginPath(); x.arc((k * 397) % W, (k * 211) % 420, 1 + (k % 3), 0, 7); x.fill(); }
+  const F = (w, s) => `${w} ${s}px "IBM Plex Sans Thai", "Taviraj", sans-serif`;
+  x.textAlign = 'center'; x.fillStyle = '#D4AF63'; x.font = F(500, 26); x.fillText('ตักศิลา · TAROT', W / 2, 70);
+  x.fillStyle = '#F6E3B0'; x.font = F(700, 58); x.fillText(sp.house ? 'ไพ่ 12 ภพ' : `ไพ่ ${sp.th} · ${sp.sub}`, W / 2, 140);
+  x.fillStyle = '#B9AD94'; x.font = F(400, 28); x.fillText(`${t.who === 'other' && t.other.name ? 'ดูให้ ' + t.other.name + ' · ' : ''}${tDate(t.histTs || Date.now())}`, W / 2, 186);
+  if (t.q && !sp.house) { x.fillStyle = '#E9DFC8'; x.font = F(400, 30); x.fillText('“' + t.q.slice(0, 40) + '”', W / 2, 230); }
+  const pics = withPics ? await Promise.all(t.cards.map((d) => loadImg(CARDS[d.i].img))) : [];
+  const cols = sp.house ? 4 : t.cards.length, rows = Math.ceil(t.cards.length / cols);
+  const cw = sp.house ? 150 : Math.min(260, (W - 120) / cols - 30), chh = cw * 1.72, gapX = (W - cols * cw) / (cols + 1), top = sp.house ? 250 : 290;
+  const rowH = chh + (sp.house ? 66 : 110);
+  t.cards.forEach((d, i) => {
+    const c = CARDS[d.i], col = i % cols, row = Math.floor(i / cols);
+    const cx = gapX + col * (cw + gapX), cy = top + row * rowH;
+    x.save();
+    x.fillStyle = '#1E1830'; x.strokeStyle = '#D4AF63'; x.lineWidth = 2;
+    if (pics[i]) { x.translate(cx + cw / 2, cy + chh / 2); if (d.rev) x.rotate(Math.PI); x.drawImage(pics[i], -cw / 2, -chh / 2, cw, chh); x.setTransform(1, 0, 0, 1, 0, 0); x.strokeRect(cx, cy, cw, chh); }
+    else { x.fillRect(cx, cy, cw, chh); x.strokeRect(cx, cy, cw, chh); x.fillStyle = '#F6E3B0'; x.font = F(600, 26); x.textAlign = 'center'; wrapText(x, thaiChunks(c.th), cx + cw / 2, cy + chh / 2 - 10, cw - 20, 32, 3); x.fillStyle = '#9C8F76'; x.font = F(400, 18); x.fillText(c.en, cx + cw / 2, cy + chh - 24); }
+    x.restore();
+    x.textAlign = 'center'; x.fillStyle = '#D4AF63'; x.font = F(600, sp.house ? 22 : 28);
+    x.fillText(sp.house ? `${i + 1} · ${HOUSE_READ[i].th}` : sp.pos[i].th, cx + cw / 2, cy + chh + (sp.house ? 30 : 38));
+    x.fillStyle = '#E9DFC8'; x.font = F(400, sp.house ? 19 : 24);
+    x.fillText((c.th.length > 14 ? c.th.split(' ')[0] : c.th) + (d.rev ? ' (กลับ)' : ''), cx + cw / 2, cy + chh + (sp.house ? 56 : 72));
+  });
+  x.fillStyle = '#8F836C'; x.font = F(400, 22); x.textAlign = 'center';
+  x.fillText('เปิดไพ่ฟรีที่ตักศิลา · mengnattawitmarin.github.io/taksila', W / 2, H - 36);
+  return new Promise((res) => {
+    try { cv.toBlob((b) => res(b), 'image/png'); } catch (e) { res(null); }
+  });
+}
+async function tarotShare(mode) {
+  let blob = await tarotImage(true);
+  if (!blob) blob = await tarotImage(false);
+  if (!blob) { toast('สร้างรูปไม่สำเร็จ'); return; }
+  const name = `taksila-tarot-${Date.now()}.png`;
+  const file = new File([blob], name, { type: 'image/png' });
+  if (mode === 'share' && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: 'ผลไพ่จากตักศิลา' }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  toast(mode === 'share' ? 'เครื่องนี้แชร์ตรงไม่ได้ บันทึกรูปไว้ให้แล้ว ส่งต่อได้เลย' : 'บันทึกรูปแล้ว');
 }
 
 function tarotReadingArea() {
@@ -8540,7 +8718,7 @@ document.addEventListener('click', (e) => {
     case 'tarotOtherKnown': state.tarot.other.known = !state.tarot.other.known; break;
     case 'tarotDraw': {
       const t = state.tarot;
-      t.deck = drawCards(78); t.picks = []; t.cards = null; t.flipped = []; t.sel = 0;
+      t.deck = drawCards(78); t.picks = []; t.cards = null; t.flipped = []; t.sel = 0; t.logged = false; t.histTs = null;
       render();
       const fan = document.getElementById('fan');
       if (fan) { fan.scrollLeft = (fan.scrollWidth - fan.clientWidth) / 2; fan.classList.add('shuffle'); }
@@ -8568,7 +8746,7 @@ document.addEventListener('click', (e) => {
       const box = document.getElementById('tarot-reading');
       if (box) box.innerHTML = tarotReadingArea();
       syncWheel();
-      if (t.flipped.length === t.cards.length) { const all = document.querySelector('[data-act="tarotAll"]'); if (all) all.remove(); }
+      if (t.flipped.length === t.cards.length) { const all = document.querySelector('[data-act="tarotAll"]'); if (all) all.remove(); tarotDone(); }
       if (spread.house && t.flipped.length === t.cards.length && box) box.scrollIntoView({ block: 'start', behavior: 'smooth' });
       return;
     }
@@ -8581,9 +8759,15 @@ document.addEventListener('click', (e) => {
       if (SPREADS[t.spread].house) document.querySelectorAll('.tc').forEach((b) => b.classList.toggle('sel', +b.dataset.i === t.sel));
       syncWheel();
       el.remove();
+      tarotDone();
       return;
     }
-    case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [] }); break;
+    case 'tarotReset': Object.assign(state.tarot, { cards: null, deck: null, picks: [], flipped: [], logged: false, histTs: null }); break;
+    case 'tarotSave': tarotShare('save'); return;
+    case 'tarotShare': tarotShare('share'); return;
+    case 'tarotHist': tarotHistOpen(i); window.scrollTo(0, 0); break;
+    case 'tarotHistDel': { const log = tarotLog(); log.splice(i, 1); try { localStorage.setItem(TAROT_LOG, JSON.stringify(log)); } catch (er) {} break; }
+    case 'tarotHistAll': state.tarot.histAll = true; break;
     case 'numMode': state.num.mode = el.dataset.v; break;
     case 'prayerCat': state.prayer.cat = el.dataset.v; break;
     case 'prayerPurpose': state.prayer.purpose = el.dataset.v || null; break;
