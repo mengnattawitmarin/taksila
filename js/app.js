@@ -11,6 +11,7 @@ import { CARDS, drawCards, SPREADS, HOUSE_READ, houseMeaning } from './tarot.js'
 import { mountGlobe, burnIncense, mountSiamsi, mountTree, askMotion, randomDigit, thaiNum } from './luck.js';
 import { SIAMSI } from './siamsi.js';
 import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
+import { prayerTr } from './prayer-tr.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
 import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
@@ -1950,6 +1951,8 @@ ${pr.origin ? `<p class="pr-origin"><b>ที่มา</b> ${pr.origin}</p>` : '
 ${pr.src ? `<p class="small" style="font-size:11px">อ้างอิงตัวบท: ${pr.src}${pr.cat === 'folk' || pr.cat === 'geji' || pr.cat === 'thasung' || pr.cat === 'khanun' ? ' · เป็นคาถาตามความเชื่อ ถ้อยคำอาจต่างกันในแต่ละสำนัก' : ''}</p>` : ''}
 <span class="pr-count">สวด ${pr.count} จบ${pr.cat === 'day' ? ' · ตามกำลังดาวประจำวัน' : ''}</span></section>
 <section class="pr-text${pr.heart ? ' heart' : ''}">${prayerText(pr)}</section>
+<details class="pr-tr"${state.prayer.trOpen ? ' open' : ''}><summary data-act="prTrToggle"><span>📖 คำแปลภาษาไทย</span><i>แตะเพื่อ${state.prayer.trOpen ? 'ซ่อน' : 'อ่าน'}</i></summary>
+<div class="pr-tr-in">${prayerTr(pr).map((t) => t.startsWith('## ') ? `<h3>${t.slice(3)}</h3>` : `<p>${t}</p>`).join('')}<p class="pr-tr-note">แปลโดยสรุปเพื่อความเข้าใจ ไม่ใช่คำแปลจากพระไตรปิฎกฉบับทางการ</p></div></details>
 <section class="pr-counter" id="pr-counter">${counterHTML(pr)}</section>
 <button class="pr-report" data-act="prReport">พบตัวบทผิด? แจ้งทาง LINE (ไอดี Mengfrog)</button>
 <p class="small" style="text-align:center;font-size:11px">ตั้งนะโม 3 จบก่อนสวด · สวดด้วยใจสงบ ความหมายเป็นสรุปสั้นเพื่อความเข้าใจ</p>
@@ -2499,6 +2502,7 @@ document.addEventListener('click', (e) => {
       navigator.geolocation.getCurrentPosition((pos) => { state.map.me = { lat: pos.coords.latitude, lon: pos.coords.longitude }; state.map.sel = null; if (route() === 'map') render(); }, () => toast('ยังไม่ได้รับอนุญาตให้ใช้ตำแหน่ง'), { timeout: 10000, maximumAge: 600000 });
       return;
     }
+    case 'prTrToggle': state.prayer.trOpen = !state.prayer.trOpen; { const sm = el.querySelector('i'); if (sm) sm.textContent = 'แตะเพื่อ' + (state.prayer.trOpen ? 'ซ่อน' : 'อ่าน'); } return;
     case 'prReport': {
       const pr = prOf(state.prayer.open), txt = reportText(pr);
       const open = () => window.open(LINE_URL, '_blank', 'noopener');
