@@ -16,7 +16,7 @@ import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, ch
 import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
 import { forecastDay, aspectEffect, ingressEffect } from './forecast.js';
 import { nextHolyDay, upcomingSpecial, thaiLunar } from './lunar.js';
-import { MU_PLACES, MU_CATS, MU_WISH, BLOOD_LINK } from './places.js';
+import { MU_PLACES, MU_CATS, MU_WISH, MU_REGIONS, BLOOD_LINK } from './places.js';
 import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf, dayPlanet } from './thai.js';
 
 // ---------------- storage ----------------
@@ -41,7 +41,7 @@ const state = {
   tarot: { topic: 0, spread: 3, histAll: false, logged: false, cards: null, deck: null, picks: [], flipped: [], sel: 0, q: '', who: 'me', other: { name: '', known: false, day: 1, month: 1, yearBE: 2540 } },
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
-  map: { cat: 'all', wish: null, sel: null, me: null },
+  map: { cat: 'all', wish: null, reg: 'all', sel: null, me: null },
   pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null, tree: { tied: false, digits: null, done: false, kind: null }, hist: [] },
@@ -2099,7 +2099,7 @@ function kmBetween(a, b) {
 }
 function muList() {
   const m = state.map;
-  let list = MU_PLACES.filter((p) => (m.cat === 'all' || p.k.includes(m.cat)) && (!m.wish || p.wish.includes(m.wish)));
+  let list = MU_PLACES.filter((p) => (m.cat === 'all' || p.k.includes(m.cat)) && (!m.wish || p.wish.includes(m.wish)) && (m.reg === 'all' || p.reg === m.reg));
   if (m.me) list = list.map((p) => ({ ...p, km: kmBetween(m.me, p) })).sort((a, b) => a.km - b.km);
   return list;
 }
@@ -2124,9 +2124,11 @@ function viewMap() {
   return `<main class="screen" style="--accent:var(--amber)">
 ${pageHead('11', 'MU MAP', 'แผนที่มู', 'var(--amber)', 'map')}
 <div class="mu-map-wrap"><div id="mu-map" class="mu-map" aria-label="แผนที่สถานที่มู"></div><button class="mu-near" data-act="muNear">${m.me ? '◉ ใกล้ฉัน' : '◎ ใกล้ฉัน'}</button></div>
+<div class="mu-cats hscroll">${MU_REGIONS.map(([k, t]) => `<button class="chip small-chip" data-act="muReg" data-v="${k}" aria-pressed="${m.reg === k}">${t}</button>`).join('')}</div>
 <div class="mu-cats hscroll">${MU_CATS.map((c) => `<button class="chip" style="--accent:${c.col}" data-act="muCat" data-v="${c.id}" aria-pressed="${m.cat === c.id}">${c.th}</button>`).join('')}</div>
 ${m.cat === 'wish' || m.wish ? `<div class="mu-cats hscroll">${Object.entries(MU_WISH).map(([k, t]) => `<button class="chip small-chip" data-act="muWish" data-v="${k}" aria-pressed="${m.wish === k}">${t}</button>`).join('')}</div>` : ''}
 ${m.cat === 'blood' ? `<a class="mu-blood" href="${BLOOD_LINK}" target="_blank" rel="noopener"><b>♥ ดูจุดรับบริจาคโลหิตล่าสุด</b><span>หน่วยเคลื่อนที่เปลี่ยนทุกวัน ดูตารางที่เว็บไซต์ศูนย์บริการโลหิตแห่งชาติ สภากาชาดไทย</span></a>` : ''}
+<p class="small" style="margin:0">${muList().length} แห่ง${m.me ? ' · เรียงจากใกล้คุณที่สุด' : ''}</p>
 <section id="mu-list" class="mu-list">${muListHTML()}</section>
 <p class="small" style="font-size:11px">หมุดบนแผนที่เป็นตำแหน่งโดยประมาณ ปุ่มนำทางจะค้นชื่อสถานที่ใน Google Maps ให้ตรงตำแหน่งจริง · ข้อมูลเรื่องเล่าและการขอพรเป็นความเชื่อ · แผนที่ © ผู้ร่วมพัฒนา OpenStreetMap</p>
 </main>`;
@@ -2489,6 +2491,7 @@ document.addEventListener('click', (e) => {
     case 'askChip': ask(el.dataset.q); return;
     case 'muCat': Object.assign(state.map, { cat: el.dataset.v, wish: el.dataset.v === 'wish' ? state.map.wish : null, sel: null }); break;
     case 'muWish': state.map.wish = state.map.wish === el.dataset.v ? null : el.dataset.v; state.map.cat = 'wish'; state.map.sel = null; break;
+    case 'muReg': state.map.reg = el.dataset.v; state.map.sel = null; break;
     case 'muSel': muSelect(el.dataset.v, false); return;
     case 'muNear': {
       if (!navigator.geolocation) { toast('เครื่องนี้หาตำแหน่งไม่ได้'); return; }
