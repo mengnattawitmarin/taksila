@@ -12,7 +12,7 @@ import { mountGlobe, burnIncense, mountSiamsi, mountTree, askMotion, randomDigit
 import { SIAMSI } from './siamsi.js';
 import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
 import { prayerTr } from './prayer-tr.js';
-import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead } from './fengshui.js';
+import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
 import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
@@ -44,7 +44,7 @@ const state = {
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
   map: { cat: 'all', wish: null, reg: 'all', sel: null, me: null },
-  fs: { tab: 'kua', gender: '', facing: 180, cell: null, heading: null, sensor: false, cam: false, ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.fs')) || {}; return { gender: j.gender || '', facing: typeof j.facing === 'number' ? j.facing : 180 }; } catch (e) { return {}; } })() },
+  fs: { tab: 'kua', gender: '', facing: 180, period: 9, repl: false, rooms: {}, members: [], home: null, radius: 40, cell: null, roomPick: null, newMember: null, heading: null, sensor: false, cam: false, ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.fs')) || {}; const o = {}; for (const k of ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius']) if (j[k] != null) o[k] = j[k]; return o; } catch (e) { return {}; } })() },
   pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null, tree: { tied: false, digits: null, done: false, kind: null }, hist: [] },
@@ -223,7 +223,8 @@ function todayOracle() {
   const lunLine = lun ? lun.full : d0.phase.th;
   const holyLine = lun && lun.holy ? 'วันนี้วันพระ' : nh ? `วันพระถัดไป ${WEEKDAY_SHORT[nh.date.getDay()]}. ${nh.date.getDate()} ${MONTHS_SHORT[nh.date.getMonth()]}${nh.inDays === 1 ? ' (พรุ่งนี้)' : ` (อีก ${nh.inDays} วัน)`}` : '';
   const special = upcomingSpecial(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1), 30).filter((e) => e.k !== 'merit' || e.th === 'วันลอยกระทง')[0];
-  return { d0, fc, total: fc.total, scores: fc.scores, advice: fc.advice, lun, lunLine, holyLine, special, events: lun ? lun.events : [],
+  const fsa = fsAlert();
+  return { d0, fc, total: fc.total, scores: fc.scores, advice: fsa ? [...fc.advice.slice(0, 3), fsa] : fc.advice, lun, lunLine, holyLine, special, events: lun ? lun.events : [],
     date: `${WEEKDAY[now.getDay()]} ${now.getDate()} ${MONTHS_SHORT[now.getMonth()]}`, verdict: VERDICT[fc.rating], col: VERDICT_COL[fc.rating], luck: luckToday() };
 }
 const advHref = (l) => l.href.startsWith('map:') ? `href="#/map" data-act="mapOpen" data-v="${l.href.slice(4)}"` : l.href.startsWith('prayer:') ? `href="#/prayer" data-act="openPrayer" data-v="${l.href.slice(7)}"` : `href="${l.href}"`;
@@ -2311,8 +2312,9 @@ const reportText = (pr) => `แจ้งตัวบทผิดในตัก�
 // ---------------- ฮวงจุ้ย ----------------
 const FS_KEY = 'taksila.fs';
 function fsLoad() { try { return JSON.parse(localStorage.getItem(FS_KEY)) || {}; } catch (e) { return {}; } }
-function fsSave() { try { localStorage.setItem(FS_KEY, JSON.stringify({ gender: state.fs.gender, facing: state.fs.facing })); } catch (e) {} }
-const FS_TABS = [['kua', 'เลขกัว'], ['house', 'ดาวบ้าน'], ['year', 'ปีนี้ระวัง'], ['compass', 'เข็มทิศ']];
+const FS_KEEP = ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius'];
+function fsSave() { try { const o = {}; FS_KEEP.forEach((k) => { o[k] = state.fs[k]; }); localStorage.setItem(FS_KEY, JSON.stringify(o)); } catch (e) {} }
+const FS_TABS = [['kua', 'เลขกัว'], ['family', 'ครอบครัว'], ['house', 'ดาวบ้าน'], ['rooms', 'ผังห้อง'], ['score', 'คะแนนบ้าน'], ['time', 'ปี · เดือน'], ['compass', 'เข็มทิศ'], ['map', 'แผนที่']];
 const FS_GRID = ['NW', 'N', 'NE', 'W', 'C', 'E', 'SW', 'S', 'SE'];
 const fsBirth = () => { const p = state.profile; return new Date(p.yearBE - 543, p.month - 1, p.day, p.timeKnown ? p.hour : 12, p.timeKnown ? p.minute : 0); };
 const fsTone = (t) => (t > 0 ? 'pos' : t < 0 ? 'neg' : 'mid');
@@ -2341,6 +2343,8 @@ function fsFacingPicker(fs) {
   return `<section class="card fs-face"><div class="fs-face-top">${fsDial(fs.facing)}<div class="fs-face-t"><span class="eyebrow">ทิศหน้าบ้าน</span><b id="fs-face-read">${Math.round(fs.facing)}° ${FS_DIR_SHORT[m.palace]}</b><span>ภูเขา ${m.cn} (${m.th}) · ${m.yuan}</span>${m.edge ? '<span class="fs-warn">⚠ ใกล้เส้นแบ่งภูเขา ผังอาจเปลี่ยน ควรวัดซ้ำหรือให้ซินแสตรวจ</span>' : ''}</div></div>
 <input type="range" min="0" max="359" step="1" value="${Math.round(fs.facing)}" data-in="fsFacing" aria-label="องศาทิศหน้าบ้าน" class="fs-range">
 <div class="fs-quick">${FS_DIRS.map((d) => `<button class="chip small-chip" data-act="fsQuick" data-v="${d}" aria-pressed="${m.palace === d}">${FS_DIR_SHORT[d]}</button>`).join('')}</div>
+<div class="fs-nrow2"><label class="field fs-nf">เข้าอยู่หรือสร้างเสร็จช่วง<select class="input" data-in="fsPeriod">${FS_PERIODS.map(([v, t]) => `<option value="${v}"${(fs.period || 9) === v ? ' selected' : ''}>${t}</option>`).join('')}</select></label></div>
+${m.edge ? `<button class="chip small-chip fs-repl" data-act="fsRepl" aria-pressed="${!!fs.repl}">${fs.repl ? '✓ ' : ''}ใช้ผังคาบเส้น (替卦)</button><p class="small" style="margin:0">บ้านที่หันใกล้เส้นแบ่งภูเขา หลายสำนักใช้ดาวแทน (替卦) ลองเทียบทั้งสองผัง ถ้าไม่แน่ใจให้ซินแสวัดซ้ำ</p>` : ''}
 <button class="btn btn-line" data-act="fsTab" data-v="compass">◎ วัดด้วยเข็มทิศมือถือ</button>
 <p class="small" style="margin:0">วิธีวัด: ยืนที่ประตูหน้าบ้าน หันหลังให้บ้าน มองออกไปข้างนอก ทิศที่มองคือทิศหน้าบ้าน (ใช้ทิศที่ตัวอาคารหันหน้า ไม่ใช่ทิศรั้ว)</p></section>`;
 }
@@ -2349,10 +2353,10 @@ function fsDial(deg, size = 92) {
   return `<svg class="fs-dial" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true"><circle cx="${c}" cy="${c}" r="${c - 3}"/>${FS_DIRS.map((d) => { const a = FS_DIR_DEG[d] * Math.PI / 180; return `<text x="${c + (c - 12) * Math.sin(a)}" y="${c - (c - 12) * Math.cos(a) + 3}" text-anchor="middle">${d}</text>`; }).join('')}<g id="fs-dial-g" style="transform:rotate(${deg}deg);transform-origin:50% 50%"><path d="M${c},${10} L${c + 6},${c} L${c},${c - 4} L${c - 6},${c}Z" class="fs-needle"/><circle cx="${c}" cy="${c}" r="3"/></g></svg>`;
 }
 function fsHouseHTML(fs, k) {
-  const fc = flyingStars(fs.facing), ya = yearAfflictions(solarYear(new Date()));
+  const fc = fsChart(), ya = yearAfflictions(solarYear(new Date()));
   const sel = fs.cell || fc.facing.palace;
   const cell = (p) => {
-    const w = fc.water[p], mo = fc.mount[p], rd = p === 'C' ? { tone: 0 } : sectorRead(w, mo);
+    const w = fc.water[p], mo = fc.mount[p], rd = p === 'C' ? { tone: 0 } : sectorRead(w, mo, fc.period);
     const kd = k && p !== 'C' ? k.dirs.find((x) => x.dir === p) : null;
     return `<button class="fs-cell ${fsTone(rd.tone)}${p === sel ? ' on' : ''}${p === fc.facing.palace ? ' front' : ''}" data-act="fsCell" data-v="${p}">
 <span class="fc-p">${FS_DIR_SHORT[p]}${p === fc.facing.palace ? ' · หน้า' : p === fc.sitting.palace ? ' · หลัง' : ''}</span>
@@ -2360,12 +2364,12 @@ function fsHouseHTML(fs, k) {
 <span class="fc-y" title="ดาวจรปีนี้">ปี ${ya.chart[p]}</span>${kd ? `<span class="fc-k ${kd.good ? 'g' : 'b'}">${kd.th}</span>` : ''}</button>`;
   };
   const w = fc.water[sel], mo = fc.mount[sel];
-  const rd = sel === 'C' ? null : sectorRead(w, mo);
+  const rd = sel === 'C' ? null : sectorRead(w, mo, fc.period);
   const kd = k && sel !== 'C' ? k.dirs.find((x) => x.dir === sel) : null;
   const yStar = ya.chart[sel];
   return `${fsFacingPicker(fs)}
 ${fc.pattern ? `<section class="fs-pat ${fc.pattern.k}"><b>${fc.pattern.th}</b><span>${fc.pattern.d}</span></section>` : ''}
-<section class="fs-chart"><div class="fs-chart-h"><b>ผังดาวเหิน ยุค 9 · นั่ง ${fc.sitting.cn} หัน ${fc.facing.cn}</b><span class="small">ทิศเหนืออยู่ด้านบน · <i class="lg-m">ภูเขา</i> <i class="lg-b">ยุค</i> <i class="lg-w">น้ำ</i></span></div>
+<section class="fs-chart"><div class="fs-chart-h"><b>ผังดาวเหิน ยุค ${fc.period}${fc.replace ? ' (คาบเส้น)' : ''} · นั่ง ${fc.sitting.cn} หัน ${fc.facing.cn}</b><span class="small">ทิศเหนืออยู่ด้านบน · <i class="lg-m">ภูเขา</i> <i class="lg-b">ยุค</i> <i class="lg-w">น้ำ</i></span></div>
 <div class="fs-grid">${FS_GRID.map(cell).join('')}</div></section>
 <section class="card fs-detail"><span class="eyebrow">${FS_DIR_TH[sel]}</span>
 ${sel === 'C' ? '<p class="body" style="margin:0">กลางบ้านควรโล่ง สะอาด ไม่วางของหนักหรือห้องน้ำ</p>' : `
@@ -2454,6 +2458,168 @@ function mountFengshui() {
   const v = document.getElementById('fs-video');
   if (v && fsStream) { v.srcObject = fsStream; v.play && v.play().catch(() => {}); }
 }
+// ---- ฮวงจุ้ย: ส่วนต่อยอด (ครอบครัว ผังห้อง คะแนน ดาวเดือน แผนที่) ----
+const fsChart = () => flyingStars(state.fs.facing, state.fs.period || 9, !!state.fs.repl);
+function fsPeople() {
+  const p = state.profile, out = [];
+  if (state.fs.gender) out.push({ id: 'me', name: (p.name || 'ฉัน').split(' ')[0], gender: state.fs.gender, day: p.day, month: p.month, yearBE: p.yearBE, me: true });
+  for (const m of state.fs.members || []) out.push(m);
+  return out.map((x) => ({ ...x, k: kuaOf(new Date(x.yearBE - 543, x.month - 1, x.day, 12), x.gender) }));
+}
+function fsFamilyHTML() {
+  const people = fsPeople(), f = state.fs.newMember || { name: '', gender: 'f', day: 1, month: 1, yearBE: 2540 };
+  const saved = (state.match.people || []).filter((x) => !(state.fs.members || []).some((m) => m.name === x.name));
+  const sel = (key, from, to, v, lab) => `<label class="field fs-nf">${lab}<select class="input" data-in="fsNew.${key}">${Array.from({ length: to - from + 1 }, (_, i) => from + i).map((n) => `<option${n === +v ? ' selected' : ''}>${n}</option>`).join('')}</select></label>`;
+  return `${people.length ? `<section class="fs-list">${people.map((x) => `<div class="fs-mem"><span class="fs-mem-k">${x.k.kua}</span><span class="fs-row-t"><b>${esc(x.name)}${x.me ? ' (คุณ)' : ''}</b><span>${x.k.group === 'east' ? 'กลุ่มตะวันออก' : 'กลุ่มตะวันตก'} · ธาตุ${x.k.element}</span><span class="small">หันหัวนอนดีสุด: ${FS_DIR_SHORT[x.k.dirs[1].dir]} (สุขภาพ) หรือ ${FS_DIR_SHORT[x.k.dirs[2].dir]} (ความรัก) · โต๊ะทำงาน: ${FS_DIR_SHORT[x.k.dirs[0].dir]}</span></span>${x.me ? '' : `<button class="th-del" data-act="fsMemDel" data-v="${esc(x.name)}" aria-label="ลบ">✕</button>`}</div>`).join('')}</section>` : '<section class="card"><p class="body" style="margin:0">เลือกเพศของคุณด้านบนก่อน แล้วเพิ่มคนในบ้านได้</p></section>'}
+${people.length > 1 ? `<section class="card fs-match"><span class="eyebrow">ทิศที่ดีร่วมกันของทุกคน</span><p class="body" style="margin:0">${(() => { const common = FS_DIRS.filter((d) => people.every((x) => x.k.dirs.find((y) => y.dir === d).good)); return common.length ? `ทิศ ${common.map((d) => FS_DIR_SHORT[d]).join(' ')} ดีกับทุกคน เหมาะเป็นห้องนั่งเล่น โต๊ะกินข้าว หรือมุมรวมครอบครัว` : 'คนในบ้านอยู่ต่างกลุ่มกัน (ตะวันออก/ตะวันตก) จึงไม่มีทิศที่ดีกับทุกคน ให้แต่ละคนใช้ทิศมงคลของตัวเองตอนจัดเตียงและโต๊ะ'; })()}</p></section>` : ''}
+<section class="card fs-add"><span class="eyebrow">เพิ่มคนในบ้าน</span>
+${saved.length ? `<div class="fs-quick">${saved.map((x, i) => `<button class="chip small-chip" data-act="fsMemPick" data-i="${i}">${esc(x.name)}</button>`).join('')}</div><p class="small" style="margin:0">แตะชื่อจากห้องคู่ดวงเพื่อใส่วันเกิดให้อัตโนมัติ</p>` : ''}
+<label class="field">ชื่อ<input class="input" data-in="fsNew.name" value="${esc(f.name)}" maxlength="20" placeholder="เช่น แม่ แฟน น้องต้น"></label>
+<div class="fs-nrow">${sel('day', 1, 31, f.day, 'วัน')}${sel('month', 1, 12, f.month, 'เดือน')}${sel('yearBE', 2450, 2575, f.yearBE, 'ปี พ.ศ.')}</div>
+<div class="seg" role="group" aria-label="เพศ">${[['m', 'ชาย'], ['f', 'หญิง']].map(([v, t]) => `<button aria-pressed="${f.gender === v}" data-act="fsNewGender" data-v="${v}">${t}</button>`).join('')}</div>
+<button class="btn" data-act="fsMemAdd">เพิ่ม</button><p class="small" style="margin:0">🔒 เก็บไว้ในเครื่องนี้เท่านั้น</p></section>`;
+}
+function fsRoomsHTML() {
+  const fs = state.fs, fc = fsChart(), rooms = fs.rooms || {}, people = fsPeople(), pick = fs.roomPick;
+  const ya = yearAfflictions(solarYear(new Date()));
+  const evals = [];
+  const cellHTML = (p) => {
+    const list = rooms[p] || [];
+    return `<button class="fs-cell fs-room${p === pick ? ' on' : ''}" data-act="fsRoomPick" data-v="${p}"><span class="fc-p">${FS_DIR_SHORT[p]}${p === fc.facing.palace ? ' · หน้า' : ''}</span>
+<span class="fc-st"><i>${fc.mount[p]}</i><b>${fc.base[p]}</b><i class="w">${fc.water[p]}</i></span>
+<span class="fr-list">${list.length ? list.map((r) => `<em>${ROOM_TYPES.find((t) => t.id === r.type).th}${r.who ? '·' + esc(r.who) : ''}</em>`).join('') : '<em class="emp">+ ใส่ห้อง</em>'}</span></button>`;
+  };
+  for (const p of FS_GRID) for (const r of rooms[p] || []) {
+    if (p === 'C') { evals.push({ p, r, tone: r.type === 'toilet' || r.type === 'kitchen' ? -1 : 0, th: `${ROOM_TYPES.find((t) => t.id === r.type).th}กลางบ้าน${r.type === 'toilet' || r.type === 'kitchen' ? ' ตามตำราไม่ควรมีห้องน้ำหรือครัวกลางบ้าน' : ''}` }); continue; }
+    const rd = roomRead(r.type, fc.water[p], fc.mount[p], fc.period);
+    const out = { p, r, tone: rd.tone, th: rd.th };
+    const who = r.who && people.find((x) => x.name === r.who);
+    if (who) { const kd = who.k.dirs.find((x) => x.dir === p); out.kua = `${esc(who.name)}: ห้องนี้อยู่ทิศ${kd.th} (${kd.use})`; out.kuaTone = kd.good ? 1 : -1; }
+    if ((r.type === 'door' || r.type === 'bed') && (ya.chart[p] === 5 || ya.chart[p] === 2)) out.year = `ปีนี้ดาวจร ${ya.chart[p]} เข้าโซนนี้ ควรแก้ด้วยโลหะ`;
+    evals.push(out);
+  }
+  const picker = pick ? `<section class="card fs-pick"><span class="eyebrow">โซน${FS_DIR_TH[pick]} มีห้องอะไรบ้าง</span>
+<div class="fs-quick">${ROOM_TYPES.map((t) => { const on = (rooms[pick] || []).some((r) => r.type === t.id); return `<button class="chip small-chip" data-act="fsRoomToggle" data-v="${t.id}" aria-pressed="${on}">${t.th}</button>`; }).join('')}</div>
+${(rooms[pick] || []).filter((r) => ROOM_TYPES.find((t) => t.id === r.type).person).map((r) => `<label class="field">ใครใช้${ROOM_TYPES.find((t) => t.id === r.type).th}นี้<select class="input" data-in="fsWho" data-room="${r.type}"><option value="">ไม่ระบุ</option>${people.map((x) => `<option${r.who === x.name ? ' selected' : ''}>${esc(x.name)}</option>`).join('')}</select></label>`).join('')}
+<button class="link-btn" data-act="fsRoomPick" data-v="">เสร็จ</button></section>` : '';
+  return `<p class="small" style="margin:0">แบ่งผังบ้านเป็น 9 ช่องตามทิศจริง (ทิศเหนืออยู่ด้านบน) แตะช่องแล้วเลือกห้องที่อยู่ในโซนนั้น</p>
+<div class="fs-grid">${FS_GRID.map(cellHTML).join('')}</div>${picker}
+${evals.length ? `<section class="fs-list"><h2 class="label">ผลการจัดห้อง</h2>${evals.map((e) => `<div class="fs-row ${fsTone(e.tone)}"><span class="fs-dir">${FS_DIR_SHORT[e.p]}<i>${e.p}</i></span><span class="fs-row-t"><b>${ROOM_TYPES.find((t) => t.id === e.r.type).th}</b><span>${e.th}</span>${e.kua ? `<span class="small ${e.kuaTone > 0 ? 'tpos' : 'tneg'}">${e.kua}</span>` : ''}${e.year ? `<span class="small tneg">${e.year}</span>` : ''}</span></div>`).join('')}</section>` : ''}`;
+}
+// คะแนนบ้านรวม 0–100 พร้อมจุดแข็งและจุดที่ควรแก้
+function fsScore() {
+  const fs = state.fs, fc = fsChart(), rooms = fs.rooms || {}, people = fsPeople(), ya = yearAfflictions(solarYear(new Date()));
+  let sc = 52; const plus = [], minus = [];
+  const add = (v, txt) => { sc += v; (v > 0 ? plus : minus).push({ v, txt }); };
+  if (fc.pattern && fc.pattern.k === 'best') add(10, 'ผังภูเขาดี น้ำดี เป็นผังที่ดีที่สุดของยุค');
+  if (fc.pattern && fc.pattern.k === 'worst') add(-10, 'ผังภูเขาตกน้ำ ควรวางของสูงหน้าบ้านและน้ำหลังบ้านเพื่อแก้');
+  const fw = starTone(fc.water[fc.facing.palace], fc.period), sm = starTone(fc.mount[fc.sitting.palace], fc.period);
+  if (fw) add(fw * 5, `หน้าบ้านได้ดาวน้ำ ${fc.water[fc.facing.palace]} (${STAR[fc.water[fc.facing.palace]].use})`);
+  if (sm) add(sm * 4, `หลังบ้านได้ดาวภูเขา ${fc.mount[fc.sitting.palace]} (${STAR[fc.mount[fc.sitting.palace]].use})`);
+  const me = people[0];
+  if (me) { const kd = me.k.dirs.find((x) => x.dir === fc.sitting.palace); add(kd.good ? 6 : -6, kd.good ? `บ้านนั่ง${FS_DIR_SHORT[fc.sitting.palace]} ตรงกับกลุ่มเลขกัวของ${esc(me.name)}` : `บ้านนั่ง${FS_DIR_SHORT[fc.sitting.palace]} ไม่ตรงกลุ่มเลขกัวของ${esc(me.name)} ใช้ทิศมงคลจัดเตียงและโต๊ะช่วย`); }
+  for (const p of FS_GRID) for (const r of rooms[p] || []) {
+    if (p === 'C') continue;
+    const rd = roomRead(r.type, fc.water[p], fc.mount[p], fc.period), w = r.type === 'door' ? 2 : 1;
+    if (rd.tone) add(rd.tone * 3 * w, rd.th + ` (${FS_DIR_SHORT[p]})`);
+    if ((r.type === 'door' || r.type === 'bed') && (ya.chart[p] === 5 || ya.chart[p] === 2)) add(-3, `ปีนี้ดาว ${ya.chart[p]} เข้า${ROOM_TYPES.find((t) => t.id === r.type).th} (${FS_DIR_SHORT[p]}) วางโลหะแก้`);
+  }
+  plus.sort((a, b) => b.v - a.v); minus.sort((a, b) => a.v - b.v);
+  return { score: Math.max(5, Math.min(98, Math.round(sc))), plus: plus.slice(0, 3), minus: minus.slice(0, 3), roomsDone: Object.values(rooms).some((l) => l.length) };
+}
+function fsScoreHTML() {
+  const r = fsScore(), fc = fsChart();
+  const v = r.score >= 75 ? 'บ้านมงคล' : r.score >= 60 ? 'บ้านดี มีจุดเสริม' : r.score >= 45 ? 'บ้านกลาง ๆ ควรปรับ' : 'ควรปรับหลายจุด';
+  return `<section class="card fs-score"><div class="fs-score-top">${oracleRing(r.score, 96)}<div><span class="eyebrow">คะแนนฮวงจุ้ยบ้าน</span><b>${v}</b><span class="small">หัน ${fc.facing.cn} ${Math.round(state.fs.facing)}° · ยุค ${fc.period}${fc.replace ? ' · ผังคาบเส้น' : ''}</span></div></div>
+${r.roomsDone ? '' : '<p class="small" style="margin:0">ใส่ผังห้องในแท็บผังห้องเพื่อให้คะแนนละเอียดขึ้น</p>'}</section>
+<section class="fs-list"><h2 class="label">จุดแข็ง</h2>${r.plus.length ? r.plus.map((x) => `<div class="fs-row pos"><span class="fs-row-t" style="grid-column:1/-1"><span>${x.txt}</span></span></div>`).join('') : '<p class="small">ยังไม่มีจุดเด่น ลองใส่ผังห้องหรือตรวจทิศหน้าบ้าน</p>'}
+<h2 class="label">ควรแก้ก่อน</h2>${r.minus.length ? r.minus.map((x) => `<div class="fs-row neg"><span class="fs-row-t" style="grid-column:1/-1"><span>${x.txt}</span></span></div>`).join('') : '<p class="small">ไม่มีจุดที่ต้องแก้เร่งด่วน</p>'}</section>
+<button class="btn" data-act="fsShare">แชร์ผลฮวงจุ้ยบ้าน ↗</button>`;
+}
+async function fsImage() {
+  const r = fsScore(), fc = fsChart(), W = 1080, H = 1350;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const x = cv.getContext('2d');
+  const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#2A1410'); g.addColorStop(.6, '#0F0C10'); g.addColorStop(1, '#1E170C'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  const F = (w, s) => `${w} ${s}px "IBM Plex Sans Thai", "Taviraj", sans-serif`;
+  x.textAlign = 'center'; x.fillStyle = '#E5675A'; x.font = F(500, 28); x.fillText('ตักศิลา · ฮวงจุ้ยบ้าน', W / 2, 80);
+  x.fillStyle = '#F6E3B0'; x.font = F(700, 120); x.fillText(String(r.score), W / 2, 230);
+  x.fillStyle = '#B9AD94'; x.font = F(400, 30); x.fillText(`หน้าบ้าน ${Math.round(state.fs.facing)}° ${FS_DIR_SHORT[fc.facing.palace]} · ยุค ${fc.period}${fc.pattern ? ' · ' + fc.pattern.th.split(' (')[0] : ''}`, W / 2, 285);
+  const cw = 230, gx = (W - cw * 3 - 24) / 2, gy = 330;
+  FS_GRID.forEach((p, i) => {
+    const cx = gx + (i % 3) * (cw + 12), cy = gy + Math.floor(i / 3) * (190 + 12);
+    const t = p === 'C' ? 0 : sectorRead(fc.water[p], fc.mount[p], fc.period).tone;
+    x.fillStyle = t > 0 ? 'rgba(111,195,178,.22)' : t < 0 ? 'rgba(229,103,90,.22)' : 'rgba(255,255,255,.05)'; x.fillRect(cx, cy, cw, 190);
+    x.fillStyle = '#E9DFC8'; x.font = F(500, 26); x.fillText(FS_DIR_SHORT[p], cx + cw / 2, cy + 40);
+    x.font = F(500, 60); x.fillStyle = '#F0D89A'; x.fillText(String(fc.mount[p]), cx + cw / 2 - 50, cy + 125);
+    x.fillStyle = '#A9C6EE'; x.fillText(String(fc.water[p]), cx + cw / 2 + 50, cy + 125);
+    x.fillStyle = '#8F836C'; x.font = F(400, 26); x.fillText(String(fc.base[p]), cx + cw / 2, cy + 120);
+  });
+  x.textAlign = 'left'; let y = 990;
+  for (const [arr, col, mark] of [[r.plus, '#7FC4B4', '✓'], [r.minus, '#F0A08C', '!']]) for (const it of arr.slice(0, 2)) { x.fillStyle = col; x.font = F(500, 30); x.fillText(mark, 90, y); x.fillStyle = '#EDE3CC'; x.font = F(400, 28); x.textAlign = 'left'; y = wrapText(x, thaiChunks(it.txt), 130, y, 860, 38, 2) + 16; }
+  x.textAlign = 'center'; x.fillStyle = '#8F836C'; x.font = F(400, 24); x.fillText('ดูฮวงจุ้ยบ้านคุณฟรีที่ตักศิลา · mengnattawitmarin.github.io/taksila', W / 2, H - 40);
+  return new Promise((res) => { try { cv.toBlob((b) => res(b), 'image/png'); } catch (e) { res(null); } });
+}
+function fsTimeHTML() {
+  const now = new Date(), mi = monthInfo(now), fc = fsChart();
+  const door = Object.keys(state.fs.rooms || {}).find((p) => (state.fs.rooms[p] || []).some((r) => r.type === 'door')) || fc.facing.palace;
+  const m5 = FS_GRID.find((p) => mi.chart[p] === 5), m2 = FS_GRID.find((p) => mi.chart[p] === 2);
+  return `${fsYearHTML()}
+<section class="card fs-yr"><span class="eyebrow">เดือนจีน${mi.animal} · ดาวกลาง ${mi.star} · ถึง ${mi.change.getDate()} ${MONTHS_SHORT[mi.change.getMonth()]}</span>
+<div class="fs-grid sm">${FS_GRID.map((p) => `<div class="fs-cell ${fsTone(STAR[mi.chart[p]].tone)}"><span class="fc-p">${FS_DIR_SHORT[p]}${p === door ? ' · ประตู' : ''}</span><span class="fc-big">${mi.chart[p]}</span></div>`).join('')}</div>
+<p class="small" style="margin:0">เดือนนี้ดาว 5 อยู่${FS_DIR_SHORT[m5]} ดาว 2 อยู่${FS_DIR_SHORT[m2]}${m5 === door || m2 === door ? ' · <b class="tneg">ตรงประตูบ้านคุณ ควรวางโลหะที่ประตูช่วงนี้</b>' : ''} · เดือนจีนเปลี่ยนราววันที่ 4–8 ของทุกเดือน ตามปฏิทิน 24 สารทของจีน</p></section>
+<button class="btn btn-line" data-act="fsAusp">หาฤกษ์ขึ้นบ้านใหม่ ย้ายบ้าน ›</button>`;
+}
+// แผนที่: ปักหมุดบ้าน แล้ววาง 8 ทิศสีดีร้ายตามผังดาวรอบบ้าน
+let fsMap = null, fsMapLayer = null;
+function fsMapHTML() {
+  return `<div class="mu-map-wrap"><div id="fs-map" class="mu-map" aria-label="ผังแปดทิศบนแผนที่"></div><button class="mu-near" data-act="fsMapMe">◎ ตำแหน่งฉัน</button></div>
+<label class="field">รัศมีผัง ${state.fs.radius || 40} เมตร<input type="range" min="15" max="300" step="5" value="${state.fs.radius || 40}" data-in="fsRadius" class="fs-range"></label>
+<p class="small" style="margin:0">แตะบนแผนที่เพื่อย้ายหมุดไปที่กลางบ้าน แต่ละทิศระบายสีตามผังดาวเหินของบ้าน (เขียว = ดี แดง = ระวัง) ใช้ดูสิ่งรอบบ้าน เช่น ถนนพุ่งเข้า แม่น้ำ ตึกสูง ว่าตกทิศไหน · แผนที่ © OpenStreetMap</p>`;
+}
+function fsMapDraw() {
+  if (!fsMap) return;
+  const L = window.L, fs = state.fs, fc = fsChart(), h = fs.home, R = fs.radius || 40;
+  if (fsMapLayer) fsMapLayer.remove();
+  fsMapLayer = L.layerGroup().addTo(fsMap);
+  const dLat = R / 111320, dLon = R / (111320 * Math.cos(h.lat * Math.PI / 180));
+  const at = (a, f) => [h.lat + dLat * f * Math.cos(a * Math.PI / 180), h.lon + dLon * f * Math.sin(a * Math.PI / 180)];
+  for (const d of FS_DIRS) {
+    const a0 = FS_DIR_DEG[d] - 22.5, pts = [[h.lat, h.lon]];
+    for (let a = a0; a <= a0 + 45.01; a += 7.5) pts.push(at(a, 1));
+    const t = sectorRead(fc.water[d], fc.mount[d], fc.period).tone;
+    L.polygon(pts, { color: '#0D0B08', weight: 1, fillColor: t > 0 ? '#6FC3B2' : t < 0 ? '#E5675A' : '#D4AF63', fillOpacity: 0.38 }).addTo(fsMapLayer)
+      .bindTooltip(`${FS_DIR_SHORT[d]} ${fc.mount[d]}-${fc.water[d]}${d === fc.facing.palace ? ' · หน้าบ้าน' : ''}`, { permanent: true, direction: 'center', className: 'fs-tt' });
+  }
+  L.circleMarker([h.lat, h.lon], { radius: 6, color: '#fff', weight: 2, fillColor: '#E5675A', fillOpacity: 1 }).addTo(fsMapLayer);
+}
+function mountFsMap() {
+  const el = document.getElementById('fs-map');
+  if (!el) { fsMap = null; return; }
+  if (!state.fs.home) { const pl = state.profile.place || {}; state.fs.home = { lat: pl.lat || 13.7563, lon: pl.lon || 100.5018 }; }
+  ensureLeaflet(() => {
+    if (!document.body.contains(el)) return;
+    if (leafletState !== 'ready') { el.classList.add('fail'); el.innerHTML = '<p>แผนที่โหลดไม่ได้ตอนนี้ (ต้องต่ออินเทอร์เน็ต)</p>'; return; }
+    if (fsMap) { try { fsMap.remove(); } catch (e) {} }
+    const L = window.L, h = state.fs.home;
+    fsMap = L.map(el, { zoomControl: false }).setView([h.lat, h.lon], 18);
+    L.control.zoom({ position: 'bottomright' }).addTo(fsMap);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(fsMap);
+    fsMap.on('click', (e) => { state.fs.home = { lat: e.latlng.lat, lon: e.latlng.lng }; fsSave(); fsMapDraw(); });
+    fsMapDraw();
+  });
+}
+// เตือนบนหน้าแรกเมื่อมีเรื่องฮวงจุ้ยที่ควรรู้
+function fsAlert() {
+  if (!state.fs.gender && !(state.fs.rooms && Object.keys(state.fs.rooms).length)) return null;
+  const now = new Date(), mi = monthInfo(now), fc = fsChart();
+  const door = Object.keys(state.fs.rooms || {}).find((p) => (state.fs.rooms[p] || []).some((r) => r.type === 'door')) || fc.facing.palace;
+  const days = Math.round((mi.change - now) / 86400000);
+  if (mi.chart[door] === 5 || mi.chart[door] === 2) return { tone: -1, text: `ฮวงจุ้ยเดือนนี้: ดาว ${mi.chart[door]} มาอยู่ที่ประตูบ้านคุณ (${FS_DIR_SHORT[door]}) วางของโลหะ เช่น กระดิ่งลมหรือน้ำเต้าทองเหลืองไว้ใกล้ประตู`, link: { href: '#/fengshui', label: 'ดูฮวงจุ้ย' } };
+  if (days >= 0 && days <= 2) return { tone: 0, text: `ฮวงจุ้ย: ดาวจรเดือนใหม่เริ่ม ${mi.change.getDate()} ${MONTHS_SHORT[mi.change.getMonth()]} ลองดูว่าโซนไหนในบ้านต้องระวัง`, link: { href: '#/fengshui', label: 'ดูฮวงจุ้ย' } };
+  return null;
+}
+
 function viewFengshui() {
   const fs = state.fs;
   const k = fs.gender ? kuaOf(fsBirth(), fs.gender) : null;
@@ -2461,12 +2627,16 @@ function viewFengshui() {
   let body = '';
   if (fs.tab === 'kua') body = k ? fsKuaHTML(k) : `<section class="card"><p class="body" style="margin:0">เลขกัวคำนวณจากปีเกิดและเพศ เลือกเพศด้านบนเพื่อดูทิศมงคลของคุณ</p></section>`;
   else if (fs.tab === 'house') body = fsHouseHTML(fs, k);
-  else if (fs.tab === 'year') body = fsYearHTML();
+  else if (fs.tab === 'family') body = fsFamilyHTML();
+  else if (fs.tab === 'rooms') body = fsRoomsHTML();
+  else if (fs.tab === 'score') body = fsScoreHTML();
+  else if (fs.tab === 'time' || fs.tab === 'year') body = fsTimeHTML();
+  else if (fs.tab === 'map') body = fsMapHTML();
   else body = fsCompassHTML(fs, k);
   return `<main class="screen" style="--accent:#E5675A">
 ${pageHead('14', 'FENG SHUI', 'ฮวงจุ้ย', '#E5675A', 'fengshui')}
 <div class="fs-gender"><span class="small">เพศ (ใช้คำนวณเลขกัว)</span>${genderSeg}</div>
-<div class="tabs fs-tabs" role="tablist">${FS_TABS.map(([t, l]) => `<button role="tab" aria-selected="${fs.tab === t}" data-act="fsTab" data-v="${t}">${l}</button>`).join('')}</div>
+<div class="fs-tabs hscroll" role="tablist">${FS_TABS.map(([t, l]) => `<button class="chip" role="tab" aria-pressed="${fs.tab === t}" data-act="fsTab" data-v="${t}">${l}</button>`).join('')}</div>
 ${body}
 <p class="small" style="font-size:11px">คำนวณตามสูตรปาจาย (八宅) และเสวียนคงเฟยซิง (玄空飛星) ยุค 9 (ปี 2024–2043) ผังดาวตรวจเทียบกับเครื่องคิดเลขฮวงจุ้ยสากลแล้ว ใช้เป็นแนวทางศึกษา หากจะสร้างหรือรีโนเวตบ้าน ควรปรึกษาซินแส</p>
 </main>`;
@@ -2486,6 +2656,8 @@ function render() {
   mountLuck();
   if (r === 'map') mountMap();
   mountFengshui();
+  if (r === 'fengshui' && state.fs.tab === 'map') mountFsMap();
+  { const row = document.querySelector('.fs-tabs'); const on = row && row.querySelector('[aria-pressed="true"]'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; }
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
   document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
@@ -2669,6 +2841,29 @@ document.addEventListener('click', (e) => {
     case 'fsSensor': fsStartSensor(); return;
     case 'fsCam': fsToggleCam(); return;
     case 'fsUseHeading': state.fs.facing = Math.round(state.fs.heading); state.fs.cell = null; state.fs.tab = 'house'; fsSave(); toast(`ตั้งทิศหน้าบ้าน ${state.fs.facing}° แล้ว`); break;
+    case 'fsRepl': state.fs.repl = !state.fs.repl; fsSave(); break;
+    case 'fsNewGender': state.fs.newMember = { ...(state.fs.newMember || { name: '', gender: 'f', day: 1, month: 1, yearBE: 2540 }), gender: el.dataset.v }; break;
+    case 'fsMemPick': { const sv = (state.match.people || []).filter((x) => !(state.fs.members || []).some((m) => m.name === x.name))[i]; if (sv) state.fs.newMember = { name: sv.name, gender: (state.fs.newMember || {}).gender || 'f', day: sv.day, month: sv.month, yearBE: sv.yearBE }; break; }
+    case 'fsMemAdd': {
+      const nm = state.fs.newMember || { name: '', gender: 'f', day: 1, month: 1, yearBE: 2540 };
+      if (!nm.name.trim()) { toast('ใส่ชื่อก่อน'); return; }
+      state.fs.members = [...(state.fs.members || []).filter((x) => x.name !== nm.name.trim()), { ...nm, name: nm.name.trim(), day: +nm.day, month: +nm.month, yearBE: +nm.yearBE }];
+      state.fs.newMember = null; fsSave(); toast('เพิ่มแล้ว'); break;
+    }
+    case 'fsMemDel': state.fs.members = (state.fs.members || []).filter((x) => x.name !== el.dataset.v); fsSave(); break;
+    case 'fsRoomPick': state.fs.roomPick = el.dataset.v || null; break;
+    case 'fsRoomToggle': {
+      const pk = state.fs.roomPick, rooms = { ...(state.fs.rooms || {}) }, list = [...(rooms[pk] || [])], k2 = list.findIndex((r) => r.type === el.dataset.v);
+      if (k2 >= 0) list.splice(k2, 1); else list.push({ type: el.dataset.v });
+      rooms[pk] = list; state.fs.rooms = rooms; fsSave(); break;
+    }
+    case 'fsShare': fsImage().then((b) => shareBlob(b, `taksila-fengshui-${Date.now()}.png`, 'ฮวงจุ้ยบ้านจากตักศิลา')); return;
+    case 'fsAusp': state.ausp.event = 'house'; state.ausp.tab = 1; state.ausp.open = 0; go('auspice'); return;
+    case 'fsMapMe': {
+      if (!navigator.geolocation) { toast('เครื่องนี้หาตำแหน่งไม่ได้'); return; }
+      navigator.geolocation.getCurrentPosition((pos) => { state.fs.home = { lat: pos.coords.latitude, lon: pos.coords.longitude }; fsSave(); if (fsMap) { fsMap.setView([state.fs.home.lat, state.fs.home.lon], 18); fsMapDraw(); } }, () => toast('ยังไม่ได้รับอนุญาตให้ใช้ตำแหน่ง'), { timeout: 10000 });
+      return;
+    }
     case 'muReg': state.map.reg = el.dataset.v; state.map.sel = null; break;
     case 'muSel': muSelect(el.dataset.v, false); return;
     case 'muNear': {
@@ -2743,6 +2938,8 @@ document.addEventListener('input', (e) => {
   const v = e.target.value;
   if (key === 'm.name') { state.match.name = v.trim(); const sb = document.querySelector('[data-act=matchSave]'); if (sb) sb.disabled = !state.match.name; return; }
   if (key === 'tarotQ') { state.tarot.q = v; return; }
+  if (key && key.startsWith('fsNew.')) { state.fs.newMember = { ...(state.fs.newMember || { name: '', gender: 'f', day: 1, month: 1, yearBE: 2540 }), [key.slice(6)]: v }; return; }
+  if (key === 'fsRadius') { state.fs.radius = +v; const lb = e.target.closest('label'); if (lb && lb.firstChild) lb.firstChild.textContent = `รัศมีผัง ${v} เมตร`; fsMapDraw(); return; }
   if (key === 'fsFacing') {
     state.fs.facing = +v; state.fs.cell = null;
     const m = mountainOf(+v), t = document.getElementById('fs-face-read'), g = document.getElementById('fs-dial-g');
@@ -2785,6 +2982,10 @@ document.addEventListener('change', (e) => {
   const v = +e.target.value;
   if (key === 'm.name') return;
   if (key === 'fsFacing') { fsSave(); render(); return; }
+  if (key === 'fsRadius') { fsSave(); return; }
+  if (key === 'fsPeriod') { state.fs.period = v; fsSave(); render(); return; }
+  if (key === 'fsWho') { const pk = state.fs.roomPick, rooms = { ...(state.fs.rooms || {}) }; rooms[pk] = (rooms[pk] || []).map((r) => (r.type === e.target.dataset.room ? { ...r, who: e.target.value || undefined } : r)); state.fs.rooms = rooms; fsSave(); render(); return; }
+  if (key && key.startsWith('fsNew.')) return;
   if (key.startsWith('m.')) { state.match[key.slice(2)] = v; render(); return; }
   if (key === 'nm.day') { state.num.day = v; const box = document.getElementById('num-results'); if (box) box.innerHTML = numResults(); return; }
   if (key.startsWith('t.')) { state.tarot.other[key.slice(2)] = v; render(); return; }

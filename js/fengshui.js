@@ -33,12 +33,17 @@ function fly(center, dir) {
 
 export const FS_PERIOD = 9; // ยุค 9: 4 ก.พ. 2024 – 3 ก.พ. 2044
 // Xuan Kong flying-star chart for a facing angle (degrees from true north).
-export function flyingStars(facingDeg, period = FS_PERIOD) {
+// 替卦 replacement stars: the mountain in the star's home palace decides which star flies instead.
+const REPL = { '子': 1, '癸': 1, '甲': 1, '申': 1, '壬': 2, '卯': 2, '乙': 2, '未': 2, '坤': 2, '戌': 6, '乾': 6, '亥': 6, '辰': 6, '巽': 6, '巳': 6, '酉': 7, '辛': 7, '丑': 7, '艮': 7, '丙': 7, '寅': 9, '午': 9, '庚': 9, '丁': 9 };
+export function flyingStars(facingDeg, period = FS_PERIOD, replace = false) {
   const f = mountainOf(facingDeg), s = mountainOf(facingDeg + 180);
   const base = fly(period, 1);
   const starFor = (palaceStar, sub) => {
     const home = palaceStar === 5 ? HOME[period] : HOME[palaceStar];
-    return fly(palaceStar, polarity(home, sub));
+    const dir = polarity(home, sub);
+    if (!replace) return fly(palaceStar, dir);
+    const mt = M24[FS_DIRS.indexOf(home) * 3 + sub];
+    return fly(REPL[mt], dir);
   };
   const water = starFor(base[f.palace], f.sub); // ดาวน้ำ (向星) → ทรัพย์
   const mount = starFor(base[s.palace], s.sub); // ดาวภูเขา (山星) → คน สุขภาพ
@@ -48,7 +53,7 @@ export function flyingStars(facingDeg, period = FS_PERIOD) {
         : mount[s.palace] === period && water[s.palace] === period ? { k: 'sit', th: 'ดาวคู่อยู่หลังบ้าน (雙星到坐)', d: 'ดาวประจำยุคทั้งสองอยู่ด้านหลัง ควรมีที่โล่งหรือน้ำด้านหลังบ้านเพื่อรับทรัพย์' }
           : mount[f.palace] === period && water[f.palace] === period ? { k: 'face', th: 'ดาวคู่อยู่หน้าบ้าน (雙星到向)', d: 'ดาวประจำยุคทั้งสองอยู่ด้านหน้า ควรมีของสูงหรือกำแพงไกล ๆ หน้าบ้านเพื่อรักษาสุขภาพและคน' }
             : null;
-  return { facing: f, sitting: s, base, water, mount, pattern };
+  return { facing: f, sitting: s, base, water, mount, pattern, period, replace };
 }
 
 // Chinese solar year: changes at ลี่ชุน (立春, Sun at 315°) around 4 Feb.
@@ -125,12 +130,81 @@ export const STAR_FIX = {
   5: 'วางกระดิ่งลมโลหะหรือน้ำเต้าทองเหลือง ไม่ต่อเติมหรือเจาะผนังโซนนี้ในปีนั้น เลี่ยงสีแดงเหลือง',
   7: 'วางน้ำนิ่งในภาชนะสีน้ำเงินหรือดำ เก็บของมีค่าให้มิดชิด'
 };
-export function sectorRead(w, m) {
-  const sw = STAR[w], sm = STAR[m];
-  const score = sw.tone * 2 + sm.tone; // water star weighs more for wealth
+export function sectorRead(w, m, period = 9) {
+  const score = starTone(w, period) * 2 + starTone(m, period); // water star weighs more for wealth
   const tips = [];
-  if (w === 9 || w === 1 || w === 8) tips.push('ดาวน้ำดี เหมาะเป็นประตู ทางเดิน หรือมุมที่มีคนเดินบ่อย วางน้ำไหลหรือตู้ปลาได้');
-  if (m === 9 || m === 1 || m === 8) tips.push('ดาวภูเขาดี เหมาะวางเตียง โต๊ะทำงาน หรือของสูงหนักที่มั่นคง');
+  const cb = comboOf(m, w);
+  if (cb) tips.push(`คู่ดาว ${m}-${w}: ${cb.th}`);
+  if (starGood(w, period) > 0) tips.push('ดาวน้ำดี เหมาะเป็นประตู ทางเดิน หรือมุมที่มีคนเดินบ่อย วางน้ำไหลหรือตู้ปลาได้');
+  if (starGood(m, period) > 0) tips.push('ดาวภูเขาดี เหมาะวางเตียง โต๊ะทำงาน หรือของสูงหนักที่มั่นคง');
   for (const n of new Set([w, m])) if (STAR_FIX[n]) tips.push(`แก้${STAR[n].th}: ${STAR_FIX[n]}`);
-  return { score, tone: score >= 3 ? 1 : score <= -2 ? -1 : 0, tips };
+  const tone = score >= 3 ? 1 : score <= -2 ? -1 : 0;
+  return { score, tone: cb && cb.tone < 0 && tone > 0 ? 0 : tone, tips };
+}
+
+// ยุคของบ้าน ตามปีที่เข้าอยู่หรือสร้างเสร็จ (นับจากลี่ชุน)
+export const FS_PERIODS = [[7, 'ยุค 7 (1984–2003)'], [8, 'ยุค 8 (2004–2023)'], [9, 'ยุค 9 (2024–2043)']];
+export const periodOfYear = (y) => (y >= 2024 ? 9 : y >= 2004 ? 8 : 7);
+
+// ดาวจรประจำเดือน: เดือนจีนเริ่มที่ลี่ชุน (ดวงอาทิตย์ 315°) แล้วเปลี่ยนทุก 30°
+const MONTH_TH = ['ขาล', 'เถาะ', 'มะโรง', 'มะเส็ง', 'มะเมีย', 'มะแม', 'วอก', 'ระกา', 'จอ', 'กุน', 'ชวด', 'ฉลู'];
+export function monthInfo(date) {
+  const L = lonOf('sun', date), sy = solarYear(date);
+  const mi = Math.floor(((L - 315 + 360) % 360) / 30); // 0 = เดือนขาล (ราว 4 ก.พ.)
+  const b = ((sy - 4) % 12 + 12) % 12;
+  const first = [0, 3, 6, 9].includes(b) ? 8 : [4, 10, 1, 7].includes(b) ? 5 : 2; // ชวด มะเมีย เถาะ ระกา → 8 · มะโรง จอ ฉลู มะแม → 5 · อื่น ๆ → 2
+  const star = ((first - 1 - mi) % 9 + 9) % 9 + 1;
+  // วันเปลี่ยนเดือนถัดไป (ประมาณจากความเร็วดวงอาทิตย์)
+  const next = 315 + (mi + 1) * 30, left = ((next - L) % 360 + 360) % 360;
+  const change = new Date(date.getTime() + (left / 0.9856) * 86400000);
+  return { sy, mi, star, chart: fly(star, 1), animal: MONTH_TH[mi], change };
+}
+
+// คู่ดาวภูเขา-น้ำที่ตำราพูดถึงบ่อย (อ่านได้ทั้งสองทาง)
+const COMBO = {
+  '1-4': [1, 'ดาวเรียนและความรัก หนุนการสอบ การเขียน ชื่อเสียงทางวิชาการ'],
+  '1-6': [1, 'หนุนการงานและตำแหน่ง ผู้ใหญ่ให้การสนับสนุน'],
+  '6-8': [1, 'ทรัพย์และอำนาจมาพร้อมกัน เงินมั่นคง'],
+  '8-9': [1, 'งานมงคล ทรัพย์และความสุขในบ้าน'],
+  '1-9': [1, 'น้ำกับไฟสมดุล ดีเรื่องงานมงคลและความก้าวหน้า'],
+  '1-8': [1, 'หนุนทรัพย์และการงาน'],
+  '4-9': [1, 'หนุนการเรียน การสอบ งานสร้างสรรค์'],
+  '2-8': [0, 'เรื่องที่ดินและทรัพย์สิน แต่ต้องระวังสุขภาพผู้สูงวัย'],
+  '2-5': [-2, 'คู่ร้ายที่สุด เสี่ยงโรคภัยและเคราะห์ ควรแก้ด้วยโลหะ และไม่ใช้เป็นห้องนอน'],
+  '2-3': [-1, 'ทะเลาะ คดีความ ปากเสียง ใช้สีแดงหรือไฟแดงช่วยลด'],
+  '3-7': [-1, 'ระวังโจรและบาดเจ็บ ใช้น้ำนิ่งช่วยแก้'],
+  '6-7': [-1, 'ขัดแย้งรุนแรงแบบดาบปะทะดาบ ใช้น้ำช่วยลด'],
+  '7-9': [-1, 'ระวังไฟและความขัดแย้งในครอบครัว ใช้ดินหรือสีเหลืองช่วย'],
+  '5-9': [-1, 'ไฟหนุนดาว 5 ให้แรงขึ้น ระวังเคราะห์ ใช้โลหะแก้'],
+  '2-9': [-1, 'ไฟหนุนดาว 2 ระวังโรคภัย ใช้โลหะแก้'],
+  '3-5': [-1, 'ทะเลาะและเสียทรัพย์ ใช้สีแดงหรือโลหะช่วย'],
+  '6-9': [-1, 'ไฟข่มทอง ระวังความขัดแย้งกับผู้ใหญ่และสุขภาพศีรษะ']
+};
+export function comboOf(m, w) {
+  const k = [m, w].sort((a, b) => a - b).join('-');
+  const c = COMBO[k];
+  return c ? { tone: c[0], th: c[1], key: `${m}-${w}` } : null;
+}
+
+// ประเภทห้อง และกติกาประเมิน: ห้องที่ใช้ "ดาวน้ำ" (ประตู นั่งเล่น) ห้องที่ใช้ "ดาวภูเขา" (นอน ทำงาน พระ)
+// ส่วนห้องน้ำ ห้องเก็บของ ครัว ตามตำราควรวางทับโซนดาวร้ายเพื่อกดไว้
+export const ROOM_TYPES = [
+  { id: 'door', th: 'ประตูหน้า', use: 'water' }, { id: 'living', th: 'ห้องนั่งเล่น', use: 'water' },
+  { id: 'bed', th: 'ห้องนอน', use: 'mount', person: true }, { id: 'work', th: 'ห้องทำงาน', use: 'mount', person: true },
+  { id: 'shrine', th: 'หิ้งพระ', use: 'mount' }, { id: 'kitchen', th: 'ครัว', use: 'press' },
+  { id: 'toilet', th: 'ห้องน้ำ', use: 'press' }, { id: 'store', th: 'ห้องเก็บของ', use: 'press' }, { id: 'stair', th: 'บันได', use: 'water' }
+];
+const GOODS = { 9: [9, 1, 8], 8: [8, 9, 1], 7: [7, 8, 9] };
+export function starGood(n, period = 9) { return GOODS[period].includes(n) ? 1 : [2, 3, 5, 7].includes(n) ? -1 : 0; }
+// Weight of a star in a given period: the timely star +2, other good stars +1, ดาว 5 −2, other bad stars −1.
+export function starTone(n, period = 9) { return n === period ? 2 : n === 5 ? -2 : starGood(n, period); }
+export function roomRead(type, w, m, period = 9) {
+  const t = ROOM_TYPES.find((r) => r.id === type);
+  if (t.use === 'press') {
+    const bad = starGood(w, period) < 0 || starGood(m, period) < 0, waste = starGood(w, period) > 0 && starGood(m, period) > 0;
+    return bad ? { tone: 1, th: `${t.th}อยู่บนดาวร้าย ช่วยกดพลังร้ายไว้ ถือว่าวางถูก` } : waste ? { tone: -1, th: `${t.th}ทับดาวดี เสียโอกาส ถ้าทำได้ควรย้าย หรือเปิดไฟและรักษาความสะอาดเสมอ` } : { tone: 0, th: `${t.th}อยู่โซนกลาง ๆ ใช้ได้` };
+  }
+  const n = t.use === 'water' ? w : m, g = starGood(n, period);
+  const what = t.use === 'water' ? 'ดาวน้ำ' : 'ดาวภูเขา';
+  return g > 0 ? { tone: 1, th: `${t.th}ได้${what}ดี เลข ${n}` } : g < 0 ? { tone: -1, th: `${t.th}ทับ${what}ร้าย เลข ${n} ควรแก้: ${STAR_FIX[n] || 'จัดให้โล่ง สะอาด'}` } : { tone: 0, th: `${t.th}ได้${what}กลาง ๆ เลข ${n}` };
 }

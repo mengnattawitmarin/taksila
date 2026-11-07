@@ -1222,3 +1222,25 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .fs-read { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 16px; border-radius: 14px; background: rgba(13,11,8,.75); text-align: center; }
 .fs-read b { font-family: var(--mono); font-size: 26px; color: var(--gold-2); font-weight: 500; } .fs-read span { font-size: 13px; color: var(--text-2); }
 .fs-cmp-btns { display: flex; gap: 8px; } .fs-cmp-btns .btn { flex: 1; }
+.fs-tabs { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.fs-tabs::-webkit-scrollbar { display: none; }
+.fs-tabs .chip { flex: none; min-height: 38px; }
+.fs-tabs .chip[aria-pressed="true"] { border-color: #E5675A; color: #fff; background: rgba(229,103,90,.22); }
+.fs-mem { display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); }
+.fs-mem .th-del { align-self: stretch; border-left: 1px solid var(--line); }
+.fs-mem-k { flex: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-family: var(--serif); font-size: 22px; color: var(--gold-2); border: 1px solid rgba(240,216,154,.5); }
+.fs-mem .fs-row-t { flex: 1; }
+.fs-add, .fs-match, .fs-pick { border-radius: 16px; }
+.fs-nrow { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; }
+.fs-nf select { min-height: 44px; }
+.fs-repl { align-self: flex-start; }
+.fs-room { min-height: 104px; }
+.fr-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
+.fr-list em { font-style: normal; font-size: 10px; padding: 1px 6px; border-radius: 99px; background: rgba(240,216,154,.16); color: var(--gold-2); }
+.fr-list em.emp { background: none; color: var(--muted); }
+.fs-score { border-radius: 18px; }
+.fs-score-top { display: flex; gap: 14px; align-items: center; }
+.fs-score-top > div { display: flex; flex-direction: column; gap: 3px; }
+.fs-score-top b { font-family: var(--serif); font-size: 24px; }
+.fs-tt { background: rgba(13,11,8,.8) !important; color: #F1E6CF !important; border: 0 !important; box-shadow: none !important; font-size: 10px !important; padding: 1px 5px !important; }
+.fs-tt::before { display: none; }
