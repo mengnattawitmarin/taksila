@@ -1,0 +1,35 @@
+name: vendor-mediapipe
+# Downloads MediaPipe Tasks Vision (JS + WASM) and the face/hand models into vendor/mediapipe,
+# so the app serves them from its own origin (works offline after first use, no third-party CDN at runtime).
+on:
+  push:
+    branches: [main]
+    paths: [tools/vendor-mediapipe.txt]
+permissions:
+  contents: write
+jobs:
+  vendor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch
+        run: |
+          set -e
+          V=$(grep '^version=' tools/vendor-mediapipe.txt | cut -d= -f2)
+          mkdir -p vendor/mediapipe/wasm tools/testdata
+          cd /tmp && npm pack @mediapipe/tasks-vision@$V && tar xzf mediapipe-tasks-vision-$V.tgz
+          cp package/vision_bundle.mjs $GITHUB_WORKSPACE/vendor/mediapipe/
+          cp package/wasm/vision_wasm_internal.js package/wasm/vision_wasm_internal.wasm package/wasm/vision_wasm_nosimd_internal.js package/wasm/vision_wasm_nosimd_internal.wasm $GITHUB_WORKSPACE/vendor/mediapipe/wasm/
+          cp package/LICENSE $GITHUB_WORKSPACE/vendor/mediapipe/LICENSE 2>/dev/null || true
+          cd $GITHUB_WORKSPACE
+          curl -fsSL -o vendor/mediapipe/face_landmarker.task https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
+          curl -fsSL -o vendor/mediapipe/hand_landmarker.task https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task
+          for f in portrait.jpg right_hands.jpg; do curl -fsSL -o tools/testdata/$f https://raw.githubusercontent.com/google-ai-edge/mediapipe/master/mediapipe/tasks/testdata/vision/$f || echo "skip $f"; done
+          ls -la vendor/mediapipe vendor/mediapipe/wasm tools/testdata
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898388+github-actions[bot]@users.noreply.github.com"
+          git add vendor tools/testdata
+          git diff --cached --quiet || git commit -m "Vendor MediaPipe tasks-vision and models"
+          git push
