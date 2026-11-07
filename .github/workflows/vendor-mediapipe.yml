@@ -24,7 +24,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           curl -fsSL -o vendor/mediapipe/face_landmarker.task https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
           curl -fsSL -o vendor/mediapipe/hand_landmarker.task https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task
-          for f in portrait.jpg right_hands.jpg; do curl -fsSL -o tools/testdata/$f https://raw.githubusercontent.com/google-ai-edge/mediapipe/master/mediapipe/tasks/testdata/vision/$f || echo "skip $f"; done
+          for f in portrait.jpg right_hands.jpg pointing_up.jpg thumb_up.jpg victory.jpg cats_and_dogs.jpg; do curl -fsSL -o tools/testdata/$f https://storage.googleapis.com/mediapipe-assets/$f || echo "skip $f"; done
           ls -la vendor/mediapipe vendor/mediapipe/wasm tools/testdata
       - name: Commit
         run: |

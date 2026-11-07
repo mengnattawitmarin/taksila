@@ -1,2 +1,3 @@
 version=0.10.14
 # Edit this file on main to re-run .github/workflows/vendor-mediapipe.yml
+# rev 2: test images
