@@ -12,7 +12,7 @@ import { mountGlobe, burnIncense, mountSiamsi, mountTree, askMotion, randomDigit
 import { SIAMSI } from './siamsi.js';
 import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
 import { prayerTr } from './prayer-tr.js';
-import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf } from './fengshui.js';
+import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf, FS_PTYPES, ptypeOf } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
 import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
@@ -2312,9 +2312,10 @@ const reportText = (pr) => `แจ้งตัวบทผิดในตัก�
 // ---------------- ฮวงจุ้ย ----------------
 const FS_KEY = 'taksila.fs';
 function fsLoad() { try { return JSON.parse(localStorage.getItem(FS_KEY)) || {}; } catch (e) { return {}; } }
-const FS_KEEP = ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius'];
+const FS_KEEP = ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius', 'ptype', 'chk'];
+const fsPt = () => ptypeOf(state.fs.ptype);
 function fsSave() { try { const o = {}; FS_KEEP.forEach((k) => { o[k] = state.fs[k]; }); localStorage.setItem(FS_KEY, JSON.stringify(o)); } catch (e) {} }
-const FS_TABS = [['kua', 'เลขกัว'], ['family', 'ครอบครัว'], ['house', 'ดาวบ้าน'], ['rooms', 'ผังห้อง'], ['score', 'คะแนนบ้าน'], ['time', 'ปี · เดือน'], ['compass', 'เข็มทิศ'], ['map', 'แผนที่']];
+const FS_TABS = [['kua', 'เลขกัว'], ['family', 'ครอบครัว'], ['house', 'ดาวบ้าน'], ['rooms', 'ผังห้อง'], ['score', 'เช็ก · คะแนน'], ['time', 'ปี · เดือน'], ['compass', 'เข็มทิศ'], ['map', 'แผนที่']];
 const FS_GRID = ['NW', 'N', 'NE', 'W', 'C', 'E', 'SW', 'S', 'SE'];
 const fsBirth = () => { const p = state.profile; return new Date(p.yearBE - 543, p.month - 1, p.day, p.timeKnown ? p.hour : 12, p.timeKnown ? p.minute : 0); };
 const fsTone = (t) => (t > 0 ? 'pos' : t < 0 ? 'neg' : 'mid');
@@ -2340,13 +2341,13 @@ function fsKuaHTML(k) {
 }
 function fsFacingPicker(fs) {
   const m = mountainOf(fs.facing);
-  return `<section class="card fs-face"><div class="fs-face-top">${fsDial(fs.facing)}<div class="fs-face-t"><span class="eyebrow">ทิศหน้าบ้าน</span><b id="fs-face-read">${Math.round(fs.facing)}° ${FS_DIR_SHORT[m.palace]}</b><span>ภูเขา ${m.cn} (${m.th}) · ${m.yuan}</span>${m.edge ? '<span class="fs-warn">⚠ ใกล้เส้นแบ่งภูเขา ผังอาจเปลี่ยน ควรวัดซ้ำหรือให้ซินแสตรวจ</span>' : ''}</div></div>
+  return `<section class="card fs-face"><div class="fs-face-top">${fsDial(fs.facing)}<div class="fs-face-t"><span class="eyebrow">${fsPt().face} · ${fsPt().th}</span><b id="fs-face-read">${Math.round(fs.facing)}° ${FS_DIR_SHORT[m.palace]}</b><span>ภูเขา ${m.cn} (${m.th}) · ${m.yuan}</span>${m.edge ? '<span class="fs-warn">⚠ ใกล้เส้นแบ่งภูเขา ผังอาจเปลี่ยน ควรวัดซ้ำหรือให้ซินแสตรวจ</span>' : ''}</div></div>
 <input type="range" min="0" max="359" step="1" value="${Math.round(fs.facing)}" data-in="fsFacing" aria-label="องศาทิศหน้าบ้าน" class="fs-range">
 <div class="fs-quick">${FS_DIRS.map((d) => `<button class="chip small-chip" data-act="fsQuick" data-v="${d}" aria-pressed="${m.palace === d}">${FS_DIR_SHORT[d]}</button>`).join('')}</div>
-<div class="fs-nrow2"><label class="field fs-nf">เข้าอยู่หรือสร้างเสร็จช่วง<select class="input" data-in="fsPeriod">${FS_PERIODS.map(([v, t]) => `<option value="${v}"${(fs.period || 9) === v ? ' selected' : ''}>${t}</option>`).join('')}</select></label></div>
+<div class="fs-nrow2"><label class="field fs-nf">${fs.ptype === 'land' ? 'จะสร้างบ้านเสร็จช่วง' : 'เข้าอยู่หรือสร้างเสร็จช่วง'}<select class="input" data-in="fsPeriod">${FS_PERIODS.map(([v, t]) => `<option value="${v}"${(fs.period || 9) === v ? ' selected' : ''}>${t}</option>`).join('')}</select></label></div>
 ${m.edge ? `<button class="chip small-chip fs-repl" data-act="fsRepl" aria-pressed="${!!fs.repl}">${fs.repl ? '✓ ' : ''}ใช้ผังคาบเส้น (替卦)</button><p class="small" style="margin:0">บ้านที่หันใกล้เส้นแบ่งภูเขา หลายสำนักใช้ดาวแทน (替卦) ลองเทียบทั้งสองผัง ถ้าไม่แน่ใจให้ซินแสวัดซ้ำ</p>` : ''}
 <button class="btn btn-line" data-act="fsTab" data-v="compass">◎ วัดด้วยเข็มทิศมือถือ</button>
-${FS_MEASURE}</section>`;
+${fsMeasure()}</section>`;
 }
 function fsDial(deg, size = 92) {
   const c = size / 2;
@@ -2406,13 +2407,16 @@ function fsPalaceHow(w, m, period, yStar) {
   if (yStar === 5 || yStar === 2) add(fix, guideOf(yStar).fix.slice(0, 2));
   return { fix: fix.slice(0, 5), boost: boost.slice(0, 4) };
 }
-const FS_MEASURE = `<details class="fs-guide"><summary>📐 วิธีวัดทิศให้แม่น (อ่านก่อนวัด)</summary><ol>
-<li><b>วัดทิศหน้าบ้านที่ประตูหน้า ไม่ใช่กลางบ้าน</b> ยืนนอกบ้านห่างประตูราว 1–1.5 เมตร หันหลังให้ตัวบ้าน แล้วมองออกไปข้างนอก ทิศที่คุณหันหน้าไปคือทิศหน้าบ้าน (ถ้าเข้าไม่ได้ ให้ยืนตรงกรอบประตูหันหน้าออก)</li>
+function fsMeasure() {
+  const pt = fsPt();
+  return `<details class="fs-guide"><summary>📐 วิธีวัด${pt.face}ให้แม่น (${pt.th})</summary><ol>
+<li><b>${pt.measure[0]}</b></li>
+<li>${pt.measure[1]}</li>
 <li><b>ถือมือถือให้ราบ ระดับเอว</b> หน้าจอขนานกับพื้น ขอบบนชี้ออกไปข้างหน้า แล้วรอให้ตัวเลขนิ่ง</li>
-<li><b>วัด 3 จุดแล้วเฉลี่ย</b> หน้าประตู มุมซ้ายหน้าบ้าน และมุมขวาหน้าบ้าน ถ้าต่างกันเกิน 15° ให้ถอยห่างจากโลหะแล้ววัดใหม่</li>
-<li><b>อยู่ห่างโลหะ</b> รถยนต์ ประตูรั้วเหล็ก ตู้ไฟ ลำโพง และถอดนาฬิกากับเครื่องประดับโลหะ ก่อนวัดให้หมุนมือถือเป็นรูปเลข 8 สัก 2–3 รอบเพื่อปรับเข็มทิศ</li>
-<li><b>คอนโดหรืออพาร์ตเมนต์</b> ใช้ทิศด้านที่มีหน้าต่างหรือระเบียงใหญ่และรับแสงมากที่สุด หรือทิศประตูทางเข้าหลักของตึก</li>
-<li><b>กลางบ้านใช้แบ่งผัง ไม่ใช่วัดทิศหน้าบ้าน</b> หาจุดกึ่งกลางของแปลนบ้าน แล้วยืนตรงนั้นดูว่าแต่ละห้องอยู่ทิศไหน เพื่อนำไปใส่ในแท็บผังห้อง (แบ่งบ้านเป็นตาราง 3×3 ตามทิศจริง)</li></ol></details>`;
+<li><b>วัด 3 จุดแล้วเฉลี่ย</b> ตรงกลางและสองมุมด้านหน้า ถ้าต่างกันเกิน 15° ให้ถอยห่างจากโลหะแล้ววัดใหม่</li>
+<li><b>อยู่ห่างโลหะ</b> รถยนต์ ประตูรั้วเหล็ก ตู้ไฟ ลำโพง ถอดนาฬิกาและเครื่องประดับโลหะ ก่อนวัดให้หมุนมือถือเป็นรูปเลข 8 สัก 2–3 รอบเพื่อปรับเข็มทิศ</li>
+${pt.id === 'land' ? '<li><b>ยุคของที่ดิน</b> นับจากปีที่สร้างบ้านเสร็จและเข้าอยู่ ถ้าจะสร้างช่วงนี้ให้เลือกยุค 9 แล้วใช้แท็บผังห้องวางแผนว่าจะวางประตู ห้องนอน และครัวตรงไหน</li>' : `<li><b>กลาง${pt.place}ใช้แบ่งผัง ไม่ใช่ใช้วัด${pt.face}</b> หาจุดกึ่งกลางของแปลน แล้วยืนตรงนั้นดูว่าแต่ละห้องอยู่ทิศไหน เพื่อนำไปใส่ในแท็บผังห้อง</li>`}</ol></details>`;
+}
 function fsTapeHTML(h, k) {
   const ppd = 5; let ticks = '';
   for (let a = 0; a < 720; a += 15) {
@@ -2430,7 +2434,7 @@ function fsCamRead(h, k) {
 function fsCompassHTML(fs, k) {
   const h = fs.heading;
   const m = h != null ? mountainOf(h) : null;
-  return `${FS_MEASURE}<section class="fs-cmp${fs.cam ? ' cam' : ''}"><video id="fs-video" playsinline muted autoplay${fs.cam ? '' : ' hidden'}></video>
+  return `${fsMeasure()}<section class="fs-cmp${fs.cam ? ' cam' : ''}"><video id="fs-video" playsinline muted autoplay${fs.cam ? '' : ' hidden'}></video>
 ${fs.cam ? `<div class="fs-ar">${fsTapeHTML(h, k)}<div class="fs-ar-cross" aria-hidden="true"></div><div class="fs-read" id="fs-read">${fsCamRead(h, k)}</div></div>` : `<div class="fs-cmp-in"><div class="fs-lp" id="fs-lp">${luopanSVG(k, h || 0)}</div><div class="fs-tick" aria-hidden="true"></div>
 <div class="fs-read" id="fs-read">${h != null ? `<b>${Math.round(h)}°</b><span>${FS_DIR_SHORT[m.palace]} · ${m.cn} ${m.th}</span>` : '<span>แตะ "เริ่มเข็มทิศ" แล้วถือมือถือให้ราบ</span>'}</div></div>`}</section>
 <div class="fs-cmp-btns">${fs.sensor ? '' : '<button class="btn" data-act="fsSensor">◎ เริ่มเข็มทิศ</button>'}<button class="btn btn-line" data-act="fsCam">${fs.cam ? 'ปิดกล้อง' : '📷 เปิดกล้อง (AR)'}</button></div>
@@ -2549,7 +2553,8 @@ function fsRoomsHTML() {
 <div class="fs-quick">${ROOM_TYPES.map((t) => { const on = (rooms[pick] || []).some((r) => r.type === t.id); return `<button class="chip small-chip" data-act="fsRoomToggle" data-v="${t.id}" aria-pressed="${on}">${t.th}</button>`; }).join('')}</div>
 ${(rooms[pick] || []).filter((r) => ROOM_TYPES.find((t) => t.id === r.type).person).map((r) => `<label class="field">ใครใช้${ROOM_TYPES.find((t) => t.id === r.type).th}นี้<select class="input" data-in="fsWho" data-room="${r.type}"><option value="">ไม่ระบุ</option>${people.map((x) => `<option${r.who === x.name ? ' selected' : ''}>${esc(x.name)}</option>`).join('')}</select></label>`).join('')}
 <button class="link-btn" data-act="fsRoomPick" data-v="">เสร็จ</button></section>` : '';
-  return `<p class="small" style="margin:0">แบ่งผังบ้านเป็น 9 ช่องตามทิศจริง (ทิศเหนืออยู่ด้านบน) แตะช่องแล้วเลือกห้องที่อยู่ในโซนนั้น</p>
+  return `<p class="small" style="margin:0">${fs.ptype === 'land' ? 'ที่ดินยังไม่มีบ้าน: ใช้ผัง 9 ช่องนี้วางแผนว่าจะวางประตู ห้องนอน ครัว ไว้ตรงไหน (ทิศเหนืออยู่ด้านบน) แตะช่องเพื่อลองใส่ห้อง' : `แบ่งผัง${fsPt().place}เป็น 9 ช่องตามทิศจริง (ทิศเหนืออยู่ด้านบน) แตะช่องแล้วเลือกห้องที่อยู่ในโซนนั้น`}</p>
+${fsPlanHTML(fc, fs.ptype === 'land' || !Object.values(rooms).some((l) => l.length))}
 <div class="fs-grid">${FS_GRID.map(cellHTML).join('')}</div>${picker}
 ${evals.length ? `<section class="fs-list"><h2 class="label">ผลการจัดห้อง</h2>${evals.map((e) => `<div class="fs-row ${fsTone(e.tone)}"><span class="fs-dir">${FS_DIR_SHORT[e.p]}<i>${e.p}</i></span><span class="fs-row-t"><b>${ROOM_TYPES.find((t) => t.id === e.r.type).th}</b><span>${e.th}</span>${e.kua ? `<span class="small ${e.kuaTone > 0 ? 'tpos' : 'tneg'}">${e.kua}</span>` : ''}${e.year ? `<span class="small tneg">${e.year}</span>` : ''}${fsHowHTML(e.fix, e.tone >= 0 ? (e.boost || []).slice(0, 2) : [])}</span></div>`).join('')}</section>` : ''}`;
 }
@@ -2571,17 +2576,42 @@ function fsScore() {
     if (rd.tone) add(rd.tone * 3 * w, rd.th + ` (${FS_DIR_SHORT[p]})`, rd.tone > 0 ? (rd.boost || [])[0] : (rd.fix || [])[0]);
     if ((r.type === 'door' || r.type === 'bed') && (ya.chart[p] === 5 || ya.chart[p] === 2)) add(-3, `ปีนี้ดาว ${ya.chart[p]} เข้า${ROOM_TYPES.find((t) => t.id === r.type).th} (${FS_DIR_SHORT[p]})`, guideOf(ya.chart[p]).fix[1]);
   }
+  const chk = (fs.chk || {})[fsPt().id] || {};
+  for (const c of fsPt().checks) if (chk[c.id]) add(c.w, c.q, c.how);
   plus.sort((a, b) => b.v - a.v); minus.sort((a, b) => a.v - b.v);
-  return { score: Math.max(5, Math.min(98, Math.round(sc))), plus: plus.slice(0, 3), minus: minus.slice(0, 3), roomsDone: Object.values(rooms).some((l) => l.length) };
+  return { score: Math.max(5, Math.min(98, Math.round(sc))), plus: plus.slice(0, 5), minus: minus.slice(0, 6), chkN: Object.values(chk).filter(Boolean).length, roomsDone: Object.values(rooms).some((l) => l.length) };
+}
+function fsCheckHTML() {
+  const pt = fsPt(), chk = (state.fs.chk || {})[pt.id] || {};
+  return `<section class="card fs-chk"><span class="eyebrow">เช็กลิสต์${pt.th} ${pt.ic}</span><p class="small" style="margin:0">ติ๊กข้อที่ตรงกับ${pt.place}ของคุณ คะแนนจะปรับตาม และบอกวิธีแก้หรือวิธีเสริมให้</p>
+<div class="fs-chk-list">${pt.checks.map((c) => `<button class="fs-chk-i ${c.w > 0 ? 'good' : 'bad'}" data-act="fsChk" data-v="${c.id}" aria-pressed="${!!chk[c.id]}"><span class="box">${chk[c.id] ? '✓' : ''}</span><span class="t"><span>${c.w > 0 ? '👍 ' : ''}${c.q}</span>${chk[c.id] ? `<span class="small fs-how-1">${c.w > 0 ? '✨ เสริม' : '🛠 แก้'}: ${c.how}</span>` : ''}</span></button>`).join('')}</div></section>`;
+}
+// Suggested placement from the flying-star chart: the plan for an empty plot, or a check for an existing home.
+function fsPlanHTML(fc, open) {
+  const P = FS_GRID.filter((p) => p !== 'C'), pts = (f) => P.map((p) => [p, f(p)]).sort((a, b) => b[1] - a[1]);
+  const fi = FS_DIRS.indexOf(fc.facing.palace), front = [FS_DIRS[(fi + 7) % 8], fc.facing.palace, FS_DIRS[(fi + 1) % 8]];
+  const wScore = (p) => starTone(fc.water[p], fc.period) * 2 + starTone(fc.mount[p], fc.period) * 0.5;
+  const door = pts(wScore).filter(([p]) => front.includes(p)).slice(0, 1).map(([p]) => p);
+  const living = pts(wScore).filter(([p]) => !door.includes(p)).slice(0, 1).map(([p]) => p);
+  const bed = pts((p) => starTone(fc.mount[p], fc.period) * 2 + starTone(fc.water[p], fc.period) * 0.3).filter(([p]) => !door.includes(p) && !living.includes(p)).slice(0, 2).map(([p]) => p);
+  const low = pts((p) => -(starTone(fc.water[p], fc.period) + starTone(fc.mount[p], fc.period))).filter(([p]) => !door.includes(p) && !living.includes(p) && !bed.includes(p)).slice(0, 2).map(([p]) => p);
+  const L = (a) => a.map((p) => `<b>${FS_DIR_SHORT[p]}</b> (${fc.mount[p]}-${fc.water[p]})`).join(' หรือ ');
+  return `<details class="fs-guide"${open ? ' open' : ''}><summary>🧭 แนะนำตำแหน่งห้องจากผังดาว</summary><ul class="fs-plan">
+<li>🚪 <span><span>ประตูหลัก${state.fs.ptype === 'land' ? ' / ประตูรั้ว' : ''}: ${L(door)}</span><i>เลือกฝั่งหน้าที่ดาวน้ำดีที่สุด รับทรัพย์</i></span></li>
+<li>🛋 <span><span>ห้องนั่งเล่น มุมรับแขก: ${L(living)}</span><i>โซนดาวน้ำดี คนใช้บ่อย พลังเคลื่อนไหว</i></span></li>
+<li>🛏 <span><span>ห้องนอน ห้องทำงาน หิ้งพระ: ${L(bed)}</span><i>โซนดาวภูเขาดี สุขภาพ ความมั่นคง ผู้ใหญ่หนุน</i></span></li>
+<li>🚽 <span><span>ห้องน้ำ ครัว ห้องเก็บของ: ${L(low)}</span><i>โซนดาวร้าย วางห้องที่ใช้กดพลังร้ายไว้</i></span></li></ul>
+<p class="small" style="margin:.4rem 0 0">ตัวเลขในวงเล็บคือ ดาวภูเขา-ดาวน้ำ ของโซนนั้น · ก่อนสร้างจริงควรให้สถาปนิกดูเรื่องแดด ลม และกฎหมายอาคารร่วมด้วย</p></details>`;
 }
 function fsScoreHTML() {
   const r = fsScore(), fc = fsChart();
   const v = r.score >= 75 ? 'บ้านมงคล' : r.score >= 60 ? 'บ้านดี มีจุดเสริม' : r.score >= 45 ? 'บ้านกลาง ๆ ควรปรับ' : 'ควรปรับหลายจุด';
-  return `<section class="card fs-score"><div class="fs-score-top">${oracleRing(r.score, 96)}<div><span class="eyebrow">คะแนนฮวงจุ้ยบ้าน</span><b>${v}</b><span class="small">หัน ${fc.facing.cn} ${Math.round(state.fs.facing)}° · ยุค ${fc.period}${fc.replace ? ' · ผังคาบเส้น' : ''}</span></div></div>
-${r.roomsDone ? '' : '<p class="small" style="margin:0">ใส่ผังห้องในแท็บผังห้องเพื่อให้คะแนนละเอียดขึ้น</p>'}</section>
+  return `<section class="card fs-score"><div class="fs-score-top">${oracleRing(r.score, 96)}<div><span class="eyebrow">คะแนนฮวงจุ้ย${fsPt().place} · ${fsPt().th}</span><b>${v}</b><span class="small">หัน ${fc.facing.cn} ${Math.round(state.fs.facing)}° · ยุค ${fc.period}${fc.replace ? ' · ผังคาบเส้น' : ''}</span></div></div>
+${r.roomsDone || fsPt().id === 'land' ? '' : '<p class="small" style="margin:0">ใส่ผังห้องในแท็บผังห้องเพื่อให้คะแนนละเอียดขึ้น</p>'}</section>
+${fsCheckHTML()}
 <section class="fs-list"><h2 class="label">จุดแข็ง</h2>${r.plus.length ? r.plus.map((x) => `<div class="fs-row pos"><span class="fs-row-t" style="grid-column:1/-1"><span>${x.txt}</span>${x.how ? `<span class="small fs-how-1">✨ เสริม: ${x.how}</span>` : ''}</span></div>`).join('') : '<p class="small">ยังไม่มีจุดเด่น ลองใส่ผังห้องหรือตรวจทิศหน้าบ้าน</p>'}
 <h2 class="label">ควรแก้ก่อน</h2>${r.minus.length ? r.minus.map((x) => `<div class="fs-row neg"><span class="fs-row-t" style="grid-column:1/-1"><span>${x.txt}</span>${x.how ? `<span class="small fs-how-1">🛠 แก้: ${x.how}</span>` : ''}</span></div>`).join('') : '<p class="small">ไม่มีจุดที่ต้องแก้เร่งด่วน</p>'}</section>
-<button class="btn" data-act="fsShare">แชร์ผลฮวงจุ้ยบ้าน ↗</button>`;
+<button class="btn" data-act="fsShare">แชร์ผลฮวงจุ้ย${fsPt().place} ↗</button>`;
 }
 async function fsImage() {
   const r = fsScore(), fc = fsChart(), W = 1080, H = 1350;
@@ -2589,7 +2619,7 @@ async function fsImage() {
   const x = cv.getContext('2d');
   const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#2A1410'); g.addColorStop(.6, '#0F0C10'); g.addColorStop(1, '#1E170C'); x.fillStyle = g; x.fillRect(0, 0, W, H);
   const F = (w, s) => `${w} ${s}px "IBM Plex Sans Thai", "Taviraj", sans-serif`;
-  x.textAlign = 'center'; x.fillStyle = '#E5675A'; x.font = F(500, 28); x.fillText('ตักศิลา · ฮวงจุ้ยบ้าน', W / 2, 80);
+  x.textAlign = 'center'; x.fillStyle = '#E5675A'; x.font = F(500, 28); x.fillText(`ตักศิลา · ฮวงจุ้ย${fsPt().th}`, W / 2, 80);
   x.fillStyle = '#F6E3B0'; x.font = F(700, 120); x.fillText(String(r.score), W / 2, 230);
   x.fillStyle = '#B9AD94'; x.font = F(400, 30); x.fillText(`หน้าบ้าน ${Math.round(state.fs.facing)}° ${FS_DIR_SHORT[fc.facing.palace]} · ยุค ${fc.period}${fc.pattern ? ' · ' + fc.pattern.th.split(' (')[0] : ''}`, W / 2, 285);
   const cw = 230, gx = (W - cw * 3 - 24) / 2, gy = 330;
@@ -2684,6 +2714,7 @@ function viewFengshui() {
   return `<main class="screen" style="--accent:#E5675A">
 ${pageHead('14', 'FENG SHUI', 'ฮวงจุ้ย', '#E5675A', 'fengshui')}
 <div class="fs-gender"><span class="small">เพศ (ใช้คำนวณเลขกัว)</span>${genderSeg}</div>
+<div class="fs-ptype"><span class="small">ประเภทสถานที่</span><div class="fs-pt-row hscroll">${FS_PTYPES.map((t) => `<button class="fs-pt" data-act="fsPtype" data-v="${t.id}" aria-pressed="${fsPt().id === t.id}"><i>${t.ic}</i>${t.th}</button>`).join('')}</div></div>
 <div class="fs-tabs hscroll" role="tablist">${FS_TABS.map(([t, l]) => `<button class="chip" role="tab" aria-pressed="${fs.tab === t}" data-act="fsTab" data-v="${t}">${l}</button>`).join('')}</div>
 ${body}
 <p class="small" style="font-size:11px">คำนวณตามสูตรปาจาย (八宅) และเสวียนคงเฟยซิง (玄空飛星) ยุค 9 (ปี 2024–2043) ผังดาวตรวจเทียบกับเครื่องคิดเลขฮวงจุ้ยสากลแล้ว ใช้เป็นแนวทางศึกษา หากจะสร้างหรือรีโนเวตบ้าน ควรปรึกษาซินแส</p>
@@ -2884,6 +2915,8 @@ document.addEventListener('click', (e) => {
     case 'muWish': state.map.wish = state.map.wish === el.dataset.v ? null : el.dataset.v; state.map.cat = 'wish'; state.map.sel = null; break;
     case 'fsTab': state.fs.tab = el.dataset.v; window.scrollTo(0, 0); break;
     case 'fsGender': state.fs.gender = el.dataset.v; fsSave(); break;
+    case 'fsPtype': state.fs.ptype = el.dataset.v; if (el.dataset.v === 'land') state.fs.period = 9; fsSave(); break;
+    case 'fsChk': { const id = fsPt().id, c = { ...(state.fs.chk || {}) }; c[id] = { ...(c[id] || {}) }; c[id][el.dataset.v] = !c[id][el.dataset.v]; state.fs.chk = c; fsSave(); break; }
     case 'fsQuick': state.fs.facing = FS_DIR_DEG[el.dataset.v]; state.fs.cell = null; fsSave(); break;
     case 'fsCell': state.fs.cell = el.dataset.v; break;
     case 'fsSensor': fsStartSensor(); return;

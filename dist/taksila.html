@@ -1281,6 +1281,24 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .fs-tape-mark{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:#E5675A;box-shadow:0 0 6px #E5675A}
 .fs-ar-cross{align-self:center;width:44px;height:44px;border:2px solid rgba(255,255,255,.8);border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
 .fs-cmp.cam .fs-read{position:static;margin:0 .6rem .6rem;background:rgba(13,11,8,.78);border-radius:12px;padding:.55rem .7rem;display:flex;flex-direction:column;gap:.15rem;text-align:center}
+/* ฮวงจุ้ย: ประเภทสถานที่ + เช็กลิสต์ */
+.fs-ptype{display:flex;flex-direction:column;gap:6px}
+.fs-pt-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px 2px}
+.fs-pt{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:84px;padding:8px 10px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);color:var(--text-2);font:inherit;font-size:12px;line-height:1.3;cursor:pointer;text-align:center}
+.fs-pt i{font-style:normal;font-size:20px}
+.fs-pt[aria-pressed="true"]{border-color:#E5675A;color:var(--text);background:rgba(229,103,90,.1);box-shadow:0 0 14px rgba(229,103,90,.25);font-weight:600}
+.fs-chk-list{display:flex;flex-direction:column;gap:6px}
+.fs-chk-i{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:10px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text-2);font:inherit;font-size:13.5px;line-height:1.5;text-align:left;cursor:pointer}
+.fs-chk-i .box{width:22px;height:22px;border-radius:6px;border:1px solid var(--faint);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.fs-chk-i .t{display:flex;flex-direction:column;gap:2px}
+.fs-chk-i.bad[aria-pressed="true"]{border-color:rgba(229,103,90,.45);background:rgba(229,103,90,.07);color:var(--text)}
+.fs-chk-i.bad[aria-pressed="true"] .box{background:#E5675A;border-color:#E5675A;color:#0D0B08}
+.fs-chk-i.good[aria-pressed="true"]{border-color:rgba(111,195,178,.45);background:rgba(111,195,178,.07);color:var(--text)}
+.fs-chk-i.good[aria-pressed="true"] .box{background:#6FC3B2;border-color:#6FC3B2;color:#0D0B08}
+.fs-plan{list-style:none;margin:.5rem 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.fs-plan li{display:grid;grid-template-columns:24px 1fr;gap:6px}
+.fs-plan li>span{display:flex;flex-direction:column}
+.fs-plan li i{font-style:normal;font-size:12px;color:var(--muted)}
 
 </style>
 </head>
@@ -7184,6 +7202,74 @@ function roomRead(type, w, m, period = 9) {
       : { tone: 0, th: `${t.th}ได้${what}กลาง ๆ เลข ${n} (${STAR[n].use})`, boost: gd.boost };
 }
 
+// ประเภทสถานที่: แต่ละแบบวัดทิศต่างกัน และมีจุดที่ต้องเช็กต่างกัน
+// เรียบเรียงจาก: Sanook (ฮวงจุ้ยทาวน์เฮาส์), ฐานเศรษฐกิจ / สมาคมธุรกิจรับสร้างบ้าน (ฮวงจุ้ยที่ดิน),
+// K-Home Smiles Club กสิกรไทย (คอนโด ตึกแถว), และหลักเสวียนคงที่ใช้ทั่วไป · w = คะแนนที่บวก/ลบเมื่อติ๊ก
+const FS_PTYPES = [
+  { id: 'house', th: 'บ้านเดี่ยว', ic: '🏡', face: 'ทิศหน้าบ้าน', place: 'บ้าน',
+    measure: ['ยืนนอกบ้านห่างประตูหน้าราว 1–1.5 เมตร หันหลังให้ตัวบ้าน มองออกไปข้างนอก ทิศที่มองคือทิศหน้าบ้าน', 'ใช้ด้านที่ตัวอาคารหันหน้าไปหาถนนหรือลานโล่ง ถ้าประตูอยู่ด้านข้าง ให้ยึดด้านที่มีหน้าต่างใหญ่และรับแสงมากที่สุด'],
+    checks: [
+      { id: 'open', q: 'หน้าบ้านมีลานหรือสนามโล่ง (หมิงถัง 明堂)', w: 3, how: 'ดูแลลานหน้าบ้านให้สะอาด เปิดไฟทางเดินตอนค่ำ' },
+      { id: 'tjunc', q: 'มีถนนพุ่งตรงเข้าหน้าบ้าน หรืออยู่ทางสามแพร่ง', w: -5, how: 'ทำรั้วทึบหรือแนวไม้พุ่มสูงบังแนวถนน และย้ายประตูรั้วให้เยื้องจากแนวถนน' },
+      { id: 'thru', q: 'ประตูหน้าตรงกับประตูหลังหรือหน้าต่างหลังเป็นแนวเดียว', w: -3, how: 'วางฉากกั้น ชั้นวางของโปร่ง หรือต้นไม้กระถางใหญ่กั้นแนวตรง ให้ลมเลี้ยวก่อนออก' },
+      { id: 'stair', q: 'บันไดหันตรงประตูหน้าบ้าน', w: -3, how: 'วางพรมหรือกระถางต้นไม้ที่เชิงบันได เปิดไฟให้สว่าง หรือใช้ฉากบังสายตา' },
+      { id: 'miss', q: 'ผังบ้านแหว่งมุม (ไม่เป็นสี่เหลี่ยม)', w: -2, how: 'ติดไฟสนามหรือปลูกต้นไม้ตรงมุมที่ขาด ให้ผังดูเต็ม และดูว่ามุมนั้นตรงกับทิศดีของใคร' },
+      { id: 'pole', q: 'มีเสาไฟฟ้า ต้นไม้ใหญ่ หรือมุมตึกชี้ตรงประตู', w: -3, how: 'ย้ายแนวประตูรั้ว ปลูกไม้พุ่มบัง หรือติดไฟส่องหน้าประตูให้สว่าง' },
+      { id: 'beam', q: 'มีคานพาดเหนือเตียงหรือโซฟา', w: -2, how: 'ขยับเตียงหรือโซฟาออกจากใต้คาน หรือทำฝ้าเพดานปิดคาน' }] },
+  { id: 'town', th: 'ทาวน์เฮาส์ · ทาวน์โฮม', ic: '🏘', face: 'ทิศหน้าบ้าน', place: 'บ้าน',
+    measure: ['ยืนหน้าประตูบ้าน หันหลังให้บ้าน มองออกไปทางถนนหน้าบ้าน ทิศนั้นคือทิศหน้าบ้าน (บ้านทั้งแถวมักหันทิศเดียวกัน)', 'ถ้าจอดรถหน้าบ้าน ให้ถอยมาวัดห่างรถอย่างน้อย 2 เมตร เพราะโลหะทำให้เข็มทิศเพี้ยนมาก'],
+    checks: [
+      { id: 'end', q: 'เป็นหลังริมสุดของแถว (มีหน้าต่างด้านข้าง)', w: 3, how: 'เปิดหน้าต่างด้านข้างรับลมทุกเช้า ใช้ม่านโปร่งแทนม่านทึบ' },
+      { id: 'mid', q: 'อยู่กลางแถว ลมเข้าได้แค่หน้ากับหลัง', w: -2, how: 'ทำช่องแสงบนหลังคา (skylight) หรือติดพัดลมระบายอากาศ ให้อากาศถ่ายเทกลางบ้าน' },
+      { id: 'block', q: 'ต่อเติมหลังบ้านจนปิดมิด ไม่มีช่องลม', w: -4, how: 'เว้นช่องบานเกล็ดหรือช่องแสงด้านบนของส่วนต่อเติม ให้ลมมีทางออก' },
+      { id: 'thru', q: 'ประตูหน้ามองทะลุถึงประตูหลังเป็นแนวตรง', w: -3, how: 'ตั้งชั้นหนังสือโปร่ง ฉากกั้น หรือต้นไม้กระถางใหญ่กลางบ้าน ให้พลังงานวนอยู่ในบ้านก่อน' },
+      { id: 'stair', q: 'บันไดอยู่ตรงประตูหน้า', w: -3, how: 'วางพรมสีเข้มหรือต้นไม้ที่เชิงบันได และเปิดไฟโถงให้สว่าง' },
+      { id: 'dark', q: 'ในบ้านมืด ต้องเปิดไฟกลางวัน', w: -2, how: 'ทาผนังสีอ่อน ใช้ไฟ LED แสงอุ่น และกระจกบานใหญ่สะท้อนแสงจากหน้าต่าง (อย่าหันกระจกเข้าประตู)' },
+      { id: 'tjunc', q: 'หน้าบ้านมีถนนพุ่งชน หรือประตูตรงกับบ้านฝั่งตรงข้าม', w: -3, how: 'ทำประตูรั้วทึบ ปลูกต้นไม้กระถางบังแนว หรือแขวนม่านที่หน้าต่างฝั่งนั้น' }] },
+  { id: 'shop', th: 'ตึกแถว · อาคารพาณิชย์', ic: '🏬', face: 'ทิศหน้าตึก', place: 'ตึก',
+    measure: ['ยืนตรงหน้าประตูม้วนหรือประตูหน้าร้าน หันหลังให้ตึก มองออกไปทางถนน ทิศนั้นคือทิศหน้าตึก', 'ประตูม้วนเหล็กกับป้ายโลหะทำให้เข็มทิศเพี้ยน ให้เดินออกไปวัดกลางทางเท้า แล้ววัดซ้ำที่อีกฝั่งถนน'],
+    checks: [
+      { id: 'corner', q: 'เป็นห้องหัวมุม ติดถนนสองด้าน', w: 2, how: 'ใช้ด้านถนนที่มีคนเดินมากเป็นหน้าร้าน ติดฟิล์มหรือม่านด้านที่โดนแดดบ่ายแรง' },
+      { id: 'block', q: 'ด้านหน้ามีเสาไฟ ตู้ไฟ หรือป้ายรถเมล์บังหน้าร้าน', w: -3, how: 'ติดไฟส่องป้ายให้เด่น วางกระถางต้นไม้คู่หน้าร้าน และทำป้ายยื่นที่มองเห็นได้ข้ามสิ่งกีดขวาง' },
+      { id: 'wide', q: 'เปิดประตูม้วนกว้างตลอดทั้งหน้าตึก แต่ด้านในโล่ง ไม่มีอะไรรับ', w: -2, how: 'จัดเคาน์เตอร์หรือชั้นวางสินค้าเยื้องเข้ามาด้านใน ให้คนเดินวนในร้าน ไม่ใช่มองทะลุถึงหลังร้าน' },
+      { id: 'cash', q: 'แคชเชียร์หรือโต๊ะเจ้าของร้านตั้งตรงแนวประตูพอดี', w: -2, how: 'ย้ายแคชเชียร์ไปเยื้องประตูแนวทแยง นั่งหันหน้าเห็นประตูและมีผนังทึบด้านหลัง' },
+      { id: 'back', q: 'ด้านหลังตึกตัน ไม่มีช่องลมหรือช่องแสง', w: -3, how: 'ติดพัดลมดูดอากาศ ทำช่องแสงบนหลังคาชั้นบนสุด และไม่วางของรกอุดหลังตึก' },
+      { id: 'stair', q: 'บันไดขึ้นชั้นบนหันตรงประตูหน้า', w: -3, how: 'กั้นเชิงบันไดด้วยฉากหรือชั้นวาง และเปิดไฟโถงบันไดให้สว่าง' },
+      { id: 'damp', q: 'ตึกเก่า ผนังชื้น มีกลิ่นอับ', w: -2, how: 'ทำกันซึม ใช้เครื่องลดความชื้น และเปิดหน้าต่างชั้นบนรับลมทุกวัน' }] },
+  { id: 'condo', th: 'คอนโด · อพาร์ตเมนต์', ic: '🏢', face: 'ทิศหน้าห้อง', place: 'ห้อง',
+    measure: ['ห้องชุดใช้ทิศของด้านที่มีระเบียงหรือหน้าต่างบานใหญ่ที่สุด (ด้านที่รับแสงและลม) ยืนหันหลังให้ห้องแล้วมองออกระเบียง ทิศที่มองคือทิศหน้าห้อง', 'บางสำนักใช้ทิศประตูทางเข้าหลักของตึก ถ้าสองแบบให้ผลต่างกันมาก ลองดูทั้งสองผัง โครงเหล็กในตึกทำให้เข็มทิศเพี้ยน ให้ถือมือถือใกล้หน้าต่าง ห่างผนังและราวเหล็ก'],
+    checks: [
+      { id: 'view', q: 'ระเบียงหรือหน้าต่างรับแสงเช้า วิวโล่ง ไม่มีตึกบัง', w: 3, how: 'วางต้นไม้กระถางที่ระเบียง และเปิดม่านรับแสงช่วงเช้า' },
+      { id: 'lift', q: 'ประตูห้องตรงลิฟต์ บันไดหนีไฟ หรือที่ทิ้งขยะ', w: -4, how: 'วางฉากกั้นหรือชั้นวางรองเท้าเยื้องหลังประตูด้านใน และใช้พรมเช็ดเท้าสีเข้มหน้าประตู' },
+      { id: 'face', q: 'ประตูห้องตรงกับประตูห้องฝั่งตรงข้ามพอดี', w: -2, how: 'แขวนป้ายเลขห้องหรือของแต่งประตูให้ดูเด่น วางพรมเช็ดเท้าสีสดใส และเปิดไฟหน้าประตูให้สว่าง' },
+      { id: 'end', q: 'ห้องอยู่สุดทางเดินยาว', w: -2, how: 'วางฉากหรือตู้เตี้ยหลังประตูในห้อง ช่วยชะลอพลังที่พุ่งมาตามทางเดิน และเปิดไฟโถงทางเข้าให้สว่าง' },
+      { id: 'thru', q: 'เปิดประตูเข้ามาแล้วเห็นระเบียงหรือหน้าต่างตรงหน้าเลย', w: -3, how: 'ใช้ม่านโปร่ง ชั้นวางของโปร่ง หรือต้นไม้กระถางสูงกั้นแนวตรง ให้มุมนั่งเล่นอยู่ระหว่างทาง' },
+      { id: 'bath', q: 'หัวเตียงติดผนังห้องน้ำ หรือเตียงหันเข้าประตูห้องน้ำ', w: -3, how: 'ย้ายหัวเตียงไปผนังอื่น ถ้าย้ายไม่ได้ให้วางตู้หรือชั้นหนังสือกั้นหัวเตียง และปิดประตูห้องน้ำเสมอ' },
+      { id: 'sharp', q: 'มองออกไปเห็นมุมตึกแหลม ป้ายใหญ่ หรือเสาไฟฟ้าแรงสูงชี้เข้าห้อง', w: -3, how: 'ใช้ม่านหรือฟิล์มฝ้าเฉพาะหน้าต่างบานนั้น และวางต้นไม้ใบกลมที่ระเบียง' },
+      { id: 'beam', q: 'มีคานพาดเหนือเตียง โซฟา หรือโต๊ะทำงาน', w: -2, how: 'ขยับเฟอร์นิเจอร์ออกจากใต้คาน หรือติดไฟซ่อนหลืบให้คานดูนุ่มลง' }] },
+  { id: 'land', th: 'ที่ดินเปล่า', ic: '🌳', face: 'ทิศหน้าที่ดิน', place: 'ที่ดิน',
+    measure: ['ที่ดินใช้ด้านที่ติดถนนหลัก หรือด้านที่จะทำประตูรั้วทางเข้า ยืนกลางแนวหน้าที่ดิน หันหลังให้ที่ดินแล้วมองออกไปทางถนน ทิศนั้นคือทิศหน้าที่ดิน', 'ที่ดินติดถนนหลายด้าน ให้ใช้ด้านที่ถนนกว้างหรือรถผ่านมากที่สุด เมื่อสร้างบ้านเสร็จ ให้วัดใหม่ที่ประตูบ้านจริง'],
+    checks: [
+      { id: 'shape', q: 'รูปที่ดินเป็นสี่เหลี่ยมผืนผ้า หรือหน้าแคบหลังกว้างเล็กน้อย', w: 4, how: 'วางตัวบ้านให้มีลานหน้าบ้านโล่ง และให้ด้านหลังมีที่ว่างพอปลูกต้นไม้ใหญ่เป็นพนักพิง' },
+      { id: 'tri', q: 'ที่ดินเป็นสามเหลี่ยม ชายธง หรือรูปทรงเบี้ยว', w: -4, how: 'วางตัวบ้านในส่วนที่เป็นสี่เหลี่ยม แล้วใช้มุมแหลมที่เหลือทำสวน ที่จอดรถ หรือปลูกไม้พุ่มตัดมุมให้ผังดูเต็ม' },
+      { id: 'low', q: 'ที่ดินต่ำกว่าถนนหรือที่ข้างเคียง น้ำไหลเข้า', w: -4, how: 'ถมดินให้สูงกว่าถนน วางระบบระบายน้ำรอบแปลงก่อนสร้าง และบดอัดดินให้แน่น' },
+      { id: 'road', q: 'ถนนพุ่งชนที่ดิน อยู่ทางสามแพร่ง หรือด้านนอกโค้งถนน', w: -5, how: 'ทำกำแพงทึบหรือแนวต้นไม้หนาด้านที่โดนชน ย้ายประตูรั้วให้พ้นแนวถนน ถ้ายังไม่ได้ซื้อควรเลือกแปลงอื่น' },
+      { id: 'wide', q: 'หน้ากว้างแต่ด้านหลังแคบลงมาก', w: -2, how: 'วางตัวบ้านค่อนมาด้านหน้า และปลูกต้นไม้สูงด้านหลังเป็นพนักพิง' },
+      { id: 'near', q: 'ติดศาลเจ้า สุสาน โรงพยาบาล หรือที่เคยเป็นโรงฆ่าสัตว์', w: -3, how: 'ทำแนวต้นไม้หรือรั้วทึบบังสายตาฝั่งนั้น และไม่วางห้องนอนหันไปทางนั้น' },
+      { id: 'soft', q: 'ดินอ่อน ริมน้ำ หรือเคยเป็นบ่อ นา ร่องสวน', w: -3, how: 'เจาะสำรวจดินและเลือกเสาเข็มให้เหมาะ ทำเขื่อนกันดินถ้าอยู่ริมน้ำ' },
+      { id: 'blind', q: 'ไม่มีทางเข้าออกเป็นของตัวเอง (ที่ตาบอด) หรือเอกสารไม่ใช่โฉนด', w: -4, how: 'ตรวจโฉนดและภาระจำยอมที่สำนักงานที่ดินก่อนซื้อ ให้ทนายหรือนายหน้าที่เชื่อถือได้ช่วยดู' }] },
+  { id: 'office', th: 'ร้านค้า · สำนักงาน', ic: '💼', face: 'ทิศหน้าร้าน', place: 'ร้าน',
+    measure: ['ยืนที่ประตูทางเข้าหลักของร้านหรือออฟฟิศ หันหลังให้ตัวร้าน มองออกไปข้างนอก ทิศนั้นคือทิศหน้าร้าน', 'ร้านในห้างหรือตึกสำนักงาน ให้ใช้ทิศประตูร้านหรือประตูออฟฟิศที่หันออกทางเดิน อยู่ห่างตู้โชว์โลหะและลำโพง'],
+    checks: [
+      { id: 'wall', q: 'โต๊ะเจ้าของหรือหัวหน้ามีผนังทึบด้านหลัง และมองเห็นประตู', w: 3, how: 'วางต้นไม้หรือชั้นหนังสือด้านหลังโต๊ะ เสริมความมั่นคง' },
+      { id: 'back', q: 'โต๊ะทำงานหลักนั่งหันหลังให้ประตู', w: -3, how: 'หมุนโต๊ะให้เห็นประตูในแนวทแยง ถ้าหมุนไม่ได้ให้วางกระจกเล็กบนโต๊ะไว้มองเห็นประตู' },
+      { id: 'cash', q: 'แคชเชียร์หรือเคาน์เตอร์ตั้งตรงแนวประตูพอดี', w: -2, how: 'ย้ายเคาน์เตอร์ไปเยื้องประตูแนวทแยง และหันหน้าเข้าหาลูกค้า' },
+      { id: 'clutter', q: 'ทางเข้ารก มีกล่องหรือของวางเกะกะ', w: -3, how: 'เคลียร์ทางเข้าให้โล่งอย่างน้อย 1 เมตร ใช้ไฟส่องป้ายร้านและพรมหน้าประตูสีสด' },
+      { id: 'dark', q: 'ทางเข้าหรือหน้าร้านมืด ป้ายไม่เด่น', w: -2, how: 'ติดไฟ LED ส่องป้ายและทางเข้า เปิดไฟหน้าร้านตั้งแต่เย็นก่อนฟ้ามืด' },
+      { id: 'toilet', q: 'ห้องน้ำอยู่ใกล้ประตูทางเข้า หรือเห็นได้จากหน้าร้าน', w: -2, how: 'ปิดประตูห้องน้ำเสมอ ทำป้ายบอกทางเล็ก ๆ และใช้ม่านหรือฉากบังสายตา' }] }
+];
+const ptypeOf = (id) => FS_PTYPES.find((t) => t.id === id) || FS_PTYPES[0];
+
 // ---- js/forecast.js ----
 // Unified daily forecast: one score per day that every screen shares (home card, opening sheet, 7-day strip).
 // It weighs five readings of the same day:
@@ -9873,9 +9959,10 @@ const reportText = (pr) => `แจ้งตัวบทผิดในตัก�
 // ---------------- ฮวงจุ้ย ----------------
 const FS_KEY = 'taksila.fs';
 function fsLoad() { try { return JSON.parse(localStorage.getItem(FS_KEY)) || {}; } catch (e) { return {}; } }
-const FS_KEEP = ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius'];
+const FS_KEEP = ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius', 'ptype', 'chk'];
+const fsPt = () => ptypeOf(state.fs.ptype);
 function fsSave() { try { const o = {}; FS_KEEP.forEach((k) => { o[k] = state.fs[k]; }); localStorage.setItem(FS_KEY, JSON.stringify(o)); } catch (e) {} }
-const FS_TABS = [['kua', 'เลขกัว'], ['family', 'ครอบครัว'], ['house', 'ดาวบ้าน'], ['rooms', 'ผังห้อง'], ['score', 'คะแนนบ้าน'], ['time', 'ปี · เดือน'], ['compass', 'เข็มทิศ'], ['map', 'แผนที่']];
+const FS_TABS = [['kua', 'เลขกัว'], ['family', 'ครอบครัว'], ['house', 'ดาวบ้าน'], ['rooms', 'ผังห้อง'], ['score', 'เช็ก · คะแนน'], ['time', 'ปี · เดือน'], ['compass', 'เข็มทิศ'], ['map', 'แผนที่']];
 const FS_GRID = ['NW', 'N', 'NE', 'W', 'C', 'E', 'SW', 'S', 'SE'];
 const fsBirth = () => { const p = state.profile; return new Date(p.yearBE - 543, p.month - 1, p.day, p.timeKnown ? p.hour : 12, p.timeKnown ? p.minute : 0); };
 const fsTone = (t) => (t > 0 ? 'pos' : t < 0 ? 'neg' : 'mid');
@@ -9901,13 +9988,13 @@ function fsKuaHTML(k) {
 }
 function fsFacingPicker(fs) {
   const m = mountainOf(fs.facing);
-  return `<section class="card fs-face"><div class="fs-face-top">${fsDial(fs.facing)}<div class="fs-face-t"><span class="eyebrow">ทิศหน้าบ้าน</span><b id="fs-face-read">${Math.round(fs.facing)}° ${FS_DIR_SHORT[m.palace]}</b><span>ภูเขา ${m.cn} (${m.th}) · ${m.yuan}</span>${m.edge ? '<span class="fs-warn">⚠ ใกล้เส้นแบ่งภูเขา ผังอาจเปลี่ยน ควรวัดซ้ำหรือให้ซินแสตรวจ</span>' : ''}</div></div>
+  return `<section class="card fs-face"><div class="fs-face-top">${fsDial(fs.facing)}<div class="fs-face-t"><span class="eyebrow">${fsPt().face} · ${fsPt().th}</span><b id="fs-face-read">${Math.round(fs.facing)}° ${FS_DIR_SHORT[m.palace]}</b><span>ภูเขา ${m.cn} (${m.th}) · ${m.yuan}</span>${m.edge ? '<span class="fs-warn">⚠ ใกล้เส้นแบ่งภูเขา ผังอาจเปลี่ยน ควรวัดซ้ำหรือให้ซินแสตรวจ</span>' : ''}</div></div>
 <input type="range" min="0" max="359" step="1" value="${Math.round(fs.facing)}" data-in="fsFacing" aria-label="องศาทิศหน้าบ้าน" class="fs-range">
 <div class="fs-quick">${FS_DIRS.map((d) => `<button class="chip small-chip" data-act="fsQuick" data-v="${d}" aria-pressed="${m.palace === d}">${FS_DIR_SHORT[d]}</button>`).join('')}</div>
-<div class="fs-nrow2"><label class="field fs-nf">เข้าอยู่หรือสร้างเสร็จช่วง<select class="input" data-in="fsPeriod">${FS_PERIODS.map(([v, t]) => `<option value="${v}"${(fs.period || 9) === v ? ' selected' : ''}>${t}</option>`).join('')}</select></label></div>
+<div class="fs-nrow2"><label class="field fs-nf">${fs.ptype === 'land' ? 'จะสร้างบ้านเสร็จช่วง' : 'เข้าอยู่หรือสร้างเสร็จช่วง'}<select class="input" data-in="fsPeriod">${FS_PERIODS.map(([v, t]) => `<option value="${v}"${(fs.period || 9) === v ? ' selected' : ''}>${t}</option>`).join('')}</select></label></div>
 ${m.edge ? `<button class="chip small-chip fs-repl" data-act="fsRepl" aria-pressed="${!!fs.repl}">${fs.repl ? '✓ ' : ''}ใช้ผังคาบเส้น (替卦)</button><p class="small" style="margin:0">บ้านที่หันใกล้เส้นแบ่งภูเขา หลายสำนักใช้ดาวแทน (替卦) ลองเทียบทั้งสองผัง ถ้าไม่แน่ใจให้ซินแสวัดซ้ำ</p>` : ''}
 <button class="btn btn-line" data-act="fsTab" data-v="compass">◎ วัดด้วยเข็มทิศมือถือ</button>
-${FS_MEASURE}</section>`;
+${fsMeasure()}</section>`;
 }
 function fsDial(deg, size = 92) {
   const c = size / 2;
@@ -9967,13 +10054,16 @@ function fsPalaceHow(w, m, period, yStar) {
   if (yStar === 5 || yStar === 2) add(fix, guideOf(yStar).fix.slice(0, 2));
   return { fix: fix.slice(0, 5), boost: boost.slice(0, 4) };
 }
-const FS_MEASURE = `<details class="fs-guide"><summary>📐 วิธีวัดทิศให้แม่น (อ่านก่อนวัด)</summary><ol>
-<li><b>วัดทิศหน้าบ้านที่ประตูหน้า ไม่ใช่กลางบ้าน</b> ยืนนอกบ้านห่างประตูราว 1–1.5 เมตร หันหลังให้ตัวบ้าน แล้วมองออกไปข้างนอก ทิศที่คุณหันหน้าไปคือทิศหน้าบ้าน (ถ้าเข้าไม่ได้ ให้ยืนตรงกรอบประตูหันหน้าออก)</li>
+function fsMeasure() {
+  const pt = fsPt();
+  return `<details class="fs-guide"><summary>📐 วิธีวัด${pt.face}ให้แม่น (${pt.th})</summary><ol>
+<li><b>${pt.measure[0]}</b></li>
+<li>${pt.measure[1]}</li>
 <li><b>ถือมือถือให้ราบ ระดับเอว</b> หน้าจอขนานกับพื้น ขอบบนชี้ออกไปข้างหน้า แล้วรอให้ตัวเลขนิ่ง</li>
-<li><b>วัด 3 จุดแล้วเฉลี่ย</b> หน้าประตู มุมซ้ายหน้าบ้าน และมุมขวาหน้าบ้าน ถ้าต่างกันเกิน 15° ให้ถอยห่างจากโลหะแล้ววัดใหม่</li>
-<li><b>อยู่ห่างโลหะ</b> รถยนต์ ประตูรั้วเหล็ก ตู้ไฟ ลำโพง และถอดนาฬิกากับเครื่องประดับโลหะ ก่อนวัดให้หมุนมือถือเป็นรูปเลข 8 สัก 2–3 รอบเพื่อปรับเข็มทิศ</li>
-<li><b>คอนโดหรืออพาร์ตเมนต์</b> ใช้ทิศด้านที่มีหน้าต่างหรือระเบียงใหญ่และรับแสงมากที่สุด หรือทิศประตูทางเข้าหลักของตึก</li>
-<li><b>กลางบ้านใช้แบ่งผัง ไม่ใช่วัดทิศหน้าบ้าน</b> หาจุดกึ่งกลางของแปลนบ้าน แล้วยืนตรงนั้นดูว่าแต่ละห้องอยู่ทิศไหน เพื่อนำไปใส่ในแท็บผังห้อง (แบ่งบ้านเป็นตาราง 3×3 ตามทิศจริง)</li></ol></details>`;
+<li><b>วัด 3 จุดแล้วเฉลี่ย</b> ตรงกลางและสองมุมด้านหน้า ถ้าต่างกันเกิน 15° ให้ถอยห่างจากโลหะแล้ววัดใหม่</li>
+<li><b>อยู่ห่างโลหะ</b> รถยนต์ ประตูรั้วเหล็ก ตู้ไฟ ลำโพง ถอดนาฬิกาและเครื่องประดับโลหะ ก่อนวัดให้หมุนมือถือเป็นรูปเลข 8 สัก 2–3 รอบเพื่อปรับเข็มทิศ</li>
+${pt.id === 'land' ? '<li><b>ยุคของที่ดิน</b> นับจากปีที่สร้างบ้านเสร็จและเข้าอยู่ ถ้าจะสร้างช่วงนี้ให้เลือกยุค 9 แล้วใช้แท็บผังห้องวางแผนว่าจะวางประตู ห้องนอน และครัวตรงไหน</li>' : `<li><b>กลาง${pt.place}ใช้แบ่งผัง ไม่ใช่ใช้วัด${pt.face}</b> หาจุดกึ่งกลางของแปลน แล้วยืนตรงนั้นดูว่าแต่ละห้องอยู่ทิศไหน เพื่อนำไปใส่ในแท็บผังห้อง</li>`}</ol></details>`;
+}
 function fsTapeHTML(h, k) {
   const ppd = 5; let ticks = '';
   for (let a = 0; a < 720; a += 15) {
@@ -9991,7 +10081,7 @@ function fsCamRead(h, k) {
 function fsCompassHTML(fs, k) {
   const h = fs.heading;
   const m = h != null ? mountainOf(h) : null;
-  return `${FS_MEASURE}<section class="fs-cmp${fs.cam ? ' cam' : ''}"><video id="fs-video" playsinline muted autoplay${fs.cam ? '' : ' hidden'}></video>
+  return `${fsMeasure()}<section class="fs-cmp${fs.cam ? ' cam' : ''}"><video id="fs-video" playsinline muted autoplay${fs.cam ? '' : ' hidden'}></video>
 ${fs.cam ? `<div class="fs-ar">${fsTapeHTML(h, k)}<div class="fs-ar-cross" aria-hidden="true"></div><div class="fs-read" id="fs-read">${fsCamRead(h, k)}</div></div>` : `<div class="fs-cmp-in"><div class="fs-lp" id="fs-lp">${luopanSVG(k, h || 0)}</div><div class="fs-tick" aria-hidden="true"></div>
 <div class="fs-read" id="fs-read">${h != null ? `<b>${Math.round(h)}°</b><span>${FS_DIR_SHORT[m.palace]} · ${m.cn} ${m.th}</span>` : '<span>แตะ "เริ่มเข็มทิศ" แล้วถือมือถือให้ราบ</span>'}</div></div>`}</section>
 <div class="fs-cmp-btns">${fs.sensor ? '' : '<button class="btn" data-act="fsSensor">◎ เริ่มเข็มทิศ</button>'}<button class="btn btn-line" data-act="fsCam">${fs.cam ? 'ปิดกล้อง' : '📷 เปิดกล้อง (AR)'}</button></div>
@@ -10110,7 +10200,8 @@ function fsRoomsHTML() {
 <div class="fs-quick">${ROOM_TYPES.map((t) => { const on = (rooms[pick] || []).some((r) => r.type === t.id); return `<button class="chip small-chip" data-act="fsRoomToggle" data-v="${t.id}" aria-pressed="${on}">${t.th}</button>`; }).join('')}</div>
 ${(rooms[pick] || []).filter((r) => ROOM_TYPES.find((t) => t.id === r.type).person).map((r) => `<label class="field">ใครใช้${ROOM_TYPES.find((t) => t.id === r.type).th}นี้<select class="input" data-in="fsWho" data-room="${r.type}"><option value="">ไม่ระบุ</option>${people.map((x) => `<option${r.who === x.name ? ' selected' : ''}>${esc(x.name)}</option>`).join('')}</select></label>`).join('')}
 <button class="link-btn" data-act="fsRoomPick" data-v="">เสร็จ</button></section>` : '';
-  return `<p class="small" style="margin:0">แบ่งผังบ้านเป็น 9 ช่องตามทิศจริง (ทิศเหนืออยู่ด้านบน) แตะช่องแล้วเลือกห้องที่อยู่ในโซนนั้น</p>
+  return `<p class="small" style="margin:0">${fs.ptype === 'land' ? 'ที่ดินยังไม่มีบ้าน: ใช้ผัง 9 ช่องนี้วางแผนว่าจะวางประตู ห้องนอน ครัว ไว้ตรงไหน (ทิศเหนืออยู่ด้านบน) แตะช่องเพื่อลองใส่ห้อง' : `แบ่งผัง${fsPt().place}เป็น 9 ช่องตามทิศจริง (ทิศเหนืออยู่ด้านบน) แตะช่องแล้วเลือกห้องที่อยู่ในโซนนั้น`}</p>
+${fsPlanHTML(fc, fs.ptype === 'land' || !Object.values(rooms).some((l) => l.length))}
 <div class="fs-grid">${FS_GRID.map(cellHTML).join('')}</div>${picker}
 ${evals.length ? `<section class="fs-list"><h2 class="label">ผลการจัดห้อง</h2>${evals.map((e) => `<div class="fs-row ${fsTone(e.tone)}"><span class="fs-dir">${FS_DIR_SHORT[e.p]}<i>${e.p}</i></span><span class="fs-row-t"><b>${ROOM_TYPES.find((t) => t.id === e.r.type).th}</b><span>${e.th}</span>${e.kua ? `<span class="small ${e.kuaTone > 0 ? 'tpos' : 'tneg'}">${e.kua}</span>` : ''}${e.year ? `<span class="small tneg">${e.year}</span>` : ''}${fsHowHTML(e.fix, e.tone >= 0 ? (e.boost || []).slice(0, 2) : [])}</span></div>`).join('')}</section>` : ''}`;
 }
@@ -10132,17 +10223,42 @@ function fsScore() {
     if (rd.tone) add(rd.tone * 3 * w, rd.th + ` (${FS_DIR_SHORT[p]})`, rd.tone > 0 ? (rd.boost || [])[0] : (rd.fix || [])[0]);
     if ((r.type === 'door' || r.type === 'bed') && (ya.chart[p] === 5 || ya.chart[p] === 2)) add(-3, `ปีนี้ดาว ${ya.chart[p]} เข้า${ROOM_TYPES.find((t) => t.id === r.type).th} (${FS_DIR_SHORT[p]})`, guideOf(ya.chart[p]).fix[1]);
   }
+  const chk = (fs.chk || {})[fsPt().id] || {};
+  for (const c of fsPt().checks) if (chk[c.id]) add(c.w, c.q, c.how);
   plus.sort((a, b) => b.v - a.v); minus.sort((a, b) => a.v - b.v);
-  return { score: Math.max(5, Math.min(98, Math.round(sc))), plus: plus.slice(0, 3), minus: minus.slice(0, 3), roomsDone: Object.values(rooms).some((l) => l.length) };
+  return { score: Math.max(5, Math.min(98, Math.round(sc))), plus: plus.slice(0, 5), minus: minus.slice(0, 6), chkN: Object.values(chk).filter(Boolean).length, roomsDone: Object.values(rooms).some((l) => l.length) };
+}
+function fsCheckHTML() {
+  const pt = fsPt(), chk = (state.fs.chk || {})[pt.id] || {};
+  return `<section class="card fs-chk"><span class="eyebrow">เช็กลิสต์${pt.th} ${pt.ic}</span><p class="small" style="margin:0">ติ๊กข้อที่ตรงกับ${pt.place}ของคุณ คะแนนจะปรับตาม และบอกวิธีแก้หรือวิธีเสริมให้</p>
+<div class="fs-chk-list">${pt.checks.map((c) => `<button class="fs-chk-i ${c.w > 0 ? 'good' : 'bad'}" data-act="fsChk" data-v="${c.id}" aria-pressed="${!!chk[c.id]}"><span class="box">${chk[c.id] ? '✓' : ''}</span><span class="t"><span>${c.w > 0 ? '👍 ' : ''}${c.q}</span>${chk[c.id] ? `<span class="small fs-how-1">${c.w > 0 ? '✨ เสริม' : '🛠 แก้'}: ${c.how}</span>` : ''}</span></button>`).join('')}</div></section>`;
+}
+// Suggested placement from the flying-star chart: the plan for an empty plot, or a check for an existing home.
+function fsPlanHTML(fc, open) {
+  const P = FS_GRID.filter((p) => p !== 'C'), pts = (f) => P.map((p) => [p, f(p)]).sort((a, b) => b[1] - a[1]);
+  const fi = FS_DIRS.indexOf(fc.facing.palace), front = [FS_DIRS[(fi + 7) % 8], fc.facing.palace, FS_DIRS[(fi + 1) % 8]];
+  const wScore = (p) => starTone(fc.water[p], fc.period) * 2 + starTone(fc.mount[p], fc.period) * 0.5;
+  const door = pts(wScore).filter(([p]) => front.includes(p)).slice(0, 1).map(([p]) => p);
+  const living = pts(wScore).filter(([p]) => !door.includes(p)).slice(0, 1).map(([p]) => p);
+  const bed = pts((p) => starTone(fc.mount[p], fc.period) * 2 + starTone(fc.water[p], fc.period) * 0.3).filter(([p]) => !door.includes(p) && !living.includes(p)).slice(0, 2).map(([p]) => p);
+  const low = pts((p) => -(starTone(fc.water[p], fc.period) + starTone(fc.mount[p], fc.period))).filter(([p]) => !door.includes(p) && !living.includes(p) && !bed.includes(p)).slice(0, 2).map(([p]) => p);
+  const L = (a) => a.map((p) => `<b>${FS_DIR_SHORT[p]}</b> (${fc.mount[p]}-${fc.water[p]})`).join(' หรือ ');
+  return `<details class="fs-guide"${open ? ' open' : ''}><summary>🧭 แนะนำตำแหน่งห้องจากผังดาว</summary><ul class="fs-plan">
+<li>🚪 <span><span>ประตูหลัก${state.fs.ptype === 'land' ? ' / ประตูรั้ว' : ''}: ${L(door)}</span><i>เลือกฝั่งหน้าที่ดาวน้ำดีที่สุด รับทรัพย์</i></span></li>
+<li>🛋 <span><span>ห้องนั่งเล่น มุมรับแขก: ${L(living)}</span><i>โซนดาวน้ำดี คนใช้บ่อย พลังเคลื่อนไหว</i></span></li>
+<li>🛏 <span><span>ห้องนอน ห้องทำงาน หิ้งพระ: ${L(bed)}</span><i>โซนดาวภูเขาดี สุขภาพ ความมั่นคง ผู้ใหญ่หนุน</i></span></li>
+<li>🚽 <span><span>ห้องน้ำ ครัว ห้องเก็บของ: ${L(low)}</span><i>โซนดาวร้าย วางห้องที่ใช้กดพลังร้ายไว้</i></span></li></ul>
+<p class="small" style="margin:.4rem 0 0">ตัวเลขในวงเล็บคือ ดาวภูเขา-ดาวน้ำ ของโซนนั้น · ก่อนสร้างจริงควรให้สถาปนิกดูเรื่องแดด ลม และกฎหมายอาคารร่วมด้วย</p></details>`;
 }
 function fsScoreHTML() {
   const r = fsScore(), fc = fsChart();
   const v = r.score >= 75 ? 'บ้านมงคล' : r.score >= 60 ? 'บ้านดี มีจุดเสริม' : r.score >= 45 ? 'บ้านกลาง ๆ ควรปรับ' : 'ควรปรับหลายจุด';
-  return `<section class="card fs-score"><div class="fs-score-top">${oracleRing(r.score, 96)}<div><span class="eyebrow">คะแนนฮวงจุ้ยบ้าน</span><b>${v}</b><span class="small">หัน ${fc.facing.cn} ${Math.round(state.fs.facing)}° · ยุค ${fc.period}${fc.replace ? ' · ผังคาบเส้น' : ''}</span></div></div>
-${r.roomsDone ? '' : '<p class="small" style="margin:0">ใส่ผังห้องในแท็บผังห้องเพื่อให้คะแนนละเอียดขึ้น</p>'}</section>
+  return `<section class="card fs-score"><div class="fs-score-top">${oracleRing(r.score, 96)}<div><span class="eyebrow">คะแนนฮวงจุ้ย${fsPt().place} · ${fsPt().th}</span><b>${v}</b><span class="small">หัน ${fc.facing.cn} ${Math.round(state.fs.facing)}° · ยุค ${fc.period}${fc.replace ? ' · ผังคาบเส้น' : ''}</span></div></div>
+${r.roomsDone || fsPt().id === 'land' ? '' : '<p class="small" style="margin:0">ใส่ผังห้องในแท็บผังห้องเพื่อให้คะแนนละเอียดขึ้น</p>'}</section>
+${fsCheckHTML()}
 <section class="fs-list"><h2 class="label">จุดแข็ง</h2>${r.plus.length ? r.plus.map((x) => `<div class="fs-row pos"><span class="fs-row-t" style="grid-column:1/-1"><span>${x.txt}</span>${x.how ? `<span class="small fs-how-1">✨ เสริม: ${x.how}</span>` : ''}</span></div>`).join('') : '<p class="small">ยังไม่มีจุดเด่น ลองใส่ผังห้องหรือตรวจทิศหน้าบ้าน</p>'}
 <h2 class="label">ควรแก้ก่อน</h2>${r.minus.length ? r.minus.map((x) => `<div class="fs-row neg"><span class="fs-row-t" style="grid-column:1/-1"><span>${x.txt}</span>${x.how ? `<span class="small fs-how-1">🛠 แก้: ${x.how}</span>` : ''}</span></div>`).join('') : '<p class="small">ไม่มีจุดที่ต้องแก้เร่งด่วน</p>'}</section>
-<button class="btn" data-act="fsShare">แชร์ผลฮวงจุ้ยบ้าน ↗</button>`;
+<button class="btn" data-act="fsShare">แชร์ผลฮวงจุ้ย${fsPt().place} ↗</button>`;
 }
 async function fsImage() {
   const r = fsScore(), fc = fsChart(), W = 1080, H = 1350;
@@ -10150,7 +10266,7 @@ async function fsImage() {
   const x = cv.getContext('2d');
   const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#2A1410'); g.addColorStop(.6, '#0F0C10'); g.addColorStop(1, '#1E170C'); x.fillStyle = g; x.fillRect(0, 0, W, H);
   const F = (w, s) => `${w} ${s}px "IBM Plex Sans Thai", "Taviraj", sans-serif`;
-  x.textAlign = 'center'; x.fillStyle = '#E5675A'; x.font = F(500, 28); x.fillText('ตักศิลา · ฮวงจุ้ยบ้าน', W / 2, 80);
+  x.textAlign = 'center'; x.fillStyle = '#E5675A'; x.font = F(500, 28); x.fillText(`ตักศิลา · ฮวงจุ้ย${fsPt().th}`, W / 2, 80);
   x.fillStyle = '#F6E3B0'; x.font = F(700, 120); x.fillText(String(r.score), W / 2, 230);
   x.fillStyle = '#B9AD94'; x.font = F(400, 30); x.fillText(`หน้าบ้าน ${Math.round(state.fs.facing)}° ${FS_DIR_SHORT[fc.facing.palace]} · ยุค ${fc.period}${fc.pattern ? ' · ' + fc.pattern.th.split(' (')[0] : ''}`, W / 2, 285);
   const cw = 230, gx = (W - cw * 3 - 24) / 2, gy = 330;
@@ -10245,6 +10361,7 @@ function viewFengshui() {
   return `<main class="screen" style="--accent:#E5675A">
 ${pageHead('14', 'FENG SHUI', 'ฮวงจุ้ย', '#E5675A', 'fengshui')}
 <div class="fs-gender"><span class="small">เพศ (ใช้คำนวณเลขกัว)</span>${genderSeg}</div>
+<div class="fs-ptype"><span class="small">ประเภทสถานที่</span><div class="fs-pt-row hscroll">${FS_PTYPES.map((t) => `<button class="fs-pt" data-act="fsPtype" data-v="${t.id}" aria-pressed="${fsPt().id === t.id}"><i>${t.ic}</i>${t.th}</button>`).join('')}</div></div>
 <div class="fs-tabs hscroll" role="tablist">${FS_TABS.map(([t, l]) => `<button class="chip" role="tab" aria-pressed="${fs.tab === t}" data-act="fsTab" data-v="${t}">${l}</button>`).join('')}</div>
 ${body}
 <p class="small" style="font-size:11px">คำนวณตามสูตรปาจาย (八宅) และเสวียนคงเฟยซิง (玄空飛星) ยุค 9 (ปี 2024–2043) ผังดาวตรวจเทียบกับเครื่องคิดเลขฮวงจุ้ยสากลแล้ว ใช้เป็นแนวทางศึกษา หากจะสร้างหรือรีโนเวตบ้าน ควรปรึกษาซินแส</p>
@@ -10445,6 +10562,8 @@ document.addEventListener('click', (e) => {
     case 'muWish': state.map.wish = state.map.wish === el.dataset.v ? null : el.dataset.v; state.map.cat = 'wish'; state.map.sel = null; break;
     case 'fsTab': state.fs.tab = el.dataset.v; window.scrollTo(0, 0); break;
     case 'fsGender': state.fs.gender = el.dataset.v; fsSave(); break;
+    case 'fsPtype': state.fs.ptype = el.dataset.v; if (el.dataset.v === 'land') state.fs.period = 9; fsSave(); break;
+    case 'fsChk': { const id = fsPt().id, c = { ...(state.fs.chk || {}) }; c[id] = { ...(c[id] || {}) }; c[id][el.dataset.v] = !c[id][el.dataset.v]; state.fs.chk = c; fsSave(); break; }
     case 'fsQuick': state.fs.facing = FS_DIR_DEG[el.dataset.v]; state.fs.cell = null; fsSave(); break;
     case 'fsCell': state.fs.cell = el.dataset.v; break;
     case 'fsSensor': fsStartSensor(); return;
