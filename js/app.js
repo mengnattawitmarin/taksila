@@ -12,6 +12,7 @@ import { mountGlobe, burnIncense, mountSiamsi, mountTree, askMotion, randomDigit
 import { SIAMSI } from './siamsi.js';
 import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
 import { prayerTr } from './prayer-tr.js';
+import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
 import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js';
@@ -43,6 +44,7 @@ const state = {
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
   map: { cat: 'all', wish: null, reg: 'all', sel: null, me: null },
+  fs: { tab: 'kua', gender: '', facing: 180, cell: null, heading: null, sensor: false, cam: false, ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.fs')) || {}; return { gender: j.gender || '', facing: typeof j.facing === 'number' ? j.facing : 180 }; } catch (e) { return {}; } })() },
   pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null, tree: { tied: false, digits: null, done: false, kind: null }, hist: [] },
@@ -80,6 +82,7 @@ const IC = {
   dream: '<path d="M14.5 4.5a7 7 0 1 0 5 11.4A7.5 7.5 0 0 1 14.5 4.5z"/><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6z"/>',
   privacy: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><rect x="9.5" y="10.5" width="5" height="4.5" rx="1"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/>',
   setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  fengshui: '<path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7z"/><path d="M12 7.5a4.5 4.5 0 0 1 0 9 2.25 2.25 0 0 1 0-4.5 2.25 2.25 0 0 0 0-4.5z"/><circle cx="12" cy="14.25" r=".6"/><circle cx="12" cy="9.75" r=".6"/>',
   calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><circle cx="12" cy="14.5" r="2.2"/>',
   about: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
   map: '<path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z"/><path d="M12 6.5l.9 2 2.1.3-1.5 1.5.4 2.1-1.9-1-1.9 1 .4-2.1-1.5-1.5 2.1-.3z"/>'
@@ -1896,7 +1899,7 @@ ${ws.some((w) => w.kind === 'care') ? remedyCard(remedyPlan({ planetNo: 7, topic
 // ---------------- router ----------------
 // Routes live in memory (and are mirrored to the URL hash when the host allows it),
 // so the app also works inside sandboxed frames that ignore hash changes.
-const NEEDS_PROFILE = ['map', 'dream', 'home', 'chart', 'match', 'ask'];
+const NEEDS_PROFILE = ['fengshui', 'map', 'dream', 'home', 'chart', 'match', 'ask'];
 // Opening the app always starts at home. Home-screen shortcuts pass ?go=<room> to open a room directly.
 let current = (() => { try { return new URLSearchParams(location.search).get('go') || ''; } catch (e) { return ''; } })();
 try { history.replaceState(null, '', location.pathname); } catch (e) { /* not allowed in some frames */ }
@@ -1994,7 +1997,7 @@ const ROOMS = [
   ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
   ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
   ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
-  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'ปฏิทินวันพระ', 'วันพระ ฤกษ์ใหญ่', 'var(--gold-2)'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
+  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'ปฏิทินวันพระ', 'วันพระ ฤกษ์ใหญ่', 'var(--gold-2)'], ['fengshui', 'ฮวงจุ้ย', 'เลขกัว ดาวเหิน', '#E5675A'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
   ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)'], ['about', 'เกี่ยวกับ', 'แหล่งอ้างอิง', 'var(--gold)']
 ];
 const NAV_ROUTES = ['home', 'chart', 'tarot', 'numbers', 'luck'];
@@ -2305,7 +2308,171 @@ ${pageHead('13', 'ABOUT', 'เกี่ยวกับตักศิลา', 'v
 const LINE_ID = 'Mengfrog', LINE_URL = 'https://line.me/ti/p/~Mengfrog';
 const reportText = (pr) => `แจ้งตัวบทผิดในตักศิลา\nบทสวด: ${pr.th} (${pr.id})\nบรรทัดที่ผิด:\nที่ถูกควรเป็น:\nแหล่งอ้างอิง (ถ้ามี):`;
 
-const VIEWS = { calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- ฮวงจุ้ย ----------------
+const FS_KEY = 'taksila.fs';
+function fsLoad() { try { return JSON.parse(localStorage.getItem(FS_KEY)) || {}; } catch (e) { return {}; } }
+function fsSave() { try { localStorage.setItem(FS_KEY, JSON.stringify({ gender: state.fs.gender, facing: state.fs.facing })); } catch (e) {} }
+const FS_TABS = [['kua', 'เลขกัว'], ['house', 'ดาวบ้าน'], ['year', 'ปีนี้ระวัง'], ['compass', 'เข็มทิศ']];
+const FS_GRID = ['NW', 'N', 'NE', 'W', 'C', 'E', 'SW', 'S', 'SE'];
+const fsBirth = () => { const p = state.profile; return new Date(p.yearBE - 543, p.month - 1, p.day, p.timeKnown ? p.hour : 12, p.timeKnown ? p.minute : 0); };
+const fsTone = (t) => (t > 0 ? 'pos' : t < 0 ? 'neg' : 'mid');
+// 8-direction wheel: north at the top, each wedge coloured by the person's Kua.
+function kuaWheel(k, size = 260, rot = 0) {
+  const c = size / 2, R = c - 6, r0 = R * 0.36;
+  const pt = (a, rr) => [c + rr * Math.sin(a * Math.PI / 180), c - rr * Math.cos(a * Math.PI / 180)];
+  const wedge = (d) => {
+    const a0 = FS_DIR_DEG[d] - 22.5, a1 = FS_DIR_DEG[d] + 22.5;
+    const [x0, y0] = pt(a0, R), [x1, y1] = pt(a1, R), [x2, y2] = pt(a1, r0), [x3, y3] = pt(a0, r0);
+    return `M${x0},${y0} A${R},${R} 0 0 1 ${x1},${y1} L${x2},${y2} A${r0},${r0} 0 0 0 ${x3},${y3}Z`;
+  };
+  return `<svg class="fs-wheel" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="ทิศมงคลของคุณ"><g style="transform:rotate(${-rot}deg);transform-origin:50% 50%">${k.dirs.map((x, i) => {
+    const [tx, ty] = pt(FS_DIR_DEG[x.dir], (R + r0) / 2);
+    return `<path d="${wedge(x.dir)}" class="fw ${x.good ? 'good' : 'bad'}" style="--i:${i}"/><text x="${tx}" y="${ty - 6}" text-anchor="middle" class="fw-d" transform="rotate(${rot} ${tx} ${ty})">${FS_DIR_SHORT[x.dir]}</text><text x="${tx}" y="${ty + 11}" text-anchor="middle" class="fw-s" transform="rotate(${rot} ${tx} ${ty})">${x.th}</text>`;
+  }).join('')}</g><circle cx="${c}" cy="${c}" r="${r0 - 4}" class="fw-c"/><text x="${c}" y="${c - 4}" text-anchor="middle" class="fw-k">${k.kua}</text><text x="${c}" y="${c + 16}" text-anchor="middle" class="fw-kl">เลขกัว</text></svg>`;
+}
+function fsKuaHTML(k) {
+  return `<section class="card fs-kua"><div class="fs-kua-top">${kuaWheel(k, 230)}<div class="fs-kua-t"><span class="eyebrow">เลขกัว · ปาจาย 八宅</span><b>${k.kua}</b><span>${k.trigram} · ธาตุ${k.element}</span><span class="fs-grp ${k.group}">${k.group === 'east' ? 'กลุ่มตะวันออก' : 'กลุ่มตะวันตก'}</span><span class="small">สีเสริม: ${EL_COLOR[k.element]}</span></div></div>
+<p class="small" style="margin:0">นับปีเกิดแบบจีน (เปลี่ยนปีที่ลี่ชุน ราว 4 ก.พ.) ปี ${k.sy} · ทิศที่ดีกับคนกลุ่ม${k.group === 'east' ? 'ตะวันออก' : 'ตะวันตก'}คือ ${k.dirs.slice(0, 4).map((x) => FS_DIR_SHORT[x.dir]).join(' ')}</p></section>
+<section class="fs-list"><h2 class="label">ทิศมงคล 4 ทิศ</h2>${k.dirs.slice(0, 4).map((x) => `<div class="fs-row pos"><span class="fs-dir">${FS_DIR_SHORT[x.dir]}<i>${x.dir}</i></span><span class="fs-row-t"><b>${x.th} ${x.cn}</b><span>${x.use}</span><span class="small">${x.tip}</span></span></div>`).join('')}
+<h2 class="label">ทิศควรเลี่ยง 4 ทิศ</h2>${k.dirs.slice(4).map((x) => `<div class="fs-row neg"><span class="fs-dir">${FS_DIR_SHORT[x.dir]}<i>${x.dir}</i></span><span class="fs-row-t"><b>${x.th} ${x.cn}</b><span>${x.use}</span><span class="small">${x.tip}</span></span></div>`).join('')}</section>`;
+}
+function fsFacingPicker(fs) {
+  const m = mountainOf(fs.facing);
+  return `<section class="card fs-face"><div class="fs-face-top">${fsDial(fs.facing)}<div class="fs-face-t"><span class="eyebrow">ทิศหน้าบ้าน</span><b id="fs-face-read">${Math.round(fs.facing)}° ${FS_DIR_SHORT[m.palace]}</b><span>ภูเขา ${m.cn} (${m.th}) · ${m.yuan}</span>${m.edge ? '<span class="fs-warn">⚠ ใกล้เส้นแบ่งภูเขา ผังอาจเปลี่ยน ควรวัดซ้ำหรือให้ซินแสตรวจ</span>' : ''}</div></div>
+<input type="range" min="0" max="359" step="1" value="${Math.round(fs.facing)}" data-in="fsFacing" aria-label="องศาทิศหน้าบ้าน" class="fs-range">
+<div class="fs-quick">${FS_DIRS.map((d) => `<button class="chip small-chip" data-act="fsQuick" data-v="${d}" aria-pressed="${m.palace === d}">${FS_DIR_SHORT[d]}</button>`).join('')}</div>
+<button class="btn btn-line" data-act="fsTab" data-v="compass">◎ วัดด้วยเข็มทิศมือถือ</button>
+<p class="small" style="margin:0">วิธีวัด: ยืนที่ประตูหน้าบ้าน หันหลังให้บ้าน มองออกไปข้างนอก ทิศที่มองคือทิศหน้าบ้าน (ใช้ทิศที่ตัวอาคารหันหน้า ไม่ใช่ทิศรั้ว)</p></section>`;
+}
+function fsDial(deg, size = 92) {
+  const c = size / 2;
+  return `<svg class="fs-dial" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true"><circle cx="${c}" cy="${c}" r="${c - 3}"/>${FS_DIRS.map((d) => { const a = FS_DIR_DEG[d] * Math.PI / 180; return `<text x="${c + (c - 12) * Math.sin(a)}" y="${c - (c - 12) * Math.cos(a) + 3}" text-anchor="middle">${d}</text>`; }).join('')}<g id="fs-dial-g" style="transform:rotate(${deg}deg);transform-origin:50% 50%"><path d="M${c},${10} L${c + 6},${c} L${c},${c - 4} L${c - 6},${c}Z" class="fs-needle"/><circle cx="${c}" cy="${c}" r="3"/></g></svg>`;
+}
+function fsHouseHTML(fs, k) {
+  const fc = flyingStars(fs.facing), ya = yearAfflictions(solarYear(new Date()));
+  const sel = fs.cell || fc.facing.palace;
+  const cell = (p) => {
+    const w = fc.water[p], mo = fc.mount[p], rd = p === 'C' ? { tone: 0 } : sectorRead(w, mo);
+    const kd = k && p !== 'C' ? k.dirs.find((x) => x.dir === p) : null;
+    return `<button class="fs-cell ${fsTone(rd.tone)}${p === sel ? ' on' : ''}${p === fc.facing.palace ? ' front' : ''}" data-act="fsCell" data-v="${p}">
+<span class="fc-p">${FS_DIR_SHORT[p]}${p === fc.facing.palace ? ' · หน้า' : p === fc.sitting.palace ? ' · หลัง' : ''}</span>
+<span class="fc-st"><i title="ดาวภูเขา">${mo}</i><b title="ดาวยุค">${fc.base[p]}</b><i title="ดาวน้ำ" class="w">${w}</i></span>
+<span class="fc-y" title="ดาวจรปีนี้">ปี ${ya.chart[p]}</span>${kd ? `<span class="fc-k ${kd.good ? 'g' : 'b'}">${kd.th}</span>` : ''}</button>`;
+  };
+  const w = fc.water[sel], mo = fc.mount[sel];
+  const rd = sel === 'C' ? null : sectorRead(w, mo);
+  const kd = k && sel !== 'C' ? k.dirs.find((x) => x.dir === sel) : null;
+  const yStar = ya.chart[sel];
+  return `${fsFacingPicker(fs)}
+${fc.pattern ? `<section class="fs-pat ${fc.pattern.k}"><b>${fc.pattern.th}</b><span>${fc.pattern.d}</span></section>` : ''}
+<section class="fs-chart"><div class="fs-chart-h"><b>ผังดาวเหิน ยุค 9 · นั่ง ${fc.sitting.cn} หัน ${fc.facing.cn}</b><span class="small">ทิศเหนืออยู่ด้านบน · <i class="lg-m">ภูเขา</i> <i class="lg-b">ยุค</i> <i class="lg-w">น้ำ</i></span></div>
+<div class="fs-grid">${FS_GRID.map(cell).join('')}</div></section>
+<section class="card fs-detail"><span class="eyebrow">${FS_DIR_TH[sel]}</span>
+${sel === 'C' ? '<p class="body" style="margin:0">กลางบ้านควรโล่ง สะอาด ไม่วางของหนักหรือห้องน้ำ</p>' : `
+<div class="fs-stars"><div class="${fsTone(STAR[mo].tone)}"><span class="small">ดาวภูเขา · คน สุขภาพ</span><b>${STAR[mo].th}</b><span>${STAR[mo].use}</span></div><div class="${fsTone(STAR[w].tone)}"><span class="small">ดาวน้ำ · เงินทอง</span><b>${STAR[w].th}</b><span>${STAR[w].use}</span></div></div>
+<p class="small" style="margin:0">ดาวจรปี ${ya.sy}: <b>${STAR[yStar].th}</b> (${STAR[yStar].use})${yStar === 5 || yStar === 2 ? ' · ปีนี้ควรแก้เป็นพิเศษ' : ''}</p>
+${kd ? `<p class="small" style="margin:0">สำหรับคุณ (เลขกัว ${k.kua}): ทิศนี้คือ <b class="${kd.good ? 'tpos' : 'tneg'}">${kd.th}</b> · ${kd.use}</p>` : ''}
+<ul class="fs-tips">${rd.tips.map((t) => `<li>${t}</li>`).join('') || '<li>โซนกลาง ๆ ใช้งานได้ตามปกติ</li>'}</ul>`}</section>`;
+}
+function fsYearHTML() {
+  const now = new Date(), sy = solarYear(now), ya = yearAfflictions(sy), nx = yearAfflictions(sy + 1);
+  const row = (lab, dir, txt, fix) => `<div class="fs-row neg"><span class="fs-dir">${FS_DIR_SHORT[dir]}<i>${dir}</i></span><span class="fs-row-t"><b>${lab}</b><span>${txt}</span><span class="small">${fix}</span></span></div>`;
+  return `<section class="card fs-yr"><span class="eyebrow">ปีจีน ${sy} · ปี${ya.animal} · ดาวกลาง ${ya.star}</span>
+<div class="fs-grid sm">${FS_GRID.map((p) => `<div class="fs-cell ${fsTone(STAR[ya.chart[p]].tone)}"><span class="fc-p">${FS_DIR_SHORT[p]}</span><span class="fc-big">${ya.chart[p]}</span></div>`).join('')}</div>
+<p class="small" style="margin:0">ปีจีนเปลี่ยนที่ลี่ชุน ราว 4 ก.พ. ของทุกปี</p></section>
+<section class="fs-list"><h2 class="label">ทิศที่ต้องระวังปีนี้</h2>
+${row('ดาวเหลือง 5 (五黄)', ya.five, 'ดาวเคราะห์ร้ายที่สุดของปี', 'ไม่ต่อเติม เจาะ ทุบผนังโซนนี้ วางกระดิ่งลมโลหะหรือน้ำเต้าทองเหลือง เลี่ยงสีแดงเหลือง')}
+${row('ดาวดำ 2 (二黑)', ya.two, 'โรคภัยไข้เจ็บ', 'วางน้ำเต้าทองเหลือง ไม่ให้คนป่วยนอนโซนนี้')}
+${row('ไท่ส่วย (太歲)', ya.taisui, `เทพประจำปี${ya.animal}`, 'อย่านั่งหันหน้าเผชิญทิศนี้ (นั่งหันหลังพิงได้) และไม่ต่อเติมบ้านทิศนี้')}
+${row('ซุ่ยผั่ว (歲破)', ya.suipo, 'ทิศตรงข้ามไท่ส่วย', 'อย่านั่งหันหลังให้ทิศนี้ และไม่ต่อเติมบ้านทิศนี้')}
+${row('ซาซัว (三煞)', ya.sansha, 'สามพิฆาต', 'นั่งหันหน้าเข้าหาทิศนี้ได้ แต่อย่านั่งหันหลังให้ และไม่ต่อเติมทิศนี้')}
+<p class="small">ปีหน้า (${sy + 1} ปี${nx.animal}): ดาว 5 ย้ายไป${FS_DIR_SHORT[nx.five]} ดาว 2 ไป${FS_DIR_SHORT[nx.two]} ไท่ส่วยอยู่${FS_DIR_SHORT[nx.taisui]}</p></section>`;
+}
+function fsCompassHTML(fs, k) {
+  const h = fs.heading;
+  const m = h != null ? mountainOf(h) : null;
+  return `<section class="fs-cmp${fs.cam ? ' cam' : ''}"><video id="fs-video" playsinline muted autoplay${fs.cam ? '' : ' hidden'}></video>
+<div class="fs-cmp-in"><div class="fs-lp" id="fs-lp">${luopanSVG(k, h || 0)}</div><div class="fs-tick" aria-hidden="true"></div>
+<div class="fs-read" id="fs-read">${h != null ? `<b>${Math.round(h)}°</b><span>${FS_DIR_SHORT[m.palace]} · ${m.cn} ${m.th}</span>` : '<span>แตะ "เริ่มเข็มทิศ" แล้วถือมือถือให้ราบ</span>'}</div></div></section>
+<div class="fs-cmp-btns">${fs.sensor ? '' : '<button class="btn" data-act="fsSensor">◎ เริ่มเข็มทิศ</button>'}<button class="btn btn-line" data-act="fsCam">${fs.cam ? 'ปิดกล้อง' : '📷 เปิดกล้อง (AR)'}</button></div>
+${h != null ? '<button class="btn" data-act="fsUseHeading">ใช้ทิศนี้เป็นทิศหน้าบ้าน</button>' : ''}
+<p class="small" style="margin:0">เข็มทิศมือถือคลาดเคลื่อนได้ 5–15° อยู่ห่างโลหะ ลำโพง และเหล็กเส้น วัดหลายจุดแล้วใช้ค่าเฉลี่ย ถ้าเครื่องไม่มีเข็มทิศ ให้เลื่อนตั้งองศาในแท็บดาวเหินบ้านเอง</p>`;
+}
+// Luo pan: ring of 8 directions coloured by Kua + ring of 24 mountains, rotated so the top points where the phone faces.
+function luopanSVG(k, rot) {
+  const S = 300, c = S / 2, R1 = 146, R2 = 116, R3 = 84;
+  const pt = (a, r) => [c + r * Math.sin(a * Math.PI / 180), c - r * Math.cos(a * Math.PI / 180)];
+  const arc = (a0, a1, ro, ri) => { const [x0, y0] = pt(a0, ro), [x1, y1] = pt(a1, ro), [x2, y2] = pt(a1, ri), [x3, y3] = pt(a0, ri); return `M${x0},${y0} A${ro},${ro} 0 0 1 ${x1},${y1} L${x2},${y2} A${ri},${ri} 0 0 0 ${x3},${y3}Z`; };
+  let g = '';
+  for (let i = 0; i < 24; i++) { const a0 = 337.5 + i * 15, mid = a0 + 7.5; const [tx, ty] = pt(mid, (R1 + R2) / 2); g += `<path d="${arc(a0, a0 + 15, R1, R2)}" class="lp-m"/><text x="${tx}" y="${ty + 5}" text-anchor="middle" class="lp-mt" transform="rotate(${mid} ${tx} ${ty})">${mountainOf(mid).cn}</text>`; }
+  for (const d of FS_DIRS) {
+    const kd = k ? k.dirs.find((x) => x.dir === d) : null, a = FS_DIR_DEG[d]; const [tx, ty] = pt(a, (R2 + R3) / 2);
+    g += `<path d="${arc(a - 22.5, a + 22.5, R2, R3)}" class="lp-d ${kd ? (kd.good ? 'good' : 'bad') : ''}"/><text x="${tx}" y="${ty + 4}" text-anchor="middle" class="lp-dt" transform="rotate(${a} ${tx} ${ty})">${FS_DIR_SHORT[d]}</text>`;
+  }
+  return `<svg viewBox="0 0 ${S} ${S}" width="100%" style="max-width:300px;transform:rotate(${-rot}deg)" id="fs-lp-svg" aria-label="ลั่วแก"><circle cx="${c}" cy="${c}" r="${R1}" class="lp-bg"/>${g}<circle cx="${c}" cy="${c}" r="${R3}" class="lp-in"/><text x="${c}" y="${c - 50}" text-anchor="middle" class="lp-n">N</text><text x="${c}" y="${c + 8}" text-anchor="middle" class="lp-taiji">☯</text></svg>`;
+}
+let fsStream = null, fsRaf = 0;
+function fsStopCam() { if (fsStream) { fsStream.getTracks().forEach((t) => t.stop()); fsStream = null; } }
+function fsOnOrient(e) {
+  let h = null;
+  if (typeof e.webkitCompassHeading === 'number') h = e.webkitCompassHeading;
+  else if (e.absolute && typeof e.alpha === 'number') h = (360 - e.alpha) % 360;
+  if (h == null) return;
+  const so = (screen.orientation && screen.orientation.angle) || 0;
+  state.fs.heading = (h + so + 360) % 360;
+  if (fsRaf) return;
+  fsRaf = requestAnimationFrame(() => {
+    fsRaf = 0;
+    const svg = document.getElementById('fs-lp-svg'), rd = document.getElementById('fs-read'), hd = state.fs.heading;
+    if (svg) svg.style.transform = `rotate(${-hd}deg)`;
+    if (rd) { const m = mountainOf(hd); rd.innerHTML = `<b>${Math.round(hd)}°</b><span>${FS_DIR_SHORT[m.palace]} · ${m.cn} ${m.th}</span>`; }
+    if (!document.querySelector('[data-act="fsUseHeading"]') && route() === 'fengshui' && state.fs.tab === 'compass') render();
+  });
+}
+async function fsStartSensor() {
+  try {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      const r = await DeviceOrientationEvent.requestPermission();
+      if (r === 'denied') { toast('ยังไม่ได้อนุญาตให้ใช้เข็มทิศ เปิดสิทธิ์ในการตั้งค่าเบราว์เซอร์'); return; }
+    }
+  } catch (e) { /* older browsers */ }
+  window.addEventListener('deviceorientationabsolute', fsOnOrient, true);
+  window.addEventListener('deviceorientation', fsOnOrient, true);
+  state.fs.sensor = true;
+  setTimeout(() => { if (state.fs.heading == null) toast('เครื่องนี้ไม่ส่งค่าเข็มทิศ ลองบนมือถือ หรือเลื่อนตั้งองศาเอง'); }, 2500);
+  render();
+}
+async function fsToggleCam() {
+  if (state.fs.cam) { fsStopCam(); state.fs.cam = false; render(); return; }
+  try {
+    fsStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+    state.fs.cam = true; render();
+  } catch (e) { toast('เปิดกล้องไม่ได้ ตรวจสิทธิ์กล้องของเบราว์เซอร์'); }
+}
+function mountFengshui() {
+  if (route() !== 'fengshui' || state.fs.tab !== 'compass') { if (fsStream && route() !== 'fengshui') { fsStopCam(); state.fs.cam = false; } return; }
+  const v = document.getElementById('fs-video');
+  if (v && fsStream) { v.srcObject = fsStream; v.play && v.play().catch(() => {}); }
+}
+function viewFengshui() {
+  const fs = state.fs;
+  const k = fs.gender ? kuaOf(fsBirth(), fs.gender) : null;
+  const genderSeg = `<div class="seg" role="group" aria-label="เพศ">${[['m', 'ชาย'], ['f', 'หญิง']].map(([v, t]) => `<button aria-pressed="${fs.gender === v}" data-act="fsGender" data-v="${v}">${t}</button>`).join('')}</div>`;
+  let body = '';
+  if (fs.tab === 'kua') body = k ? fsKuaHTML(k) : `<section class="card"><p class="body" style="margin:0">เลขกัวคำนวณจากปีเกิดและเพศ เลือกเพศด้านบนเพื่อดูทิศมงคลของคุณ</p></section>`;
+  else if (fs.tab === 'house') body = fsHouseHTML(fs, k);
+  else if (fs.tab === 'year') body = fsYearHTML();
+  else body = fsCompassHTML(fs, k);
+  return `<main class="screen" style="--accent:#E5675A">
+${pageHead('14', 'FENG SHUI', 'ฮวงจุ้ย', '#E5675A', 'fengshui')}
+<div class="fs-gender"><span class="small">เพศ (ใช้คำนวณเลขกัว)</span>${genderSeg}</div>
+<div class="tabs fs-tabs" role="tablist">${FS_TABS.map(([t, l]) => `<button role="tab" aria-selected="${fs.tab === t}" data-act="fsTab" data-v="${t}">${l}</button>`).join('')}</div>
+${body}
+<p class="small" style="font-size:11px">คำนวณตามสูตรปาจาย (八宅) และเสวียนคงเฟยซิง (玄空飛星) ยุค 9 (ปี 2024–2043) ผังดาวตรวจเทียบกับเครื่องคิดเลขฮวงจุ้ยสากลแล้ว ใช้เป็นแนวทางศึกษา หากจะสร้างหรือรีโนเวตบ้าน ควรปรึกษาซินแส</p>
+</main>`;
+}
+
+const VIEWS = { fengshui: viewFengshui, calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -2318,8 +2485,9 @@ function render() {
   if (r === 'home' && showOraSheet() && !document.getElementById('ora-sheet')) document.body.insertAdjacentHTML('beforeend', oracleSheetB());
   mountLuck();
   if (r === 'map') mountMap();
+  mountFengshui();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -2494,6 +2662,13 @@ document.addEventListener('click', (e) => {
     case 'askChip': ask(el.dataset.q); return;
     case 'muCat': Object.assign(state.map, { cat: el.dataset.v, wish: el.dataset.v === 'wish' ? state.map.wish : null, sel: null }); break;
     case 'muWish': state.map.wish = state.map.wish === el.dataset.v ? null : el.dataset.v; state.map.cat = 'wish'; state.map.sel = null; break;
+    case 'fsTab': state.fs.tab = el.dataset.v; window.scrollTo(0, 0); break;
+    case 'fsGender': state.fs.gender = el.dataset.v; fsSave(); break;
+    case 'fsQuick': state.fs.facing = FS_DIR_DEG[el.dataset.v]; state.fs.cell = null; fsSave(); break;
+    case 'fsCell': state.fs.cell = el.dataset.v; break;
+    case 'fsSensor': fsStartSensor(); return;
+    case 'fsCam': fsToggleCam(); return;
+    case 'fsUseHeading': state.fs.facing = Math.round(state.fs.heading); state.fs.cell = null; state.fs.tab = 'house'; fsSave(); toast(`ตั้งทิศหน้าบ้าน ${state.fs.facing}° แล้ว`); break;
     case 'muReg': state.map.reg = el.dataset.v; state.map.sel = null; break;
     case 'muSel': muSelect(el.dataset.v, false); return;
     case 'muNear': {
@@ -2568,6 +2743,13 @@ document.addEventListener('input', (e) => {
   const v = e.target.value;
   if (key === 'm.name') { state.match.name = v.trim(); const sb = document.querySelector('[data-act=matchSave]'); if (sb) sb.disabled = !state.match.name; return; }
   if (key === 'tarotQ') { state.tarot.q = v; return; }
+  if (key === 'fsFacing') {
+    state.fs.facing = +v; state.fs.cell = null;
+    const m = mountainOf(+v), t = document.getElementById('fs-face-read'), g = document.getElementById('fs-dial-g');
+    if (t) t.textContent = `${v}° ${FS_DIR_SHORT[m.palace]} · ${m.cn}`;
+    if (g) g.style.transform = `rotate(${v}deg)`;
+    return;
+  }
   if (key === 'dreamQ') {
     state.dream.q = v; state.dream.sel = null; state.dream.saved = false;
     const out = document.getElementById('dream-out'), d = v.trim() ? dreamLookup(v) : null;
@@ -2602,6 +2784,7 @@ document.addEventListener('change', (e) => {
   if (!key) return;
   const v = +e.target.value;
   if (key === 'm.name') return;
+  if (key === 'fsFacing') { fsSave(); render(); return; }
   if (key.startsWith('m.')) { state.match[key.slice(2)] = v; render(); return; }
   if (key === 'nm.day') { state.num.day = v; const box = document.getElementById('num-results'); if (box) box.innerHTML = numResults(); return; }
   if (key.startsWith('t.')) { state.tarot.other[key.slice(2)] = v; render(); return; }

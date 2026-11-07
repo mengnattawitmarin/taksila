@@ -1150,6 +1150,84 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .pr-tr-in h3 { margin: 6px 0 0; font-size: 13px; letter-spacing: .08em; color: var(--harmony); font-weight: 600; }
 .pr-tr-in .pr-tr-note { font-size: 11px; color: var(--muted); }
 
+/* ---- ฮวงจุ้ย ---- */
+.fs-gender { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.fs-gender .seg { width: 150px; }
+.fs-tabs button { font-size: 13px; }
+.fs-kua { border-radius: 18px; border-color: rgba(229,103,90,.45); background: radial-gradient(ellipse 80% 70% at 0% 0%, rgba(229,103,90,.16), transparent 70%), var(--surface); }
+.fs-kua-top { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; align-items: center; }
+.fs-wheel { width: 150px; height: 150px; }
+.fw { stroke: #0D0B08; stroke-width: 1.5; animation: fwIn .5s ease both; animation-delay: calc(var(--i) * 40ms); }
+@keyframes fwIn { from { opacity: 0; } }
+.fw.good { fill: rgba(111,195,178,.55); } .fw.bad { fill: rgba(229,103,90,.35); }
+.fw-d { font-size: 12px; fill: #F1E6CF; font-weight: 600; } .fw-s { font-size: 9.5px; fill: #E9DFC8; }
+.fw-c { fill: #14110C; stroke: rgba(240,216,154,.5); }
+.fw-k { font-family: var(--serif); font-size: 34px; fill: var(--gold-2); } .fw-kl { font-size: 10px; fill: var(--muted); }
+.fs-kua-t { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.fs-kua-t b { font-family: var(--serif); font-size: 44px; line-height: 1; color: var(--gold-2); }
+.fs-kua-t > span { font-size: 13px; color: var(--text-2); }
+.fs-grp { align-self: flex-start; padding: 2px 10px; border-radius: 99px; font-size: 12px !important; }
+.fs-grp.east { background: rgba(111,195,178,.15); color: var(--harmony) !important; } .fs-grp.west { background: rgba(240,216,154,.15); color: var(--gold-2) !important; }
+.fs-list { display: flex; flex-direction: column; gap: 8px; }
+.fs-row { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 10px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); }
+.fs-row.pos { border-left: 3px solid var(--harmony); } .fs-row.neg { border-left: 3px solid var(--tension); }
+.fs-dir { display: flex; flex-direction: column; justify-content: center; font-weight: 600; font-size: 14px; }
+.fs-dir i { font-style: normal; font-family: var(--mono); font-size: 11px; color: var(--muted); font-weight: 400; }
+.fs-row-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fs-row-t b { font-size: 14px; } .fs-row-t > span:nth-child(2) { font-size: 13px; color: var(--text-2); }
+.fs-face { border-radius: 18px; }
+.fs-face-top { display: flex; gap: 14px; align-items: center; }
+.fs-dial circle:first-child { fill: #14110C; stroke: var(--line-2); }
+.fs-dial text { font-size: 8px; fill: var(--muted); font-family: var(--mono); }
+.fs-needle { fill: #E5675A; } .fs-dial g circle { fill: var(--gold-2); }
+.fs-face-t { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.fs-face-t b { font-family: var(--serif); font-size: 26px; }
+.fs-face-t span { font-size: 13px; color: var(--text-2); }
+.fs-warn { color: #F0A08C !important; font-size: 12px !important; }
+.fs-range { width: 100%; accent-color: #E5675A; }
+.fs-quick { display: flex; flex-wrap: wrap; gap: 6px; }
+.fs-pat { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line-2); background: var(--surface); }
+.fs-pat b { font-size: 15px; } .fs-pat span { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+.fs-pat.best { border-color: rgba(111,195,178,.6); background: rgba(111,195,178,.1); } .fs-pat.worst { border-color: rgba(229,103,90,.6); background: rgba(229,103,90,.1); }
+.fs-chart { display: flex; flex-direction: column; gap: 8px; }
+.fs-chart-h { display: flex; flex-direction: column; gap: 2px; } .fs-chart-h b { font-size: 14px; }
+.fs-chart-h i { font-style: normal; padding: 0 5px; border-radius: 4px; }
+.lg-m { background: rgba(240,216,154,.18); color: var(--gold-2); } .lg-b { background: var(--surface-2); color: var(--muted); } .lg-w { background: rgba(94,146,218,.2); color: #A9C6EE; }
+.fs-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.fs-cell { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px 8px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font: inherit; color: var(--text); cursor: pointer; min-height: 92px; }
+.fs-cell.pos { background: linear-gradient(180deg, rgba(111,195,178,.16), var(--surface)); border-color: rgba(111,195,178,.4); }
+.fs-cell.neg { background: linear-gradient(180deg, rgba(229,103,90,.16), var(--surface)); border-color: rgba(229,103,90,.4); }
+.fs-cell.on { box-shadow: 0 0 0 2px var(--gold); }
+.fs-cell.front::after { content: ''; position: absolute; left: 20%; right: 20%; bottom: -1px; height: 3px; border-radius: 3px; background: var(--gold-2); }
+.fc-p { font-size: 11px; color: var(--text-2); white-space: nowrap; }
+.fc-st { display: flex; align-items: baseline; gap: 6px; font-family: var(--mono); }
+.fc-st i { font-style: normal; font-size: 20px; color: var(--gold-2); } .fc-st i.w { color: #A9C6EE; }
+.fc-st b { font-size: 12px; color: var(--muted); font-weight: 400; }
+.fc-y { font-size: 10px; color: var(--muted); font-family: var(--mono); }
+.fc-k { font-size: 9.5px; padding: 0 6px; border-radius: 99px; } .fc-k.g { background: rgba(111,195,178,.18); color: var(--harmony); } .fc-k.b { background: rgba(229,103,90,.15); color: #F0A08C; }
+.fs-grid.sm .fs-cell { min-height: 64px; cursor: default; } .fc-big { font-family: var(--mono); font-size: 24px; color: var(--gold-2); }
+.fs-detail { border-radius: 16px; }
+.fs-stars { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.fs-stars > div { display: flex; flex-direction: column; gap: 2px; padding: 10px; border-radius: 12px; background: var(--surface-2); border-left: 3px solid var(--line-2); }
+.fs-stars > div.pos { border-left-color: var(--harmony); } .fs-stars > div.neg { border-left-color: var(--tension); }
+.fs-stars b { font-size: 15px; } .fs-stars span:last-child { font-size: 12.5px; color: var(--text-2); }
+.tpos { color: var(--harmony); } .tneg { color: var(--tension); }
+.fs-tips { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; line-height: 1.55; color: var(--text-2); }
+.fs-yr { border-radius: 18px; }
+.fs-cmp { position: relative; border-radius: 20px; overflow: hidden; border: 1px solid var(--line-2); background: radial-gradient(circle at 50% 45%, #2A1A14, #0D0B08 70%); min-height: 360px; display: grid; place-items: center; }
+.fs-cmp video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .75; }
+.fs-cmp-in { position: relative; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 12px; }
+.fs-lp { width: min(300px, 86vw); } .fs-lp svg { transition: transform .15s linear; display: block; margin: 0 auto; }
+.fs-tick { position: absolute; top: 12px; left: 50%; width: 0; height: 0; border-left: 9px solid transparent; border-right: 9px solid transparent; border-top: 14px solid #E5675A; transform: translateX(-50%); filter: drop-shadow(0 0 6px rgba(229,103,90,.8)); }
+.lp-bg { fill: rgba(20,16,10,.85); stroke: rgba(240,216,154,.6); stroke-width: 2; }
+.lp-m { fill: rgba(212,175,99,.08); stroke: rgba(240,216,154,.25); } .lp-mt { font-size: 15px; fill: #F6E3B0; font-family: serif; }
+.lp-d { fill: rgba(255,255,255,.04); stroke: rgba(240,216,154,.25); } .lp-d.good { fill: rgba(111,195,178,.4); } .lp-d.bad { fill: rgba(229,103,90,.28); }
+.lp-dt { font-size: 11px; fill: #F1E6CF; font-weight: 600; }
+.lp-in { fill: rgba(13,11,8,.9); stroke: rgba(240,216,154,.5); } .lp-n { font-size: 16px; fill: #E5675A; font-weight: 700; } .lp-taiji { font-size: 34px; fill: var(--gold-2); }
+.fs-read { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 16px; border-radius: 14px; background: rgba(13,11,8,.75); text-align: center; }
+.fs-read b { font-family: var(--mono); font-size: 26px; color: var(--gold-2); font-weight: 500; } .fs-read span { font-size: 13px; color: var(--text-2); }
+.fs-cmp-btns { display: flex; gap: 8px; } .fs-cmp-btns .btn { flex: 1; }
+
 </style>
 <div id="app" class="app"></div>
 <noscript>กรุณาเปิด JavaScript เพื่อใช้งานตักศิลา</noscript>
@@ -6819,6 +6897,143 @@ const MU_REGIONS = [['all', 'ทุกภาค'], ['central', 'กรุงเ�
 for (const p of MU_PLACES) p.reg = REG_OF.find((r) => r[2].test(p.prov))[0];
 const muPlaceById = (id) => MU_PLACES.find((p) => p.id === id);
 
+// ---- js/fengshui.js ----
+// ฮวงจุ้ย: เลขกัว (ปาจาย 八宅), ดาวเหินยุค 9 (玄空飛星 2024–2043), ดาวจรประจำปี, ไท่ส่วย/ซาซัว
+// ต่อยอดจากต้นแบบที่ผู้ใช้ส่งมา (fengshui-app) โดยแทนผังดาวตัวอย่างด้วยการคำนวณจริงตามสูตรคลาสสิก
+
+const FS_DIRS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+const FS_DIR_TH = { N: 'เหนือ', NE: 'ตะวันออกเฉียงเหนือ', E: 'ตะวันออก', SE: 'ตะวันออกเฉียงใต้', S: 'ใต้', SW: 'ตะวันตกเฉียงใต้', W: 'ตะวันตก', NW: 'ตะวันตกเฉียงเหนือ', C: 'กลางบ้าน' };
+const FS_DIR_SHORT = { N: 'เหนือ', NE: 'อีสาน', E: 'ตะวันออก', SE: 'อาคเนย์', S: 'ใต้', SW: 'หรดี', W: 'ตะวันตก', NW: 'พายัพ', C: 'กลาง' };
+const FS_DIR_DEG = { N: 0, NE: 45, E: 90, SE: 135, S: 180, SW: 225, W: 270, NW: 315 };
+const OPP = { N: 'S', NE: 'SW', E: 'W', SE: 'NW', S: 'N', SW: 'NE', W: 'E', NW: 'SE' };
+// Lo Shu home palace of each number, and the flight path (center → NW → W → NE → S → N → SW → E → SE).
+const HOME = { 1: 'N', 2: 'SW', 3: 'E', 4: 'SE', 5: 'C', 6: 'NW', 7: 'W', 8: 'NE', 9: 'S' };
+const PATH = ['C', 'NW', 'W', 'NE', 'S', 'N', 'SW', 'E', 'SE'];
+const CARDINAL = ['N', 'E', 'S', 'W'];
+// 24 ภูเขา (二十四山) starting at 壬 337.5°, three per palace: ดิน (地元) · ฟ้า (天元) · คน (人元).
+const M24 = ['壬', '子', '癸', '丑', '艮', '寅', '甲', '卯', '乙', '辰', '巽', '巳', '丙', '午', '丁', '未', '坤', '申', '庚', '酉', '辛', '戌', '乾', '亥'];
+const M24_TH = ['เหริน', 'จื่อ', 'กุ่ย', 'โฉ่ว', 'เกิ้น', 'อิ๋น', 'เจี่ย', 'เหม่า', 'อี่', 'เฉิน', 'ซวิ่น', 'ซื่อ', 'ปิ่ง', 'อู่', 'ติง', 'เว่ย', 'คุน', 'เซิน', 'เกิง', 'โหย่ว', 'ซิน', 'ซวี', 'เฉียน', 'ไฮ่'];
+const YUAN_TH = ['ดิน', 'ฟ้า', 'คน'];
+
+function mountainOf(deg) {
+  const a = ((deg % 360) + 360) % 360;
+  const idx = Math.floor(((a - 337.5 + 360) % 360) / 15);
+  const palace = FS_DIRS[Math.floor(idx / 3)], sub = idx % 3;
+  const off = ((a - 337.5 + 360) % 360) % 15; // degrees into the mountain
+  return { idx, palace, sub, cn: M24[idx], th: M24_TH[idx], yuan: YUAN_TH[sub], edge: off < 3 || off > 12 };
+}
+// Polarity of a sub-mountain: cardinal palaces are + - -, corner palaces - + +.
+const polarity = (palace, sub) => (CARDINAL.includes(palace) ? [1, -1, -1] : [-1, 1, 1])[sub];
+function fly(center, dir) {
+  const g = {};
+  PATH.forEach((p, i) => { g[p] = ((center - 1 + dir * i) % 9 + 9) % 9 + 1; });
+  return g;
+}
+
+const FS_PERIOD = 9; // ยุค 9: 4 ก.พ. 2024 – 3 ก.พ. 2044
+// Xuan Kong flying-star chart for a facing angle (degrees from true north).
+function flyingStars(facingDeg, period = FS_PERIOD) {
+  const f = mountainOf(facingDeg), s = mountainOf(facingDeg + 180);
+  const base = fly(period, 1);
+  const starFor = (palaceStar, sub) => {
+    const home = palaceStar === 5 ? HOME[period] : HOME[palaceStar];
+    return fly(palaceStar, polarity(home, sub));
+  };
+  const water = starFor(base[f.palace], f.sub); // ดาวน้ำ (向星) → ทรัพย์
+  const mount = starFor(base[s.palace], s.sub); // ดาวภูเขา (山星) → คน สุขภาพ
+  const pattern =
+    mount[s.palace] === period && water[f.palace] === period ? { k: 'best', th: 'ภูเขาดี น้ำดี (旺山旺向)', d: 'ดาวภูเขาประจำยุคอยู่ด้านหลังบ้าน ดาวน้ำประจำยุคอยู่หน้าบ้าน เป็นผังที่ดีที่สุด ทั้งคนและทรัพย์รุ่งเรือง' }
+      : mount[f.palace] === period && water[s.palace] === period ? { k: 'worst', th: 'ภูเขาตกน้ำ (上山下水)', d: 'ดาวประจำยุคสลับที่กัน ตามตำราควรวางของสูงหรือภูเขาไว้หน้าบ้าน และน้ำหรือที่โล่งไว้หลังบ้านเพื่อแก้' }
+        : mount[s.palace] === period && water[s.palace] === period ? { k: 'sit', th: 'ดาวคู่อยู่หลังบ้าน (雙星到坐)', d: 'ดาวประจำยุคทั้งสองอยู่ด้านหลัง ควรมีที่โล่งหรือน้ำด้านหลังบ้านเพื่อรับทรัพย์' }
+          : mount[f.palace] === period && water[f.palace] === period ? { k: 'face', th: 'ดาวคู่อยู่หน้าบ้าน (雙星到向)', d: 'ดาวประจำยุคทั้งสองอยู่ด้านหน้า ควรมีของสูงหรือกำแพงไกล ๆ หน้าบ้านเพื่อรักษาสุขภาพและคน' }
+            : null;
+  return { facing: f, sitting: s, base, water, mount, pattern };
+}
+
+// Chinese solar year: changes at ลี่ชุน (立春, Sun at 315°) around 4 Feb.
+function solarYear(date) {
+  const y = date.getFullYear(), m = date.getMonth() + 1;
+  if (m > 2) return y;
+  if (m === 1) return y - 1;
+  const L = lonOf('sun', date);
+  return L < 315 && L > 270 ? y - 1 : y;
+}
+function annualStar(sy) { return ((3 - (sy - 2024)) % 9 + 9) % 9 || 9; }
+function annualChart(sy) { return fly(annualStar(sy), 1); }
+const BRANCH_DIR = [['N', 1], ['NE', 0], ['NE', 2], ['E', 1], ['SE', 0], ['SE', 2], ['S', 1], ['SW', 0], ['SW', 2], ['W', 1], ['NW', 0], ['NW', 2]];
+const BRANCH_TH = ['ชวด', 'ฉลู', 'ขาล', 'เถาะ', 'มะโรง', 'มะเส็ง', 'มะเมีย', 'มะแม', 'วอก', 'ระกา', 'จอ', 'กุน'];
+function yearAfflictions(sy) {
+  const b = ((sy - 4) % 12 + 12) % 12;
+  const ac = annualChart(sy);
+  const five = PATH.find((p) => ac[p] === 5), two = PATH.find((p) => ac[p] === 2);
+  const taisui = BRANCH_DIR[b][0], suipo = OPP[taisui];
+  const sansha = [6, 2, 10].includes(b) ? 'N' : [8, 0, 4].includes(b) ? 'S' : [5, 9, 1].includes(b) ? 'E' : 'W';
+  return { sy, star: annualStar(sy), chart: ac, five, two, taisui, suipo, sansha, animal: BRANCH_TH[b] };
+}
+
+// เลขกัว (Ba Zhai). Uses the Chinese solar year of birth.
+const KUA_DIRS = {
+  1: ['SE', 'E', 'S', 'N', 'W', 'NE', 'NW', 'SW'], 2: ['NE', 'W', 'NW', 'SW', 'E', 'SE', 'S', 'N'],
+  3: ['S', 'N', 'SE', 'E', 'SW', 'NW', 'NE', 'W'], 4: ['N', 'S', 'E', 'SE', 'NW', 'SW', 'W', 'NE'],
+  6: ['W', 'NE', 'SW', 'NW', 'SE', 'E', 'N', 'S'], 7: ['NW', 'SW', 'NE', 'W', 'N', 'S', 'SE', 'E'],
+  8: ['SW', 'NW', 'W', 'NE', 'S', 'N', 'E', 'SE'], 9: ['E', 'SE', 'N', 'S', 'NE', 'W', 'SW', 'NW']
+};
+const KUA_STAR = [
+  { k: 'shengqi', cn: '生氣', th: 'เซิงชี่', use: 'ความสำเร็จ เงินทอง', tip: 'หันหน้าโต๊ะทำงานหรือหน้าร้านไปทางนี้', good: 1 },
+  { k: 'tianyi', cn: '天醫', th: 'เทียนอี', use: 'สุขภาพ ผู้ใหญ่ช่วย', tip: 'เหมาะหันหัวนอน หรือวางห้องนอนของคนป่วย', good: 1 },
+  { k: 'yannian', cn: '延年', th: 'เหยียนเหนียน', use: 'ความรัก ครอบครัว', tip: 'เหมาะกับห้องนอนคู่รัก หรือหันหัวนอนเพื่อความสัมพันธ์', good: 1 },
+  { k: 'fuwei', cn: '伏位', th: 'ฝูเหว่ย', use: 'ความมั่นคง สมาธิ', tip: 'เหมาะกับมุมอ่านหนังสือ สวดมนต์ หรือนั่งสมาธิ', good: 1 },
+  { k: 'huohai', cn: '禍害', th: 'ฮั่วไห่', use: 'เรื่องจุกจิก เสียเงินเล็ก ๆ', tip: 'เหมาะทำห้องน้ำหรือห้องเก็บของ', good: 0 },
+  { k: 'wugui', cn: '五鬼', th: 'อู่กุ่ย', use: 'ทะเลาะ ไฟ ขโมย', tip: 'เลี่ยงหันประตูหลักหรือหัวนอน', good: 0 },
+  { k: 'liusha', cn: '六煞', th: 'ลิ่วซา', use: 'เรื่องรักวุ่นวาย คดีความ', tip: 'เลี่ยงวางเตียงหรือโต๊ะทำงาน', good: 0 },
+  { k: 'jueming', cn: '絕命', th: 'เจวี๋ยมิ่ง', use: 'ร้ายที่สุด สุขภาพและเงิน', tip: 'ห้ามหันหัวนอนหรือโต๊ะทำงาน ทำเป็นห้องน้ำหรือห้องเก็บของดีที่สุด', good: 0 }
+];
+const KUA_INFO = {
+  1: ['กั้น 坎', 'น้ำ'], 2: ['คุน 坤', 'ดิน'], 3: ['เจิ้น 震', 'ไม้'], 4: ['ซวิ่น 巽', 'ไม้'],
+  6: ['เฉียน 乾', 'ทอง'], 7: ['ตุ้ย 兌', 'ทอง'], 8: ['เกิ้น 艮', 'ดิน'], 9: ['หลี 離', 'ไฟ']
+};
+// Colours that feed (生) and match each element.
+const EL_COLOR = { 'น้ำ': 'น้ำเงิน ดำ ขาว เงิน', 'ไม้': 'เขียว น้ำเงิน ดำ', 'ไฟ': 'แดง ชมพู ม่วง เขียว', 'ดิน': 'เหลือง น้ำตาล ส้ม แดง', 'ทอง': 'ขาว เงิน ทอง เหลือง' };
+function kuaOf(date, gender) {
+  const sy = solarYear(date);
+  let s = String(sy % 100).split('').reduce((a, b) => a + +b, 0);
+  while (s > 9) s = String(s).split('').reduce((a, b) => a + +b, 0);
+  let k;
+  if (gender === 'f') { k = sy < 2000 ? s + 5 : s + 6; while (k > 9) k -= 9; if (k === 5) k = 8; }
+  else { k = sy < 2000 ? 10 - s : 9 - s; if (k <= 0) k += 9; if (k === 5) k = 2; }
+  const d = KUA_DIRS[k];
+  return { kua: k, sy, group: [1, 3, 4, 9].includes(k) ? 'east' : 'west', trigram: KUA_INFO[k][0], element: KUA_INFO[k][1], dirs: d.map((dir, i) => ({ dir, ...KUA_STAR[i] })) };
+}
+
+// Meanings of the nine stars in ยุค 9.
+const STAR = {
+  1: { th: 'ดาวขาว 1', use: 'การงาน ข่าวดี ความก้าวหน้า', tone: 1, el: 'น้ำ' },
+  2: { th: 'ดาวดำ 2', use: 'โรคภัย ความเจ็บป่วย', tone: -1, el: 'ดิน' },
+  3: { th: 'ดาวเขียว 3', use: 'ทะเลาะ คดีความ', tone: -1, el: 'ไม้' },
+  4: { th: 'ดาวเขียว 4', use: 'การเรียน ปัญญา ความรัก', tone: 0, el: 'ไม้' },
+  5: { th: 'ดาวเหลือง 5', use: 'เคราะห์ร้าย อุบัติเหตุ', tone: -2, el: 'ดิน' },
+  6: { th: 'ดาวขาว 6', use: 'อำนาจ ผู้ใหญ่อุปถัมภ์', tone: 0, el: 'ทอง' },
+  7: { th: 'ดาวแดง 7', use: 'ขโมย ขัดแย้ง เสียทรัพย์', tone: -1, el: 'ทอง' },
+  8: { th: 'ดาวขาว 8', use: 'ทรัพย์สิน ที่ดิน (เริ่มอ่อนแรง)', tone: 1, el: 'ดิน' },
+  9: { th: 'ดาวม่วง 9', use: 'รุ่งเรือง ชื่อเสียง งานมงคล (ดาวประจำยุค)', tone: 2, el: 'ไฟ' }
+};
+// Classic remedies, written plainly.
+const STAR_FIX = {
+  2: 'วางของโลหะ เช่น น้ำเต้าทองเหลือง หรือกระดิ่งลมโลหะ 6 ก้าน และเลี่ยงใช้สีแดงเหลือง',
+  3: 'ใช้สีแดงหรือไฟสีแดงเล็ก ๆ ลดความขัดแย้ง เลี่ยงต้นไม้ใหญ่',
+  5: 'วางกระดิ่งลมโลหะหรือน้ำเต้าทองเหลือง ไม่ต่อเติมหรือเจาะผนังโซนนี้ในปีนั้น เลี่ยงสีแดงเหลือง',
+  7: 'วางน้ำนิ่งในภาชนะสีน้ำเงินหรือดำ เก็บของมีค่าให้มิดชิด'
+};
+function sectorRead(w, m) {
+  const sw = STAR[w], sm = STAR[m];
+  const score = sw.tone * 2 + sm.tone; // water star weighs more for wealth
+  const tips = [];
+  if (w === 9 || w === 1 || w === 8) tips.push('ดาวน้ำดี เหมาะเป็นประตู ทางเดิน หรือมุมที่มีคนเดินบ่อย วางน้ำไหลหรือตู้ปลาได้');
+  if (m === 9 || m === 1 || m === 8) tips.push('ดาวภูเขาดี เหมาะวางเตียง โต๊ะทำงาน หรือของสูงหนักที่มั่นคง');
+  for (const n of new Set([w, m])) if (STAR_FIX[n]) tips.push(`แก้${STAR[n].th}: ${STAR_FIX[n]}`);
+  return { score, tone: score >= 3 ? 1 : score <= -2 ? -1 : 0, tips };
+}
+
 // ---- js/forecast.js ----
 // Unified daily forecast: one score per day that every screen shares (home card, opening sheet, 7-day strip).
 // It weighs five readings of the same day:
@@ -7216,6 +7431,7 @@ function logoRing() {
 
 
 
+
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
 function load() { try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; } }
@@ -7239,6 +7455,7 @@ const state = {
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
   map: { cat: 'all', wish: null, reg: 'all', sel: null, me: null },
+  fs: { tab: 'kua', gender: '', facing: 180, cell: null, heading: null, sensor: false, cam: false, ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.fs')) || {}; return { gender: j.gender || '', facing: typeof j.facing === 'number' ? j.facing : 180 }; } catch (e) { return {}; } })() },
   pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null, tree: { tied: false, digits: null, done: false, kind: null }, hist: [] },
@@ -7276,6 +7493,7 @@ const IC = {
   dream: '<path d="M14.5 4.5a7 7 0 1 0 5 11.4A7.5 7.5 0 0 1 14.5 4.5z"/><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6z"/>',
   privacy: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><rect x="9.5" y="10.5" width="5" height="4.5" rx="1"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/>',
   setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  fengshui: '<path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7z"/><path d="M12 7.5a4.5 4.5 0 0 1 0 9 2.25 2.25 0 0 1 0-4.5 2.25 2.25 0 0 0 0-4.5z"/><circle cx="12" cy="14.25" r=".6"/><circle cx="12" cy="9.75" r=".6"/>',
   calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><circle cx="12" cy="14.5" r="2.2"/>',
   about: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
   map: '<path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z"/><path d="M12 6.5l.9 2 2.1.3-1.5 1.5.4 2.1-1.9-1-1.9 1 .4-2.1-1.5-1.5 2.1-.3z"/>'
@@ -9092,7 +9310,7 @@ ${ws.some((w) => w.kind === 'care') ? remedyCard(remedyPlan({ planetNo: 7, topic
 // ---------------- router ----------------
 // Routes live in memory (and are mirrored to the URL hash when the host allows it),
 // so the app also works inside sandboxed frames that ignore hash changes.
-const NEEDS_PROFILE = ['map', 'dream', 'home', 'chart', 'match', 'ask'];
+const NEEDS_PROFILE = ['fengshui', 'map', 'dream', 'home', 'chart', 'match', 'ask'];
 // Opening the app always starts at home. Home-screen shortcuts pass ?go=<room> to open a room directly.
 let current = (() => { try { return new URLSearchParams(location.search).get('go') || ''; } catch (e) { return ''; } })();
 try { history.replaceState(null, '', location.pathname); } catch (e) { /* not allowed in some frames */ }
@@ -9190,7 +9408,7 @@ const ROOMS = [
   ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
   ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
   ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
-  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'ปฏิทินวันพระ', 'วันพระ ฤกษ์ใหญ่', 'var(--gold-2)'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
+  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'ปฏิทินวันพระ', 'วันพระ ฤกษ์ใหญ่', 'var(--gold-2)'], ['fengshui', 'ฮวงจุ้ย', 'เลขกัว ดาวเหิน', '#E5675A'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
   ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)'], ['about', 'เกี่ยวกับ', 'แหล่งอ้างอิง', 'var(--gold)']
 ];
 const NAV_ROUTES = ['home', 'chart', 'tarot', 'numbers', 'luck'];
@@ -9501,7 +9719,171 @@ ${pageHead('13', 'ABOUT', 'เกี่ยวกับตักศิลา', 'v
 const LINE_ID = 'Mengfrog', LINE_URL = 'https://line.me/ti/p/~Mengfrog';
 const reportText = (pr) => `แจ้งตัวบทผิดในตักศิลา\nบทสวด: ${pr.th} (${pr.id})\nบรรทัดที่ผิด:\nที่ถูกควรเป็น:\nแหล่งอ้างอิง (ถ้ามี):`;
 
-const VIEWS = { calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- ฮวงจุ้ย ----------------
+const FS_KEY = 'taksila.fs';
+function fsLoad() { try { return JSON.parse(localStorage.getItem(FS_KEY)) || {}; } catch (e) { return {}; } }
+function fsSave() { try { localStorage.setItem(FS_KEY, JSON.stringify({ gender: state.fs.gender, facing: state.fs.facing })); } catch (e) {} }
+const FS_TABS = [['kua', 'เลขกัว'], ['house', 'ดาวบ้าน'], ['year', 'ปีนี้ระวัง'], ['compass', 'เข็มทิศ']];
+const FS_GRID = ['NW', 'N', 'NE', 'W', 'C', 'E', 'SW', 'S', 'SE'];
+const fsBirth = () => { const p = state.profile; return new Date(p.yearBE - 543, p.month - 1, p.day, p.timeKnown ? p.hour : 12, p.timeKnown ? p.minute : 0); };
+const fsTone = (t) => (t > 0 ? 'pos' : t < 0 ? 'neg' : 'mid');
+// 8-direction wheel: north at the top, each wedge coloured by the person's Kua.
+function kuaWheel(k, size = 260, rot = 0) {
+  const c = size / 2, R = c - 6, r0 = R * 0.36;
+  const pt = (a, rr) => [c + rr * Math.sin(a * Math.PI / 180), c - rr * Math.cos(a * Math.PI / 180)];
+  const wedge = (d) => {
+    const a0 = FS_DIR_DEG[d] - 22.5, a1 = FS_DIR_DEG[d] + 22.5;
+    const [x0, y0] = pt(a0, R), [x1, y1] = pt(a1, R), [x2, y2] = pt(a1, r0), [x3, y3] = pt(a0, r0);
+    return `M${x0},${y0} A${R},${R} 0 0 1 ${x1},${y1} L${x2},${y2} A${r0},${r0} 0 0 0 ${x3},${y3}Z`;
+  };
+  return `<svg class="fs-wheel" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="ทิศมงคลของคุณ"><g style="transform:rotate(${-rot}deg);transform-origin:50% 50%">${k.dirs.map((x, i) => {
+    const [tx, ty] = pt(FS_DIR_DEG[x.dir], (R + r0) / 2);
+    return `<path d="${wedge(x.dir)}" class="fw ${x.good ? 'good' : 'bad'}" style="--i:${i}"/><text x="${tx}" y="${ty - 6}" text-anchor="middle" class="fw-d" transform="rotate(${rot} ${tx} ${ty})">${FS_DIR_SHORT[x.dir]}</text><text x="${tx}" y="${ty + 11}" text-anchor="middle" class="fw-s" transform="rotate(${rot} ${tx} ${ty})">${x.th}</text>`;
+  }).join('')}</g><circle cx="${c}" cy="${c}" r="${r0 - 4}" class="fw-c"/><text x="${c}" y="${c - 4}" text-anchor="middle" class="fw-k">${k.kua}</text><text x="${c}" y="${c + 16}" text-anchor="middle" class="fw-kl">เลขกัว</text></svg>`;
+}
+function fsKuaHTML(k) {
+  return `<section class="card fs-kua"><div class="fs-kua-top">${kuaWheel(k, 230)}<div class="fs-kua-t"><span class="eyebrow">เลขกัว · ปาจาย 八宅</span><b>${k.kua}</b><span>${k.trigram} · ธาตุ${k.element}</span><span class="fs-grp ${k.group}">${k.group === 'east' ? 'กลุ่มตะวันออก' : 'กลุ่มตะวันตก'}</span><span class="small">สีเสริม: ${EL_COLOR[k.element]}</span></div></div>
+<p class="small" style="margin:0">นับปีเกิดแบบจีน (เปลี่ยนปีที่ลี่ชุน ราว 4 ก.พ.) ปี ${k.sy} · ทิศที่ดีกับคนกลุ่ม${k.group === 'east' ? 'ตะวันออก' : 'ตะวันตก'}คือ ${k.dirs.slice(0, 4).map((x) => FS_DIR_SHORT[x.dir]).join(' ')}</p></section>
+<section class="fs-list"><h2 class="label">ทิศมงคล 4 ทิศ</h2>${k.dirs.slice(0, 4).map((x) => `<div class="fs-row pos"><span class="fs-dir">${FS_DIR_SHORT[x.dir]}<i>${x.dir}</i></span><span class="fs-row-t"><b>${x.th} ${x.cn}</b><span>${x.use}</span><span class="small">${x.tip}</span></span></div>`).join('')}
+<h2 class="label">ทิศควรเลี่ยง 4 ทิศ</h2>${k.dirs.slice(4).map((x) => `<div class="fs-row neg"><span class="fs-dir">${FS_DIR_SHORT[x.dir]}<i>${x.dir}</i></span><span class="fs-row-t"><b>${x.th} ${x.cn}</b><span>${x.use}</span><span class="small">${x.tip}</span></span></div>`).join('')}</section>`;
+}
+function fsFacingPicker(fs) {
+  const m = mountainOf(fs.facing);
+  return `<section class="card fs-face"><div class="fs-face-top">${fsDial(fs.facing)}<div class="fs-face-t"><span class="eyebrow">ทิศหน้าบ้าน</span><b id="fs-face-read">${Math.round(fs.facing)}° ${FS_DIR_SHORT[m.palace]}</b><span>ภูเขา ${m.cn} (${m.th}) · ${m.yuan}</span>${m.edge ? '<span class="fs-warn">⚠ ใกล้เส้นแบ่งภูเขา ผังอาจเปลี่ยน ควรวัดซ้ำหรือให้ซินแสตรวจ</span>' : ''}</div></div>
+<input type="range" min="0" max="359" step="1" value="${Math.round(fs.facing)}" data-in="fsFacing" aria-label="องศาทิศหน้าบ้าน" class="fs-range">
+<div class="fs-quick">${FS_DIRS.map((d) => `<button class="chip small-chip" data-act="fsQuick" data-v="${d}" aria-pressed="${m.palace === d}">${FS_DIR_SHORT[d]}</button>`).join('')}</div>
+<button class="btn btn-line" data-act="fsTab" data-v="compass">◎ วัดด้วยเข็มทิศมือถือ</button>
+<p class="small" style="margin:0">วิธีวัด: ยืนที่ประตูหน้าบ้าน หันหลังให้บ้าน มองออกไปข้างนอก ทิศที่มองคือทิศหน้าบ้าน (ใช้ทิศที่ตัวอาคารหันหน้า ไม่ใช่ทิศรั้ว)</p></section>`;
+}
+function fsDial(deg, size = 92) {
+  const c = size / 2;
+  return `<svg class="fs-dial" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true"><circle cx="${c}" cy="${c}" r="${c - 3}"/>${FS_DIRS.map((d) => { const a = FS_DIR_DEG[d] * Math.PI / 180; return `<text x="${c + (c - 12) * Math.sin(a)}" y="${c - (c - 12) * Math.cos(a) + 3}" text-anchor="middle">${d}</text>`; }).join('')}<g id="fs-dial-g" style="transform:rotate(${deg}deg);transform-origin:50% 50%"><path d="M${c},${10} L${c + 6},${c} L${c},${c - 4} L${c - 6},${c}Z" class="fs-needle"/><circle cx="${c}" cy="${c}" r="3"/></g></svg>`;
+}
+function fsHouseHTML(fs, k) {
+  const fc = flyingStars(fs.facing), ya = yearAfflictions(solarYear(new Date()));
+  const sel = fs.cell || fc.facing.palace;
+  const cell = (p) => {
+    const w = fc.water[p], mo = fc.mount[p], rd = p === 'C' ? { tone: 0 } : sectorRead(w, mo);
+    const kd = k && p !== 'C' ? k.dirs.find((x) => x.dir === p) : null;
+    return `<button class="fs-cell ${fsTone(rd.tone)}${p === sel ? ' on' : ''}${p === fc.facing.palace ? ' front' : ''}" data-act="fsCell" data-v="${p}">
+<span class="fc-p">${FS_DIR_SHORT[p]}${p === fc.facing.palace ? ' · หน้า' : p === fc.sitting.palace ? ' · หลัง' : ''}</span>
+<span class="fc-st"><i title="ดาวภูเขา">${mo}</i><b title="ดาวยุค">${fc.base[p]}</b><i title="ดาวน้ำ" class="w">${w}</i></span>
+<span class="fc-y" title="ดาวจรปีนี้">ปี ${ya.chart[p]}</span>${kd ? `<span class="fc-k ${kd.good ? 'g' : 'b'}">${kd.th}</span>` : ''}</button>`;
+  };
+  const w = fc.water[sel], mo = fc.mount[sel];
+  const rd = sel === 'C' ? null : sectorRead(w, mo);
+  const kd = k && sel !== 'C' ? k.dirs.find((x) => x.dir === sel) : null;
+  const yStar = ya.chart[sel];
+  return `${fsFacingPicker(fs)}
+${fc.pattern ? `<section class="fs-pat ${fc.pattern.k}"><b>${fc.pattern.th}</b><span>${fc.pattern.d}</span></section>` : ''}
+<section class="fs-chart"><div class="fs-chart-h"><b>ผังดาวเหิน ยุค 9 · นั่ง ${fc.sitting.cn} หัน ${fc.facing.cn}</b><span class="small">ทิศเหนืออยู่ด้านบน · <i class="lg-m">ภูเขา</i> <i class="lg-b">ยุค</i> <i class="lg-w">น้ำ</i></span></div>
+<div class="fs-grid">${FS_GRID.map(cell).join('')}</div></section>
+<section class="card fs-detail"><span class="eyebrow">${FS_DIR_TH[sel]}</span>
+${sel === 'C' ? '<p class="body" style="margin:0">กลางบ้านควรโล่ง สะอาด ไม่วางของหนักหรือห้องน้ำ</p>' : `
+<div class="fs-stars"><div class="${fsTone(STAR[mo].tone)}"><span class="small">ดาวภูเขา · คน สุขภาพ</span><b>${STAR[mo].th}</b><span>${STAR[mo].use}</span></div><div class="${fsTone(STAR[w].tone)}"><span class="small">ดาวน้ำ · เงินทอง</span><b>${STAR[w].th}</b><span>${STAR[w].use}</span></div></div>
+<p class="small" style="margin:0">ดาวจรปี ${ya.sy}: <b>${STAR[yStar].th}</b> (${STAR[yStar].use})${yStar === 5 || yStar === 2 ? ' · ปีนี้ควรแก้เป็นพิเศษ' : ''}</p>
+${kd ? `<p class="small" style="margin:0">สำหรับคุณ (เลขกัว ${k.kua}): ทิศนี้คือ <b class="${kd.good ? 'tpos' : 'tneg'}">${kd.th}</b> · ${kd.use}</p>` : ''}
+<ul class="fs-tips">${rd.tips.map((t) => `<li>${t}</li>`).join('') || '<li>โซนกลาง ๆ ใช้งานได้ตามปกติ</li>'}</ul>`}</section>`;
+}
+function fsYearHTML() {
+  const now = new Date(), sy = solarYear(now), ya = yearAfflictions(sy), nx = yearAfflictions(sy + 1);
+  const row = (lab, dir, txt, fix) => `<div class="fs-row neg"><span class="fs-dir">${FS_DIR_SHORT[dir]}<i>${dir}</i></span><span class="fs-row-t"><b>${lab}</b><span>${txt}</span><span class="small">${fix}</span></span></div>`;
+  return `<section class="card fs-yr"><span class="eyebrow">ปีจีน ${sy} · ปี${ya.animal} · ดาวกลาง ${ya.star}</span>
+<div class="fs-grid sm">${FS_GRID.map((p) => `<div class="fs-cell ${fsTone(STAR[ya.chart[p]].tone)}"><span class="fc-p">${FS_DIR_SHORT[p]}</span><span class="fc-big">${ya.chart[p]}</span></div>`).join('')}</div>
+<p class="small" style="margin:0">ปีจีนเปลี่ยนที่ลี่ชุน ราว 4 ก.พ. ของทุกปี</p></section>
+<section class="fs-list"><h2 class="label">ทิศที่ต้องระวังปีนี้</h2>
+${row('ดาวเหลือง 5 (五黄)', ya.five, 'ดาวเคราะห์ร้ายที่สุดของปี', 'ไม่ต่อเติม เจาะ ทุบผนังโซนนี้ วางกระดิ่งลมโลหะหรือน้ำเต้าทองเหลือง เลี่ยงสีแดงเหลือง')}
+${row('ดาวดำ 2 (二黑)', ya.two, 'โรคภัยไข้เจ็บ', 'วางน้ำเต้าทองเหลือง ไม่ให้คนป่วยนอนโซนนี้')}
+${row('ไท่ส่วย (太歲)', ya.taisui, `เทพประจำปี${ya.animal}`, 'อย่านั่งหันหน้าเผชิญทิศนี้ (นั่งหันหลังพิงได้) และไม่ต่อเติมบ้านทิศนี้')}
+${row('ซุ่ยผั่ว (歲破)', ya.suipo, 'ทิศตรงข้ามไท่ส่วย', 'อย่านั่งหันหลังให้ทิศนี้ และไม่ต่อเติมบ้านทิศนี้')}
+${row('ซาซัว (三煞)', ya.sansha, 'สามพิฆาต', 'นั่งหันหน้าเข้าหาทิศนี้ได้ แต่อย่านั่งหันหลังให้ และไม่ต่อเติมทิศนี้')}
+<p class="small">ปีหน้า (${sy + 1} ปี${nx.animal}): ดาว 5 ย้ายไป${FS_DIR_SHORT[nx.five]} ดาว 2 ไป${FS_DIR_SHORT[nx.two]} ไท่ส่วยอยู่${FS_DIR_SHORT[nx.taisui]}</p></section>`;
+}
+function fsCompassHTML(fs, k) {
+  const h = fs.heading;
+  const m = h != null ? mountainOf(h) : null;
+  return `<section class="fs-cmp${fs.cam ? ' cam' : ''}"><video id="fs-video" playsinline muted autoplay${fs.cam ? '' : ' hidden'}></video>
+<div class="fs-cmp-in"><div class="fs-lp" id="fs-lp">${luopanSVG(k, h || 0)}</div><div class="fs-tick" aria-hidden="true"></div>
+<div class="fs-read" id="fs-read">${h != null ? `<b>${Math.round(h)}°</b><span>${FS_DIR_SHORT[m.palace]} · ${m.cn} ${m.th}</span>` : '<span>แตะ "เริ่มเข็มทิศ" แล้วถือมือถือให้ราบ</span>'}</div></div></section>
+<div class="fs-cmp-btns">${fs.sensor ? '' : '<button class="btn" data-act="fsSensor">◎ เริ่มเข็มทิศ</button>'}<button class="btn btn-line" data-act="fsCam">${fs.cam ? 'ปิดกล้อง' : '📷 เปิดกล้อง (AR)'}</button></div>
+${h != null ? '<button class="btn" data-act="fsUseHeading">ใช้ทิศนี้เป็นทิศหน้าบ้าน</button>' : ''}
+<p class="small" style="margin:0">เข็มทิศมือถือคลาดเคลื่อนได้ 5–15° อยู่ห่างโลหะ ลำโพง และเหล็กเส้น วัดหลายจุดแล้วใช้ค่าเฉลี่ย ถ้าเครื่องไม่มีเข็มทิศ ให้เลื่อนตั้งองศาในแท็บดาวเหินบ้านเอง</p>`;
+}
+// Luo pan: ring of 8 directions coloured by Kua + ring of 24 mountains, rotated so the top points where the phone faces.
+function luopanSVG(k, rot) {
+  const S = 300, c = S / 2, R1 = 146, R2 = 116, R3 = 84;
+  const pt = (a, r) => [c + r * Math.sin(a * Math.PI / 180), c - r * Math.cos(a * Math.PI / 180)];
+  const arc = (a0, a1, ro, ri) => { const [x0, y0] = pt(a0, ro), [x1, y1] = pt(a1, ro), [x2, y2] = pt(a1, ri), [x3, y3] = pt(a0, ri); return `M${x0},${y0} A${ro},${ro} 0 0 1 ${x1},${y1} L${x2},${y2} A${ri},${ri} 0 0 0 ${x3},${y3}Z`; };
+  let g = '';
+  for (let i = 0; i < 24; i++) { const a0 = 337.5 + i * 15, mid = a0 + 7.5; const [tx, ty] = pt(mid, (R1 + R2) / 2); g += `<path d="${arc(a0, a0 + 15, R1, R2)}" class="lp-m"/><text x="${tx}" y="${ty + 5}" text-anchor="middle" class="lp-mt" transform="rotate(${mid} ${tx} ${ty})">${mountainOf(mid).cn}</text>`; }
+  for (const d of FS_DIRS) {
+    const kd = k ? k.dirs.find((x) => x.dir === d) : null, a = FS_DIR_DEG[d]; const [tx, ty] = pt(a, (R2 + R3) / 2);
+    g += `<path d="${arc(a - 22.5, a + 22.5, R2, R3)}" class="lp-d ${kd ? (kd.good ? 'good' : 'bad') : ''}"/><text x="${tx}" y="${ty + 4}" text-anchor="middle" class="lp-dt" transform="rotate(${a} ${tx} ${ty})">${FS_DIR_SHORT[d]}</text>`;
+  }
+  return `<svg viewBox="0 0 ${S} ${S}" width="100%" style="max-width:300px;transform:rotate(${-rot}deg)" id="fs-lp-svg" aria-label="ลั่วแก"><circle cx="${c}" cy="${c}" r="${R1}" class="lp-bg"/>${g}<circle cx="${c}" cy="${c}" r="${R3}" class="lp-in"/><text x="${c}" y="${c - 50}" text-anchor="middle" class="lp-n">N</text><text x="${c}" y="${c + 8}" text-anchor="middle" class="lp-taiji">☯</text></svg>`;
+}
+let fsStream = null, fsRaf = 0;
+function fsStopCam() { if (fsStream) { fsStream.getTracks().forEach((t) => t.stop()); fsStream = null; } }
+function fsOnOrient(e) {
+  let h = null;
+  if (typeof e.webkitCompassHeading === 'number') h = e.webkitCompassHeading;
+  else if (e.absolute && typeof e.alpha === 'number') h = (360 - e.alpha) % 360;
+  if (h == null) return;
+  const so = (screen.orientation && screen.orientation.angle) || 0;
+  state.fs.heading = (h + so + 360) % 360;
+  if (fsRaf) return;
+  fsRaf = requestAnimationFrame(() => {
+    fsRaf = 0;
+    const svg = document.getElementById('fs-lp-svg'), rd = document.getElementById('fs-read'), hd = state.fs.heading;
+    if (svg) svg.style.transform = `rotate(${-hd}deg)`;
+    if (rd) { const m = mountainOf(hd); rd.innerHTML = `<b>${Math.round(hd)}°</b><span>${FS_DIR_SHORT[m.palace]} · ${m.cn} ${m.th}</span>`; }
+    if (!document.querySelector('[data-act="fsUseHeading"]') && route() === 'fengshui' && state.fs.tab === 'compass') render();
+  });
+}
+async function fsStartSensor() {
+  try {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+      const r = await DeviceOrientationEvent.requestPermission();
+      if (r === 'denied') { toast('ยังไม่ได้อนุญาตให้ใช้เข็มทิศ เปิดสิทธิ์ในการตั้งค่าเบราว์เซอร์'); return; }
+    }
+  } catch (e) { /* older browsers */ }
+  window.addEventListener('deviceorientationabsolute', fsOnOrient, true);
+  window.addEventListener('deviceorientation', fsOnOrient, true);
+  state.fs.sensor = true;
+  setTimeout(() => { if (state.fs.heading == null) toast('เครื่องนี้ไม่ส่งค่าเข็มทิศ ลองบนมือถือ หรือเลื่อนตั้งองศาเอง'); }, 2500);
+  render();
+}
+async function fsToggleCam() {
+  if (state.fs.cam) { fsStopCam(); state.fs.cam = false; render(); return; }
+  try {
+    fsStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+    state.fs.cam = true; render();
+  } catch (e) { toast('เปิดกล้องไม่ได้ ตรวจสิทธิ์กล้องของเบราว์เซอร์'); }
+}
+function mountFengshui() {
+  if (route() !== 'fengshui' || state.fs.tab !== 'compass') { if (fsStream && route() !== 'fengshui') { fsStopCam(); state.fs.cam = false; } return; }
+  const v = document.getElementById('fs-video');
+  if (v && fsStream) { v.srcObject = fsStream; v.play && v.play().catch(() => {}); }
+}
+function viewFengshui() {
+  const fs = state.fs;
+  const k = fs.gender ? kuaOf(fsBirth(), fs.gender) : null;
+  const genderSeg = `<div class="seg" role="group" aria-label="เพศ">${[['m', 'ชาย'], ['f', 'หญิง']].map(([v, t]) => `<button aria-pressed="${fs.gender === v}" data-act="fsGender" data-v="${v}">${t}</button>`).join('')}</div>`;
+  let body = '';
+  if (fs.tab === 'kua') body = k ? fsKuaHTML(k) : `<section class="card"><p class="body" style="margin:0">เลขกัวคำนวณจากปีเกิดและเพศ เลือกเพศด้านบนเพื่อดูทิศมงคลของคุณ</p></section>`;
+  else if (fs.tab === 'house') body = fsHouseHTML(fs, k);
+  else if (fs.tab === 'year') body = fsYearHTML();
+  else body = fsCompassHTML(fs, k);
+  return `<main class="screen" style="--accent:#E5675A">
+${pageHead('14', 'FENG SHUI', 'ฮวงจุ้ย', '#E5675A', 'fengshui')}
+<div class="fs-gender"><span class="small">เพศ (ใช้คำนวณเลขกัว)</span>${genderSeg}</div>
+<div class="tabs fs-tabs" role="tablist">${FS_TABS.map(([t, l]) => `<button role="tab" aria-selected="${fs.tab === t}" data-act="fsTab" data-v="${t}">${l}</button>`).join('')}</div>
+${body}
+<p class="small" style="font-size:11px">คำนวณตามสูตรปาจาย (八宅) และเสวียนคงเฟยซิง (玄空飛星) ยุค 9 (ปี 2024–2043) ผังดาวตรวจเทียบกับเครื่องคิดเลขฮวงจุ้ยสากลแล้ว ใช้เป็นแนวทางศึกษา หากจะสร้างหรือรีโนเวตบ้าน ควรปรึกษาซินแส</p>
+</main>`;
+}
+
+const VIEWS = { fengshui: viewFengshui, calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -9514,8 +9896,9 @@ function render() {
   if (r === 'home' && showOraSheet() && !document.getElementById('ora-sheet')) document.body.insertAdjacentHTML('beforeend', oracleSheetB());
   mountLuck();
   if (r === 'map') mountMap();
+  mountFengshui();
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -9690,6 +10073,13 @@ document.addEventListener('click', (e) => {
     case 'askChip': ask(el.dataset.q); return;
     case 'muCat': Object.assign(state.map, { cat: el.dataset.v, wish: el.dataset.v === 'wish' ? state.map.wish : null, sel: null }); break;
     case 'muWish': state.map.wish = state.map.wish === el.dataset.v ? null : el.dataset.v; state.map.cat = 'wish'; state.map.sel = null; break;
+    case 'fsTab': state.fs.tab = el.dataset.v; window.scrollTo(0, 0); break;
+    case 'fsGender': state.fs.gender = el.dataset.v; fsSave(); break;
+    case 'fsQuick': state.fs.facing = FS_DIR_DEG[el.dataset.v]; state.fs.cell = null; fsSave(); break;
+    case 'fsCell': state.fs.cell = el.dataset.v; break;
+    case 'fsSensor': fsStartSensor(); return;
+    case 'fsCam': fsToggleCam(); return;
+    case 'fsUseHeading': state.fs.facing = Math.round(state.fs.heading); state.fs.cell = null; state.fs.tab = 'house'; fsSave(); toast(`ตั้งทิศหน้าบ้าน ${state.fs.facing}° แล้ว`); break;
     case 'muReg': state.map.reg = el.dataset.v; state.map.sel = null; break;
     case 'muSel': muSelect(el.dataset.v, false); return;
     case 'muNear': {
@@ -9764,6 +10154,13 @@ document.addEventListener('input', (e) => {
   const v = e.target.value;
   if (key === 'm.name') { state.match.name = v.trim(); const sb = document.querySelector('[data-act=matchSave]'); if (sb) sb.disabled = !state.match.name; return; }
   if (key === 'tarotQ') { state.tarot.q = v; return; }
+  if (key === 'fsFacing') {
+    state.fs.facing = +v; state.fs.cell = null;
+    const m = mountainOf(+v), t = document.getElementById('fs-face-read'), g = document.getElementById('fs-dial-g');
+    if (t) t.textContent = `${v}° ${FS_DIR_SHORT[m.palace]} · ${m.cn}`;
+    if (g) g.style.transform = `rotate(${v}deg)`;
+    return;
+  }
   if (key === 'dreamQ') {
     state.dream.q = v; state.dream.sel = null; state.dream.saved = false;
     const out = document.getElementById('dream-out'), d = v.trim() ? dreamLookup(v) : null;
@@ -9798,6 +10195,7 @@ document.addEventListener('change', (e) => {
   if (!key) return;
   const v = +e.target.value;
   if (key === 'm.name') return;
+  if (key === 'fsFacing') { fsSave(); render(); return; }
   if (key.startsWith('m.')) { state.match[key.slice(2)] = v; render(); return; }
   if (key === 'nm.day') { state.num.day = v; const box = document.getElementById('num-results'); if (box) box.innerHTML = numResults(); return; }
   if (key.startsWith('t.')) { state.tarot.other[key.slice(2)] = v; render(); return; }
