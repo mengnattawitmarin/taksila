@@ -1299,6 +1299,64 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .fs-plan li{display:grid;grid-template-columns:24px 1fr;gap:6px}
 .fs-plan li>span{display:flex;flex-direction:column}
 .fs-plan li i{font-style:normal;font-size:12px;color:var(--muted)}
+/* โหงวเฮ้ง · ลายมือ */
+.ph-start{align-items:stretch;gap:12px}
+.ph-ill{display:flex;justify-content:center}
+.ph-svg{width:min(70vw,230px);height:auto}
+.ph-svg .o{fill:rgba(232,162,184,.06);stroke:rgba(232,162,184,.6);stroke-width:1.5}
+.ph-svg .l{fill:none;stroke:rgba(241,230,207,.55);stroke-width:1.4;stroke-linecap:round}
+.ph-svg .z line{stroke:rgba(229,103,90,.6);stroke-dasharray:4 4}
+.ph-svg .d{fill:#E5675A;stroke:#fff;stroke-width:1}
+.ph-svg text{font-size:9px;fill:#F0D89A;font-family:var(--sans)}
+.ph-svg .pl{fill:none;stroke-width:3;stroke-linecap:round}
+.ph-t{font-family:var(--serif);font-size:18px;line-height:1.4}
+.ph-steps{margin:0;padding-left:1.1rem;font-size:13.5px;line-height:1.7;color:var(--text-2)}
+.ph-btns{display:flex;gap:8px}.ph-btns .btn{flex:1}
+.ph-file{cursor:pointer}
+.ph-err{margin:0;padding:10px 12px;border-radius:10px;background:rgba(229,103,90,.1);border:1px solid rgba(229,103,90,.35);font-size:13px;line-height:1.55;color:#F2B3A3}
+.ph-live{display:flex;flex-direction:column;gap:10px}
+.ph-stage{position:relative;border-radius:18px;overflow:hidden;background:#000;aspect-ratio:3/4;border:1px solid var(--line-2)}
+.ph-stage video,.ph-stage canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
+.ph-stage video.mir{transform:scaleX(-1)}
+.ph-top{position:absolute;left:10px;right:10px;top:10px;display:flex;flex-direction:column;gap:6px}
+.ph-hint{align-self:center;padding:7px 14px;border-radius:16px;background:rgba(13,11,8,.75);font-size:14px;color:var(--gold-2);border:1px solid rgba(240,216,154,.4)}
+.ph-hint.ok{color:#6FC3B2;border-color:rgba(111,195,178,.6)}
+.ph-bar{height:4px;border-radius:2px;background:rgba(255,255,255,.15);overflow:hidden}
+.ph-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#E8A2B8,#F0D89A);transition:width .15s}
+.ph-spin{width:44px;height:44px;margin:6px auto 0;border-radius:50%;border:3px solid rgba(232,162,184,.25);border-top-color:#E8A2B8;animation:phspin 1s linear infinite}
+@keyframes phspin{to{transform:rotate(360deg)}}
+.ph-snapw{display:flex;flex-direction:column;gap:8px}
+#ph-snap{width:100%;height:auto;border-radius:16px;border:1px solid var(--line-2);display:block}
+.ph-snapbar{display:flex;flex-wrap:wrap;gap:6px}
+.ph-dot{display:inline-block;width:9px;height:9px;border-radius:5px;margin-right:5px;vertical-align:0}
+.ph-el{gap:8px}
+.ph-el-top{display:flex;align-items:center;gap:14px}
+.ph-el-top b{display:block;font-family:var(--serif);font-size:21px}
+.ph-el-top span{font-size:13px;color:var(--text-2)}
+.ph-el-ic{flex:none;width:58px;height:58px;border-radius:29px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:20px;font-weight:600;color:#0D0B08;background:#D4AF63}
+.ph-el-ic.wood,.ph-el-ic.h-air{background:#7FC4B4}.ph-el-ic.fire,.ph-el-ic.h-fire{background:#E5675A}.ph-el-ic.earth,.ph-el-ic.h-earth{background:#E0A458}.ph-el-ic.metal{background:#E9DFC8;color:#3A2E14}.ph-el-ic.water,.ph-el-ic.h-water{background:#8FB3E0}
+.ph-el-ic.h-air,.ph-el-ic.h-fire,.ph-el-ic.h-earth,.ph-el-ic.h-water{font-size:17px}
+.ph-tip{margin:0;font-size:13px;line-height:1.55;color:#9FD8CB}
+.ph-list{display:flex;flex-direction:column;gap:8px}
+.ph-read{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);border-left:3px solid var(--line-2)}
+.ph-read.pos{border-left-color:#6FC3B2}.ph-read.neg{border-left-color:#E5675A}.ph-read.mid{border-left-color:#D4AF63}
+.ph-read header{display:flex;align-items:baseline;gap:8px}
+.ph-read header b{font-size:15px}
+.ph-cn{font-size:12px;color:var(--muted)}
+.ph-val{font-size:11.5px;color:var(--gold)}
+.ph-read p{margin:0;font-size:14px;line-height:1.6;color:var(--text-2)}
+.ph-read p.ph-tip{color:#9FD8CB;font-size:13px}
+.ph-line{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);border-left:3px solid var(--lc)}
+.ph-line header{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ph-line header b{font-size:15px}
+.ph-opts{display:flex;flex-wrap:wrap;gap:6px}
+.ph-opts .chip{min-height:36px;font-size:12.5px;text-align:left;white-space:normal;line-height:1.35;padding:6px 12px}
+.ph-lread{margin:0;font-size:14px;line-height:1.6;color:var(--text)}
+.ph-pc{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ph-pc>div{padding:10px;border-radius:10px;font-size:12.5px;line-height:1.55}
+.ph-pc ul{margin:4px 0 0;padding-left:1rem}
+.ph-pc .pos{background:rgba(111,195,178,.08)}.ph-pc .neg{background:rgba(229,103,90,.08)}
+@media (max-width:360px){.ph-pc{grid-template-columns:1fr}}
 
 </style>
 </head>
@@ -7648,8 +7706,332 @@ function logoRing() {
 </svg>`;
 }
 
+// ---- js/physio.js ----
+// โหงวเฮ้ง (面相) และลายมือ: วัดสัดส่วนจากจุด landmark ของ MediaPipe แล้วอ่านตามหลักตำรา
+// ใบหน้า: Face Landmarker 478 จุด · มือ: Hand Landmarker 21 จุด (+ พิกัดจริงหน่วยเมตร)
+// หลักที่ใช้: สามส่วนของใบหน้า (三停), 12 ตำแหน่ง (十二宮), รูปหน้าห้าธาตุ (五行面相),
+// สัดส่วนอุดมคติ เช่น ระยะหว่างตาเท่าความยาวตา และปีกจมูกเท่าระยะหว่างหัวตา
+// มือ: รูปมือสี่ธาตุ (ดิน ลม ไฟ น้ำ) และความยาวนิ้วตามตำราลายมือสากล
+// ผลเป็นแนวทางเพื่อความบันเทิงและรู้จักตัวเอง ไม่ใช่การตัดสินคน
+
+// ---------- เครื่องมือเรขาคณิต ----------
+const phD2 = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+const phD3 = (a, b) => Math.hypot(a.x - b.x, a.y - b.y, (a.z || 0) - (b.z || 0));
+const phMid = (a, b) => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, z: ((a.z || 0) + (b.z || 0)) / 2 });
+const phClamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const phR2 = (v) => Math.round(v * 100) / 100;
+
+// แปลงพิกัด 0–1 เป็นพิกเซล แล้วหมุนให้ตาอยู่แนวระนาบ (แก้หน้าเอียง)
+function levelFace(lm, W, H) {
+  const P = lm.map((p) => ({ x: p.x * W, y: p.y * H, z: (p.z || 0) * W }));
+  const eR = phMid(P[33], P[133]), eL = phMid(P[263], P[362]); // ตาขวาของเจ้าของหน้า (ซ้ายภาพ) / ตาซ้าย
+  const roll = Math.atan2(eL.y - eR.y, eL.x - eR.x);
+  const c = phMid(eR, eL), cs = Math.cos(-roll), sn = Math.sin(-roll);
+  return { P: P.map((p) => ({ x: c.x + (p.x - c.x) * cs - (p.y - c.y) * sn, y: c.y + (p.x - c.x) * sn + (p.y - c.y) * cs, z: p.z })), roll: roll * 180 / Math.PI };
+}
+
+// ---------- ใบหน้า: วัดค่า ----------
+// ดัชนีจุดหลักของ Face Mesh
+const FI = {
+  top: 10, glab: 9, nasion: 168, bridge: 6, tip: 4, sub: 2, lipTop: 0, lipIn1: 13, lipIn2: 14, lipBot: 17, chin: 152,
+  eRo: 33, eRi: 133, eRt: 159, eRb: 145, eLo: 263, eLi: 362, eLt: 386, eLb: 374,
+  bRo: 70, bRi: 107, bRt: 105, bLo: 300, bLi: 336, bLt: 334,
+  noseR: 64, noseL: 294, mR: 61, mL: 291, cheekR: 234, cheekL: 454, jawR: 172, jawL: 397, foreR: 54, foreL: 284, chinR: 148, chinL: 377
+};
+// คู่จุดซ้าย-ขวา ใช้วัดความสมมาตร
+const PH_SYM = [[33, 263], [133, 362], [70, 300], [107, 336], [105, 334], [64, 294], [61, 291], [234, 454], [172, 397], [54, 284], [148, 377], [159, 386], [145, 374]];
+
+function faceMeasure(lm, W = 1, H = 1) {
+  const { P, roll } = levelFace(lm, W, H), g = (i) => P[i];
+  const faceW = phD2(g(FI.cheekR), g(FI.cheekL)), faceH = g(FI.chin).y - g(FI.top).y;
+  const browY = (g(FI.bRt).y + g(FI.bLt).y) / 2;
+  // จุด 10 อยู่ต่ำกว่าแนวไรผมจริง จึงประมาณหน้าผากเต็มด้วยตัวคูณ 1.55 (ปรับจากสัดส่วนมาตรฐานที่สามส่วนเท่ากัน)
+  const up = (browY - g(FI.top).y) * 1.55, md = g(FI.sub).y - browY, lo = g(FI.chin).y - g(FI.sub).y, th = up + md + lo;
+  const eyeW = (phD2(g(FI.eRo), g(FI.eRi)) + phD2(g(FI.eLo), g(FI.eLi))) / 2;
+  const eyeGap = phD2(g(FI.eRi), g(FI.eLi));
+  const eyeOpen = ((g(FI.eRb).y - g(FI.eRt).y) + (g(FI.eLb).y - g(FI.eLt).y)) / 2 / eyeW;
+  // หางตาสูงกว่าหัวตา = ค่าบวก (องศา)
+  const tilt = ((Math.atan2(g(FI.eRi).y - g(FI.eRo).y, Math.abs(g(FI.eRi).x - g(FI.eRo).x)) + Math.atan2(g(FI.eLi).y - g(FI.eLo).y, Math.abs(g(FI.eLi).x - g(FI.eLo).x))) / 2) * 180 / Math.PI;
+  const browLen = (phD2(g(FI.bRo), g(FI.bRi)) + phD2(g(FI.bLo), g(FI.bLi))) / 2;
+  const browEye = ((g(FI.eRt).y - g(FI.bRt).y) + (g(FI.eLt).y - g(FI.bLt).y)) / 2 / eyeW;
+  const browGap = phD2(g(FI.bRi), g(FI.bLi)) / eyeW;
+  const noseW = phD2(g(FI.noseR), g(FI.noseL)), noseL = g(FI.sub).y - g(FI.nasion).y;
+  const mouthW = phD2(g(FI.mR), g(FI.mL));
+  const lipU = g(FI.lipIn1).y - g(FI.lipTop).y, lipL = g(FI.lipBot).y - g(FI.lipIn2).y;
+  const lipMidY = (g(FI.lipIn1).y + g(FI.lipIn2).y) / 2, cornerY = (g(FI.mR).y + g(FI.mL).y) / 2;
+  const philtrum = g(FI.lipTop).y - g(FI.sub).y, chinL = g(FI.chin).y - g(FI.lipBot).y;
+  // ความหันข้าง: ระยะจมูกถึงแก้มสองข้างควรเท่ากัน
+  const yaw = (phD2(g(FI.tip), g(FI.cheekR)) - phD2(g(FI.tip), g(FI.cheekL))) / faceW;
+  // ก้มเงย: ปลายจมูกเทียบเส้นกลางระหว่างตากับปาก
+  const pitch = ((g(FI.tip).y - g(FI.nasion).y) / (g(FI.lipIn1).y - g(FI.nasion).y));
+  const cx = (g(FI.cheekR).x + g(FI.cheekL).x) / 2;
+  let asym = 0;
+  for (const [a, b] of PH_SYM) asym += Math.abs((cx - g(a).x) - (g(b).x - cx)) / faceW + Math.abs(g(a).y - g(b).y) / faceW;
+  asym /= PH_SYM.length;
+  return {
+    roll, yaw, pitch, faceW, faceH,
+    ratio: faceH / faceW,
+    fore: phD2(g(FI.foreR), g(FI.foreL)) / faceW, jaw: phD2(g(FI.jawR), g(FI.jawL)) / faceW, chinW: phD2(g(FI.chinR), g(FI.chinL)) / faceW,
+    up: up / th, md: md / th, lo: lo / th,
+    eyeGapR: eyeGap / eyeW, eyeOpen, tilt, eyeW: eyeW / faceW,
+    browLenR: browLen / eyeW, browEye, browGap,
+    noseWR: noseW / eyeGap, noseLR: noseL / th,
+    mouthR: mouthW / noseW, lipBal: lipU / Math.max(lipL, 1e-6), lipThick: (lipU + lipL) / mouthW,
+    corner: (lipMidY - cornerY) / mouthW, philR: philtrum / lo, chinLR: chinL / lo,
+    sym: phClamp(1 - asym * 6, 0, 1)
+  };
+}
+
+// ตรวจท่าทางก่อนอ่าน: หน้าตรง ไม่เอียง ไม่ยิ้มกว้าง
+function facePoseOK(m, bs) {
+  const issues = [];
+  if (Math.abs(m.yaw) > 0.12) issues.push(m.yaw > 0 ? 'หันหน้าไปทางขวาอีกนิด' : 'หันหน้าไปทางซ้ายอีกนิด');
+  if (Math.abs(m.roll) > 12) issues.push('ตั้งศีรษะให้ตรง');
+  if (m.pitch < 0.48) issues.push('ก้มหน้าลงเล็กน้อย');
+  else if (m.pitch > 0.78) issues.push('เงยหน้าขึ้นเล็กน้อย');
+  const smile = bs ? Math.max(bs.mouthSmileLeft || 0, bs.mouthSmileRight || 0) : 0;
+  if (smile > 0.45) issues.push('ทำหน้าปกติ ไม่ยิ้ม');
+  if (bs && (bs.jawOpen || 0) > 0.25) issues.push('ปิดปาก');
+  return { ok: !issues.length, issues, smile };
+}
+
+// เฉลี่ยค่าหลายเฟรม (ตัดค่าโด่งด้วยมัธยฐาน)
+function averageMeasures(list) {
+  if (!list.length) return null;
+  const out = {};
+  for (const k of Object.keys(list[0])) { const v = list.map((x) => x[k]).sort((a, b) => a - b); out[k] = v[Math.floor(v.length / 2)]; }
+  out.n = list.length;
+  return out;
+}
+
+// ---------- ใบหน้า: รูปหน้าห้าธาตุ ----------
+const FACE_EL = {
+  wood: { th: 'ไม้', shape: 'หน้ายาว', cn: '木形', read: 'สูงโปร่ง ใจรักความก้าวหน้า มีอุดมการณ์ ชอบเรียนรู้และพัฒนาตัวเอง เหมาะงานความคิด การศึกษา งานสร้างสรรค์', boost: 'ทรงผมที่มีวอลุ่มด้านข้าง ช่วยให้หน้าดูสมดุล ใส่สีเขียวหรือฟ้าเสริมธาตุ' },
+  fire: { th: 'ไฟ', shape: 'หน้าเรียวแหลม', cn: '火形', read: 'คิดไว ทำไว มีเสน่ห์ ช่างพูด กระตือรือร้น ชอบความท้าทาย แต่ใจร้อนและเบื่อง่าย ควรฝึกความต่อเนื่อง', boost: 'คอนทัวร์กรามให้ดูนุ่มขึ้นเล็กน้อย ใส่สีแดง ชมพู ม่วง เสริมธาตุ' },
+  earth: { th: 'ดิน', shape: 'หน้าเหลี่ยมกรามกว้าง', cn: '土形', read: 'หนักแน่น อดทน ซื่อสัตย์ น่าไว้ใจ เก็บเงินเก่ง คนรอบตัวพึ่งพาได้ แต่บางครั้งดื้อและเปลี่ยนแปลงช้า', boost: 'ทรงผมยาวระดับคางหรือเลยลงมา ช่วยลดความเหลี่ยม ใส่สีเหลือง น้ำตาล ครีม เสริมธาตุ' },
+  metal: { th: 'ทอง', shape: 'หน้าเหลี่ยมสมส่วน', cn: '金形', read: 'มีระเบียบ ตัดสินใจเด็ดขาด ยุติธรรม รักศักดิ์ศรี เหมาะงานบริหาร การเงิน กฎหมาย แต่ควรระวังความเข้มงวดเกินไป', boost: 'แต่งหน้าโทนอบอุ่นให้ดูเป็นมิตร ใส่สีขาว เงิน ทอง เสริมธาตุ' },
+  water: { th: 'น้ำ', shape: 'หน้ากลม', cn: '水形', read: 'อ่อนโยน ปรับตัวเก่ง เข้ากับคนง่าย มีไหวพริบและเสน่ห์ เหมาะงานติดต่อผู้คน แต่ควรระวังความลังเล', boost: 'ทรงผมที่มีความสูงด้านบน หรือแสกข้าง ช่วยให้หน้าดูยาวขึ้น ใส่สีดำ น้ำเงิน เสริมธาตุ' }
+};
+function faceElement(m) {
+  const s = {
+    water: phClamp((1.22 - m.ratio) * 6, 0, 1.5) + phClamp((m.jaw - 0.72) * 3, 0, 0.6),
+    wood: phClamp((m.ratio - 1.3) * 6, 0, 1.5) + phClamp((0.84 - m.jaw) * 3, 0, 0.5),
+    earth: phClamp((m.jaw - 0.8) * 8, 0, 1.5) + phClamp((1.32 - m.ratio) * 3, 0, 0.5),
+    metal: phClamp(1 - Math.abs(m.ratio - 1.28) * 5, 0, 1) + phClamp(1 - Math.abs(m.jaw - 0.8) * 8, 0, 0.8) + phClamp((m.fore - 0.82) * 4, 0, 0.4),
+    fire: phClamp((0.19 - m.chinW) * 25, 0, 1.2) + phClamp((0.77 - m.jaw) * 6, 0, 0.9)
+  };
+  const rank = Object.entries(s).sort((a, b) => b[1] - a[1]);
+  const [k1, v1] = rank[0], [k2, v2] = rank[1];
+  return { key: k1, mix: v2 > v1 * 0.75 ? k2 : null, scores: s, ...FACE_EL[k1], mixTh: v2 > v1 * 0.75 ? FACE_EL[k2].th : null };
+}
+// ธาตุประจำปีเกิดจีน (เลขท้ายปี ค.ศ. จีน) เทียบกับธาตุใบหน้า
+const YEAR_EL = ['metal', 'metal', 'water', 'water', 'wood', 'wood', 'fire', 'fire', 'earth', 'earth'];
+const GEN = { wood: 'fire', fire: 'earth', earth: 'metal', metal: 'water', water: 'wood' };
+const CTRL = { wood: 'earth', earth: 'water', water: 'fire', fire: 'metal', metal: 'wood' };
+function elementRelation(faceKey, solarYear) {
+  const y = YEAR_EL[((solarYear % 10) + 10) % 10];
+  const t = (k) => FACE_EL[k].th;
+  if (y === faceKey) return { y, tone: 1, th: `ธาตุปีเกิด (${t(y)}) ตรงกับธาตุใบหน้า พลังไปทางเดียวกัน เป็นตัวของตัวเองชัด` };
+  if (GEN[y] === faceKey) return { y, tone: 1, th: `ธาตุปีเกิด (${t(y)}) ให้กำเนิดธาตุใบหน้า (${t(faceKey)}) ได้แรงหนุนจากพื้นดวง ทำอะไรมักมีคนช่วย` };
+  if (GEN[faceKey] === y) return { y, tone: 0, th: `ธาตุใบหน้า (${t(faceKey)}) ให้กำเนิดธาตุปีเกิด (${t(y)}) เป็นคนให้ ทุ่มเทเพื่อคนอื่น ควรเผื่อแรงให้ตัวเองบ้าง` };
+  if (CTRL[y] === faceKey) return { y, tone: -1, th: `ธาตุปีเกิด (${t(y)}) ข่มธาตุใบหน้า (${t(faceKey)}) มักกดดันตัวเอง เสริมด้วยสีของธาตุ${t(Object.keys(GEN).find((k) => GEN[k] === faceKey))} ซึ่งช่วยหนุนธาตุใบหน้า` };
+  return { y, tone: 0, th: `ธาตุใบหน้า (${t(faceKey)}) ข่มธาตุปีเกิด (${t(y)}) เป็นคนคุมเกม ชอบลงมือเอง ระวังรับภาระมากเกิน` };
+}
+
+// ---------- ใบหน้า: อ่านแต่ละส่วน ----------
+// แต่ละข้อ: ค่า → ระดับ → คำอ่าน + วิธีเสริมแบบปัจจุบัน (แต่งหน้า ทรงผม แว่น นิสัย)
+function phBand(v, lo, hi) { return v < lo ? -1 : v > hi ? 1 : 0; }
+function faceRead(m) {
+  const out = [];
+  const add = (o) => out.push(o);
+  // สามส่วนของใบหน้า
+  const thirds = [['up', 'ส่วนบน (หน้าผาก)', 'วัยต้น 15–30 ปี', 'สติปัญญา การเรียน ผู้ใหญ่อุปถัมภ์'], ['md', 'ส่วนกลาง (คิ้วถึงปลายจมูก)', 'วัยกลาง 31–50 ปี', 'การงาน ความมุ่งมั่น การสร้างฐานะ'], ['lo', 'ส่วนล่าง (ใต้จมูกถึงคาง)', 'วัยปลาย 51 ปีขึ้นไป', 'ความมั่นคง บริวาร ที่อยู่อาศัย']];
+  const big = thirds.reduce((a, t) => (m[t[0]] > m[a[0]] ? t : a));
+  const even = Math.max(m.up, m.md, m.lo) - Math.min(m.up, m.md, m.lo) < 0.06;
+  add({ key: 'thirds', zone: 'thirds', title: 'สามส่วนของใบหน้า', cn: '三停', val: `บน ${Math.round(m.up * 100)}% · กลาง ${Math.round(m.md * 100)}% · ล่าง ${Math.round(m.lo * 100)}%`, tone: even ? 1 : 0,
+    read: even ? 'สามส่วนใกล้เคียงกัน ตำราถือว่าดวงสมดุล ชีวิตไปได้เรื่อย ๆ ทุกช่วงวัย' : `${big[1]}เด่นที่สุด ตำราให้ช่วง${big[2]}เป็นช่วงที่เด่น เรื่อง${big[3]}`,
+    tip: m.up < 0.29 ? 'หน้าผากวัดได้แคบ ถ้ามีผมหน้าม้าหรือผมปิดหน้าผาก ให้เปิดผมขึ้นแล้ววัดใหม่ ทรงผมเปิดหน้าผากช่วยให้ดูเปิดกว้าง' : 'รักษาทั้งสามส่วนให้สะอาด สดใส ผิวที่ดูมีน้ำมีนวลตำราถือว่าเสริมดวงทุกช่วงวัย' });
+  // หน้าผาก 官祿宮
+  const fw = phBand(m.fore, 0.78, 0.88);
+  add({ key: 'fore', zone: 'fore', title: 'หน้าผาก', cn: '官祿宮', val: `กว้าง ${Math.round(m.fore * 100)}% ของหน้า`, tone: fw >= 0 ? 1 : 0,
+    read: fw > 0 ? 'หน้าผากกว้าง มองการณ์ไกล คิดเป็นระบบ ตำราว่าได้ผู้ใหญ่และหัวหน้าเมตตา' : fw < 0 ? 'หน้าผากค่อนแคบ เป็นคนลงมือทำมากกว่าคิดนาน ประสบการณ์สอนได้ดีกว่าตำรา' : 'หน้าผากพอดี สมดุลระหว่างคิดกับลงมือ',
+    tip: 'เปิดหน้าผากด้วยทรงผมเสยหรือแสกกลาง ดูแลผิวช่วงหน้าผากไม่ให้มีสิว ตำราว่าหน้าผากสว่างสดใสช่วยเรื่องงานและผู้ใหญ่' });
+  // หว่างคิ้ว 命宮
+  const bg = phBand(m.browGap, 0.75, 1.15);
+  add({ key: 'browGap', zone: 'yintang', title: 'หว่างคิ้ว', cn: '命宮 印堂', val: `ระยะ ${phR2(m.browGap)} เท่าความยาวตา`, tone: bg >= 0 ? 1 : -1,
+    read: bg > 0 ? 'หว่างคิ้วกว้าง ใจกว้าง มองโลกแง่ดี ให้อภัยง่าย ตำราถือเป็นตำแหน่งชะตาที่เปิดรับโชค' : bg < 0 ? 'หว่างคิ้วแคบ จริงจัง ละเอียด คิดมาก มีแนวโน้มเครียดง่าย' : 'หว่างคิ้วพอดี มีเหตุผล ไม่คิดมากเกินไป',
+    tip: bg < 0 ? 'เล็มขนคิ้วส่วนหัวให้หว่างคิ้วโล่งขึ้นเล็กน้อย ฝึกคลายคิ้วเวลาคิด เพราะการขมวดคิ้วบ่อยทำให้เกิดริ้วรอยตรงจุดนี้' : 'รักษาหว่างคิ้วให้สะอาด ไม่มีขนรก ตำราว่าจุดนี้สว่างแล้วชีวิตราบรื่น' });
+  // คิ้ว 兄弟宮
+  const bl = phBand(m.browLenR, 1.45, 1.85);
+  add({ key: 'brow', zone: 'brow', title: 'คิ้ว', cn: '兄弟宮', val: `ยาว ${phR2(m.browLenR)} เท่าของตา`, tone: bl >= 0 ? 1 : 0,
+    read: bl >= 0 ? 'คิ้วยาวกว่าตา ตำราว่ามีพี่น้อง เพื่อน และคนรอบตัวคอยช่วยเหลือ เป็นคนมีน้ำใจ' : 'คิ้วสั้นกว่าตา พึ่งตัวเองเป็นหลัก ตัดสินใจเร็ว เป็นตัวของตัวเอง',
+    tip: bl < 0 ? 'เขียนคิ้วต่อหางให้ยาวเลยหางตาเล็กน้อย ใช้สีใกล้สีผม' : 'แต่งคิ้วให้เรียบ เป็นระเบียบ ไม่ขาดเป็นช่วง' });
+  // ระยะคิ้วกับตา 田宅宮
+  const be = phBand(m.browEye, 0.45, 0.66);
+  add({ key: 'browEye', zone: 'lid', title: 'ระยะคิ้วกับตา', cn: '田宅宮', val: `${phR2(m.browEye)} เท่าความยาวตา`, tone: be >= 0 ? 1 : 0,
+    read: be > 0 ? 'คิ้วอยู่ห่างตา ใจเย็น ใจกว้าง ตำราว่าเกี่ยวกับบ้านและที่ดิน มีโอกาสได้ทรัพย์สินมั่นคง' : be < 0 ? 'คิ้วชิดตา ใจร้อน ตัดสินใจไว มุ่งมั่นสูง ควรให้เวลาคิดก่อนตัดสินใจเรื่องใหญ่' : 'ระยะคิ้วกับตาพอดี สมดุลระหว่างความเร็วกับความรอบคอบ',
+    tip: be < 0 ? 'ถอนขนคิ้วด้านล่างเล็กน้อย และใช้อายแชโดว์สีอ่อนบนเปลือกตา ช่วยให้ระยะดูกว้างขึ้น' : 'ใช้อายแชโดว์โทนสว่างบนเปลือกตา ช่วยให้ดวงตาดูสดใส' });
+  // ตา
+  const eg = phBand(m.eyeGapR, 1.15, 1.42);
+  const tl = m.tilt > 4 ? 1 : m.tilt < -2 ? -1 : 0;
+  add({ key: 'eye', zone: 'eye', title: 'ดวงตา', cn: '監察官', val: `ระยะหว่างตา ${phR2(m.eyeGapR)} เท่าความยาวตา · หางตา${tl > 0 ? 'ชี้ขึ้น' : tl < 0 ? 'ตก' : 'ระนาบ'}`, tone: eg === 0 ? 1 : 0,
+    read: `${eg > 0 ? 'ตาห่าง ใจกว้าง ใจเย็น มองภาพรวมเก่ง แต่บางครั้งช้าไปนิด' : eg < 0 ? 'ตาชิด มีสมาธิ ทำงานละเอียด เก่งเรื่องเฉพาะทาง แต่เครียดง่าย' : 'ระยะหว่างตาพอดีตามสัดส่วนอุดมคติ คิดอ่านสมดุล'} ${tl > 0 ? 'หางตาชี้ขึ้น มั่นใจ มีความทะเยอทะยาน' : tl < 0 ? 'หางตาตก ใจดี อ่อนโยน ขี้สงสาร' : 'แนวตาระนาบ ตรงไปตรงมา'}`,
+    tip: eg > 0 ? 'เขียนอายไลเนอร์เน้นหัวตา ช่วยให้ระยะดูพอดีขึ้น' : eg < 0 ? 'เน้นอายไลเนอร์และมาสคาร่าที่หางตา ช่วยให้ตาดูห่างขึ้น' : 'นอนให้พอ ตาที่สดใสมีประกาย ตำราว่าคือเครื่องหมายของพลังชีวิตดี' });
+  // ใต้ตา 子女宮 (ความอวบใต้ตา ไม่วัดในภาพ 2D จึงให้คำแนะนำทั่วไป)
+  // จมูก 財帛宮
+  const nw = phBand(m.noseWR, 1.12, 1.4);
+  add({ key: 'nose', zone: 'nose', title: 'จมูก', cn: '財帛宮', val: `ปีกจมูก ${phR2(m.noseWR)} เท่าระยะหัวตา · ยาว ${Math.round(m.noseLR * 100)}% ของหน้า`, tone: nw >= 0 ? 1 : 0,
+    read: `${nw > 0 ? 'ปีกจมูกกว้าง ตำราว่าเก็บเงินเก่ง หาเงินได้และรักษาไว้ได้' : nw < 0 ? 'ปีกจมูกแคบ ใช้เงินคล่อง ควรมีระบบออมอัตโนมัติ' : 'ปีกจมูกพอดีกับระยะหัวตา การเงินสมดุล'} ${m.noseLR > 0.31 ? 'จมูกยาว มีหลักการ รับผิดชอบสูง' : m.noseLR < 0.235 ? 'จมูกสั้น ยืดหยุ่น ปรับตัวไว' : ''}`.trim(),
+    tip: nw < 0 ? 'ตั้งโอนเงินเข้าบัญชีออมทันทีที่เงินเดือนออก ตำราว่าจมูกคือคลังเงิน ส่วนพฤติกรรมคือกุญแจ' : 'ดูแลผิวปลายจมูกไม่ให้มีสิวหรือรอยแดง ตำราว่าปลายจมูกสว่างช่วยเรื่องเงิน' });
+  // ร่องใต้จมูก 人中
+  const ph = phBand(m.philR, 0.14, 0.22);
+  add({ key: 'phil', zone: 'phil', title: 'ร่องใต้จมูก', cn: '人中', val: `${Math.round(m.philR * 100)}% ของส่วนล่าง`, tone: ph >= 0 ? 1 : 0,
+    read: ph > 0 ? 'ร่องใต้จมูกยาว อดทน ใจเย็น ตำราว่าอายุยืน' : ph < 0 ? 'ร่องใต้จมูกสั้น กระตือรือร้น ใจร้อน ทำอะไรรวดเร็ว' : 'ร่องใต้จมูกพอดี สุขภาพและอารมณ์สมดุล',
+    tip: 'ออกกำลังกายสม่ำเสมอ ตรวจสุขภาพประจำปี ตำราโยงจุดนี้กับสุขภาพและอายุ' });
+  // ปาก 出納官
+  const mw = phBand(m.mouthR, 1.3, 1.62), lb = m.lipBal > 0.85 ? 1 : m.lipBal < 0.55 ? -1 : 0, cn = m.corner > 0.03 ? 1 : m.corner < -0.03 ? -1 : 0;
+  add({ key: 'mouth', zone: 'mouth', title: 'ปาก', cn: '出納官', val: `กว้าง ${phR2(m.mouthR)} เท่าปีกจมูก · มุมปาก${cn > 0 ? 'ยก' : cn < 0 ? 'ตก' : 'ระนาบ'}`, tone: cn >= 0 ? 1 : 0,
+    read: `${mw > 0 ? 'ปากกว้าง ช่างพูด เข้าสังคมเก่ง กล้าแสดงออก' : mw < 0 ? 'ปากเล็ก พูดน้อยแต่ตรงประเด็น เก็บความลับเก่ง' : 'ปากพอดี สื่อสารสมดุล'} ${lb > 0 ? 'ริมฝีปากบนหนา ให้ความรักและใส่ใจคนอื่นมาก' : lb < 0 ? 'ริมฝีปากล่างหนากว่า รักสนุก ชอบความสุขสบาย' : ''} ${cn > 0 ? 'มุมปากยก มองโลกแง่บวก คนอยากเข้าใกล้' : cn < 0 ? 'มุมปากตก ช่วงนี้อาจเหนื่อยหรือคิดมาก' : ''}`.replace(/\s+/g, ' ').trim(),
+    tip: cn < 0 ? 'ใช้ลิปไลเนอร์ยกมุมปากขึ้นเล็กน้อย และฝึกยิ้มบ่อย ๆ ตำราว่ามุมปากยกเรียกเสน่ห์และโชค' : 'บำรุงริมฝีปากให้ชุ่มชื้น ใช้ลิปสีสุขภาพดี ตำราว่าปากสีสดเกี่ยวกับเสน่ห์และการเจรจา' });
+  // คาง 地閣
+  const cw = phBand(m.chinW, 0.17, 0.23), cl = phBand(m.chinLR, 0.42, 0.52);
+  add({ key: 'chin', zone: 'chin', title: 'คางและกราม', cn: '地閣 奴僕宮', val: `คางกว้าง ${Math.round(m.chinW * 100)}% · กราม ${Math.round(m.jaw * 100)}% ของหน้า`, tone: cw >= 0 || cl >= 0 ? 1 : 0,
+    read: `${cw > 0 || cl > 0 ? 'คางเต็มอิ่ม ตำราว่าบั้นปลายมั่นคง มีบ้าน มีลูกน้องและบริวารคอยช่วย' : cw < 0 && cl < 0 ? 'คางเรียว ความคิดคล่องตัว ชอบอิสระ ควรวางแผนการเงินระยะยาวตั้งแต่เนิ่น ๆ' : 'คางได้รูปพอดี ชีวิตช่วงปลายค่อย ๆ มั่นคงตามที่สร้างไว้'} ${m.jaw > 0.85 ? 'กรามกว้าง มีพลัง อดทน ไม่ยอมแพ้' : ''}`.trim(),
+    tip: cw < 0 && cl < 0 ? 'ไว้ผมยาวระดับคางหรือไหล่ ช่วยให้ส่วนล่างของหน้าดูเต็มขึ้น และเริ่มออมเพื่อเกษียณตั้งแต่วันนี้' : 'ทำคอนทัวร์ใต้กรามบาง ๆ ให้กรอบหน้าชัด และดูแลความสัมพันธ์กับทีมงาน' });
+  // สมมาตร
+  add({ key: 'sym', zone: 'all', title: 'ความสมดุลซ้าย-ขวา', cn: '', val: `${Math.round(m.sym * 100)}%`, tone: m.sym > 0.75 ? 1 : 0,
+    read: m.sym > 0.75 ? 'ใบหน้าซ้ายขวาสมดุล ตำราว่าชีวิตราบรื่น ไม่ค่อยมีเรื่องขึ้นลงแรง' : 'ใบหน้าซ้ายขวาต่างกันพอสมควร เป็นเรื่องปกติของคนทั่วไป และอาจมาจากมุมกล้องหรือแสง',
+    tip: 'เคี้ยวอาหารสองข้างเท่า ๆ กัน และไม่นอนตะแคงข้างเดียวตลอด ช่วยให้กล้ามเนื้อหน้าสมดุล' });
+  return out;
+}
+
+// ตำแหน่งบนใบหน้าสำหรับวาด AR (ดัชนี landmark ของแต่ละโซน)
+const FACE_ZONES = {
+  fore: { at: 151, th: 'หน้าผาก', cn: '官祿' }, yintang: { at: 9, th: 'หว่างคิ้ว', cn: '命宮' }, brow: { at: 105, th: 'คิ้ว', cn: '兄弟' },
+  lid: { at: 159, th: 'เปลือกตา', cn: '田宅' }, eye: { at: 263, th: 'ตา', cn: '監察' }, nose: { at: 4, th: 'จมูก', cn: '財帛' },
+  phil: { at: 164, th: 'ร่องจมูก', cn: '人中' }, mouth: { at: 291, th: 'ปาก', cn: '出納' }, chin: { at: 152, th: 'คาง', cn: '地閣' },
+  under: { at: 230, th: 'ใต้ตา', cn: '子女' }, temple: { at: 127, th: 'หางตา', cn: '夫妻' }, cheek: { at: 425, th: 'โหนกแก้ม', cn: '顴' }
+};
+// เส้นแบ่งสามส่วนของใบหน้า: ใช้คู่จุดแนวคิ้วและใต้จมูก
+const FACE_LINES = { brow: [70, 300], sub: [2, 2], top: [10, 10], chin: [152, 152] };
+
+// ---------- มือ: วัดค่า ----------
+// 0 ข้อมือ · 1–4 นิ้วโป้ง · 5–8 ชี้ · 9–12 กลาง · 13–16 นาง · 17–20 ก้อย
+const phSeg = (P, a, b, c, d) => phD3(P[a], P[b]) + phD3(P[b], P[c]) + phD3(P[c], P[d]);
+function handMeasure(world, img) {
+  const P = world; // หน่วยเมตร ไม่ขึ้นกับระยะกล้อง
+  const palmL = phD3(P[0], P[9]), palmW = phD3(P[5], P[17]);
+  const fing = { index: phSeg(P, 5, 6, 7, 8), middle: phSeg(P, 9, 10, 11, 12), ring: phSeg(P, 13, 14, 15, 16), little: phSeg(P, 17, 18, 19, 20), thumb: phSeg(P, 1, 2, 3, 4) };
+  // ก้อยถึงข้อนิ้วนางไหม: ฉายลงแกนมือ (ข้อมือ → โคนนิ้วกลาง)
+  const ax = { x: P[9].x - P[0].x, y: P[9].y - P[0].y, z: P[9].z - P[0].z }, al = Math.hypot(ax.x, ax.y, ax.z);
+  const proj = (i) => ((P[i].x - P[0].x) * ax.x + (P[i].y - P[0].y) * ax.y + (P[i].z - P[0].z) * ax.z) / al;
+  // มุมกางนิ้วโป้ง: ระหว่างแนวโป้ง (2→4) กับแนวนิ้วชี้ (5→8)
+  const v1 = { x: P[4].x - P[2].x, y: P[4].y - P[2].y, z: P[4].z - P[2].z }, v2 = { x: P[8].x - P[5].x, y: P[8].y - P[5].y, z: P[8].z - P[5].z };
+  const thumbAng = Math.acos(phClamp((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z) / (Math.hypot(v1.x, v1.y, v1.z) * Math.hypot(v2.x, v2.y, v2.z)), -1, 1)) * 180 / Math.PI;
+  // นิ้วเหยียดตรงไหม (ใช้ตรวจท่า): ปลายนิ้วต้องห่างข้อมือกว่าข้อกลางนิ้ว
+  const straight = [8, 12, 16, 20].every((t) => phD3(P[0], P[t]) > phD3(P[0], P[t - 2]) * 1.05);
+  // ฝ่ามือหันเข้ากล้องหรือหลังมือ: ใช้พิกัดภาพ (z ของโคนนิ้วชี้กับก้อย) ร่วมกับว่าเป็นมือซ้ายหรือขวา
+  return {
+    palmL, palmW, palmRatio: palmL / palmW,
+    fingerRatio: fing.middle / palmL, idxRing: fing.index / fing.ring, thumbR: fing.thumb / palmL, littleR: fing.little / fing.ring,
+    littleReach: proj(20) - proj(15), thumbAng, straight, palmMM: Math.round(palmL * 1000), widthMM: Math.round(palmW * 1000)
+  };
+}
+
+// ตรวจท่ามือจากพิกัดภาพ: ฝ่ามือหันเข้ากล้องไหม (ใช้ทิศการหมุนของข้อมือ→โคนนิ้วชี้→โคนนิ้วก้อย)
+// side = 'R' | 'L' (มือที่ผู้ใช้เลือก), mirrored = ภาพจากกล้องหน้าที่กลับซ้ายขวา
+function handPoseOK(lm, h, side, mirrored) {
+  const issues = [];
+  const v5 = { x: lm[5].x - lm[0].x, y: lm[5].y - lm[0].y }, v17 = { x: lm[17].x - lm[0].x, y: lm[17].y - lm[0].y };
+  const cross = v5.x * v17.y - v5.y * v17.x;
+  const palmIn = side ? ((cross < 0) === (side === 'R')) !== !!mirrored : true;
+  const area = Math.abs(cross), size = Math.hypot(v5.x, v5.y);
+  if (!palmIn) issues.push('หงายฝ่ามือเข้าหากล้อง');
+  else if (area < size * size * 0.25) issues.push('หันฝ่ามือตรงเข้ากล้อง อย่าตะแคงมือ');
+  if (!h.straight) issues.push('เหยียดนิ้วให้ตรง');
+  if (size < 0.12) issues.push('ยื่นมือเข้าใกล้กล้องอีกนิด');
+  if (h.palmRatio < 1.05 || h.palmRatio > 1.9) issues.push('วางมือให้ราบ ขนานกับกล้อง');
+  return { ok: !issues.length, issues, palmIn };
+}
+const HAND_EL = {
+  earth: { th: 'มือธาตุดิน', shape: 'ฝ่ามือเหลี่ยม นิ้วสั้น', read: 'ติดดิน ขยัน ซื่อตรง ชอบทำงานด้วยมือและเห็นผลจริง มั่นคง เชื่อถือได้ ไม่ชอบความเปลี่ยนแปลงเร็ว ๆ', work: 'งานช่าง เกษตร การเงินที่ต้องละเอียด ธุรกิจของตัวเอง' },
+  air: { th: 'มือธาตุลม', shape: 'ฝ่ามือเหลี่ยม นิ้วยาว', read: 'ช่างคิด ช่างสื่อสาร อยากรู้อยากเห็น มีเหตุผล ชอบแลกเปลี่ยนความคิด แต่บางครั้งคิดมากจนไม่ลงมือ', work: 'งานสื่อสาร การสอน การตลาด ไอที งานเขียน' },
+  fire: { th: 'มือธาตุไฟ', shape: 'ฝ่ามือยาว นิ้วสั้น', read: 'กระตือรือร้น กล้าตัดสินใจ มีพลังและความเป็นผู้นำ ชอบความท้าทาย แต่ใจร้อนและเบื่อง่าย', work: 'งานขาย ผู้ประกอบการ กีฬา งานที่ต้องตัดสินใจเร็ว' },
+  water: { th: 'มือธาตุน้ำ', shape: 'ฝ่ามือยาว นิ้วยาว', read: 'อ่อนไหว มีจินตนาการ เข้าใจความรู้สึกคนอื่น มีศิลปะ แต่รับอารมณ์คนรอบตัวง่าย ต้องรู้จักพักใจ', work: 'งานศิลปะ ดนตรี งานดูแลคน จิตวิทยา งานออกแบบ' }
+};
+function handElement(h) {
+  const longPalm = h.palmRatio > 1.42, longFing = h.fingerRatio > 0.95;
+  const key = longPalm ? (longFing ? 'water' : 'fire') : (longFing ? 'air' : 'earth');
+  return { key, ...HAND_EL[key], longPalm, longFing };
+}
+function handRead(h) {
+  const out = [], el = handElement(h);
+  out.push({ key: 'shape', title: 'รูปมือ', val: `${el.shape} · ฝ่ามือยาว ${h.palmMM} มม. กว้าง ${h.widthMM} มม.`, tone: 1, read: el.read, tip: `เหมาะกับ${el.work}` });
+  const ir = h.idxRing > 1.03 ? 1 : h.idxRing < 0.95 ? -1 : 0;
+  out.push({ key: 'idxRing', title: 'นิ้วชี้เทียบนิ้วนาง', val: `นิ้วชี้ ${phR2(h.idxRing)} เท่าของนิ้วนาง`, tone: 1,
+    read: ir > 0 ? 'นิ้วชี้ยาวกว่านิ้วนาง มั่นใจ ชอบเป็นผู้นำ มีความรับผิดชอบสูง' : ir < 0 ? 'นิ้วนางยาวกว่านิ้วชี้ กล้าเสี่ยง มีศิลปะ ชอบความแปลกใหม่และการแข่งขัน' : 'นิ้วชี้กับนิ้วนางใกล้เคียงกัน สมดุลระหว่างความมั่นคงกับความกล้า',
+    tip: ir > 0 ? 'ฝึกรับฟังความเห็นทีม จะเป็นผู้นำที่คนรัก' : ir < 0 ? 'วางแผนความเสี่ยงไว้ก่อน แล้วความกล้าจะกลายเป็นจุดแข็ง' : 'ใช้ความสมดุลนี้เป็นตัวกลางประสานงาน' });
+  out.push({ key: 'little', title: 'นิ้วก้อย', val: h.littleReach >= -0.002 ? 'ยาวถึงข้อบนของนิ้วนาง' : 'สั้นกว่าข้อบนของนิ้วนาง', tone: 1,
+    read: h.littleReach >= -0.002 ? 'นิ้วก้อยยาว ตำราว่าสื่อสารเก่ง เจรจาต่อรองดี มีหัวการค้า' : 'นิ้วก้อยสั้น พูดตรง จริงใจ อาจต้องฝึกการนำเสนอให้นุ่มนวลขึ้น',
+    tip: 'นิ้วก้อยในตำราโยงกับดาวพุธ เรื่องการพูด การค้า และการเรียนรู้' });
+  const ta = h.thumbAng > 52 ? 1 : h.thumbAng < 32 ? -1 : 0, tl = h.thumbR > 0.66 ? 1 : h.thumbR < 0.56 ? -1 : 0;
+  out.push({ key: 'thumb', title: 'นิ้วโป้ง', val: `กาง ${Math.round(h.thumbAng)}° · ยาว ${Math.round(h.thumbR * 100)}% ของฝ่ามือ`, tone: 1,
+    read: `${tl > 0 ? 'นิ้วโป้งยาว มีความตั้งใจแรง ตั้งเป้าแล้วทำให้ถึง' : tl < 0 ? 'นิ้วโป้งสั้น ยืดหยุ่น ใช้ความรู้สึกนำ' : 'นิ้วโป้งยาวพอดี เหตุผลกับความรู้สึกสมดุล'} ${ta > 0 ? 'กางได้กว้าง ใจกว้าง เปิดรับคนและความคิดใหม่' : ta < 0 ? 'กางแคบ ระมัดระวัง เก็บตัว ไว้ใจคนยาก' : ''}`.trim(),
+    tip: 'ตำราลายมือถือว่านิ้วโป้งบอกพลังใจและความมุ่งมั่น' });
+  return out;
+}
+
+// ---------- ลายมือ: เส้นหลักให้ผู้ใช้เลือกลักษณะที่เห็น ----------
+const PALM_LINES = [
+  { id: 'heart', th: 'เส้นใจ (เส้นหัวใจ)', color: '#E5675A', where: 'เส้นบนสุด ใต้โคนนิ้ว เริ่มจากขอบมือฝั่งนิ้วก้อย', about: 'อารมณ์ ความรัก ความสัมพันธ์',
+    opts: [
+      { id: 'curve', th: 'โค้งขึ้นไปจบระหว่างนิ้วชี้กับนิ้วกลาง', read: 'แสดงความรักเปิดเผย อบอุ่น พร้อมดูแลคนรัก', tip: 'บอกความรู้สึกออกไปตรง ๆ คือเสน่ห์ของคุณ' },
+      { id: 'straight', th: 'ตรงยาวเกือบข้ามมือ', read: 'รักใครรักจริง มีเหตุผลในความรัก อาจไม่หวานแต่มั่นคง', tip: 'เติมคำหวานหรือของขวัญเล็ก ๆ ให้คนรักบ้าง' },
+      { id: 'short', th: 'สั้น จบใต้นิ้วกลาง', read: 'เป็นตัวของตัวเองสูง ให้ความสำคัญกับเป้าหมายส่วนตัว', tip: 'แบ่งเวลาให้คนใกล้ตัวอย่างสม่ำเสมอ' },
+      { id: 'fork', th: 'ปลายแตกเป็นแฉก', read: 'เข้าใจคนอื่น ใจกว้าง มีหลายมุมในการรัก', tip: 'จุดแข็งคือความเข้าใจ ใช้มันประคองความสัมพันธ์' },
+      { id: 'chain', th: 'เป็นข้อ ๆ หรือขาดเป็นช่วง', read: 'อารมณ์อ่อนไหว ความรักเคยมีช่วงขึ้นลง', tip: 'ฝึกสื่อสารความรู้สึกตอนใจเย็น ไม่ใช่ตอนโกรธ' }] },
+  { id: 'head', th: 'เส้นสมอง', color: '#D4AF63', where: 'เส้นกลาง เริ่มระหว่างนิ้วโป้งกับนิ้วชี้ ลากผ่านกลางฝ่ามือ', about: 'วิธีคิด การเรียนรู้ การตัดสินใจ',
+    opts: [
+      { id: 'straight', th: 'ตรงและยาว', read: 'คิดเป็นระบบ มีเหตุผล เก่งวิเคราะห์ ตัวเลข การวางแผน', tip: 'เปิดใจให้ไอเดียแปลกใหม่บ้าง จะคิดได้รอบด้านขึ้น' },
+      { id: 'curve', th: 'โค้งลงไปทางฐานมือ', read: 'จินตนาการดี สร้างสรรค์ มีศิลปะ คิดนอกกรอบ', tip: 'จดไอเดียไว้แล้วทำทีละขั้น จะเปลี่ยนจินตนาการเป็นผลงาน' },
+      { id: 'short', th: 'สั้น จบกลางฝ่ามือ', read: 'คิดเร็ว ตัดสินใจไว ชอบลงมือมากกว่าวางแผนนาน', tip: 'ก่อนตัดสินใจเรื่องใหญ่ ให้นอนคิดอีกหนึ่งคืน' },
+      { id: 'fork', th: 'ปลายแยกเป็นสองแฉก (ส้อมนักเขียน)', read: 'มองได้หลายมุม เขียนและพูดเก่ง เข้าใจทั้งเหตุผลและความรู้สึก', tip: 'งานเขียน งานสื่อ หรือการสอน เหมาะกับคุณมาก' },
+      { id: 'joined', th: 'ต้นเส้นติดกับเส้นชีวิตยาว', read: 'รอบคอบ ระมัดระวัง คิดก่อนทำ ผูกพันกับครอบครัว', tip: 'เชื่อมั่นในตัวเองให้มากขึ้น กล้าตัดสินใจเองบ้าง' },
+      { id: 'apart', th: 'ต้นเส้นแยกห่างจากเส้นชีวิต', read: 'กล้าคิด กล้าทำ รักอิสระ เป็นตัวของตัวเอง', tip: 'ฟังคำแนะนำคนรอบตัวก่อนพุ่งไปข้างหน้า' }] },
+  { id: 'life', th: 'เส้นชีวิต', color: '#6FC3B2', where: 'เส้นโค้งรอบเนินนิ้วโป้ง เริ่มระหว่างนิ้วโป้งกับนิ้วชี้ ลงไปทางข้อมือ', about: 'พลังชีวิต สุขภาพ ความกระตือรือร้น (ไม่ได้บอกอายุ)',
+    opts: [
+      { id: 'wide', th: 'โค้งกว้าง ลึก ชัด', read: 'พลังเหลือล้น กระตือรือร้น ชอบกิจกรรม ฟื้นตัวเร็ว', tip: 'ใช้พลังกับการออกกำลังกายที่ชอบ จะยิ่งสดชื่น' },
+      { id: 'close', th: 'โค้งแคบ ชิดนิ้วโป้ง', read: 'ระมัดระวัง ชอบความสงบ เหนื่อยง่ายกว่าคนอื่น', tip: 'นอนให้พอ เดินวันละ 30 นาที เติมพลังได้ดี' },
+      { id: 'double', th: 'มีเส้นคู่ขนานด้านใน', read: 'มีคนคอยดูแลปกป้อง ฟื้นตัวจากเรื่องยากได้ดี', tip: 'ตอบแทนคนที่คอยหนุนคุณบ้าง' },
+      { id: 'break', th: 'ขาดเป็นช่วง หรือเปลี่ยนทิศ', read: 'ชีวิตเคยหรือจะมีจุดเปลี่ยนสำคัญ เช่น ย้ายที่อยู่ เปลี่ยนงาน', tip: 'จุดเปลี่ยนไม่ใช่เรื่องร้าย เตรียมเงินสำรองไว้ แล้วมองเป็นโอกาส' },
+      { id: 'faint', th: 'จาง บาง', read: 'เป็นคนใช้ความคิดมากกว่าแรงกาย ควรดูแลร่างกายสม่ำเสมอ', tip: 'ตรวจสุขภาพประจำปี และหากิจกรรมขยับร่างกายที่สนุก' }] },
+  { id: 'fate', th: 'เส้นวาสนา (เส้นโชคชะตา)', color: '#A99BD9', where: 'เส้นแนวตั้งกลางฝ่ามือ จากข้อมือขึ้นไปทางนิ้วกลาง (บางคนไม่มี)', about: 'เส้นทางการงาน ความมั่นคงของอาชีพ',
+    opts: [
+      { id: 'clear', th: 'ชัด ยาวถึงใต้นิ้วกลาง', read: 'รู้ว่าตัวเองต้องการอะไร เส้นทางอาชีพชัด มั่นคง', tip: 'ตั้งเป้าระยะยาวแล้วเดินต่อ คุณทำได้' },
+      { id: 'late', th: 'เริ่มจากกลางฝ่ามือ', read: 'งานจะชัดเจนและก้าวหน้าตอนวัยกลางคน ประสบความสำเร็จด้วยตัวเอง', tip: 'ช่วงแรกลองหลายอย่างได้ ประสบการณ์จะรวมเป็นจุดแข็ง' },
+      { id: 'broken', th: 'จาง หรือขาดเป็นช่วง', read: 'เปลี่ยนงานหรือสายงานหลายครั้ง ปรับตัวเก่ง มีหลายทักษะ', tip: 'เก็บพอร์ตผลงานและเครือข่ายไว้ การเปลี่ยนงานจะง่ายขึ้น' },
+      { id: 'none', th: 'มองไม่เห็นเส้นนี้', read: 'ไม่ยึดติดกรอบ สร้างทางของตัวเอง ใช้ชีวิตอิสระ', tip: 'ไม่มีเส้นไม่ได้แปลว่าไม่มีวาสนา แค่คุณเขียนเส้นทางเองได้' }] }
+];
+
+// เส้นนำทาง AR: ประมาณตำแหน่งเส้นหลักจากจุดบนมือ (พิกัดภาพ 0–1)
+function palmGuides(lm) {
+  const L = (a, b, t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
+  const w = lm[0], i5 = lm[5], m9 = lm[9], r13 = lm[13], p17 = lm[17], t2 = lm[2], t1 = lm[1];
+  const heartS = L(p17, w, 0.22), heartE = L(i5, m9, 0.45), heartC = L(L(r13, w, 0.2), L(m9, w, 0.22), 0.5);
+  const headS = L(t2, i5, 0.55), headE = L(L(p17, w, 0.45), headS, 0.08), headC = L(L(m9, w, 0.42), L(r13, w, 0.42), 0.5);
+  const lifeS = L(t2, i5, 0.6), lifeE = L(w, t1, 0.25), lifeC = L(t2, w, 0.3); // โค้งออกรอบเนินนิ้วโป้ง
+  return { heart: [heartS, heartC, heartE], head: [headS, headC, headE], life: [lifeS, lifeC, lifeE], fate: [L(w, m9, 0.08), L(w, m9, 0.5), L(w, m9, 0.95)] };
+}
+
+// สรุปเป็นประโยคเดียวสำหรับการ์ดแชร์
+function faceSummary(el, reads) {
+  const good = reads.filter((r) => r.tone > 0 && r.key !== 'sym').map((r) => r.title);
+  return `ใบหน้าธาตุ${el.th}${el.mixTh ? `ผสม${el.mixTh}` : ''} (${el.shape}) · จุดเด่น: ${good.slice(0, 3).join(' ') || 'สมดุลทุกส่วน'}`;
+}
+
 // ---- js/app.js ----
 // Taksila app — screens, state and routing (hash routes, no framework).
+
 
 
 
@@ -7691,7 +8073,8 @@ const state = {
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
   map: { cat: 'all', wish: null, reg: 'all', sel: null, me: null },
-  fs: { tab: 'kua', gender: '', facing: 180, period: 9, repl: false, rooms: {}, members: [], home: null, radius: 40, cell: null, roomPick: null, newMember: null, heading: null, sensor: false, cam: false, ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.fs')) || {}; const o = {}; for (const k of ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius']) if (j[k] != null) o[k] = j[k]; return o; } catch (e) { return {}; } })() },
+  ph: { tab: 'face', status: 'idle', side: 'R', facing: 'environment', mirror: false, enh: false, hide: {}, err: '', warn: [], ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.physio')) || {}; return { face: j.face || null, hand: j.hand || null, side: j.side || 'R', lines: j.lines || {} }; } catch (e) { return {}; } })() },
+  fs: { tab: 'kua', gender: '', facing: 180, period: 9, repl: false, rooms: {}, members: [], home: null, radius: 40, cell: null, roomPick: null, newMember: null, heading: null, sensor: false, cam: false, ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.fs')) || {}; const o = {}; for (const k of ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius', 'ptype', 'chk']) if (j[k] != null) o[k] = j[k]; return o; } catch (e) { return {}; } })() },
   pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
   luck: { mode: 'ball', balls: [], inc: 'idle', incDigits: [], incShown: [], ss: null, tree: { tied: false, digits: null, done: false, kind: null }, hist: [] },
@@ -7729,6 +8112,7 @@ const IC = {
   dream: '<path d="M14.5 4.5a7 7 0 1 0 5 11.4A7.5 7.5 0 0 1 14.5 4.5z"/><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6z"/>',
   privacy: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><rect x="9.5" y="10.5" width="5" height="4.5" rx="1"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/>',
   setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  face: '<path d="M12 3c-4 0-6.5 3-6.5 7.5 0 5 3 9.5 6.5 10.5 3.5-1 6.5-5.5 6.5-10.5C18.5 6 16 3 12 3z"/><path d="M9 10.5h.01M15 10.5h.01M10 15.5q2 1.2 4 0M12 11v2.5"/>',
   fengshui: '<path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7z"/><path d="M12 7.5a4.5 4.5 0 0 1 0 9 2.25 2.25 0 0 1 0-4.5 2.25 2.25 0 0 0 0-4.5z"/><circle cx="12" cy="14.25" r=".6"/><circle cx="12" cy="9.75" r=".6"/>',
   calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><circle cx="12" cy="14.5" r="2.2"/>',
   about: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
@@ -7954,7 +8338,9 @@ function viewHome() {
     ['prayer', 'บทสวด', 'แก้ดวง เสริมดวง', 'var(--gold-2)'],
     ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
     ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'],
-    ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)']
+    ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'],
+    ['face', 'โหงวเฮ้ง', 'หน้า ลายมือ AR', '#E8A2B8'],
+    ['fengshui', 'ฮวงจุ้ย', 'บ้าน คอนโด ที่ดิน', '#E5675A']
   ];
   return `<main class="screen home">
 <header class="home-head">
@@ -9645,7 +10031,7 @@ const ROOMS = [
   ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
   ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
   ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
-  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'ปฏิทินวันพระ', 'วันพระ ฤกษ์ใหญ่', 'var(--gold-2)'], ['fengshui', 'ฮวงจุ้ย', 'เลขกัว ดาวเหิน', '#E5675A'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
+  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'ปฏิทินวันพระ', 'วันพระ ฤกษ์ใหญ่', 'var(--gold-2)'], ['fengshui', 'ฮวงจุ้ย', 'เลขกัว ดาวเหิน', '#E5675A'], ['face', 'โหงวเฮ้ง', 'หน้า ลายมือ AR', '#E8A2B8'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
   ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)'], ['about', 'เกี่ยวกับ', 'แหล่งอ้างอิง', 'var(--gold)']
 ];
 const NAV_ROUTES = ['home', 'chart', 'tarot', 'numbers', 'luck'];
@@ -9942,7 +10328,8 @@ function viewAbout() {
     ['ทักษา ยามอัฏฐกาล ฤกษ์', 'หลักโหราศาสตร์ไทยแบบดั้งเดิม'],
     ['ทำนายฝัน', 'สรุปจากบทความความเชื่อไทย ระบุที่มาทุกข้อ'],
     ['แผนที่มู', 'ข้อมูลเขียนเอง แผนที่ © OpenStreetMap นำทางด้วย Google Maps'],
-    ['บริจาคโลหิต', 'ศูนย์บริการโลหิตแห่งชาติ สภากาชาดไทย']
+    ['บริจาคโลหิต', 'ศูนย์บริการโลหิตแห่งชาติ สภากาชาดไทย'],
+    ['โหงวเฮ้ง ลายมือ', 'จุดบนใบหน้าและมือจาก MediaPipe ของ Google (สัญญาอนุญาต Apache 2.0) ประมวลผลในเครื่อง · หลักอ่านจากตำราโหงวเฮ้งจีน (สามส่วน 12 ตำแหน่ง ห้าธาตุ) และตำราลายมือสากล']
   ];
   return `<main class="screen" style="--accent:var(--gold)">
 ${pageHead('13', 'ABOUT', 'เกี่ยวกับตักศิลา', 'var(--gold)', 'about')}
@@ -10368,7 +10755,382 @@ ${body}
 </main>`;
 }
 
-const VIEWS = { fengshui: viewFengshui, calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- โหงวเฮ้ง · ลายมือ (AR) ----------------
+// MediaPipe โหลดจากโฟลเดอร์ vendor ของแอปเอง ประมวลผลในเครื่อง ไม่ส่งรูปออกไปไหน
+const PH_KEY = 'taksila.physio';
+const PH_WEB = 'https://mengnattawitmarin.github.io/taksila/#/face';
+function phLoadSaved() { try { return JSON.parse(localStorage.getItem(PH_KEY)) || {}; } catch (e) { return {}; } }
+function phSaveSaved(o) { try { localStorage.setItem(PH_KEY, JSON.stringify({ ...phLoadSaved(), ...o })); } catch (e) {} }
+const PH_OVAL = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109];
+const PH_HAND = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [5, 9], [9, 10], [10, 11], [11, 12], [9, 13], [13, 14], [14, 15], [15, 16], [13, 17], [17, 18], [18, 19], [19, 20], [0, 17]];
+const PH_NEED = 18; // จำนวนเฟรมท่าถูกต้องที่ใช้เฉลี่ยก่อนอ่านผล
+let phVision = null, phFaceLm = null, phHandLm = null, phStream = null, phRaf = 0, phBuf = [], phLastT = 0;
+let phSnap = null, phSnapLm = null, phEnh = null, phT0 = 0, phForce = false;
+
+async function phEnsure(kind) {
+  const base = new URL('vendor/mediapipe/', document.baseURI).href;
+  if (!phVision) {
+    const mod = await import(base + 'vision_bundle.mjs');
+    phVision = { mod, fs: await mod.FilesetResolver.forVisionTasks(base + 'wasm') };
+  }
+  const { mod, fs } = phVision;
+  const make = async (Cls, file, extra) => {
+    for (const delegate of ['GPU', 'CPU']) {
+      try { return await Cls.createFromOptions(fs, { baseOptions: { modelAssetPath: base + file, delegate }, runningMode: 'VIDEO', ...extra }); } catch (e) { if (delegate === 'CPU') throw e; }
+    }
+  };
+  if (kind === 'face' && !phFaceLm) phFaceLm = await make(mod.FaceLandmarker, 'face_landmarker.task', { numFaces: 1, outputFaceBlendshapes: true });
+  if (kind === 'palm' && !phHandLm) phHandLm = await make(mod.HandLandmarker, 'hand_landmarker.task', { numHands: 1 });
+  return kind === 'face' ? phFaceLm : phHandLm;
+}
+function phStopCam() {
+  cancelAnimationFrame(phRaf); phRaf = 0;
+  if (phStream) { phStream.getTracks().forEach((t) => t.stop()); phStream = null; }
+}
+async function phStart() {
+  const ph = state.ph, kind = ph.tab;
+  phBuf = []; phForce = false; ph.status = 'loading'; ph.err = ''; render();
+  try {
+    const lmk = await phEnsure(kind);
+    await lmk.setOptions({ runningMode: 'VIDEO' });
+    ph.mirror = kind === 'face' ? true : ph.facing === 'user';
+    phStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: kind === 'face' ? 'user' : (ph.facing || 'environment'), width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false });
+    ph.status = 'live'; phT0 = performance.now(); render();
+  } catch (e) {
+    phStopCam();
+    ph.status = 'idle';
+    ph.err = /vision_bundle|import|Failed to fetch|dynamically imported/i.test(String(e && e.message)) ? 'nomodel' : /Permission|NotAllowed/i.test(String(e && e.name) + e) ? 'perm' : 'cam';
+    render();
+  }
+}
+function phPhoto(file) {
+  const ph = state.ph, kind = ph.tab;
+  const img = new Image();
+  img.onload = async () => {
+    ph.status = 'loading'; render();
+    try {
+      const lmk = await phEnsure(kind);
+      await lmk.setOptions({ runningMode: 'IMAGE' });
+      const res = lmk.detect(img);
+      const cv = document.createElement('canvas'), sc = Math.min(1, 1280 / Math.max(img.naturalWidth, img.naturalHeight));
+      cv.width = Math.round(img.naturalWidth * sc); cv.height = Math.round(img.naturalHeight * sc);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(img.src);
+      ph.mirror = false;
+      if (kind === 'face') {
+        if (!res.faceLandmarks.length) throw new Error('noface');
+        const lm = res.faceLandmarks[0], bs = phBs(res), m = faceMeasure(lm, cv.width, cv.height);
+        phFinish(cv, lm, m, facePoseOK(m, bs).issues);
+      } else {
+        if (!res.landmarks.length) throw new Error('nohand');
+        const lm = res.landmarks[0], h = handMeasure(res.worldLandmarks[0]);
+        phFinish(cv, lm, h, handPoseOK(lm, h, ph.side, false).issues);
+      }
+    } catch (e) {
+      ph.status = 'idle';
+      ph.err = e.message === 'noface' ? 'noface' : e.message === 'nohand' ? 'nohand' : /vision_bundle|import|fetch/i.test(String(e.message)) ? 'nomodel' : 'cam';
+      render();
+    }
+  };
+  img.src = URL.createObjectURL(file);
+}
+const phBs = (res) => (res.faceBlendshapes && res.faceBlendshapes[0] ? Object.fromEntries(res.faceBlendshapes[0].categories.map((c) => [c.categoryName, c.score])) : null);
+// ครอปภาพให้เหลือเฉพาะหน้าหรือมือ (เผื่อขอบไว้วางป้าย) แล้วแปลงพิกัดจุดตาม
+function phCrop(cv, lm, padX, padY) {
+  const xs = lm.map((p) => p.x * cv.width), ys = lm.map((p) => p.y * cv.height);
+  let x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const w = x1 - x0, h = y1 - y0;
+  x0 = Math.max(0, x0 - w * padX); x1 = Math.min(cv.width, x1 + w * padX); y0 = Math.max(0, y0 - h * padY); y1 = Math.min(cv.height, y1 + h * padY * 0.7);
+  const W = Math.round(x1 - x0), H = Math.round(y1 - y0), sc = Math.min(2, 900 / Math.max(W, H));
+  const out = document.createElement('canvas'); out.width = Math.round(W * sc); out.height = Math.round(H * sc);
+  out.getContext('2d').drawImage(cv, x0, y0, W, H, 0, 0, out.width, out.height);
+  return { cv: out, lm: lm.map((p) => ({ ...p, x: (p.x * cv.width - x0) / W, y: (p.y * cv.height - y0) / H })) };
+}
+function phFinish(cv, lm, meas, warn) {
+  const ph = state.ph, kind = ph.tab;
+  const cr = kind === 'face' ? phCrop(cv, lm, 0.55, 0.45) : phCrop(cv, lm, 0.3, 0.2);
+  phSnap = cr.cv; phSnapLm = cr.lm; phEnh = null;
+  ph.status = 'result'; ph.warn = warn || [];
+  if (kind === 'face') { ph.face = meas; phSaveSaved({ face: meas, faceAt: Date.now() }); }
+  else { ph.hand = meas; phSaveSaved({ hand: meas, handAt: Date.now(), side: ph.side }); }
+  render();
+}
+// ลูป AR: ตรวจทุก ~70 ms วาดจุดซ้อนบนวิดีโอ และเก็บค่าเมื่อท่าถูก
+function phLoop() {
+  const v = document.getElementById('ph-video'), c = document.getElementById('ph-ov'), ph = state.ph;
+  if (!v || !c || ph.status !== 'live') { phRaf = 0; return; }
+  phRaf = requestAnimationFrame(phLoop);
+  const now = performance.now();
+  if (v.readyState < 2 || now - phLastT < 70) return;
+  phLastT = now;
+  if (c.width !== v.videoWidth) { c.width = v.videoWidth; c.height = v.videoHeight; const w = document.getElementById('ph-stage'); if (w) w.style.aspectRatio = `${v.videoWidth} / ${v.videoHeight}`; }
+  const ctx = c.getContext('2d'), W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+  let hint = '', ok = false;
+  if (ph.tab === 'face') {
+    const res = phFaceLm.detectForVideo(v, now);
+    if (res.faceLandmarks.length) {
+      const lm = res.faceLandmarks[0], m = faceMeasure(lm, W, H), pose = facePoseOK(m, phBs(res));
+      phDrawFace(ctx, lm, W, H, ph.mirror, pose.ok);
+      ok = pose.ok || phForce; hint = ok ? 'นิ่งไว้ กำลังวัด…' : pose.issues[0];
+      if (ok) phBuf.push(m);
+    } else hint = 'มองตรงเข้ากล้อง ให้เห็นทั้งหน้า';
+  } else {
+    const res = phHandLm.detectForVideo(v, now);
+    if (res.landmarks.length) {
+      const lm = res.landmarks[0], h = handMeasure(res.worldLandmarks[0]), pose = handPoseOK(lm, h, ph.side, ph.mirror);
+      phDrawHand(ctx, lm, W, H, ph.mirror, pose.ok);
+      ok = pose.ok || phForce; hint = ok ? 'นิ่งไว้ กำลังวัด…' : pose.issues[0];
+      if (ok) phBuf.push(h);
+    } else hint = `ยกฝ่ามือ${ph.side === 'L' ? 'ซ้าย' : 'ขวา'}ให้อยู่ในกรอบ กางนิ้วเล็กน้อย`;
+  }
+  const hn = document.getElementById('ph-hint'), pr = document.getElementById('ph-prog');
+  if (hn) { hn.textContent = hint; hn.className = 'ph-hint' + (ok ? ' ok' : ''); }
+  if (pr) pr.style.width = `${Math.min(100, phBuf.length / PH_NEED * 100)}%`;
+  const sk = document.getElementById('ph-skip');
+  if (sk && sk.hidden && !phForce && now - phT0 > 9000) sk.hidden = false;
+  if (phBuf.length >= PH_NEED) phCapture(v);
+}
+function phCapture(v) {
+  const ph = state.ph, cv = document.createElement('canvas');
+  cv.width = v.videoWidth; cv.height = v.videoHeight;
+  const x = cv.getContext('2d');
+  if (ph.mirror) { x.translate(cv.width, 0); x.scale(-1, 1); }
+  x.drawImage(v, 0, 0);
+  const lmk = ph.tab === 'face' ? phFaceLm : phHandLm, res = lmk.detectForVideo(v, performance.now() + 1);
+  let lm = ph.tab === 'face' ? res.faceLandmarks[0] : res.landmarks[0];
+  if (!lm) { phBuf = phBuf.slice(-6); return; }
+  if (ph.mirror) lm = lm.map((p) => ({ ...p, x: 1 - p.x }));
+  const avg = averageMeasures(phBuf.map((m) => { const o = {}; for (const k in m) if (typeof m[k] === 'number') o[k] = m[k]; return o; }));
+  if (ph.tab === 'palm') avg.straight = true;
+  phStopCam();
+  const was = ph.mirror; ph.mirror = false;
+  phFinish(cv, lm, avg, []);
+  ph.wasMirror = was;
+}
+// ---- วาดซ้อน ----
+const phX = (p, W, mir) => (mir ? (1 - p.x) * W : p.x * W);
+function phLabel(ctx, x, y, t, color = '#F0D89A', s = 1) {
+  ctx.font = `600 ${Math.round(13 * s)}px "IBM Plex Sans Thai", sans-serif`;
+  const w = ctx.measureText(t).width + 10 * s;
+  ctx.fillStyle = 'rgba(13,11,8,.72)'; ctx.fillRect(x, y - 11 * s, w, 20 * s);
+  ctx.fillStyle = color; ctx.fillText(t, x + 5 * s, y + 4 * s);
+}
+function phDrawFace(ctx, lm, W, H, mir, ok, full) {
+  const s = full ? W / 400 : Math.max(1, W / 640), P = (i) => ({ x: phX(lm[i], W, mir), y: lm[i].y * H });
+  ctx.lineWidth = 1.5 * s; ctx.strokeStyle = ok ? 'rgba(111,195,178,.85)' : 'rgba(240,216,154,.6)';
+  ctx.beginPath(); PH_OVAL.forEach((i, k) => { const p = P(i); k ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }); ctx.closePath(); ctx.stroke();
+  // เส้นแบ่งสามส่วน
+  const top = P(10), brow = { x: (P(70).x + P(300).x) / 2, y: (P(105).y + P(334).y) / 2 }, sub = P(2), chin = P(152);
+  const hair = { x: top.x, y: top.y - (brow.y - top.y) * 0.55 };
+  const xl = Math.min(P(234).x, P(454).x) - 10 * s, xr = Math.max(P(234).x, P(454).x) + 10 * s;
+  ctx.setLineDash([6 * s, 5 * s]); ctx.strokeStyle = 'rgba(229,103,90,.85)';
+  for (const y of [hair.y, brow.y, sub.y, chin.y]) { ctx.beginPath(); ctx.moveTo(xl, y); ctx.lineTo(xr, y); ctx.stroke(); }
+  ctx.setLineDash([]);
+  if (full) {
+    [['บน', (hair.y + brow.y) / 2], ['กลาง', (brow.y + sub.y) / 2], ['ล่าง', (sub.y + chin.y) / 2]].forEach(([t, y]) => phLabel(ctx, xr + 4 * s, y, t, '#E5675A', s));
+  }
+  // จุดสำคัญ
+  const zones = full ? ['fore', 'yintang', 'brow', 'eye', 'nose', 'phil', 'mouth', 'chin', 'temple'].map((k) => FACE_ZONES[k]) : [FACE_ZONES.yintang, FACE_ZONES.nose, FACE_ZONES.mouth, FACE_ZONES.chin, FACE_ZONES.fore];
+  for (const z of zones) {
+    const p = P(z.at);
+    ctx.fillStyle = '#E5675A'; ctx.beginPath(); ctx.arc(p.x, p.y, 4 * s, 0, 7); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2 * s; ctx.stroke();
+    if (full) phLabel(ctx, p.x + 6 * s, p.y, z.th, '#F0D89A', s * 0.82);
+  }
+}
+function phCurve(ctx, pts, W, H, mir) {
+  const [a, c, b] = pts.map((p) => ({ x: phX(p, W, mir), y: p.y * H }));
+  const cp = { x: 2 * c.x - (a.x + b.x) / 2, y: 2 * c.y - (a.y + b.y) / 2 };
+  ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(cp.x, cp.y, b.x, b.y); ctx.stroke();
+  return b;
+}
+function phDrawHand(ctx, lm, W, H, mir, ok, full) {
+  const s = full ? W / 400 : Math.max(1, W / 640), P = (i) => ({ x: phX(lm[i], W, mir), y: lm[i].y * H });
+  ctx.lineWidth = 2 * s; ctx.strokeStyle = ok ? 'rgba(111,195,178,.8)' : 'rgba(240,216,154,.55)';
+  for (const [a, b] of PH_HAND) { const p = P(a), q = P(b); ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y); ctx.stroke(); }
+  ctx.fillStyle = '#fff'; lm.forEach((_, i) => { const p = P(i); ctx.beginPath(); ctx.arc(p.x, p.y, 2.6 * s, 0, 7); ctx.fill(); });
+  const g = palmGuides(lm);
+  ctx.lineWidth = 3 * s; ctx.setLineDash(full ? [] : [8 * s, 6 * s]);
+  for (const L of PALM_LINES) {
+    if (full && state.ph.hide && state.ph.hide[L.id]) continue;
+    ctx.strokeStyle = L.color + (full ? 'CC' : '99');
+    const end = phCurve(ctx, g[L.id], W, H, mir);
+    if (full) phLabel(ctx, end.x + 4 * s, end.y, L.th.split(' ')[0], L.color, s * 0.9);
+  }
+  ctx.setLineDash([]);
+}
+// เน้นรอยเส้นลายมือ: ภาพเทา − ภาพเบลอ (รอยพับเข้มกว่ารอบข้าง) แล้วระบายสีเฉพาะในฝ่ามือ
+function phEnhance(src, lm) {
+  const sc = Math.min(1, 720 / Math.max(src.width, src.height)), W = Math.round(src.width * sc), H = Math.round(src.height * sc);
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const x = cv.getContext('2d'); x.drawImage(src, 0, 0, W, H);
+  const id = x.getImageData(0, 0, W, H), d = id.data, g = new Float32Array(W * H);
+  for (let i = 0; i < W * H; i++) g[i] = d[i * 4] * 0.3 + d[i * 4 + 1] * 0.59 + d[i * 4 + 2] * 0.11;
+  const blur = (a, r) => { // box blur แยกแกน 2 รอบ
+    const t = new Float32Array(a.length), o = new Float32Array(a.length);
+    for (let y = 0; y < H; y++) { let acc = 0; for (let k = -r; k <= r; k++) acc += a[y * W + Math.min(W - 1, Math.max(0, k))]; for (let xx = 0; xx < W; xx++) { t[y * W + xx] = acc / (2 * r + 1); acc += a[y * W + Math.min(W - 1, xx + r + 1)] - a[y * W + Math.max(0, xx - r)]; } }
+    for (let xx = 0; xx < W; xx++) { let acc = 0; for (let k = -r; k <= r; k++) acc += t[Math.min(H - 1, Math.max(0, k)) * W + xx]; for (let y = 0; y < H; y++) { o[y * W + xx] = acc / (2 * r + 1); acc += t[Math.min(H - 1, y + r + 1) * W + xx] - t[Math.max(0, y - r) * W + xx]; } }
+    return o;
+  };
+  const r = Math.max(4, Math.round(W / 90)), b = blur(blur(g, r), r), fine = blur(g, 1);
+  // หน้ากากฝ่ามือ
+  const mk = document.createElement('canvas'); mk.width = W; mk.height = H;
+  const mx = mk.getContext('2d'); mx.fillStyle = '#fff'; mx.beginPath();
+  [0, 1, 2, 5, 9, 13, 17].forEach((i, k) => { const p = { x: lm[i].x * W, y: lm[i].y * H }; k ? mx.lineTo(p.x, p.y) : mx.moveTo(p.x, p.y); });
+  mx.closePath(); mx.fill();
+  const m = mx.getImageData(0, 0, W, H).data;
+  let mean = 0, n = 0;
+  for (let i = 0; i < W * H; i++) if (m[i * 4 + 3]) { const v = b[i] - fine[i]; if (v > 0) { mean += v; n++; } }
+  mean = n ? mean / n : 4;
+  for (let i = 0; i < W * H; i++) {
+    const v = m[i * 4 + 3] ? (b[i] - fine[i]) : 0, a = Math.max(0, Math.min(1, (v - mean * 1.2) / (mean * 2.5)));
+    d[i * 4] = 255; d[i * 4 + 1] = 216; d[i * 4 + 2] = 120; d[i * 4 + 3] = Math.round(a * 230);
+  }
+  x.putImageData(id, 0, 0);
+  return cv;
+}
+function mountPhysio() {
+  if (route() !== 'face') { if (phStream) phStopCam(); return; }
+  const ph = state.ph;
+  if (ph.status === 'live') {
+    const v = document.getElementById('ph-video');
+    if (v && phStream) { v.srcObject = phStream; v.play && v.play().catch(() => {}); if (!phRaf) phRaf = requestAnimationFrame(phLoop); }
+  }
+  const sn = document.getElementById('ph-snap');
+  if (sn && phSnap && ph.status === 'result') {
+    sn.width = phSnap.width; sn.height = phSnap.height;
+    const x = sn.getContext('2d'); x.drawImage(phSnap, 0, 0);
+    if (ph.tab === 'face') phDrawFace(x, phSnapLm, sn.width, sn.height, false, true, true);
+    else {
+      if (ph.enh) { if (!phEnh) phEnh = phEnhance(phSnap, phSnapLm); x.fillStyle = 'rgba(0,0,0,.35)'; x.fillRect(0, 0, sn.width, sn.height); x.drawImage(phEnh, 0, 0, sn.width, sn.height); }
+      phDrawHand(x, phSnapLm, sn.width, sn.height, false, true, true);
+    }
+  }
+}
+// ---- หน้าจอ ----
+const PH_TABS = [['face', 'โหงวเฮ้ง'], ['palm', 'ลายมือ'], ['learn', 'ความรู้']];
+function phErrHTML(err) {
+  if (!err) return '';
+  const t = { nomodel: `โหมดนี้ต้องใช้โมเดล AI ที่อยู่ในเว็บแอปหลัก เปิดที่ <a href="${PH_WEB}" target="_blank" rel="noopener">mengnattawitmarin.github.io/taksila</a> แล้วลองใหม่`, perm: 'ยังไม่ได้อนุญาตให้ใช้กล้อง เปิดสิทธิ์กล้องในการตั้งค่าเบราว์เซอร์ หรือเลือกรูปจากเครื่องแทน', cam: 'เปิดกล้องไม่ได้ ลองเลือกรูปจากเครื่องแทน', noface: 'ไม่พบใบหน้าในรูป ลองรูปหน้าตรง เห็นทั้งหน้า แสงสว่าง', nohand: 'ไม่พบมือในรูป ลองรูปฝ่ามือเต็มมือ กางนิ้วเล็กน้อย บนพื้นหลังเรียบ' }[err];
+  return `<p class="ph-err">${t}</p>`;
+}
+function phStartHTML(kind) {
+  const ph = state.ph;
+  return `<section class="card ph-start">
+${kind === 'face' ? `<div class="ph-ill">${phFaceSVG()}</div><b class="ph-t">ส่องหน้าด้วยกล้อง แล้วอ่านโหงวเฮ้งจากสัดส่วนจริง</b>
+<ul class="ph-steps"><li>หน้าตรง แสงสว่างด้านหน้า ไม่ย้อนแสง</li><li>เปิดหน้าผาก ถอดแว่น ทำหน้าปกติ ไม่ยิ้ม</li><li>วางมือถือระดับสายตา ห่างราว 40–50 ซม.</li></ul>`
+    : `<div class="ph-ill">${phPalmSVG()}</div><b class="ph-t">ส่องฝ่ามือ แล้วอ่านรูปมือ นิ้ว และเส้นลายมือ</b>
+<div class="seg" role="group" aria-label="มือข้างไหน">${[['L', 'มือซ้าย'], ['R', 'มือขวา']].map(([v, t]) => `<button aria-pressed="${ph.side === v}" data-act="phSide" data-v="${v}">${t}</button>`).join('')}</div>
+<p class="small" style="margin:0">ตำราลายมือสมัยใหม่: มือข้างที่ถนัดบอกสิ่งที่คุณสร้างเองและปัจจุบัน มืออีกข้างบอกพื้นฐานที่ติดตัวมา ดูทั้งสองข้างได้</p>
+<ul class="ph-steps"><li>หงายฝ่ามือเข้ากล้อง กางนิ้วเล็กน้อย</li><li>แสงสว่างจากด้านข้าง จะเห็นเส้นชัด</li><li>ใช้กล้องหลังจะคมกว่า หรือวางมือบนโต๊ะแล้วถ่าย</li></ul>`}
+${phErrHTML(ph.err)}
+<div class="ph-btns"><button class="btn" data-act="phStart">📷 เปิดกล้อง AR</button>
+<label class="btn btn-line ph-file">🖼 เลือกรูป<input type="file" accept="image/*" data-in="phFile" hidden></label></div>
+${kind === 'palm' ? `<button class="link-btn" data-act="phFacing">${ph.facing === 'user' ? 'ใช้กล้องหน้าอยู่ · สลับเป็นกล้องหลัง' : 'ใช้กล้องหลังอยู่ · สลับเป็นกล้องหน้า'}</button>` : ''}
+<p class="small" style="margin:0">🔒 ประมวลผลในเครื่องของคุณทั้งหมด ไม่อัปโหลดหรือเก็บรูปไว้ · ครั้งแรกต้องโหลดโมเดลราว ${kind === 'face' ? '13' : '17'} MB</p></section>`;
+}
+function phLiveHTML() {
+  return `<section class="ph-live"><div class="ph-stage" id="ph-stage"><video id="ph-video" playsinline muted autoplay${state.ph.mirror ? ' class="mir"' : ''}></video><canvas id="ph-ov"></canvas>
+<div class="ph-top"><span class="ph-hint" id="ph-hint">กำลังเริ่มกล้อง…</span><span class="ph-bar"><i id="ph-prog"></i></span></div></div>
+<button class="btn btn-line" data-act="phSkip" id="ph-skip" hidden>อ่านเลย ไม่ต้องรอท่าตรง</button><button class="btn btn-line" data-act="phStop">ยกเลิก</button></section>`;
+}
+function phLoadingHTML() { return '<section class="card ph-start"><div class="ph-spin" aria-hidden="true"></div><b class="ph-t" style="text-align:center">กำลังโหลดโมเดล AI…</b><p class="small" style="margin:0;text-align:center">ครั้งแรกอาจใช้เวลาสักครู่ ครั้งต่อไปจะเร็วขึ้น</p></section>'; }
+function phReadCard(r) {
+  return `<article class="ph-read ${fsTone(r.tone)}"><header><b>${r.title}</b>${r.cn ? `<span class="ph-cn">${r.cn}</span>` : ''}</header><span class="ph-val mono">${r.val}</span><p>${r.read}</p>${r.tip ? `<p class="ph-tip">✨ เสริม: ${r.tip}</p>` : ''}</article>`;
+}
+function phFaceResultHTML() {
+  const ph = state.ph, m = ph.face, el = faceElement(m), reads = faceRead(m);
+  const p = state.profile, sy = p && p.yearBE ? solarYear(new Date(p.yearBE - 543, (p.month || 1) - 1, p.day || 1, 12)) : null;
+  const rel = sy ? elementRelation(el.key, sy) : null;
+  return `${phSnap ? `<section class="ph-snapw"><canvas id="ph-snap" aria-label="ภาพใบหน้าพร้อมจุดโหงวเฮ้ง"></canvas></section>` : ''}
+${ph.warn && ph.warn.length ? `<p class="ph-err">รูปนี้: ${ph.warn.join(' · ')} ผลอาจคลาดเคลื่อน ลองถ่ายใหม่ได้</p>` : ''}
+<section class="card ph-el"><span class="eyebrow">รูปหน้าห้าธาตุ · 五行面相</span><div class="ph-el-top"><span class="ph-el-ic ${el.key}">${el.th}</span><div><b>ใบหน้าธาตุ${el.th}${el.mixTh ? ` ผสม${el.mixTh}` : ''}</b><span>${el.shape} ${el.cn}</span></div></div>
+<p class="body" style="margin:0">${el.read}</p><p class="ph-tip">✨ เสริม: ${el.boost}</p>
+${rel ? `<p class="small ${rel.tone > 0 ? 'tpos' : rel.tone < 0 ? 'tneg' : ''}" style="margin:0">เทียบปีเกิด: ${rel.th}</p>` : ''}</section>
+<section class="ph-list"><h2 class="label">อ่านทีละส่วน</h2>${reads.map(phReadCard).join('')}</section>
+<div class="ph-btns"><button class="btn" data-act="phAgain">อ่านใหม่</button><button class="btn btn-line" data-act="phShare">แชร์ผล ↗</button></div>
+<p class="small" style="font-size:11px">วัดจากจุดบนใบหน้า ${m.n ? `เฉลี่ย ${m.n} เฟรม` : 'จากรูปเดียว'} · มุมกล้อง แสง และสีหน้ามีผลต่อค่า ใช้เพื่อรู้จักตัวเองและความบันเทิง ไม่ใช่การตัดสินคนจากหน้าตา</p>`;
+}
+function phPalmResultHTML() {
+  const ph = state.ph, h = ph.hand, reads = handRead(h), el = handElement(h), sel = ph.lines || {};
+  return `${phSnap ? `<section class="ph-snapw"><canvas id="ph-snap" aria-label="ภาพฝ่ามือพร้อมเส้นนำ"></canvas>
+<div class="ph-snapbar"><button class="chip small-chip" data-act="phEnh" aria-pressed="${!!ph.enh}">${ph.enh ? '✓ ' : ''}เน้นเส้นลายมือ</button>${PALM_LINES.map((L) => `<button class="chip small-chip" data-act="phHide" data-v="${L.id}" aria-pressed="${!(ph.hide || {})[L.id]}" style="--accent:${L.color}"><i class="ph-dot" style="background:${L.color}"></i>${L.th.split(' ')[0]}</button>`).join('')}</div>
+<p class="small" style="margin:0">เส้นสีคือตำแหน่งโดยประมาณของเส้นหลัก ให้ดูรอยจริงบนมือแล้วเลือกลักษณะด้านล่าง กด "เน้นเส้นลายมือ" เพื่อให้รอยเส้นชัดขึ้น</p></section>` : ''}
+${ph.warn && ph.warn.length ? `<p class="ph-err">รูปนี้: ${ph.warn.join(' · ')} ผลอาจคลาดเคลื่อน</p>` : ''}
+<section class="card ph-el"><span class="eyebrow">รูปมือ · ${ph.side === 'L' ? 'มือซ้าย' : 'มือขวา'}</span><div class="ph-el-top"><span class="ph-el-ic h-${el.key}">${el.th.replace('มือธาตุ', '')}</span><div><b>${el.th}</b><span>${el.shape}</span></div></div>
+<p class="body" style="margin:0">${el.read}</p><p class="ph-tip">💼 ${reads[0].tip}</p></section>
+<section class="ph-list"><h2 class="label">นิ้วมือ</h2>${reads.slice(1).map(phReadCard).join('')}</section>
+<section class="ph-list"><h2 class="label">เส้นลายมือ: แตะเลือกลักษณะที่เห็นบนมือคุณ</h2>
+${PALM_LINES.map((L) => { const o = L.opts.find((x) => x.id === sel[L.id]); return `<article class="ph-line" style="--lc:${L.color}"><header><i class="ph-dot" style="background:${L.color}"></i><b>${L.th}</b><span class="small">${L.about}</span></header>
+<p class="small" style="margin:0">อยู่ตรงไหน: ${L.where}</p><div class="ph-opts">${L.opts.map((x) => `<button class="chip small-chip" data-act="phLine" data-l="${L.id}" data-v="${x.id}" aria-pressed="${sel[L.id] === x.id}">${x.th}</button>`).join('')}</div>
+${o ? `<p class="ph-lread">${o.read}</p><p class="ph-tip">✨ ${o.tip}</p>` : ''}</article>`; }).join('')}</section>
+<div class="ph-btns"><button class="btn" data-act="phAgain">อ่านใหม่</button><button class="btn btn-line" data-act="phShare">แชร์ผล ↗</button></div>
+<p class="small" style="font-size:11px">รูปมือและความยาวนิ้ววัดจากจุดบนมือแบบสามมิติ · เส้นลายมือให้คุณเลือกเองเพราะกล้องมือถือยังแยกรอยเส้นละเอียดได้ไม่แม่นพอ · ใช้เพื่อความบันเทิงและรู้จักตัวเอง</p>`;
+}
+function phFaceSVG() {
+  return `<svg viewBox="0 0 200 230" class="ph-svg" role="img" aria-label="ตำแหน่งโหงวเฮ้งบนใบหน้า"><ellipse cx="100" cy="118" rx="70" ry="98" class="o"/>
+<path d="M52 92q18-10 36-2M112 90q18-8 36 2" class="l"/><ellipse cx="72" cy="106" rx="13" ry="5" class="l"/><ellipse cx="128" cy="106" rx="13" ry="5" class="l"/>
+<path d="M100 104v38q-10 6-12 10h24q-2-4-12-10" class="l"/><path d="M80 172q20 9 40 0" class="l"/>
+<g class="z"><line x1="22" x2="178" y1="86" y2="86"/><line x1="22" x2="178" y1="152" y2="152"/></g>
+${[[100, 50, 'หน้าผาก 官祿'], [100, 92, 'หว่างคิ้ว 命宮'], [100, 128, 'จมูก 財帛'], [100, 196, 'คาง 地閣'], [128, 92, 'คิ้ว 兄弟'], [156, 108, 'หางตา 夫妻'], [72, 120, 'ใต้ตา 子女'], [124, 172, 'ปาก 出納']].map(([x, y, t]) => `<circle cx="${x}" cy="${y}" r="3.5" class="d"/><text x="${x + 6}" y="${y + 3}">${t}</text>`).join('')}</svg>`;
+}
+function phPalmSVG() {
+  return `<svg viewBox="0 0 200 240" class="ph-svg" role="img" aria-label="เส้นหลักบนฝ่ามือ"><path d="M60 230q-24-60-20-110l-14-40q-4-14 8-16 10-2 16 12l14 32V40q0-12 11-12t11 12v62V22q0-12 11-12t11 12v80V30q0-12 11-12t11 12v78V58q0-11 10-11t10 11v82q0 50-24 90z" class="o"/>
+<path d="M150 130q-30-6-62 2" style="stroke:#E5675A" class="pl"/><path d="M68 112q30 12 72 34" style="stroke:#D4AF63" class="pl"/><path d="M70 112q-30 44 8 104" style="stroke:#6FC3B2" class="pl"/><path d="M110 220q-4-40 0-96" style="stroke:#A99BD9" class="pl"/>
+<text x="136" y="124" style="fill:#E5675A">เส้นใจ</text><text x="122" y="158" style="fill:#D4AF63">เส้นสมอง</text><text x="40" y="190" style="fill:#6FC3B2">ชีวิต</text><text x="114" y="206" style="fill:#A99BD9">วาสนา</text></svg>`;
+}
+function phLearnHTML() {
+  return `<section class="card"><span class="eyebrow">สามส่วนของใบหน้า 三停</span><div class="ph-ill">${phFaceSVG()}</div>
+<p class="body" style="margin:0">ตำราจีนแบ่งหน้าเป็นสามส่วนเท่า ๆ กัน: <b>ส่วนบน</b> แนวไรผมถึงคิ้ว ดูวัยต้นและสติปัญญา <b>ส่วนกลาง</b> คิ้วถึงปลายจมูก ดูวัยทำงาน <b>ส่วนล่าง</b> ใต้จมูกถึงคาง ดูบั้นปลายและความมั่นคง ส่วนที่ยาวเด่นบอกช่วงวัยที่ชีวิตโดดเด่น</p></section>
+<section class="card"><span class="eyebrow">รูปหน้าห้าธาตุ 五行</span><ul class="ph-steps">
+<li><b>ไม้</b> หน้ายาว ผอมสูง: มีอุดมการณ์ ชอบเรียนรู้</li><li><b>ไฟ</b> หน้าเรียว คางแหลม: คิดไว มีเสน่ห์ ใจร้อน</li><li><b>ดิน</b> หน้าเหลี่ยม กรามกว้าง: หนักแน่น อดทน เก็บเงินเก่ง</li><li><b>ทอง</b> หน้าเหลี่ยมสมส่วน: มีระเบียบ เด็ดขาด</li><li><b>น้ำ</b> หน้ากลม: อ่อนโยน ปรับตัวเก่ง</li></ul></section>
+<section class="card"><span class="eyebrow">เส้นหลักบนฝ่ามือ</span><div class="ph-ill">${phPalmSVG()}</div>
+<ul class="ph-steps">${PALM_LINES.map((L) => `<li><b style="color:${L.color}">${L.th}</b> ${L.where} · เกี่ยวกับ${L.about}</li>`).join('')}</ul>
+<p class="small" style="margin:0">รูปมือสี่ธาตุ: ดิน (ฝ่ามือเหลี่ยม นิ้วสั้น) ลม (เหลี่ยม นิ้วยาว) ไฟ (ฝ่ามือยาว นิ้วสั้น) น้ำ (ยาว นิ้วยาว)</p></section>
+<section class="card"><span class="eyebrow">AI อ่านหน้า อ่านมือ ต่างจากซินแสอย่างไร</span>
+<div class="ph-pc"><div class="pos"><b>ข้อดี</b><ul><li>ใช้ได้ทันที ฟรี อ่านซ้ำได้ทุกเมื่อ</li><li>วัดสัดส่วนเป็นตัวเลข ไม่มีอคติจากความประทับใจแรก</li><li>AR ชี้ตำแหน่งให้เห็นบนหน้าและมือจริง</li><li>ประมวลผลในเครื่อง รูปไม่ออกไปไหน</li></ul></div>
+<div class="neg"><b>ข้อจำกัด</b><ul><li>ยังไม่เห็นสีผิว ไฝ รอยตำหนิ และความลึกของเส้นแบบซินแส</li><li>แสง มุมกล้อง สีหน้า มีผลต่อค่า</li><li>เส้นลายมือละเอียดยังต้องให้ผู้ใช้ช่วยดู</li><li>เป็นศาสตร์ความเชื่อ ไม่ใช่วิทยาศาสตร์</li></ul></div></div>
+<p class="small" style="margin:0">ตำราโหงวเฮ้งเองก็สอนว่าใจและการกระทำสำคัญกว่าหน้าตา การดูแลสุขภาพ ยิ้มแย้ม และพูดดี คือการ "เสริมโหงวเฮ้ง" ที่ได้ผลจริงที่สุด การศัลยกรรมเป็นเรื่องส่วนตัว ควรตัดสินใจเพราะความสบายใจของตัวเอง ไม่ใช่เพราะคำทำนาย</p></section>`;
+}
+function viewFace() {
+  const ph = state.ph;
+  let body;
+  if (ph.tab === 'learn') body = phLearnHTML();
+  else if (ph.status === 'loading') body = phLoadingHTML();
+  else if (ph.status === 'live') body = phLiveHTML();
+  else if (ph.status === 'result' || (ph.tab === 'face' ? ph.face : ph.hand) && ph.status !== 'start') body = (ph.tab === 'face' ? (ph.face ? phFaceResultHTML() : '') : (ph.hand ? phPalmResultHTML() : '')) || phStartHTML(ph.tab);
+  else body = phStartHTML(ph.tab);
+  return `<main class="screen" style="--accent:#E8A2B8">
+${pageHead('15', 'FACE · PALM', 'โหงวเฮ้ง ลายมือ', '#E8A2B8', 'face')}
+<div class="seg" role="tablist">${PH_TABS.map(([t, l]) => `<button role="tab" aria-selected="${ph.tab === t}" data-act="phTab" data-v="${t}">${l}</button>`).join('')}</div>
+${body}
+</main>`;
+}
+async function phImage() {
+  const ph = state.ph, W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const x = cv.getContext('2d'), g = x.createLinearGradient(0, 0, W, H);
+  g.addColorStop(0, '#2A1420'); g.addColorStop(.6, '#0F0C10'); g.addColorStop(1, '#1E170C'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  const F = (w, s) => `${w} ${s}px "IBM Plex Sans Thai", "Taviraj", sans-serif`;
+  x.textAlign = 'center'; x.fillStyle = '#E8A2B8'; x.font = F(500, 30); x.fillText(ph.tab === 'face' ? 'ตักศิลา · โหงวเฮ้ง' : 'ตักศิลา · ลายมือ', W / 2, 90);
+  let title, sub, items;
+  if (ph.tab === 'face') { const el = faceElement(ph.face), rd = faceRead(ph.face); title = `ใบหน้าธาตุ${el.th}`; sub = el.shape + (el.mixTh ? ` ผสม${el.mixTh}` : ''); items = rd.filter((r) => r.tone > 0 && r.key !== 'sym').slice(0, 4).map((r) => [r.title, r.read]); }
+  else { const el = handElement(ph.hand), rd = handRead(ph.hand); title = el.th; sub = el.shape; items = [[rd[0].title, el.read], ...PALM_LINES.filter((L) => (ph.lines || {})[L.id]).slice(0, 3).map((L) => [L.th, L.opts.find((o) => o.id === ph.lines[L.id]).read])]; }
+  x.fillStyle = '#F6E3B0'; x.font = F(700, 92); x.fillText(title, W / 2, 230);
+  x.fillStyle = '#B9AD94'; x.font = F(400, 34); x.fillText(sub, W / 2, 290);
+  x.textAlign = 'left'; let y = 380;
+  for (const [t, d] of items) {
+    x.fillStyle = 'rgba(255,255,255,.05)'; x.fillRect(80, y - 50, W - 160, 210);
+    x.fillStyle = '#E8A2B8'; x.font = F(600, 34); x.fillText(t, 110, y);
+    x.fillStyle = '#E9DFC8'; x.font = F(400, 30);
+    wrapText(x, thaiChunks(d), 110, y + 46, W - 220, 40, 4);
+    y += 230;
+  }
+  x.textAlign = 'center'; x.fillStyle = '#8F836C'; x.font = F(400, 26); x.fillText('ส่องหน้า อ่านลายมือฟรี ที่ตักศิลา · mengnattawitmarin.github.io/taksila', W / 2, H - 50);
+  return new Promise((res) => cv.toBlob(res, 'image/png'));
+}
+
+const VIEWS = { face: viewFace, fengshui: viewFengshui, calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -10382,10 +11144,11 @@ function render() {
   mountLuck();
   if (r === 'map') mountMap();
   mountFengshui();
+  mountPhysio();
   if (r === 'fengshui' && state.fs.tab === 'map') mountFsMap();
   { const row = document.querySelector('.fs-tabs'); const on = row && row.querySelector('[aria-pressed="true"]'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; }
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', face: 'โหงวเฮ้ง ลายมือ', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -10561,6 +11324,17 @@ document.addEventListener('click', (e) => {
     case 'muCat': Object.assign(state.map, { cat: el.dataset.v, wish: el.dataset.v === 'wish' ? state.map.wish : null, sel: null }); break;
     case 'muWish': state.map.wish = state.map.wish === el.dataset.v ? null : el.dataset.v; state.map.cat = 'wish'; state.map.sel = null; break;
     case 'fsTab': state.fs.tab = el.dataset.v; window.scrollTo(0, 0); break;
+    case 'phTab': if (state.ph.status === 'live') phStopCam(); state.ph.tab = el.dataset.v; state.ph.status = 'idle'; state.ph.err = ''; break;
+    case 'phStart': phStart(); return;
+    case 'phStop': phStopCam(); state.ph.status = 'start'; break;
+    case 'phSkip': phForce = true; el.hidden = true; return;
+    case 'phAgain': phSnap = null; state.ph.status = 'start'; state.ph.err = ''; state.ph.warn = []; break;
+    case 'phSide': state.ph.side = el.dataset.v; break;
+    case 'phFacing': state.ph.facing = state.ph.facing === 'user' ? 'environment' : 'user'; break;
+    case 'phEnh': state.ph.enh = !state.ph.enh; break;
+    case 'phHide': state.ph.hide = { ...state.ph.hide, [el.dataset.v]: !state.ph.hide[el.dataset.v] }; break;
+    case 'phLine': { const l = el.dataset.l, v = el.dataset.v; state.ph.lines = { ...state.ph.lines, [l]: state.ph.lines[l] === v ? null : v }; phSaveSaved({ lines: state.ph.lines }); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
+    case 'phShare': phImage().then((b) => shareBlob(b, `taksila-${state.ph.tab}-${Date.now()}.png`, state.ph.tab === 'face' ? 'โหงวเฮ้งจากตักศิลา' : 'ลายมือจากตักศิลา')); return;
     case 'fsGender': state.fs.gender = el.dataset.v; fsSave(); break;
     case 'fsPtype': state.fs.ptype = el.dataset.v; if (el.dataset.v === 'land') state.fs.period = 9; fsSave(); break;
     case 'fsChk': { const id = fsPt().id, c = { ...(state.fs.chk || {}) }; c[id] = { ...(c[id] || {}) }; c[id][el.dataset.v] = !c[id][el.dataset.v]; state.fs.chk = c; fsSave(); break; }
@@ -10709,6 +11483,7 @@ document.addEventListener('change', (e) => {
   if (!key) return;
   const v = +e.target.value;
   if (key === 'm.name') return;
+  if (key === 'phFile') { const f = e.target.files && e.target.files[0]; if (f) phPhoto(f); return; }
   if (key === 'fsFacing') { fsSave(); render(); return; }
   if (key === 'fsRadius') { fsSave(); return; }
   if (key === 'fsPeriod') { state.fs.period = v; fsSave(); render(); return; }
