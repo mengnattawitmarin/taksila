@@ -1244,3 +1244,30 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .fs-score-top b { font-family: var(--serif); font-size: 24px; }
 .fs-tt { background: rgba(13,11,8,.8) !important; color: #F1E6CF !important; border: 0 !important; box-shadow: none !important; font-size: 10px !important; padding: 1px 5px !important; }
 .fs-tt::before { display: none; }
+/* ฮวงจุ้ย: วิธีแก้/เสริม, วิธีวัด, AR tape */
+.fs-how{display:grid;gap:.45rem;margin-top:.5rem}
+.fs-how-b{border-radius:12px;padding:.55rem .7rem;font-size:.86rem;line-height:1.5}
+.fs-how-b b{display:block;font-size:.82rem;margin-bottom:.15rem}
+.fs-how-b ul{margin:0;padding-left:1.1rem}
+.fs-how-b li{margin:.12rem 0}
+.fs-how-b.fix{background:rgba(229,103,90,.1);border:1px solid rgba(229,103,90,.28)}
+.fs-how-b.fix b{color:#E5675A}
+.fs-how-b.boost{background:rgba(111,195,178,.1);border:1px solid rgba(111,195,178,.28)}
+.fs-how-b.boost b{color:#6FC3B2}
+.fs-how-1{display:block;margin-top:.2rem;opacity:.9}
+.fs-combo{margin-top:.35rem!important}
+.fs-guide{border:1px solid rgba(212,175,99,.3);border-radius:14px;padding:.6rem .8rem;background:rgba(212,175,99,.06);font-size:.88rem;line-height:1.55}
+.fs-guide summary{cursor:pointer;font-weight:600;color:#D4AF63}
+.fs-guide ol{margin:.5rem 0 0;padding-left:1.2rem}
+.fs-guide li{margin:.3rem 0}
+.fs-ar{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.fs-tape{position:relative;height:64px;overflow:hidden;background:linear-gradient(rgba(13,11,8,.82),rgba(13,11,8,.55));border-bottom:1px solid rgba(212,175,99,.5)}
+.fs-tape-in{position:absolute;top:0;left:50%;height:100%;width:3600px;transition:transform .12s linear}
+.fs-tape .tp{position:absolute;top:0;height:100%;width:0;border-left:1px solid rgba(255,255,255,.35)}
+.fs-tape .tp.main{border-left:2px solid #D4AF63}
+.fs-tape .tp b{position:absolute;top:6px;left:0;transform:translateX(-50%);font-size:.95rem;color:#fff;white-space:nowrap}
+.fs-tape .tp i{position:absolute;bottom:6px;left:0;transform:translateX(-50%);font-style:normal;font-size:.72rem;color:rgba(255,255,255,.7)}
+.fs-tape .tp.good b{color:#6FC3B2}.fs-tape .tp.bad b{color:#E5675A}
+.fs-tape-mark{position:absolute;left:50%;top:0;bottom:0;width:2px;margin-left:-1px;background:#E5675A;box-shadow:0 0 6px #E5675A}
+.fs-ar-cross{align-self:center;width:44px;height:44px;border:2px solid rgba(255,255,255,.8);border-radius:50%;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.fs-cmp.cam .fs-read{position:static;margin:0 .6rem .6rem;background:rgba(13,11,8,.78);border-radius:12px;padding:.55rem .7rem;display:flex;flex-direction:column;gap:.15rem;text-align:center}
