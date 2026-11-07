@@ -117,6 +117,7 @@ export function faceElement(m) {
 }
 // ธาตุประจำปีเกิดจีน (เลขท้ายปี ค.ศ. จีน) เทียบกับธาตุใบหน้า
 const YEAR_EL = ['metal', 'metal', 'water', 'water', 'wood', 'wood', 'fire', 'fire', 'earth', 'earth'];
+export const yearElementTh = (sy) => FACE_EL[YEAR_EL[((sy % 10) + 10) % 10]].th;
 const GEN = { wood: 'fire', fire: 'earth', earth: 'metal', metal: 'water', water: 'wood' };
 const CTRL = { wood: 'earth', earth: 'water', water: 'fire', fire: 'metal', metal: 'wood' };
 export function elementRelation(faceKey, solarYear) {

@@ -1357,6 +1357,9 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .ph-pc ul{margin:4px 0 0;padding-left:1rem}
 .ph-pc .pos{background:rgba(111,195,178,.08)}.ph-pc .neg{background:rgba(229,103,90,.08)}
 @media (max-width:360px){.ph-pc{grid-template-columns:1fr}}
+.ph-bd{gap:8px}
+.ph-bd .seg button{font-size:13px;padding:0 6px}
+.ph-bd-row{display:grid;grid-template-columns:1fr 1.2fr 1.4fr;gap:8px}
 
 </style>
 </head>
@@ -7826,6 +7829,7 @@ function faceElement(m) {
 }
 // ธาตุประจำปีเกิดจีน (เลขท้ายปี ค.ศ. จีน) เทียบกับธาตุใบหน้า
 const YEAR_EL = ['metal', 'metal', 'water', 'water', 'wood', 'wood', 'fire', 'fire', 'earth', 'earth'];
+const yearElementTh = (sy) => FACE_EL[YEAR_EL[((sy % 10) + 10) % 10]].th;
 const GEN = { wood: 'fire', fire: 'earth', earth: 'metal', metal: 'water', water: 'wood' };
 const CTRL = { wood: 'earth', earth: 'water', water: 'fire', fire: 'metal', metal: 'wood' };
 function elementRelation(faceKey, solarYear) {
@@ -8073,7 +8077,7 @@ const state = {
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
   map: { cat: 'all', wish: null, reg: 'all', sel: null, me: null },
-  ph: { tab: 'face', status: 'idle', side: 'R', facing: 'environment', mirror: false, enh: false, hide: {}, err: '', warn: [], ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.physio')) || {}; return { face: j.face || null, hand: j.hand || null, side: j.side || 'R', lines: j.lines || {} }; } catch (e) { return {}; } })() },
+  ph: { tab: 'face', status: 'idle', side: 'R', facing: 'environment', mirror: false, enh: false, hide: {}, err: '', warn: [], ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.physio')) || {}; return { face: j.face || null, hand: j.hand || null, side: j.side || 'R', lines: j.lines || {}, who: j.who || 'me', birth: j.birth || null }; } catch (e) { return {}; } })() },
   fs: { tab: 'kua', gender: '', facing: 180, period: 9, repl: false, rooms: {}, members: [], home: null, radius: 40, cell: null, roomPick: null, newMember: null, heading: null, sensor: false, cam: false, ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.fs')) || {}; const o = {}; for (const k of ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius', 'ptype', 'chk']) if (j[k] != null) o[k] = j[k]; return o; } catch (e) { return {}; } })() },
   pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
@@ -11009,6 +11013,24 @@ function mountPhysio() {
   }
 }
 // ---- หน้าจอ ----
+// วันเกิดของคนที่ส่อง: ใช้ข้อมูลในแอป หรือกรอกของคนอื่น
+function phBirth() {
+  const ph = state.ph, p = state.profile || {};
+  if (ph.who === 'other' && ph.birth) return ph.birth;
+  return p.yearBE ? { d: p.day || 1, m: p.month || 1, y: p.yearBE, name: (p.name || '').split(' ')[0] } : null;
+}
+function phBirthInfo() {
+  const b = phBirth(); if (!b) return null;
+  const sy = solarYear(new Date(b.y - 543, b.m - 1, b.d, 12));
+  return { ...b, sy, el: yearElementTh(sy), animal: yearAfflictions(sy).animal };
+}
+function phBirthHTML() {
+  const ph = state.ph, p = state.profile || {}, b = ph.birth || { d: 1, m: 1, y: 2540 }, info = phBirthInfo();
+  return `<section class="card ph-bd"><span class="eyebrow">วันเกิดของคนที่ส่อง</span>
+<div class="seg" role="group" aria-label="อ่านให้ใคร"><button aria-pressed="${ph.who !== 'other'}" data-act="phWho" data-v="me">${p.yearBE ? `ฉัน (${p.day} ${MONTHS_SHORT[(p.month || 1) - 1]} ${p.yearBE})` : 'ฉัน'}</button><button aria-pressed="${ph.who === 'other'}" data-act="phWho" data-v="other">คนอื่น</button></div>
+${ph.who === 'other' ? `<div class="ph-bd-row"><label class="field">วัน<select class="select mono" data-in="phB.d">${opts(range(1, 31).map((n) => [n, n]), b.d)}</select></label><label class="field">เดือน<select class="select" data-in="phB.m">${opts(MONTHS_SHORT.map((m, i) => [i + 1, m]), b.m)}</select></label><label class="field">ปี พ.ศ.<select class="select mono" data-in="phB.y">${opts(range(2443, 2575).reverse().map((n) => [n, n]), b.y)}</select></label></div>` : ''}
+${info ? `<p class="small" style="margin:0">ปีจีน ${info.sy} · ปี${info.animal} · ธาตุปีเกิด<b> ${info.el}</b> ใช้เทียบกับธาตุใบหน้า</p>` : '<p class="small" style="margin:0">ยังไม่มีวันเกิด เลือก "คนอื่น" แล้วกรอกได้</p>'}</section>`;
+}
 const PH_TABS = [['face', 'โหงวเฮ้ง'], ['palm', 'ลายมือ'], ['learn', 'ความรู้']];
 function phErrHTML(err) {
   if (!err) return '';
@@ -11017,7 +11039,7 @@ function phErrHTML(err) {
 }
 function phStartHTML(kind) {
   const ph = state.ph;
-  return `<section class="card ph-start">
+  return `${kind === 'face' ? phBirthHTML() : ''}<section class="card ph-start">
 ${kind === 'face' ? `<div class="ph-ill">${phFaceSVG()}</div><b class="ph-t">ส่องหน้าด้วยกล้อง แล้วอ่านโหงวเฮ้งจากสัดส่วนจริง</b>
 <ul class="ph-steps"><li>หน้าตรง แสงสว่างด้านหน้า ไม่ย้อนแสง</li><li>เปิดหน้าผาก ถอดแว่น ทำหน้าปกติ ไม่ยิ้ม</li><li>วางมือถือระดับสายตา ห่างราว 40–50 ซม.</li></ul>`
     : `<div class="ph-ill">${phPalmSVG()}</div><b class="ph-t">ส่องฝ่ามือ แล้วอ่านรูปมือ นิ้ว และเส้นลายมือ</b>
@@ -11041,13 +11063,13 @@ function phReadCard(r) {
 }
 function phFaceResultHTML() {
   const ph = state.ph, m = ph.face, el = faceElement(m), reads = faceRead(m);
-  const p = state.profile, sy = p && p.yearBE ? solarYear(new Date(p.yearBE - 543, (p.month || 1) - 1, p.day || 1, 12)) : null;
-  const rel = sy ? elementRelation(el.key, sy) : null;
+  const bi = phBirthInfo(), rel = bi ? elementRelation(el.key, bi.sy) : null;
   return `${phSnap ? `<section class="ph-snapw"><canvas id="ph-snap" aria-label="ภาพใบหน้าพร้อมจุดโหงวเฮ้ง"></canvas></section>` : ''}
 ${ph.warn && ph.warn.length ? `<p class="ph-err">รูปนี้: ${ph.warn.join(' · ')} ผลอาจคลาดเคลื่อน ลองถ่ายใหม่ได้</p>` : ''}
 <section class="card ph-el"><span class="eyebrow">รูปหน้าห้าธาตุ · 五行面相</span><div class="ph-el-top"><span class="ph-el-ic ${el.key}">${el.th}</span><div><b>ใบหน้าธาตุ${el.th}${el.mixTh ? ` ผสม${el.mixTh}` : ''}</b><span>${el.shape} ${el.cn}</span></div></div>
 <p class="body" style="margin:0">${el.read}</p><p class="ph-tip">✨ เสริม: ${el.boost}</p>
-${rel ? `<p class="small ${rel.tone > 0 ? 'tpos' : rel.tone < 0 ? 'tneg' : ''}" style="margin:0">เทียบปีเกิด: ${rel.th}</p>` : ''}</section>
+${rel ? `<p class="small ${rel.tone > 0 ? 'tpos' : rel.tone < 0 ? 'tneg' : ''}" style="margin:0">เทียบปีเกิด${state.ph.who === 'other' ? ' (คนอื่น)' : ''} ปี${bi.animal} ธาตุ${bi.el}: ${rel.th}</p>` : ''}</section>
+${phBirthHTML()}
 <section class="ph-list"><h2 class="label">อ่านทีละส่วน</h2>${reads.map(phReadCard).join('')}</section>
 <div class="ph-btns"><button class="btn" data-act="phAgain">อ่านใหม่</button><button class="btn btn-line" data-act="phShare">แชร์ผล ↗</button></div>
 <p class="small" style="font-size:11px">วัดจากจุดบนใบหน้า ${m.n ? `เฉลี่ย ${m.n} เฟรม` : 'จากรูปเดียว'} · มุมกล้อง แสง และสีหน้ามีผลต่อค่า ใช้เพื่อรู้จักตัวเองและความบันเทิง ไม่ใช่การตัดสินคนจากหน้าตา</p>`;
@@ -11073,7 +11095,7 @@ function phFaceSVG() {
 <path d="M52 92q18-10 36-2M112 90q18-8 36 2" class="l"/><ellipse cx="72" cy="106" rx="13" ry="5" class="l"/><ellipse cx="128" cy="106" rx="13" ry="5" class="l"/>
 <path d="M100 104v38q-10 6-12 10h24q-2-4-12-10" class="l"/><path d="M80 172q20 9 40 0" class="l"/>
 <g class="z"><line x1="22" x2="178" y1="86" y2="86"/><line x1="22" x2="178" y1="152" y2="152"/></g>
-${[[100, 50, 'หน้าผาก 官祿'], [100, 92, 'หว่างคิ้ว 命宮'], [100, 128, 'จมูก 財帛'], [100, 196, 'คาง 地閣'], [128, 92, 'คิ้ว 兄弟'], [156, 108, 'หางตา 夫妻'], [72, 120, 'ใต้ตา 子女'], [124, 172, 'ปาก 出納']].map(([x, y, t]) => `<circle cx="${x}" cy="${y}" r="3.5" class="d"/><text x="${x + 6}" y="${y + 3}">${t}</text>`).join('')}</svg>`;
+${[[100, 50, 'หน้าผาก 官祿', 1], [100, 90, 'หว่างคิ้ว 命宮', 1], [134, 84, 'คิ้ว 兄弟', 0], [148, 106, 'หางตา 夫妻', 2], [72, 116, 'ใต้ตา 子女', 3], [100, 132, 'จมูก 財帛', 1], [120, 172, 'ปาก 出納', 1], [100, 198, 'คาง 地閣', 1]].map(([x, y, t, a]) => `<circle cx="${x}" cy="${y}" r="3.2" class="d"/><text x="${a === 3 ? x - 5 : a === 0 ? x : a === 2 ? x - 2 : x + 5}" y="${a === 0 ? y - 6 : a === 2 ? y + 13 : y + 3}" text-anchor="${a === 3 ? 'end' : a === 0 ? 'middle' : a === 2 ? 'middle' : 'start'}">${t}</text>`).join('')}</svg>`;
 }
 function phPalmSVG() {
   return `<svg viewBox="0 0 200 240" class="ph-svg" role="img" aria-label="เส้นหลักบนฝ่ามือ"><path d="M60 230q-24-60-20-110l-14-40q-4-14 8-16 10-2 16 12l14 32V40q0-12 11-12t11 12v62V22q0-12 11-12t11 12v80V30q0-12 11-12t11 12v78V58q0-11 10-11t10 11v82q0 50-24 90z" class="o"/>
@@ -11330,6 +11352,7 @@ document.addEventListener('click', (e) => {
     case 'phSkip': phForce = true; el.hidden = true; return;
     case 'phAgain': phSnap = null; state.ph.status = 'start'; state.ph.err = ''; state.ph.warn = []; break;
     case 'phSide': state.ph.side = el.dataset.v; break;
+    case 'phWho': state.ph.who = el.dataset.v; if (el.dataset.v === 'other' && !state.ph.birth) state.ph.birth = { d: 1, m: 1, y: 2540 }; phSaveSaved({ who: state.ph.who, birth: state.ph.birth }); { const y = window.scrollY; render(); window.scrollTo(0, y); } return;
     case 'phFacing': state.ph.facing = state.ph.facing === 'user' ? 'environment' : 'user'; break;
     case 'phEnh': state.ph.enh = !state.ph.enh; break;
     case 'phHide': state.ph.hide = { ...state.ph.hide, [el.dataset.v]: !state.ph.hide[el.dataset.v] }; break;
@@ -11483,6 +11506,7 @@ document.addEventListener('change', (e) => {
   if (!key) return;
   const v = +e.target.value;
   if (key === 'm.name') return;
+  if (key && key.startsWith('phB.')) { state.ph.birth = { ...(state.ph.birth || { d: 1, m: 1, y: 2540 }), [key.slice(4)]: v }; phSaveSaved({ birth: state.ph.birth }); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
   if (key === 'phFile') { const f = e.target.files && e.target.files[0]; if (f) phPhoto(f); return; }
   if (key === 'fsFacing') { fsSave(); render(); return; }
   if (key === 'fsRadius') { fsSave(); return; }

@@ -1347,3 +1347,6 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .ph-pc ul{margin:4px 0 0;padding-left:1rem}
 .ph-pc .pos{background:rgba(111,195,178,.08)}.ph-pc .neg{background:rgba(229,103,90,.08)}
 @media (max-width:360px){.ph-pc{grid-template-columns:1fr}}
+.ph-bd{gap:8px}
+.ph-bd .seg button{font-size:13px;padding:0 6px}
+.ph-bd-row{display:grid;grid-template-columns:1fr 1.2fr 1.4fr;gap:8px}
