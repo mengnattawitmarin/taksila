@@ -1,0 +1,18 @@
+name: verify-face
+on:
+  push:
+    branches: [verify-face]
+    paths: [tools/verify/face_ref.py]
+permissions:
+  contents: write
+jobs:
+  ref:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install mediapipe==0.10.14 numpy pillow && python tools/verify/face_ref.py
+      - run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898388+github-actions[bot]@users.noreply.github.com"
+          git add tools/verify && git commit -m "Face/palm reference data" && git push
