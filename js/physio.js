@@ -21,8 +21,66 @@ function levelFace(lm, W, H) {
   return { P: P.map((p) => ({ x: c.x + (p.x - c.x) * cs - (p.y - c.y) * sn, y: c.y + (p.x - c.x) * sn + (p.y - c.y) * cs, z: p.z })), roll: roll * 180 / Math.PI };
 }
 
+// ---------- จัดหน้าให้ตรงแบบ 3 มิติ ----------
+// เทียบจุดที่ไม่ขยับตามสีหน้า (หัวตา หางตา สันจมูก หน้าผาก คาง แก้ม) กับใบหน้ามาตรฐานของ MediaPipe
+// แล้วหมุนกลับให้หน้าตรง ทำให้สัดส่วนไม่เพี้ยนเวลาหน้าเอียงหรือหันเล็กน้อย (วิธีของ Horn, 1987)
+const PH_CANON = {"33":[-4.446,-2.664,-3.173],"133":[-1.856,-2.585,-3.758],"263":[4.446,-2.664,-3.173],"362":[1.856,-2.585,-3.758],"1":[0,1.127,-7.476],"4":[0,0.463,-7.587],"6":[0,-2.473,-5.789],"168":[0,-3.271,-5.236],"10":[0,-8.262,-4.482],"152":[0,9.403,-4.264],"234":[-7.664,-0.673,2.436],"454":[7.664,-0.673,2.436],"2":[0,2.089,-6.058],"9":[0,-4.886,-5.385],"151":[0,-6.545,-5.027],"58":[-6.72,4.789,1.745],"288":[6.72,4.789,1.745],"197":[0,-1.728,-6.317],"195":[0,-1.059,-6.775],"5":[0,-0.366,-7.243],"8":[0,-4.019,-5.285]};
+function phJacobi4(A) { // eigen-decomposition of a symmetric 4×4 matrix
+  const a = A.map((r) => r.slice()), V = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]];
+  for (let sweep = 0; sweep < 50; sweep++) {
+    let off = 0;
+    for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) off += a[i][j] * a[i][j];
+    if (off < 1e-18) break;
+    for (let p = 0; p < 4; p++) for (let q = p + 1; q < 4; q++) {
+      if (Math.abs(a[p][q]) < 1e-15) continue;
+      const th = (a[q][q] - a[p][p]) / (2 * a[p][q]), t = Math.sign(th || 1) / (Math.abs(th) + Math.sqrt(th * th + 1)), c = 1 / Math.sqrt(t * t + 1), s = t * c;
+      for (let k = 0; k < 4; k++) { const akp = a[k][p], akq = a[k][q]; a[k][p] = c * akp - s * akq; a[k][q] = s * akp + c * akq; }
+      for (let k = 0; k < 4; k++) { const apk = a[p][k], aqk = a[q][k]; a[p][k] = c * apk - s * aqk; a[q][k] = s * apk + c * aqk; }
+      for (let k = 0; k < 4; k++) { const vkp = V[k][p], vkq = V[k][q]; V[k][p] = c * vkp - s * vkq; V[k][q] = s * vkp + c * vkq; }
+    }
+  }
+  return { val: [0, 1, 2, 3].map((i) => a[i][i]), vec: V };
+}
+function frontalize(P) {
+  const ids = Object.keys(PH_CANON).map(Number), n = ids.length;
+  const ca = [0, 0, 0], cb = [0, 0, 0];
+  for (const i of ids) { const a = PH_CANON[i]; ca[0] += a[0] / n; ca[1] += a[1] / n; ca[2] += a[2] / n; cb[0] += P[i].x / n; cb[1] += P[i].y / n; cb[2] += P[i].z / n; }
+  const S = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+  for (const i of ids) {
+    const a = [PH_CANON[i][0] - ca[0], PH_CANON[i][1] - ca[1], PH_CANON[i][2] - ca[2]], b = [P[i].x - cb[0], P[i].y - cb[1], P[i].z - cb[2]];
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) S[r][c] += a[r] * b[c];
+  }
+  const [[xx, xy, xz], [yx, yy, yz], [zx, zy, zz]] = S;
+  const N = [[xx + yy + zz, yz - zy, zx - xz, xy - yx], [yz - zy, xx - yy - zz, xy + yx, zx + xz], [zx - xz, xy + yx, -xx + yy - zz, yz + zy], [xy - yx, zx + xz, yz + zy, -xx - yy + zz]];
+  const { val, vec } = phJacobi4(N), k = val.indexOf(Math.max(...val));
+  const [w, x, y, z] = [vec[0][k], vec[1][k], vec[2][k], vec[3][k]];
+  const R = [[w * w + x * x - y * y - z * z, 2 * (x * y - w * z), 2 * (x * z + w * y)], [2 * (x * y + w * z), w * w - x * x + y * y - z * z, 2 * (y * z - w * x)], [2 * (x * z - w * y), 2 * (y * z + w * x), w * w - x * x - y * y + z * z]];
+  // R maps canonical → observed; apply Rᵀ to bring the observed face back to frontal
+  const out = P.map((p) => { const d = [p.x - cb[0], p.y - cb[1], p.z - cb[2]]; return { x: R[0][0] * d[0] + R[1][0] * d[1] + R[2][0] * d[2], y: R[0][1] * d[0] + R[1][1] * d[1] + R[2][1] * d[2], z: R[0][2] * d[0] + R[1][2] * d[1] + R[2][2] * d[2] }; });
+  const yaw = Math.asin(Math.max(-1, Math.min(1, R[0][2]))) * 180 / Math.PI, pitch = Math.asin(Math.max(-1, Math.min(1, -R[1][2]))) * 180 / Math.PI, roll = Math.atan2(R[1][0], R[0][0]) * 180 / Math.PI;
+  return { P: out, yaw, pitch, roll, extra: P.length > 478 };
+}
+
 // ---------- ใบหน้า: วัดค่า ----------
 // ดัชนีจุดหลักของ Face Mesh
+// ค่าเปรียบเทียบประชากร (เปอร์เซ็นไทล์ 10/25/50/75/90) วัดด้วยโค้ดนี้จากภาพหน้าตรง 628 ภาพ
+// (ภาพทางการสาธารณสมบัติจาก github.com/unitedstates/images) ค่าปาก ตา คาง ใช้เฉพาะภาพที่ไม่ยิ้ม
+// หมายเหตุ: กลุ่มตัวอย่างส่วนใหญ่เป็นชาวตะวันตก ค่าจมูกและระยะตาของคนเอเชียอาจต่างไปเล็กน้อย
+export const PH_NORM = {"ratio":[1.139,1.172,1.205,1.244,1.282],"fore":[0.816,0.828,0.842,0.856,0.869],"jaw":[0.793,0.805,0.818,0.828,0.838],"chinW":[0.174,0.179,0.184,0.189,0.195],"up":[0.223,0.269,0.298,0.322,0.342],"md":[0.306,0.319,0.335,0.356,0.38],"lo":[0.341,0.353,0.368,0.384,0.404],"eyeGapR":[1.189,1.239,1.306,1.384,1.441],"eyeOpen":[0.251,0.278,0.298,0.321,0.342],"tilt":[0.481,1.81,2.972,4.225,5.499],"browLenR":[1.564,1.604,1.662,1.712,1.762],"browEye":[0.535,0.581,0.642,0.71,0.773],"browGap":[1.007,1.041,1.085,1.131,1.18],"noseWR":[1.108,1.164,1.215,1.269,1.317],"noseLR":[0.224,0.234,0.246,0.258,0.273],"mouthR":[1.263,1.328,1.393,1.43,1.467],"lipBal":[0.519,0.564,0.65,0.704,0.764],"lipThick":[0.145,0.177,0.217,0.255,0.289],"corner":[-0.015,0.003,0.017,0.033,0.055],"philR":[0.227,0.24,0.253,0.272,0.29],"chinLR":[0.513,0.535,0.563,0.596,0.614],"sym":[0.852,0.89,0.92,0.94,0.953]};
+// หน้าผากที่วัดได้จริง ÷ ระยะคิ้วถึงจุด 10 (มัธยฐานจาก 611 ภาพที่ตรวจพบแนวไรผม)
+export const PH_HAIRK = 1.77;
+// ตำแหน่งเทียบคนทั่วไป 0–100 (ประมาณจากเปอร์เซ็นไทล์)
+export function phPct(k, v) {
+  const q = PH_NORM[k], P = [10, 25, 50, 75, 90];
+  if (!q) return 50;
+  if (v <= q[0]) return Math.max(2, 10 - (q[0] - v) / Math.max(1e-6, q[1] - q[0]) * 15);
+  if (v >= q[4]) return Math.min(98, 90 + (v - q[4]) / Math.max(1e-6, q[4] - q[3]) * 15);
+  for (let i = 0; i < 4; i++) if (v <= q[i + 1]) return P[i] + (v - q[i]) / Math.max(1e-6, q[i + 1] - q[i]) * (P[i + 1] - P[i]);
+  return 50;
+}
+const phZ = (k, v) => { const q = PH_NORM[k]; return (v - q[2]) / Math.max(1e-6, (q[3] - q[1]) / 1.349); };
+const nb = (k, v) => (v < PH_NORM[k][1] ? -1 : v > PH_NORM[k][3] ? 1 : 0); // ต่ำกว่า P25 / สูงกว่า P75
+const pctTxt = (k, v) => { const p = Math.round(phPct(k, v)); return p >= 60 ? `มากกว่าคนทั่วไป ~${p}%` : p <= 40 ? `น้อยกว่าคนทั่วไป ~${100 - p}%` : 'ใกล้ค่ากลาง'; };
 export const FI = {
   top: 10, glab: 9, nasion: 168, bridge: 6, tip: 4, sub: 2, lipTop: 0, lipIn1: 13, lipIn2: 14, lipBot: 17, chin: 152,
   eRo: 33, eRi: 133, eRt: 159, eRb: 145, eLo: 263, eLi: 362, eLt: 386, eLb: 374,
@@ -32,12 +90,16 @@ export const FI = {
 // คู่จุดซ้าย-ขวา ใช้วัดความสมมาตร
 const PH_SYM = [[33, 263], [133, 362], [70, 300], [107, 336], [105, 334], [64, 294], [61, 291], [234, 454], [172, 397], [54, 284], [148, 377], [159, 386], [145, 374]];
 
-export function faceMeasure(lm, W = 1, H = 1) {
-  const { P, roll } = levelFace(lm, W, H), g = (i) => P[i];
+// hair = จุดแนวไรผมจริง {x, y} (0–1) จากตัวแยกเส้นผม ถ้ามี
+export function faceMeasure(lm, W = 1, H = 1, hair = null) {
+  const raw = lm.map((p) => ({ x: p.x * W, y: p.y * H, z: (p.z || 0) * W }));
+  if (hair) raw.push({ x: hair.x * W, y: hair.y * H, z: raw[10].z });
+  const fr = frontalize(raw), P = fr.P, lv = levelFace(lm, W, H), roll = lv.roll, g = (i) => P[i], q = (i) => lv.P[i];
   const faceW = phD2(g(FI.cheekR), g(FI.cheekL)), faceH = g(FI.chin).y - g(FI.top).y;
   const browY = (g(FI.bRt).y + g(FI.bLt).y) / 2;
-  // จุด 10 อยู่ต่ำกว่าแนวไรผมจริง จึงประมาณหน้าผากเต็มด้วยตัวคูณ 1.55 (ปรับจากสัดส่วนมาตรฐานที่สามส่วนเท่ากัน)
-  const up = (browY - g(FI.top).y) * 1.55, md = g(FI.sub).y - browY, lo = g(FI.chin).y - g(FI.sub).y, th = up + md + lo;
+  // หน้าผาก: ใช้แนวไรผมจริงถ้าหาได้ ไม่งั้นประมาณจากจุด 10 (อยู่ต่ำกว่าแนวไรผม) ด้วยตัวคูณ PH_HAIRK
+  const hairY = hair ? P[P.length - 1].y : null;
+  const up = hairY != null && browY - hairY > (browY - g(FI.top).y) ? browY - hairY : (browY - g(FI.top).y) * PH_HAIRK, md = g(FI.sub).y - browY, lo = g(FI.chin).y - g(FI.sub).y, th = up + md + lo;
   const eyeW = (phD2(g(FI.eRo), g(FI.eRi)) + phD2(g(FI.eLo), g(FI.eLi))) / 2;
   const eyeGap = phD2(g(FI.eRi), g(FI.eLi));
   const eyeOpen = ((g(FI.eRb).y - g(FI.eRt).y) + (g(FI.eLb).y - g(FI.eLt).y)) / 2 / eyeW;
@@ -52,15 +114,16 @@ export function faceMeasure(lm, W = 1, H = 1) {
   const lipMidY = (g(FI.lipIn1).y + g(FI.lipIn2).y) / 2, cornerY = (g(FI.mR).y + g(FI.mL).y) / 2;
   const philtrum = g(FI.lipTop).y - g(FI.sub).y, chinL = g(FI.chin).y - g(FI.lipBot).y;
   // ความหันข้าง: ระยะจมูกถึงแก้มสองข้างควรเท่ากัน
-  const yaw = (phD2(g(FI.tip), g(FI.cheekR)) - phD2(g(FI.tip), g(FI.cheekL))) / faceW;
+  // ท่าทาง (ใช้ภาพจริงก่อนจัดหน้าตรง)
+  const yaw = (phD2(q(FI.tip), q(FI.cheekR)) - phD2(q(FI.tip), q(FI.cheekL))) / phD2(q(FI.cheekR), q(FI.cheekL));
   // ก้มเงย: ปลายจมูกเทียบเส้นกลางระหว่างตากับปาก
-  const pitch = ((g(FI.tip).y - g(FI.nasion).y) / (g(FI.lipIn1).y - g(FI.nasion).y));
+  const pitch = ((q(FI.tip).y - q(FI.nasion).y) / (q(FI.lipIn1).y - q(FI.nasion).y));
   const cx = (g(FI.cheekR).x + g(FI.cheekL).x) / 2;
   let asym = 0;
   for (const [a, b] of PH_SYM) asym += Math.abs((cx - g(a).x) - (g(b).x - cx)) / faceW + Math.abs(g(a).y - g(b).y) / faceW;
   asym /= PH_SYM.length;
   return {
-    roll, yaw, pitch, faceW, faceH,
+    roll, yaw, pitch, faceW, faceH, hairOK: hairY != null ? 1 : 0, yaw3: fr.yaw, pitch3: fr.pitch,
     ratio: faceH / faceW,
     fore: phD2(g(FI.foreR), g(FI.foreL)) / faceW, jaw: phD2(g(FI.jawR), g(FI.jawL)) / faceW, chinW: phD2(g(FI.chinR), g(FI.chinL)) / faceW,
     up: up / th, md: md / th, lo: lo / th,
@@ -76,10 +139,11 @@ export function faceMeasure(lm, W = 1, H = 1) {
 // ตรวจท่าทางก่อนอ่าน: หน้าตรง ไม่เอียง ไม่ยิ้มกว้าง
 export function facePoseOK(m, bs) {
   const issues = [];
-  if (Math.abs(m.yaw) > 0.12) issues.push(m.yaw > 0 ? 'หันหน้าไปทางขวาอีกนิด' : 'หันหน้าไปทางซ้ายอีกนิด');
-  if (Math.abs(m.roll) > 12) issues.push('ตั้งศีรษะให้ตรง');
-  if (m.pitch < 0.48) issues.push('ก้มหน้าลงเล็กน้อย');
-  else if (m.pitch > 0.78) issues.push('เงยหน้าขึ้นเล็กน้อย');
+  // หน้าถูกหมุนให้ตรงแบบ 3 มิติแล้ว จึงยอมให้เอียงได้ราว 12–14° โดยค่าไม่เพี้ยน
+  if (Math.abs(m.yaw3) > 12) issues.push(m.yaw3 > 0 ? 'หันหน้าไปทางซ้ายอีกนิด' : 'หันหน้าไปทางขวาอีกนิด');
+  if (Math.abs(m.roll) > 15) issues.push('ตั้งศีรษะให้ตรง');
+  if (m.pitch3 < -14) issues.push('ก้มหน้าลงเล็กน้อย');
+  else if (m.pitch3 > 14) issues.push('เงยหน้าขึ้นเล็กน้อย');
   const smile = bs ? Math.max(bs.mouthSmileLeft || 0, bs.mouthSmileRight || 0) : 0;
   if (smile > 0.45) issues.push('ทำหน้าปกติ ไม่ยิ้ม');
   if (bs && (bs.jawOpen || 0) > 0.25) issues.push('ปิดปาก');
@@ -104,12 +168,14 @@ const FACE_EL = {
   water: { th: 'น้ำ', shape: 'หน้ากลม', cn: '水形', read: 'อ่อนโยน ปรับตัวเก่ง เข้ากับคนง่าย มีไหวพริบและเสน่ห์ เหมาะงานติดต่อผู้คน แต่ควรระวังความลังเล', boost: 'ทรงผมที่มีความสูงด้านบน หรือแสกข้าง ช่วยให้หน้าดูยาวขึ้น ใส่สีดำ น้ำเงิน เสริมธาตุ' }
 };
 export function faceElement(m) {
+  const zr = phZ('ratio', m.ratio), zj = phZ('jaw', m.jaw), zf = phZ('fore', m.fore), zc = phZ('chinW', m.chinW);
+  const P = (x) => Math.max(0, x);
   const s = {
-    water: phClamp((1.22 - m.ratio) * 6, 0, 1.5) + phClamp((m.jaw - 0.72) * 3, 0, 0.6),
-    wood: phClamp((m.ratio - 1.3) * 6, 0, 1.5) + phClamp((0.84 - m.jaw) * 3, 0, 0.5),
-    earth: phClamp((m.jaw - 0.8) * 8, 0, 1.5) + phClamp((1.32 - m.ratio) * 3, 0, 0.5),
-    metal: phClamp(1 - Math.abs(m.ratio - 1.28) * 5, 0, 1) + phClamp(1 - Math.abs(m.jaw - 0.8) * 8, 0, 0.8) + phClamp((m.fore - 0.82) * 4, 0, 0.4),
-    fire: phClamp((0.19 - m.chinW) * 25, 0, 1.2) + phClamp((0.77 - m.jaw) * 6, 0, 0.9)
+    water: P(-zr) * 1.0 + P(zc) * 0.3 + P(-Math.abs(zj) + 0.5) * 0.2,
+    wood: P(zr) * 1.0 + P(-zj) * 0.4,
+    earth: P(zj) * 1.0 + P(zc) * 0.4 + P(-zr) * 0.2,
+    metal: P(1 - (Math.abs(zr) + Math.abs(zj)) / 2) * 0.9 + P(zf) * 0.4,
+    fire: P(-zc) * 0.9 + P(-zj) * 0.4 + P(zf) * 0.2
   };
   const rank = Object.entries(s).sort((a, b) => b[1] - a[1]);
   const [k1, v1] = rank[0], [k2, v2] = rank[1];
@@ -138,61 +204,62 @@ export function faceRead(m) {
   const add = (o) => out.push(o);
   // สามส่วนของใบหน้า
   const thirds = [['up', 'ส่วนบน (หน้าผาก)', 'วัยต้น 15–30 ปี', 'สติปัญญา การเรียน ผู้ใหญ่อุปถัมภ์'], ['md', 'ส่วนกลาง (คิ้วถึงปลายจมูก)', 'วัยกลาง 31–50 ปี', 'การงาน ความมุ่งมั่น การสร้างฐานะ'], ['lo', 'ส่วนล่าง (ใต้จมูกถึงคาง)', 'วัยปลาย 51 ปีขึ้นไป', 'ความมั่นคง บริวาร ที่อยู่อาศัย']];
-  const big = thirds.reduce((a, t) => (m[t[0]] > m[a[0]] ? t : a));
-  const even = Math.max(m.up, m.md, m.lo) - Math.min(m.up, m.md, m.lo) < 0.06;
-  add({ key: 'thirds', zone: 'thirds', title: 'สามส่วนของใบหน้า', cn: '三停', val: `บน ${Math.round(m.up * 100)}% · กลาง ${Math.round(m.md * 100)}% · ล่าง ${Math.round(m.lo * 100)}%`, tone: even ? 1 : 0,
+  // เทียบกับคนทั่วไป: ส่วนที่สูงกว่า P75 ถือว่าเด่น
+  const big = thirds.reduce((a, t) => (phZ(t[0], m[t[0]]) > phZ(a[0], m[a[0]]) ? t : a));
+  const even = thirds.every((t) => nb(t[0], m[t[0]]) === 0);
+  add({ key: 'thirds', zone: 'thirds', title: 'สามส่วนของใบหน้า', cn: '三停', val: `บน ${Math.round(m.up * 100)}% · กลาง ${Math.round(m.md * 100)}% · ล่าง ${Math.round(m.lo * 100)}%${m.hairOK ? ' · วัดแนวไรผมจริง' : ' · แนวไรผมโดยประมาณ'}`, tone: even ? 1 : 0,
     read: even ? 'สามส่วนใกล้เคียงกัน ตำราถือว่าดวงสมดุล ชีวิตไปได้เรื่อย ๆ ทุกช่วงวัย' : `${big[1]}เด่นที่สุด ตำราให้ช่วง${big[2]}เป็นช่วงที่เด่น เรื่อง${big[3]}`,
-    tip: m.up < 0.29 ? 'หน้าผากวัดได้แคบ ถ้ามีผมหน้าม้าหรือผมปิดหน้าผาก ให้เปิดผมขึ้นแล้ววัดใหม่ ทรงผมเปิดหน้าผากช่วยให้ดูเปิดกว้าง' : 'รักษาทั้งสามส่วนให้สะอาด สดใส ผิวที่ดูมีน้ำมีนวลตำราถือว่าเสริมดวงทุกช่วงวัย' });
+    tip: nb('up', m.up) < 0 && !m.hairOK ? 'หน้าผากวัดได้แคบ ถ้ามีผมหน้าม้าหรือผมปิดหน้าผาก ให้เปิดผมขึ้นแล้ววัดใหม่ ทรงผมเปิดหน้าผากช่วยให้ดูเปิดกว้าง' : 'รักษาทั้งสามส่วนให้สะอาด สดใส ผิวที่ดูมีน้ำมีนวลตำราถือว่าเสริมดวงทุกช่วงวัย' });
   // หน้าผาก 官祿宮
-  const fw = phBand(m.fore, 0.78, 0.88);
-  add({ key: 'fore', zone: 'fore', title: 'หน้าผาก', cn: '官祿宮', val: `กว้าง ${Math.round(m.fore * 100)}% ของหน้า`, tone: fw >= 0 ? 1 : 0,
+  const fw = nb('fore', m.fore);
+  add({ key: 'fore', zone: 'fore', title: 'หน้าผาก', cn: '官祿宮', val: `ความกว้าง${pctTxt('fore', m.fore)}`, tone: fw >= 0 ? 1 : 0,
     read: fw > 0 ? 'หน้าผากกว้าง มองการณ์ไกล คิดเป็นระบบ ตำราว่าได้ผู้ใหญ่และหัวหน้าเมตตา' : fw < 0 ? 'หน้าผากค่อนแคบ เป็นคนลงมือทำมากกว่าคิดนาน ประสบการณ์สอนได้ดีกว่าตำรา' : 'หน้าผากพอดี สมดุลระหว่างคิดกับลงมือ',
     tip: 'เปิดหน้าผากด้วยทรงผมเสยหรือแสกกลาง ดูแลผิวช่วงหน้าผากไม่ให้มีสิว ตำราว่าหน้าผากสว่างสดใสช่วยเรื่องงานและผู้ใหญ่' });
   // หว่างคิ้ว 命宮
-  const bg = phBand(m.browGap, 0.75, 1.15);
-  add({ key: 'browGap', zone: 'yintang', title: 'หว่างคิ้ว', cn: '命宮 印堂', val: `ระยะ ${phR2(m.browGap)} เท่าความยาวตา`, tone: bg >= 0 ? 1 : -1,
+  const bg = nb('browGap', m.browGap);
+  add({ key: 'browGap', zone: 'yintang', title: 'หว่างคิ้ว', cn: '命宮 印堂', val: `ความกว้าง${pctTxt('browGap', m.browGap)}`, tone: bg >= 0 ? 1 : -1,
     read: bg > 0 ? 'หว่างคิ้วกว้าง ใจกว้าง มองโลกแง่ดี ให้อภัยง่าย ตำราถือเป็นตำแหน่งชะตาที่เปิดรับโชค' : bg < 0 ? 'หว่างคิ้วแคบ จริงจัง ละเอียด คิดมาก มีแนวโน้มเครียดง่าย' : 'หว่างคิ้วพอดี มีเหตุผล ไม่คิดมากเกินไป',
     tip: bg < 0 ? 'เล็มขนคิ้วส่วนหัวให้หว่างคิ้วโล่งขึ้นเล็กน้อย ฝึกคลายคิ้วเวลาคิด เพราะการขมวดคิ้วบ่อยทำให้เกิดริ้วรอยตรงจุดนี้' : 'รักษาหว่างคิ้วให้สะอาด ไม่มีขนรก ตำราว่าจุดนี้สว่างแล้วชีวิตราบรื่น' });
   // คิ้ว 兄弟宮
-  const bl = phBand(m.browLenR, 1.45, 1.85);
-  add({ key: 'brow', zone: 'brow', title: 'คิ้ว', cn: '兄弟宮', val: `ยาว ${phR2(m.browLenR)} เท่าของตา`, tone: bl >= 0 ? 1 : 0,
-    read: bl >= 0 ? 'คิ้วยาวกว่าตา ตำราว่ามีพี่น้อง เพื่อน และคนรอบตัวคอยช่วยเหลือ เป็นคนมีน้ำใจ' : 'คิ้วสั้นกว่าตา พึ่งตัวเองเป็นหลัก ตัดสินใจเร็ว เป็นตัวของตัวเอง',
+  const bl = nb('browLenR', m.browLenR);
+  add({ key: 'brow', zone: 'brow', title: 'คิ้ว', cn: '兄弟宮', val: `ความยาวเทียบตา${pctTxt('browLenR', m.browLenR)}`, tone: bl >= 0 ? 1 : 0,
+    read: bl > 0 ? 'คิ้วยาวเลยหางตาชัด ตำราว่ามีพี่น้อง เพื่อน และคนรอบตัวคอยช่วยเหลือ เป็นคนมีน้ำใจ' : bl < 0 ? 'คิ้วค่อนสั้นเมื่อเทียบกับตา พึ่งตัวเองเป็นหลัก ตัดสินใจเร็ว เป็นตัวของตัวเอง' : 'คิ้วยาวพอดีกับตา มีเพื่อนช่วยในยามจำเป็น และพึ่งตัวเองได้',
     tip: bl < 0 ? 'เขียนคิ้วต่อหางให้ยาวเลยหางตาเล็กน้อย ใช้สีใกล้สีผม' : 'แต่งคิ้วให้เรียบ เป็นระเบียบ ไม่ขาดเป็นช่วง' });
   // ระยะคิ้วกับตา 田宅宮
-  const be = phBand(m.browEye, 0.45, 0.66);
-  add({ key: 'browEye', zone: 'lid', title: 'ระยะคิ้วกับตา', cn: '田宅宮', val: `${phR2(m.browEye)} เท่าความยาวตา`, tone: be >= 0 ? 1 : 0,
+  const be = nb('browEye', m.browEye);
+  add({ key: 'browEye', zone: 'lid', title: 'ระยะคิ้วกับตา', cn: '田宅宮', val: `ระยะห่าง${pctTxt('browEye', m.browEye)}`, tone: be >= 0 ? 1 : 0,
     read: be > 0 ? 'คิ้วอยู่ห่างตา ใจเย็น ใจกว้าง ตำราว่าเกี่ยวกับบ้านและที่ดิน มีโอกาสได้ทรัพย์สินมั่นคง' : be < 0 ? 'คิ้วชิดตา ใจร้อน ตัดสินใจไว มุ่งมั่นสูง ควรให้เวลาคิดก่อนตัดสินใจเรื่องใหญ่' : 'ระยะคิ้วกับตาพอดี สมดุลระหว่างความเร็วกับความรอบคอบ',
     tip: be < 0 ? 'ถอนขนคิ้วด้านล่างเล็กน้อย และใช้อายแชโดว์สีอ่อนบนเปลือกตา ช่วยให้ระยะดูกว้างขึ้น' : 'ใช้อายแชโดว์โทนสว่างบนเปลือกตา ช่วยให้ดวงตาดูสดใส' });
   // ตา
-  const eg = phBand(m.eyeGapR, 1.15, 1.42);
-  const tl = m.tilt > 4 ? 1 : m.tilt < -2 ? -1 : 0;
-  add({ key: 'eye', zone: 'eye', title: 'ดวงตา', cn: '監察官', val: `ระยะหว่างตา ${phR2(m.eyeGapR)} เท่าความยาวตา · หางตา${tl > 0 ? 'ชี้ขึ้น' : tl < 0 ? 'ตก' : 'ระนาบ'}`, tone: eg === 0 ? 1 : 0,
+  const eg = nb('eyeGapR', m.eyeGapR);
+  const tl = nb('tilt', m.tilt);
+  add({ key: 'eye', zone: 'eye', title: 'ดวงตา', cn: '監察官', val: `ระยะหว่างตา${pctTxt('eyeGapR', m.eyeGapR)} · หางตา${tl > 0 ? 'ชี้ขึ้น' : tl < 0 ? 'ตก' : 'ระนาบ'}`, tone: eg === 0 ? 1 : 0,
     read: `${eg > 0 ? 'ตาห่าง ใจกว้าง ใจเย็น มองภาพรวมเก่ง แต่บางครั้งช้าไปนิด' : eg < 0 ? 'ตาชิด มีสมาธิ ทำงานละเอียด เก่งเรื่องเฉพาะทาง แต่เครียดง่าย' : 'ระยะหว่างตาพอดีตามสัดส่วนอุดมคติ คิดอ่านสมดุล'} ${tl > 0 ? 'หางตาชี้ขึ้น มั่นใจ มีความทะเยอทะยาน' : tl < 0 ? 'หางตาตก ใจดี อ่อนโยน ขี้สงสาร' : 'แนวตาระนาบ ตรงไปตรงมา'}`,
     tip: eg > 0 ? 'เขียนอายไลเนอร์เน้นหัวตา ช่วยให้ระยะดูพอดีขึ้น' : eg < 0 ? 'เน้นอายไลเนอร์และมาสคาร่าที่หางตา ช่วยให้ตาดูห่างขึ้น' : 'นอนให้พอ ตาที่สดใสมีประกาย ตำราว่าคือเครื่องหมายของพลังชีวิตดี' });
   // ใต้ตา 子女宮 (ความอวบใต้ตา ไม่วัดในภาพ 2D จึงให้คำแนะนำทั่วไป)
   // จมูก 財帛宮
-  const nw = phBand(m.noseWR, 1.12, 1.4);
-  add({ key: 'nose', zone: 'nose', title: 'จมูก', cn: '財帛宮', val: `ปีกจมูก ${phR2(m.noseWR)} เท่าระยะหัวตา · ยาว ${Math.round(m.noseLR * 100)}% ของหน้า`, tone: nw >= 0 ? 1 : 0,
-    read: `${nw > 0 ? 'ปีกจมูกกว้าง ตำราว่าเก็บเงินเก่ง หาเงินได้และรักษาไว้ได้' : nw < 0 ? 'ปีกจมูกแคบ ใช้เงินคล่อง ควรมีระบบออมอัตโนมัติ' : 'ปีกจมูกพอดีกับระยะหัวตา การเงินสมดุล'} ${m.noseLR > 0.31 ? 'จมูกยาว มีหลักการ รับผิดชอบสูง' : m.noseLR < 0.235 ? 'จมูกสั้น ยืดหยุ่น ปรับตัวไว' : ''}`.trim(),
+  const nw = nb('noseWR', m.noseWR);
+  add({ key: 'nose', zone: 'nose', title: 'จมูก', cn: '財帛宮', val: `ปีกจมูก${pctTxt('noseWR', m.noseWR)} · ความยาว${pctTxt('noseLR', m.noseLR)}`, tone: nw >= 0 ? 1 : 0,
+    read: `${nw > 0 ? 'ปีกจมูกกว้าง ตำราว่าเก็บเงินเก่ง หาเงินได้และรักษาไว้ได้' : nw < 0 ? 'ปีกจมูกแคบ ใช้เงินคล่อง ควรมีระบบออมอัตโนมัติ' : 'ปีกจมูกพอดีกับระยะหัวตา การเงินสมดุล'} ${nb('noseLR', m.noseLR) > 0 ? 'จมูกยาว มีหลักการ รับผิดชอบสูง' : nb('noseLR', m.noseLR) < 0 ? 'จมูกสั้น ยืดหยุ่น ปรับตัวไว' : ''}`.trim(),
     tip: nw < 0 ? 'ตั้งโอนเงินเข้าบัญชีออมทันทีที่เงินเดือนออก ตำราว่าจมูกคือคลังเงิน ส่วนพฤติกรรมคือกุญแจ' : 'ดูแลผิวปลายจมูกไม่ให้มีสิวหรือรอยแดง ตำราว่าปลายจมูกสว่างช่วยเรื่องเงิน' });
   // ร่องใต้จมูก 人中
-  const ph = phBand(m.philR, 0.14, 0.22);
-  add({ key: 'phil', zone: 'phil', title: 'ร่องใต้จมูก', cn: '人中', val: `${Math.round(m.philR * 100)}% ของส่วนล่าง`, tone: ph >= 0 ? 1 : 0,
+  const ph = nb('philR', m.philR);
+  add({ key: 'phil', zone: 'phil', title: 'ร่องใต้จมูก', cn: '人中', val: `ความยาว${pctTxt('philR', m.philR)}`, tone: ph >= 0 ? 1 : 0,
     read: ph > 0 ? 'ร่องใต้จมูกยาว อดทน ใจเย็น ตำราว่าอายุยืน' : ph < 0 ? 'ร่องใต้จมูกสั้น กระตือรือร้น ใจร้อน ทำอะไรรวดเร็ว' : 'ร่องใต้จมูกพอดี สุขภาพและอารมณ์สมดุล',
     tip: 'ออกกำลังกายสม่ำเสมอ ตรวจสุขภาพประจำปี ตำราโยงจุดนี้กับสุขภาพและอายุ' });
   // ปาก 出納官
-  const mw = phBand(m.mouthR, 1.3, 1.62), lb = m.lipBal > 0.85 ? 1 : m.lipBal < 0.55 ? -1 : 0, cn = m.corner > 0.03 ? 1 : m.corner < -0.03 ? -1 : 0;
-  add({ key: 'mouth', zone: 'mouth', title: 'ปาก', cn: '出納官', val: `กว้าง ${phR2(m.mouthR)} เท่าปีกจมูก · มุมปาก${cn > 0 ? 'ยก' : cn < 0 ? 'ตก' : 'ระนาบ'}`, tone: cn >= 0 ? 1 : 0,
+  const mw = nb('mouthR', m.mouthR), lb = nb('lipBal', m.lipBal), cn = nb('corner', m.corner);
+  add({ key: 'mouth', zone: 'mouth', title: 'ปาก', cn: '出納官', val: `ความกว้าง${pctTxt('mouthR', m.mouthR)} · มุมปาก${cn > 0 ? 'ยก' : cn < 0 ? 'ตก' : 'ระนาบ'}`, tone: cn >= 0 ? 1 : 0,
     read: `${mw > 0 ? 'ปากกว้าง ช่างพูด เข้าสังคมเก่ง กล้าแสดงออก' : mw < 0 ? 'ปากเล็ก พูดน้อยแต่ตรงประเด็น เก็บความลับเก่ง' : 'ปากพอดี สื่อสารสมดุล'} ${lb > 0 ? 'ริมฝีปากบนหนา ให้ความรักและใส่ใจคนอื่นมาก' : lb < 0 ? 'ริมฝีปากล่างหนากว่า รักสนุก ชอบความสุขสบาย' : ''} ${cn > 0 ? 'มุมปากยก มองโลกแง่บวก คนอยากเข้าใกล้' : cn < 0 ? 'มุมปากตก ช่วงนี้อาจเหนื่อยหรือคิดมาก' : ''}`.replace(/\s+/g, ' ').trim(),
     tip: cn < 0 ? 'ใช้ลิปไลเนอร์ยกมุมปากขึ้นเล็กน้อย และฝึกยิ้มบ่อย ๆ ตำราว่ามุมปากยกเรียกเสน่ห์และโชค' : 'บำรุงริมฝีปากให้ชุ่มชื้น ใช้ลิปสีสุขภาพดี ตำราว่าปากสีสดเกี่ยวกับเสน่ห์และการเจรจา' });
   // คาง 地閣
-  const cw = phBand(m.chinW, 0.17, 0.23), cl = phBand(m.chinLR, 0.42, 0.52);
-  add({ key: 'chin', zone: 'chin', title: 'คางและกราม', cn: '地閣 奴僕宮', val: `คางกว้าง ${Math.round(m.chinW * 100)}% · กราม ${Math.round(m.jaw * 100)}% ของหน้า`, tone: cw >= 0 || cl >= 0 ? 1 : 0,
-    read: `${cw > 0 || cl > 0 ? 'คางเต็มอิ่ม ตำราว่าบั้นปลายมั่นคง มีบ้าน มีลูกน้องและบริวารคอยช่วย' : cw < 0 && cl < 0 ? 'คางเรียว ความคิดคล่องตัว ชอบอิสระ ควรวางแผนการเงินระยะยาวตั้งแต่เนิ่น ๆ' : 'คางได้รูปพอดี ชีวิตช่วงปลายค่อย ๆ มั่นคงตามที่สร้างไว้'} ${m.jaw > 0.85 ? 'กรามกว้าง มีพลัง อดทน ไม่ยอมแพ้' : ''}`.trim(),
+  const cw = nb('chinW', m.chinW), cl = nb('chinLR', m.chinLR);
+  add({ key: 'chin', zone: 'chin', title: 'คางและกราม', cn: '地閣 奴僕宮', val: `คาง${pctTxt('chinW', m.chinW)} · กราม${pctTxt('jaw', m.jaw)}`, tone: cw >= 0 || cl >= 0 ? 1 : 0,
+    read: `${cw > 0 || cl > 0 ? 'คางเต็มอิ่ม ตำราว่าบั้นปลายมั่นคง มีบ้าน มีลูกน้องและบริวารคอยช่วย' : cw < 0 && cl < 0 ? 'คางเรียว ความคิดคล่องตัว ชอบอิสระ ควรวางแผนการเงินระยะยาวตั้งแต่เนิ่น ๆ' : 'คางได้รูปพอดี ชีวิตช่วงปลายค่อย ๆ มั่นคงตามที่สร้างไว้'} ${nb('jaw', m.jaw) > 0 ? 'กรามกว้าง มีพลัง อดทน ไม่ยอมแพ้' : ''}`.trim(),
     tip: cw < 0 && cl < 0 ? 'ไว้ผมยาวระดับคางหรือไหล่ ช่วยให้ส่วนล่างของหน้าดูเต็มขึ้น และเริ่มออมเพื่อเกษียณตั้งแต่วันนี้' : 'ทำคอนทัวร์ใต้กรามบาง ๆ ให้กรอบหน้าชัด และดูแลความสัมพันธ์กับทีมงาน' });
   // สมมาตร
-  add({ key: 'sym', zone: 'all', title: 'ความสมดุลซ้าย-ขวา', cn: '', val: `${Math.round(m.sym * 100)}%`, tone: m.sym > 0.75 ? 1 : 0,
-    read: m.sym > 0.75 ? 'ใบหน้าซ้ายขวาสมดุล ตำราว่าชีวิตราบรื่น ไม่ค่อยมีเรื่องขึ้นลงแรง' : 'ใบหน้าซ้ายขวาต่างกันพอสมควร เป็นเรื่องปกติของคนทั่วไป และอาจมาจากมุมกล้องหรือแสง',
+  add({ key: 'sym', zone: 'all', title: 'ความสมดุลซ้าย-ขวา', cn: '', val: `${Math.round(m.sym * 100)}% · ${pctTxt('sym', m.sym)}`, tone: m.sym >= PH_NORM.sym[1] ? 1 : 0,
+    read: m.sym >= PH_NORM.sym[1] ? 'ใบหน้าซ้ายขวาสมดุล ตำราว่าชีวิตราบรื่น ไม่ค่อยมีเรื่องขึ้นลงแรง' : 'ใบหน้าซ้ายขวาต่างกันพอสมควร เป็นเรื่องปกติของคนทั่วไป และอาจมาจากมุมกล้องหรือแสง',
     tip: 'เคี้ยวอาหารสองข้างเท่า ๆ กัน และไม่นอนตะแคงข้างเดียวตลอด ช่วยให้กล้ามเนื้อหน้าสมดุล' });
   return out;
 }
@@ -310,7 +377,7 @@ export function palmGuides(lm) {
   const L = (a, b, t) => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t });
   const w = lm[0], i5 = lm[5], m9 = lm[9], r13 = lm[13], p17 = lm[17], t2 = lm[2], t1 = lm[1];
   const heartS = L(p17, w, 0.22), heartE = L(i5, m9, 0.45), heartC = L(L(r13, w, 0.2), L(m9, w, 0.22), 0.5);
-  const headS = L(t2, i5, 0.55), headE = L(L(p17, w, 0.45), headS, 0.08), headC = L(L(m9, w, 0.42), L(r13, w, 0.42), 0.5);
+  const headS = L(t2, i5, 0.55), headE = L(L(p17, w, 0.55), headS, 0.08), headC = L(L(m9, w, 0.47), L(r13, w, 0.47), 0.5);
   const lifeS = L(t2, i5, 0.6), lifeE = L(w, t1, 0.25), lifeC = L(t2, w, 0.3); // โค้งออกรอบเนินนิ้วโป้ง
   return { heart: [heartS, heartC, heartE], head: [headS, headC, headE], life: [lifeS, lifeC, lifeE], fate: [L(w, m9, 0.08), L(w, m9, 0.5), L(w, m9, 0.95)] };
 }
@@ -319,4 +386,94 @@ export function palmGuides(lm) {
 export function faceSummary(el, reads) {
   const good = reads.filter((r) => r.tone > 0 && r.key !== 'sym').map((r) => r.title);
   return `ใบหน้าธาตุ${el.th}${el.mixTh ? `ผสม${el.mixTh}` : ''} (${el.shape}) · จุดเด่น: ${good.slice(0, 3).join(' ') || 'สมดุลทุกส่วน'}`;
+}
+
+// ---------- ลายมือ: หาเส้นจริงจากภาพ ----------
+// resp = ค่ารอยพับ (ยิ่งมากยิ่งเป็นร่องเข้ม) ขนาด W×H, mask = 1 ในฝ่ามือ, lm = จุดมือ 0–1 ของภาพเดียวกัน
+// ไล่หาเส้นทางที่รอยพับเข้มที่สุดในแนวของเส้นนำแต่ละเส้น ด้วย dynamic programming (Viterbi)
+export function palmTrace(resp, mask, W, H, lm) {
+  const G = palmGuides(lm), P = (i) => ({ x: lm[i].x * W, y: lm[i].y * H });
+  const palmW = Math.hypot(P(5).x - P(17).x, P(5).y - P(17).y), palmL = Math.hypot(P(9).x - P(0).x, P(9).y - P(0).y);
+  // ค่าเฉลี่ยรอยพับในฝ่ามือ ใช้เป็นเกณฑ์
+  // เกณฑ์จากการกระจายค่ารอยพับในฝ่ามือ: รอยเส้นหลักควรเข้มกว่า 85% ของพื้นที่ฝ่ามือ
+  const smp = [];
+  for (let i = 0; i < W * H; i += 5) if (mask[i]) smp.push(resp[i]);
+  smp.sort((a, b) => a - b);
+  const pq = (q) => smp.length ? smp[Math.min(smp.length - 1, Math.floor(q * smp.length))] : 1;
+  const mean = Math.max(1e-3, pq(0.5) > 0 ? pq(0.5) : pq(0.7)), p85 = Math.max(mean * 1.2, pq(0.85));
+  const at = (x, y) => { const xi = Math.round(x), yi = Math.round(y); if (xi < 0 || yi < 0 || xi >= W || yi >= H) return -1; const i = yi * W + xi; return mask[i] ? resp[i] : -1; };
+  const quad = (pts, t) => { const [a, c, b] = pts.map((p) => ({ x: p.x * W, y: p.y * H })); const cp = { x: 2 * c.x - (a.x + b.x) / 2, y: 2 * c.y - (a.y + b.y) / 2 }; const u = 1 - t; return { x: u * u * a.x + 2 * u * t * cp.x + t * t * b.x, y: u * u * a.y + 2 * u * t * cp.y + t * t * b.y }; };
+  const T = 48, K = 12, step = palmW * 0.013, t0 = -0.12, t1 = 1.12;
+  const out = {};
+  for (const id of ['heart', 'head', 'life', 'fate']) {
+    const ts = Array.from({ length: T }, (_, i) => t0 + (t1 - t0) * i / (T - 1));
+    const base = ts.map((t) => quad(G[id], t));
+    const nrm = base.map((p, i) => { const q = base[Math.min(T - 1, i + 1)], r = base[Math.max(0, i - 1)], dx = q.x - r.x, dy = q.y - r.y, l = Math.hypot(dx, dy) || 1; return { x: -dy / l, y: dx / l }; });
+    // คะแนนแต่ละจุด: เฉลี่ย 3 จุดตามแนวเส้น ลดผลของจุดรบกวน
+    const sc = base.map((p, i) => Array.from({ length: 2 * K + 1 }, (_, j) => { const o = (j - K) * step, q = { x: p.x + nrm[i].x * o, y: p.y + nrm[i].y * o }; const v = at(q.x, q.y); return v < 0 ? -mean : v; }));
+    const lam = mean * 0.35, D = sc.map(() => new Float32Array(2 * K + 1)), B = sc.map(() => new Int16Array(2 * K + 1));
+    for (let j = 0; j <= 2 * K; j++) D[0][j] = sc[0][j] - Math.abs(j - K) * lam * 0.2;
+    for (let i = 1; i < T; i++) for (let j = 0; j <= 2 * K; j++) {
+      let best = -1e9, bj = j;
+      for (let dj = -2; dj <= 2; dj++) { const k = j + dj; if (k < 0 || k > 2 * K) continue; const v = D[i - 1][k] - Math.abs(dj) * lam; if (v > best) { best = v; bj = k; } }
+      D[i][j] = best + sc[i][j]; B[i][j] = bj;
+    }
+    let j = 0; for (let k = 1; k <= 2 * K; k++) if (D[T - 1][k] > D[T - 1][j]) j = k;
+    const path = new Array(T);
+    for (let i = T - 1; i >= 0; i--) { const o = (j - K) * step; path[i] = { x: base[i].x + nrm[i].x * o, y: base[i].y + nrm[i].y * o, r: sc[i][j], t: ts[i] }; j = B[i][j]; }
+    // ช่วงที่เป็นรอยจริง: เกินเกณฑ์ 1.5 เท่าของค่าเฉลี่ย (ทำให้เรียบด้วยค่าเฉลี่ยเคลื่อนที่ 3 จุด)
+    const sm = path.map((p, i) => (path[Math.max(0, i - 1)].r + p.r + path[Math.min(T - 1, i + 1)].r) / 3);
+    const thr = p85, on0 = sm.map((v) => v > thr);
+    // เติมช่องว่างสั้น ๆ (≤2 จุด) และตัดเศษที่ยาวไม่ถึง 3 จุด
+    const on = on0.slice();
+    for (let i = 1; i < T - 1; i++) if (!on[i]) { let a = i - 1, b = i; while (b < T && !on0[b]) b++; if (b < T && a >= 0 && on0[a] && b - i <= 2) for (let k = i; k < b; k++) on[k] = true; }
+    for (let i = 0; i < T;) { if (!on[i]) { i++; continue; } let b = i; while (b < T && on[b]) b++; if (b - i < 3) for (let k = i; k < b; k++) on[k] = false; i = b; }
+    const inRange = path.map((p) => p.t >= 0 && p.t <= 1);
+    const cov = on.filter((v, i) => v && inRange[i]).length / inRange.filter(Boolean).length;
+    let first = -1, last = -1, gaps = 0, run = 0;
+    on.forEach((v, i) => { if (v) { if (first < 0) first = i; if (last >= 0 && run >= 4 && inRange[i]) gaps++; last = i; run = 0; } else if (first >= 0) run++; });
+    const strength = on.some(Boolean) ? sm.filter((_, i) => on[i]).reduce((a, b) => a + b, 0) / on.filter(Boolean).length / p85 : 0;
+    out[id] = { path, on, cov, first: first >= 0 ? path[first] : null, last: last >= 0 ? path[last] : null, gaps, strength };
+  }
+  // พิกัดแกนมือ: u = ตามแนวข้อมือ→โคนนิ้วกลาง (หารความยาวฝ่ามือ), v = ขวางมือไปทางนิ้วโป้ง (หารความกว้าง)
+  const o = P(0), ax = { x: (P(9).x - o.x) / palmL, y: (P(9).y - o.y) / palmL };
+  let ac = { x: -ax.y, y: ax.x };
+  if ((P(1).x - o.x) * ac.x + (P(1).y - o.y) * ac.y < 0) ac = { x: -ac.x, y: -ac.y };
+  const uv = (p) => ({ u: ((p.x - o.x) * ax.x + (p.y - o.y) * ax.y) / palmL, v: ((p.x - o.x) * ac.x + (p.y - o.y) * ac.y) / palmW });
+  const sag = (L) => { // ระยะโค้งมากสุดจากเส้นตรงเชื่อมหัวท้าย (หารความกว้างฝ่ามือ) ใช้เฉพาะช่วงที่เห็นรอย
+    if (!L.first || !L.last) return 0;
+    const a = L.first, b = L.last, dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy) || 1;
+    let m = 0; L.path.forEach((p, i) => { if (L.on[i]) m = Math.max(m, Math.abs((p.x - a.x) * dy - (p.y - a.y) * dx) / l); });
+    return m / palmW;
+  };
+  const sug = {}, conf = {};
+  const h = out.heart, hd = out.head, lf = out.life, ft = out.fate;
+  const gUV = (id, t) => uv(quad(G[id], t)); // ตำแหน่งเส้นนำ (แบบมาตรฐาน) ที่ t เดียวกัน ใช้เทียบว่าเส้นจริงสูง/ต่ำกว่าปกติ
+  const cf = (L) => Math.max(0, Math.min(1, (L.strength - 1.1) * 0.9 * L.cov));
+  // เส้นใจ: จบสูงระหว่างนิ้วชี้-กลาง = โค้ง, จบต่ำกว่าแนวมาตรฐาน = ตรงยาว
+  if (h.cov < 0.2) { sug.heart = null; conf.heart = 0; }
+  else {
+    const du = uv(h.last).u - gUV('heart', h.last.t).u;
+    sug.heart = h.gaps >= 2 && h.cov < 0.75 ? 'chain' : h.last.t < 0.62 ? 'short' : du > -0.03 ? 'curve' : 'straight';
+    conf.heart = cf(h);
+  }
+  // เส้นสมอง: ปลายต่ำกว่าแนวมาตรฐาน = โค้งลง, ต้นติดเส้นชีวิต = ติด
+  if (hd.cov < 0.2) { sug.head = null; conf.head = 0; }
+  else {
+    const du = uv(hd.last).u - gUV('head', hd.last.t).u;
+    const gap0 = lf.first && hd.first ? Math.hypot(hd.first.x - lf.first.x, hd.first.y - lf.first.y) / palmW : 1;
+    sug.head = hd.last.t < 0.6 ? 'short' : du < -0.06 || sag(hd) > 0.16 ? 'curve' : gap0 < 0.06 ? 'joined' : gap0 > 0.14 ? 'apart' : 'straight';
+    conf.head = cf(hd);
+  }
+  // เส้นชีวิต: โค้งออกกว้างเทียบแนวมาตรฐาน
+  if (lf.cov < 0.2) { sug.life = 'faint'; conf.life = 0.3; }
+  else {
+    const dv = Math.max(...lf.path.map((p, i) => (lf.on[i] ? uv(p).v - gUV('life', p.t).v : -9)));
+    sug.life = lf.gaps >= 1 && lf.cov < 0.8 ? 'break' : lf.strength < 1.25 ? 'faint' : dv < -0.06 ? 'close' : 'wide';
+    conf.life = cf(lf);
+  }
+  // เส้นวาสนา
+  if (ft.cov < 0.3 || ft.strength < 1.2) { sug.fate = 'none'; conf.fate = 0.35; }
+  else { sug.fate = ft.gaps >= 1 || ft.cov < 0.55 ? 'broken' : ft.first.t > 0.38 ? 'late' : 'clear'; conf.fate = cf(ft); }
+  return { lines: out, sug, conf, mean };
 }

@@ -1350,3 +1350,6 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .ph-bd{gap:8px}
 .ph-bd .seg button{font-size:13px;padding:0 6px}
 .ph-bd-row{display:grid;grid-template-columns:1fr 1.2fr 1.4fr;gap:8px}
+.ph-ai{margin:0;font-size:12.5px;line-height:1.5;color:#C9BDF0;background:rgba(169,155,217,.1);border-radius:8px;padding:6px 10px}
+.ph-ai.mine{color:#9FD8CB;background:rgba(111,195,178,.08)}
+.ph-opts .chip.ai{border-style:dashed}

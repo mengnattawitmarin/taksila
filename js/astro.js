@@ -177,7 +177,7 @@ function plutoHelio(d) {
     + 0.011 * cosd(S - P);
   const r = 40.72 + 6.68 * sind(P) + 6.9 * cosd(P) - 1.18 * sind(2 * P) - 0.03 * cosd(2 * P)
     + 0.15 * sind(3 * P) - 0.14 * cosd(3 * P);
-  lon += 3.82394e-5 * d; // J2000 -> equinox of date
+  // Schlyter gives this series in the equinox of date already (checked against JPL DE421: adding precession again drifted 50″/yr)
   return { x: r * cosd(lat) * cosd(lon), y: r * cosd(lat) * sind(lon), z: r * sind(lat) };
 }
 
@@ -294,7 +294,18 @@ export function computeChart(profile) {
   planets.forEach((p) => { elementCount[elementOf(p.sign)] += 1; });
   const signCount = new Array(12).fill(0);
   planets.forEach((p) => { signCount[p.sign] += 1; });
-  return { utc, asc, mc, firstSign, houseOf, planets, aspects, elementCount, signCount, timeKnown: profile.timeKnown };
+  // ไม่ทราบเวลาเกิด: ดวงจันทร์เดินวันละ ~13° ตรวจว่าทั้งวันอยู่ราศีเดียวหรือคาบเกี่ยวสองราศี
+  let moonSigns = null;
+  if (!profile.timeKnown) {
+    const a = planetPositions(localToUtc(yCE, profile.month, profile.day, 0, 0, profile.place)).moon.lon;
+    const b = planetPositions(localToUtc(yCE, profile.month, profile.day, 23, 59, profile.place)).moon.lon;
+    if (signOf(a) !== signOf(b)) {
+      const cut = (signOf(b) * 30 - a + 360) % 360 / ((b - a + 360) % 360); // fraction of the day when the Moon changes sign
+      const mins = Math.round(cut * 1439);
+      moonSigns = { from: signOf(a), to: signOf(b), at: `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}` };
+    }
+  }
+  return { utc, asc, mc, firstSign, houseOf, planets, aspects, elementCount, signCount, timeKnown: profile.timeKnown, moonSigns };
 }
 
 // When does a slow planet leave its current sign? (scan forward)

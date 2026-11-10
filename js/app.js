@@ -12,7 +12,7 @@ import { mountGlobe, burnIncense, mountSiamsi, mountTree, askMotion, randomDigit
 import { SIAMSI } from './siamsi.js';
 import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
 import { prayerTr } from './prayer-tr.js';
-import { faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, yearElementTh } from './physio.js';
+import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh } from './physio.js';
 import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf, FS_PTYPES, ptypeOf } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
@@ -788,7 +788,7 @@ ${bigThree(ch)}
 <p class="asp-leg small"><span style="color:var(--harmony)">ส่งเสริม ${nh}</span><span style="color:var(--gold)">ร่วม ${nc}</span><span style="color:var(--tension)">ท้าทาย ${nt}</span></p>
 <ul class="asp-list">${asp.map(aspectCard).join('')}</ul></section>`;
   } else if (tab === 1) {
-    body = `<p class="small" style="font-size:13px">ตำแหน่งดาว 10 ดวง ณ เวลาเกิด แตะการ์ดเพื่ออ่านความหมาย · สีวงบอกธาตุของราศี${ch.timeKnown ? '' : ' (ไม่ทราบเวลา: ภพนับจากราศีดวงอาทิตย์ และดวงจันทร์อาจคลาดได้ถึง ±6°)'}</p>
+    body = `<p class="small" style="font-size:13px">ตำแหน่งดาว 10 ดวง ณ เวลาเกิด แตะการ์ดเพื่ออ่านความหมาย · สีวงบอกธาตุของราศี${ch.timeKnown ? '' : ' (ไม่ทราบเวลา: ภพนับจากราศีดวงอาทิตย์ และดวงจันทร์อาจคลาดได้ถึง ±6°)'}</p>${ch.moonSigns ? `<p class="small tneg" style="font-size:13px;margin:0">⚠️ วันเกิดของคุณดวงจันทร์ย้ายราศีกลางวัน: ถ้าเกิดก่อนราว ${ch.moonSigns.at} น. จันทร์อยู่ราศี${SIGNS[ch.moonSigns.from].th} หลังจากนั้นอยู่ราศี${SIGNS[ch.moonSigns.to].th} ใส่เวลาเกิดเพื่อความแม่นยำ</p>` : ''}
 <ul class="pl-list">${ch.asc != null ? `<li class="pl-card asc"><div class="pl-head"><span class="b3-m sm" style="--c:${EL_COL[signOf(ch.asc) % 4]}"><span class="mono" style="font-size:10px">ASC</span></span>
 <span class="pl-t"><b>ลัคนา</b><span>ภาพลักษณ์ที่คนอื่นเห็น: ${SIGNS[signOf(ch.asc)].trait}</span></span>
 <span class="pl-b"><span class="pl-sign"><span class="sym">${SIGNS[signOf(ch.asc)].glyph}&#xFE0E;</span> ${SIGNS[signOf(ch.asc)].th}</span><span class="mono">${fmtDeg(ch.asc)}</span></span></div></li>` : ''}
@@ -2737,7 +2737,7 @@ const PH_OVAL = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397,
 const PH_HAND = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 5], [5, 6], [6, 7], [7, 8], [5, 9], [9, 10], [10, 11], [11, 12], [9, 13], [13, 14], [14, 15], [15, 16], [13, 17], [17, 18], [18, 19], [19, 20], [0, 17]];
 const PH_NEED = 18; // จำนวนเฟรมท่าถูกต้องที่ใช้เฉลี่ยก่อนอ่านผล
 let phVision = null, phFaceLm = null, phHandLm = null, phStream = null, phRaf = 0, phBuf = [], phLastT = 0;
-let phSnap = null, phSnapLm = null, phEnh = null, phT0 = 0, phForce = false;
+let phSnap = null, phSnapLm = null, phSnapHair = null, phEnh = null, phT0 = 0, phForce = false, phHairSeg = null, phQ = { n: 0, msg: '' };
 
 async function phEnsure(kind) {
   const base = new URL('vendor/mediapipe/', document.baseURI).href;
@@ -2752,6 +2752,7 @@ async function phEnsure(kind) {
     }
   };
   if (kind === 'face' && !phFaceLm) phFaceLm = await make(mod.FaceLandmarker, 'face_landmarker.task', { numFaces: 1, outputFaceBlendshapes: true });
+  if (kind === 'face' && !phHairSeg) { try { phHairSeg = await make(mod.ImageSegmenter, 'hair_segmenter.tflite', { runningMode: 'IMAGE', outputConfidenceMasks: true, outputCategoryMask: false }); } catch (e) { phHairSeg = false; } }
   if (kind === 'palm' && !phHandLm) phHandLm = await make(mod.HandLandmarker, 'hand_landmarker.task', { numHands: 1 });
   return kind === 'face' ? phFaceLm : phHandLm;
 }
@@ -2791,12 +2792,14 @@ function phPhoto(file) {
       ph.mirror = false;
       if (kind === 'face') {
         if (!res.faceLandmarks.length) throw new Error('noface');
-        const lm = res.faceLandmarks[0], bs = phBs(res), m = faceMeasure(lm, cv.width, cv.height);
-        phFinish(cv, lm, m, facePoseOK(m, bs).issues);
+        const lm = res.faceLandmarks[0], bs = phBs(res), hair = phHairline(cv, lm), m = faceMeasure(lm, cv.width, cv.height, hair);
+        phFinish(cv, lm, m, facePoseOK(m, bs).issues, hair);
       } else {
         if (!res.landmarks.length) throw new Error('nohand');
         const lm = res.landmarks[0], h = handMeasure(res.worldLandmarks[0]);
-        phFinish(cv, lm, h, handPoseOK(lm, h, ph.side, false).issues);
+        const side = phSideOf(res); if (side) ph.side = side;
+        const pose = handPoseOK(lm, h, side || ph.side, false); ph.palmIn = pose.palmIn;
+        phFinish(cv, lm, h, pose.issues);
       }
     } catch (e) {
       ph.status = 'idle';
@@ -2806,6 +2809,8 @@ function phPhoto(file) {
   };
   img.src = URL.createObjectURL(file);
 }
+// มือซ้ายหรือขวา: ใช้ผลของโมเดล (ทดสอบกับภาพถ่ายฝ่ามือจริง ป้ายตรงกับมือจริงเมื่อป้อนภาพไม่กลับด้าน)
+const phSideOf = (res) => (res.handedness && res.handedness[0] && res.handedness[0][0] ? (res.handedness[0][0].categoryName === 'Right' ? 'R' : 'L') : null);
 const phBs = (res) => (res.faceBlendshapes && res.faceBlendshapes[0] ? Object.fromEntries(res.faceBlendshapes[0].categories.map((c) => [c.categoryName, c.score])) : null);
 // ครอปภาพให้เหลือเฉพาะหน้าหรือมือ (เผื่อขอบไว้วางป้าย) แล้วแปลงพิกัดจุดตาม
 function phCrop(cv, lm, padX, padY) {
@@ -2818,13 +2823,14 @@ function phCrop(cv, lm, padX, padY) {
   out.getContext('2d').drawImage(cv, x0, y0, W, H, 0, 0, out.width, out.height);
   return { cv: out, lm: lm.map((p) => ({ ...p, x: (p.x * cv.width - x0) / W, y: (p.y * cv.height - y0) / H })) };
 }
-function phFinish(cv, lm, meas, warn) {
+function phFinish(cv, lm, meas, warn, hair) {
   const ph = state.ph, kind = ph.tab;
-  const cr = kind === 'face' ? phCrop(cv, lm, 0.55, 0.45) : phCrop(cv, lm, 0.3, 0.2);
-  phSnap = cr.cv; phSnapLm = cr.lm; phEnh = null;
+  const pts = hair ? [...lm, { x: hair.x, y: hair.y, z: 0 }] : lm;
+  const cr = kind === 'face' ? phCrop(cv, pts, 0.55, 0.45) : phCrop(cv, pts, 0.3, 0.2);
+  phSnap = cr.cv; phSnapLm = cr.lm.slice(0, lm.length); phSnapHair = hair ? cr.lm[lm.length] : null; phEnh = null;
   ph.status = 'result'; ph.warn = warn || [];
   if (kind === 'face') { ph.face = meas; phSaveSaved({ face: meas, faceAt: Date.now() }); }
-  else { ph.hand = meas; phSaveSaved({ hand: meas, handAt: Date.now(), side: ph.side }); }
+  else { ph.hand = meas; phSaveSaved({ hand: meas, handAt: Date.now(), side: ph.side }); phMap = null; if (ph.palmIn !== false) phAutoPalm(); else ph.auto = null; ph.lines = {}; phSaveSaved({ lines: {} }); }
   render();
 }
 // ลูป AR: ตรวจทุก ~70 ms วาดจุดซ้อนบนวิดีโอ และเก็บค่าเมื่อท่าถูก
@@ -2842,19 +2848,20 @@ function phLoop() {
   if (ph.tab === 'face') {
     const res = phFaceLm.detectForVideo(v, now);
     if (res.faceLandmarks.length) {
-      const lm = res.faceLandmarks[0], m = faceMeasure(lm, W, H), pose = facePoseOK(m, phBs(res));
-      phDrawFace(ctx, lm, W, H, ph.mirror, pose.ok);
-      ok = pose.ok || phForce; hint = ok ? 'นิ่งไว้ กำลังวัด…' : pose.issues[0];
+      const lm = res.faceLandmarks[0], m = faceMeasure(lm, W, H), pose = facePoseOK(m, phBs(res)), qm = phQuality(v, lm, W, H);
+      phDrawFace(ctx, lm, W, H, ph.mirror, pose.ok && !qm);
+      ok = (pose.ok && !qm) || phForce; hint = ok ? 'นิ่งไว้ กำลังวัด…' : qm || pose.issues[0];
       if (ok) phBuf.push(m);
     } else hint = 'มองตรงเข้ากล้อง ให้เห็นทั้งหน้า';
   } else {
     const res = phHandLm.detectForVideo(v, now);
     if (res.landmarks.length) {
-      const lm = res.landmarks[0], h = handMeasure(res.worldLandmarks[0]), pose = handPoseOK(lm, h, ph.side, ph.mirror);
-      phDrawHand(ctx, lm, W, H, ph.mirror, pose.ok);
-      ok = pose.ok || phForce; hint = ok ? 'นิ่งไว้ กำลังวัด…' : pose.issues[0];
+      const side = phSideOf(res) || ph.side, lm = res.landmarks[0], h = handMeasure(res.worldLandmarks[0]), pose = handPoseOK(lm, h, side, false), qm = phQuality(v, lm, W, H);
+      if (pose.ok) { ph.side = side; ph.palmIn = true; }
+      phDrawHand(ctx, lm, W, H, ph.mirror, pose.ok && !qm);
+      ok = (pose.ok && !qm) || phForce; hint = ok ? 'นิ่งไว้ กำลังวัด…' : qm || pose.issues[0];
       if (ok) phBuf.push(h);
-    } else hint = `ยกฝ่ามือ${ph.side === 'L' ? 'ซ้าย' : 'ขวา'}ให้อยู่ในกรอบ กางนิ้วเล็กน้อย`;
+    } else hint = 'หงายฝ่ามือให้อยู่ในกรอบ กางนิ้วเล็กน้อย';
   }
   const hn = document.getElementById('ph-hint'), pr = document.getElementById('ph-prog');
   if (hn) { hn.textContent = hint; hn.className = 'ph-hint' + (ok ? ' ok' : ''); }
@@ -2875,10 +2882,54 @@ function phCapture(v) {
   if (ph.mirror) lm = lm.map((p) => ({ ...p, x: 1 - p.x }));
   const avg = averageMeasures(phBuf.map((m) => { const o = {}; for (const k in m) if (typeof m[k] === 'number') o[k] = m[k]; return o; }));
   if (ph.tab === 'palm') avg.straight = true;
+  let hair = null;
+  if (ph.tab === 'face') { // สามส่วนของหน้าต้องใช้แนวไรผม: วัดจากภาพที่จับไว้
+    hair = phHairline(cv, lm);
+    const mh = faceMeasure(lm, cv.width, cv.height, hair);
+    for (const k of ['up', 'md', 'lo', 'noseLR', 'hairOK']) avg[k] = mh[k];
+  }
   phStopCam();
   const was = ph.mirror; ph.mirror = false;
-  phFinish(cv, lm, avg, []);
+  phFinish(cv, lm, avg, [], hair);
   ph.wasMirror = was;
+}
+// หาแนวไรผมจริง: ไล่จากจุดบนหน้าผาก (10) ขึ้นไปจนเจอพิกเซลเส้นผม เฉลี่ย 7 แนว
+function phHairline(cv, lm) {
+  if (!phHairSeg) return null;
+  try {
+    const r = phHairSeg.segment(cv), mk = r.confidenceMasks[r.confidenceMasks.length - 1], W = mk.width, H = mk.height, d = mk.getAsFloat32Array();
+    const ys = [];
+    for (let k = -3; k <= 3; k++) {
+      const x = Math.max(0, Math.min(W - 1, Math.round((lm[10].x + k * 0.01) * W)));
+      for (let y = Math.floor(lm[10].y * H) - 1; y >= 0; y--) if (d[y * W + x] > 0.5) { ys.push((y + 1) / H); break; }
+    }
+    r.confidenceMasks.forEach((m) => m.close && m.close());
+    if (ys.length < 4) return null;
+    ys.sort((a, b) => a - b);
+    const y = ys[ys.length >> 1];
+    return lm[10].y - y > 0.005 ? { x: lm[10].x, y } : null;
+  } catch (e) { return null; }
+}
+// ตรวจคุณภาพภาพ: แสง ความคม ระยะ (คำนวณทุก ~8 รอบ)
+const phQc = document.createElement('canvas');
+function phQuality(v, lm, W, H, mir) {
+  if (phQ.n++ % 8) return phQ.msg;
+  const xs = lm.map((p) => p.x), ys = lm.map((p) => p.y), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const fw = x1 - x0;
+  if (fw < 0.28) return (phQ.msg = state.ph.tab === 'face' ? 'ขยับหน้าเข้าใกล้กล้องอีกนิด' : 'ยื่นมือเข้าใกล้กล้องอีกนิด');
+  if (state.ph.tab === 'face' && fw > 0.8) return (phQ.msg = 'ถอยออกจากกล้องอีกนิด');
+  const S = 64; phQc.width = S; phQc.height = S;
+  const c = phQc.getContext('2d', { willReadFrequently: true });
+  c.drawImage(v, x0 * W, y0 * H, fw * W, (y1 - y0) * H, 0, 0, S, S);
+  const d = c.getImageData(0, 0, S, S).data, g = new Float32Array(S * S);
+  let mean = 0;
+  for (let i = 0; i < S * S; i++) { g[i] = d[i * 4] * 0.3 + d[i * 4 + 1] * 0.59 + d[i * 4 + 2] * 0.11; mean += g[i]; }
+  mean /= S * S;
+  let lap = 0, lm2 = 0, n = 0;
+  for (let y = 1; y < S - 1; y++) for (let x = 1; x < S - 1; x++) { const i = y * S + x, l = 4 * g[i] - g[i - 1] - g[i + 1] - g[i - S] - g[i + S]; lap += l; lm2 += l * l; n++; }
+  const sharp = lm2 / n - (lap / n) ** 2;
+  phQ.msg = mean < 65 ? 'แสงน้อยไป หันหน้าเข้าหาหน้าต่างหรือเปิดไฟ' : mean > 215 ? 'แสงจ้าเกินไป ถอยห่างจากแสงตรง' : sharp < 6 ? 'ภาพเบลอ ถือมือถือให้นิ่ง ๆ' : '';
+  return phQ.msg;
 }
 // ---- วาดซ้อน ----
 const phX = (p, W, mir) => (mir ? (1 - p.x) * W : p.x * W);
@@ -2894,7 +2945,7 @@ function phDrawFace(ctx, lm, W, H, mir, ok, full) {
   ctx.beginPath(); PH_OVAL.forEach((i, k) => { const p = P(i); k ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y); }); ctx.closePath(); ctx.stroke();
   // เส้นแบ่งสามส่วน
   const top = P(10), brow = { x: (P(70).x + P(300).x) / 2, y: (P(105).y + P(334).y) / 2 }, sub = P(2), chin = P(152);
-  const hair = { x: top.x, y: top.y - (brow.y - top.y) * 0.55 };
+  const hair = full && phSnapHair ? { x: phX(phSnapHair, W, mir), y: phSnapHair.y * H } : { x: top.x, y: top.y - (brow.y - top.y) * (PH_HAIRK - 1) };
   const xl = Math.min(P(234).x, P(454).x) - 10 * s, xr = Math.max(P(234).x, P(454).x) + 10 * s;
   ctx.setLineDash([6 * s, 5 * s]); ctx.strokeStyle = 'rgba(229,103,90,.85)';
   for (const y of [hair.y, brow.y, sub.y, chin.y]) { ctx.beginPath(); ctx.moveTo(xl, y); ctx.lineTo(xr, y); ctx.stroke(); }
@@ -2926,6 +2977,16 @@ function phDrawHand(ctx, lm, W, H, mir, ok, full) {
   ctx.lineWidth = 3 * s; ctx.setLineDash(full ? [] : [8 * s, 6 * s]);
   for (const L of PALM_LINES) {
     if (full && state.ph.hide && state.ph.hide[L.id]) continue;
+    const auto = full && state.ph.auto && state.ph.auto.paths[L.id];
+    if (auto) { // เส้นที่ AI หาเจอ: ทึบตรงที่เห็นรอยจริง เส้นนำบาง ๆ ตรงที่ไม่เห็น
+      ctx.lineWidth = 1.5 * s; ctx.setLineDash([4 * s, 5 * s]); ctx.strokeStyle = L.color + '66'; phCurve(ctx, g[L.id], W, H, mir); ctx.setLineDash([]);
+      ctx.lineWidth = 3.5 * s; ctx.strokeStyle = L.color; ctx.lineCap = 'round';
+      let end = null;
+      auto.forEach((p, i) => { if (!p.on) return; const q = auto[i - 1]; const a = { x: phX(p, W, mir), y: p.y * H }; if (q && q.on) { ctx.beginPath(); ctx.moveTo(phX(q, W, mir), q.y * H); ctx.lineTo(a.x, a.y); ctx.stroke(); } end = a; });
+      const tip = end || (() => { const e = g[L.id][2]; return { x: phX(e, W, mir), y: e.y * H }; })();
+      phLabel(ctx, tip.x + 4 * s, tip.y, L.th.split(' ')[0], L.color, s * 0.9);
+      continue;
+    }
     ctx.strokeStyle = L.color + (full ? 'CC' : '99');
     const end = phCurve(ctx, g[L.id], W, H, mir);
     if (full) phLabel(ctx, end.x + 4 * s, end.y, L.th.split(' ')[0], L.color, s * 0.9);
@@ -2933,34 +2994,52 @@ function phDrawHand(ctx, lm, W, H, mir, ok, full) {
   ctx.setLineDash([]);
 }
 // เน้นรอยเส้นลายมือ: ภาพเทา − ภาพเบลอ (รอยพับเข้มกว่ารอบข้าง) แล้วระบายสีเฉพาะในฝ่ามือ
-function phEnhance(src, lm) {
+// แผนที่รอยพับ: ภาพเบลอกว้าง − ภาพเบลอแคบ (รอยเส้นเข้มกว่ารอบข้างจึงได้ค่าบวก) เฉพาะในฝ่ามือ
+let phMap = null;
+function phCreaseMap(src, lm) {
   const sc = Math.min(1, 720 / Math.max(src.width, src.height)), W = Math.round(src.width * sc), H = Math.round(src.height * sc);
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-  const x = cv.getContext('2d'); x.drawImage(src, 0, 0, W, H);
-  const id = x.getImageData(0, 0, W, H), d = id.data, g = new Float32Array(W * H);
+  const x = cv.getContext('2d', { willReadFrequently: true }); x.drawImage(src, 0, 0, W, H);
+  const d = x.getImageData(0, 0, W, H).data, g = new Float32Array(W * H);
   for (let i = 0; i < W * H; i++) g[i] = d[i * 4] * 0.3 + d[i * 4 + 1] * 0.59 + d[i * 4 + 2] * 0.11;
-  const blur = (a, r) => { // box blur แยกแกน 2 รอบ
+  const blur = (a, r) => { // box blur แยกแกน
     const t = new Float32Array(a.length), o = new Float32Array(a.length);
     for (let y = 0; y < H; y++) { let acc = 0; for (let k = -r; k <= r; k++) acc += a[y * W + Math.min(W - 1, Math.max(0, k))]; for (let xx = 0; xx < W; xx++) { t[y * W + xx] = acc / (2 * r + 1); acc += a[y * W + Math.min(W - 1, xx + r + 1)] - a[y * W + Math.max(0, xx - r)]; } }
     for (let xx = 0; xx < W; xx++) { let acc = 0; for (let k = -r; k <= r; k++) acc += t[Math.min(H - 1, Math.max(0, k)) * W + xx]; for (let y = 0; y < H; y++) { o[y * W + xx] = acc / (2 * r + 1); acc += t[Math.min(H - 1, y + r + 1) * W + xx] - t[Math.max(0, y - r) * W + xx]; } }
     return o;
   };
-  const r = Math.max(4, Math.round(W / 90)), b = blur(blur(g, r), r), fine = blur(g, 1);
-  // หน้ากากฝ่ามือ
+  const hw = Math.hypot((lm[5].x - lm[17].x) * W, (lm[5].y - lm[17].y) * H); // ความกว้างฝ่ามือเป็นพิกเซล
+  const r = Math.max(3, Math.round(hw / 22)), b = blur(blur(g, r), r), fine = blur(g, Math.max(1, Math.round(hw / 160)));
   const mk = document.createElement('canvas'); mk.width = W; mk.height = H;
   const mx = mk.getContext('2d'); mx.fillStyle = '#fff'; mx.beginPath();
   [0, 1, 2, 5, 9, 13, 17].forEach((i, k) => { const p = { x: lm[i].x * W, y: lm[i].y * H }; k ? mx.lineTo(p.x, p.y) : mx.moveTo(p.x, p.y); });
   mx.closePath(); mx.fill();
-  const m = mx.getImageData(0, 0, W, H).data;
+  const md = mx.getImageData(0, 0, W, H).data, mask = new Uint8Array(W * H), resp = new Float32Array(W * H);
+  for (let i = 0; i < W * H; i++) { mask[i] = md[i * 4 + 3] > 0 ? 1 : 0; resp[i] = b[i] - fine[i]; }
+  return { W, H, resp, mask };
+}
+function phEnhance(src, lm) {
+  const m = phMap || (phMap = phCreaseMap(src, lm)), { W, H, resp, mask } = m;
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const x = cv.getContext('2d'), id = x.createImageData(W, H), d = id.data;
   let mean = 0, n = 0;
-  for (let i = 0; i < W * H; i++) if (m[i * 4 + 3]) { const v = b[i] - fine[i]; if (v > 0) { mean += v; n++; } }
+  for (let i = 0; i < W * H; i++) if (mask[i] && resp[i] > 0) { mean += resp[i]; n++; }
   mean = n ? mean / n : 4;
   for (let i = 0; i < W * H; i++) {
-    const v = m[i * 4 + 3] ? (b[i] - fine[i]) : 0, a = Math.max(0, Math.min(1, (v - mean * 1.2) / (mean * 2.5)));
+    const a = mask[i] ? Math.max(0, Math.min(1, (resp[i] - mean * 1.2) / (mean * 2.5))) : 0;
     d[i * 4] = 255; d[i * 4 + 1] = 216; d[i * 4 + 2] = 120; d[i * 4 + 3] = Math.round(a * 230);
   }
   x.putImageData(id, 0, 0);
   return cv;
+}
+// ให้ AI หาเส้นจริงจากภาพ แล้วเลือกลักษณะให้ก่อน (ผู้ใช้แก้ได้)
+function phAutoPalm() {
+  try {
+    phMap = phCreaseMap(phSnap, phSnapLm);
+    const r = palmTrace(phMap.resp, phMap.mask, phMap.W, phMap.H, phSnapLm);
+    if (window.__phDebug !== undefined) window.__phDebug = Object.fromEntries(Object.entries(r.lines).map(([k, L]) => [k, { cov: +L.cov.toFixed(2), gaps: L.gaps, str: +L.strength.toFixed(2), t0: L.first && +L.first.t.toFixed(2), t1: L.last && +L.last.t.toFixed(2) }]));
+    state.ph.auto = { sug: r.sug, conf: r.conf, paths: Object.fromEntries(Object.entries(r.lines).map(([k, L]) => [k, L.path.map((p, i) => ({ x: p.x / phMap.W, y: p.y / phMap.H, on: L.on[i] }))])) };
+  } catch (e) { state.ph.auto = null; }
 }
 function mountPhysio() {
   if (route() !== 'face') { if (phStream) phStopCam(); return; }
@@ -3011,8 +3090,7 @@ function phStartHTML(kind) {
 ${kind === 'face' ? `<div class="ph-ill">${phFaceSVG()}</div><b class="ph-t">ส่องหน้าด้วยกล้อง แล้วอ่านโหงวเฮ้งจากสัดส่วนจริง</b>
 <ul class="ph-steps"><li>หน้าตรง แสงสว่างด้านหน้า ไม่ย้อนแสง</li><li>เปิดหน้าผาก ถอดแว่น ทำหน้าปกติ ไม่ยิ้ม</li><li>วางมือถือระดับสายตา ห่างราว 40–50 ซม.</li></ul>`
     : `<div class="ph-ill">${phPalmSVG()}</div><b class="ph-t">ส่องฝ่ามือ แล้วอ่านรูปมือ นิ้ว และเส้นลายมือ</b>
-<div class="seg" role="group" aria-label="มือข้างไหน">${[['L', 'มือซ้าย'], ['R', 'มือขวา']].map(([v, t]) => `<button aria-pressed="${ph.side === v}" data-act="phSide" data-v="${v}">${t}</button>`).join('')}</div>
-<p class="small" style="margin:0">ตำราลายมือสมัยใหม่: มือข้างที่ถนัดบอกสิ่งที่คุณสร้างเองและปัจจุบัน มืออีกข้างบอกพื้นฐานที่ติดตัวมา ดูทั้งสองข้างได้</p>
+<p class="small" style="margin:0">แอปรู้เองว่าเป็นมือซ้ายหรือขวา · ตำราลายมือสมัยใหม่: มือข้างที่ถนัดบอกสิ่งที่คุณสร้างเองและปัจจุบัน มืออีกข้างบอกพื้นฐานที่ติดตัวมา ดูทั้งสองข้างได้</p>
 <ul class="ph-steps"><li>หงายฝ่ามือเข้ากล้อง กางนิ้วเล็กน้อย</li><li>แสงสว่างจากด้านข้าง จะเห็นเส้นชัด</li><li>ใช้กล้องหลังจะคมกว่า หรือวางมือบนโต๊ะแล้วถ่าย</li></ul>`}
 ${phErrHTML(ph.err)}
 <div class="ph-btns"><button class="btn" data-act="phStart">📷 เปิดกล้อง AR</button>
@@ -3046,14 +3124,16 @@ function phPalmResultHTML() {
   const ph = state.ph, h = ph.hand, reads = handRead(h), el = handElement(h), sel = ph.lines || {};
   return `${phSnap ? `<section class="ph-snapw"><canvas id="ph-snap" aria-label="ภาพฝ่ามือพร้อมเส้นนำ"></canvas>
 <div class="ph-snapbar"><button class="chip small-chip" data-act="phEnh" aria-pressed="${!!ph.enh}">${ph.enh ? '✓ ' : ''}เน้นเส้นลายมือ</button>${PALM_LINES.map((L) => `<button class="chip small-chip" data-act="phHide" data-v="${L.id}" aria-pressed="${!(ph.hide || {})[L.id]}" style="--accent:${L.color}"><i class="ph-dot" style="background:${L.color}"></i>${L.th.split(' ')[0]}</button>`).join('')}</div>
-<p class="small" style="margin:0">เส้นสีคือตำแหน่งโดยประมาณของเส้นหลัก ให้ดูรอยจริงบนมือแล้วเลือกลักษณะด้านล่าง กด "เน้นเส้นลายมือ" เพื่อให้รอยเส้นชัดขึ้น</p></section>` : ''}
+<p class="small" style="margin:0">${ph.auto ? 'เส้นทึบคือรอยเส้นที่ AI ไล่เจอในรูป เส้นประบางคือแนวเส้นตามตำรา' : 'เส้นสีคือตำแหน่งโดยประมาณของเส้นหลัก'} · กด "เน้นเส้นลายมือ" เพื่อดูรอยเส้นชัดขึ้น</p></section>` : ''}${ph.palmIn === false ? '<p class="ph-err">ดูเหมือนเป็นหลังมือ ถ่ายใหม่โดยหงายฝ่ามือเข้ากล้อง AI จึงจะหาเส้นลายมือให้ได้</p>' : ''}
 ${ph.warn && ph.warn.length ? `<p class="ph-err">รูปนี้: ${ph.warn.join(' · ')} ผลอาจคลาดเคลื่อน</p>` : ''}
 <section class="card ph-el"><span class="eyebrow">รูปมือ · ${ph.side === 'L' ? 'มือซ้าย' : 'มือขวา'}</span><div class="ph-el-top"><span class="ph-el-ic h-${el.key}">${el.th.replace('มือธาตุ', '')}</span><div><b>${el.th}</b><span>${el.shape}</span></div></div>
 <p class="body" style="margin:0">${el.read}</p><p class="ph-tip">💼 ${reads[0].tip}</p></section>
 <section class="ph-list"><h2 class="label">นิ้วมือ</h2>${reads.slice(1).map(phReadCard).join('')}</section>
-<section class="ph-list"><h2 class="label">เส้นลายมือ: แตะเลือกลักษณะที่เห็นบนมือคุณ</h2>
-${PALM_LINES.map((L) => { const o = L.opts.find((x) => x.id === sel[L.id]); return `<article class="ph-line" style="--lc:${L.color}"><header><i class="ph-dot" style="background:${L.color}"></i><b>${L.th}</b><span class="small">${L.about}</span></header>
-<p class="small" style="margin:0">อยู่ตรงไหน: ${L.where}</p><div class="ph-opts">${L.opts.map((x) => `<button class="chip small-chip" data-act="phLine" data-l="${L.id}" data-v="${x.id}" aria-pressed="${sel[L.id] === x.id}">${x.th}</button>`).join('')}</div>
+<section class="ph-list"><h2 class="label">เส้นลายมือ: AI เลือกให้ก่อน แตะเปลี่ยนได้ถ้าไม่ตรง</h2>
+${PALM_LINES.map((L) => { const ai = ph.auto && ph.auto.sug[L.id], mine = sel[L.id], pick = mine || ai, o = L.opts.find((x) => x.id === pick), cf = ph.auto ? ph.auto.conf[L.id] || 0 : 0; return `<article class="ph-line" style="--lc:${L.color}"><header><i class="ph-dot" style="background:${L.color}"></i><b>${L.th}</b><span class="small">${L.about}</span></header>
+<p class="small" style="margin:0">อยู่ตรงไหน: ${L.where}</p>
+${ai && !mine ? `<p class="ph-ai">🤖 AI ไล่รอยเส้นในรูปแล้วเลือกให้ (ความมั่นใจ${cf > 0.6 ? 'สูง' : cf > 0.3 ? 'ปานกลาง' : 'ต่ำ'}) ดูรอยจริงบนมือ ถ้าไม่ตรงแตะเลือกใหม่ได้</p>` : mine ? '<p class="ph-ai mine">✋ คุณเลือกเอง</p>' : ''}
+<div class="ph-opts">${L.opts.map((x) => `<button class="chip small-chip${!mine && ai === x.id ? ' ai' : ''}" data-act="phLine" data-l="${L.id}" data-v="${x.id}" aria-pressed="${pick === x.id}">${x.th}</button>`).join('')}</div>
 ${o ? `<p class="ph-lread">${o.read}</p><p class="ph-tip">✨ ${o.tip}</p>` : ''}</article>`; }).join('')}</section>
 <div class="ph-btns"><button class="btn" data-act="phAgain">อ่านใหม่</button><button class="btn btn-line" data-act="phShare">แชร์ผล ↗</button></div>
 <p class="small" style="font-size:11px">รูปมือและความยาวนิ้ววัดจากจุดบนมือแบบสามมิติ · เส้นลายมือให้คุณเลือกเองเพราะกล้องมือถือยังแยกรอยเส้นละเอียดได้ไม่แม่นพอ · ใช้เพื่อความบันเทิงและรู้จักตัวเอง</p>`;
@@ -3105,7 +3185,7 @@ async function phImage() {
   x.textAlign = 'center'; x.fillStyle = '#E8A2B8'; x.font = F(500, 30); x.fillText(ph.tab === 'face' ? 'ตักศิลา · โหงวเฮ้ง' : 'ตักศิลา · ลายมือ', W / 2, 90);
   let title, sub, items;
   if (ph.tab === 'face') { const el = faceElement(ph.face), rd = faceRead(ph.face); title = `ใบหน้าธาตุ${el.th}`; sub = el.shape + (el.mixTh ? ` ผสม${el.mixTh}` : ''); items = rd.filter((r) => r.tone > 0 && r.key !== 'sym').slice(0, 4).map((r) => [r.title, r.read]); }
-  else { const el = handElement(ph.hand), rd = handRead(ph.hand); title = el.th; sub = el.shape; items = [[rd[0].title, el.read], ...PALM_LINES.filter((L) => (ph.lines || {})[L.id]).slice(0, 3).map((L) => [L.th, L.opts.find((o) => o.id === ph.lines[L.id]).read])]; }
+  else { const el = handElement(ph.hand), rd = handRead(ph.hand); title = el.th; sub = el.shape; items = [[rd[0].title, el.read], ...PALM_LINES.map((L) => [L, (ph.lines || {})[L.id] || (ph.auto && ph.auto.sug[L.id])]).filter(([, v]) => v).slice(0, 3).map(([L, v]) => [L.th, L.opts.find((o) => o.id === v).read])]; }
   x.fillStyle = '#F6E3B0'; x.font = F(700, 92); x.fillText(title, W / 2, 230);
   x.fillStyle = '#B9AD94'; x.font = F(400, 34); x.fillText(sub, W / 2, 290);
   x.textAlign = 'left'; let y = 380;
