@@ -3,7 +3,7 @@ name: vendor-mediapipe
 # so the app serves them from its own origin (works offline after first use, no third-party CDN at runtime).
 on:
   push:
-    branches: [main]
+    branches: [main, accuracy]
     paths: [tools/vendor-mediapipe.txt]
 permissions:
   contents: write
@@ -24,6 +24,7 @@ jobs:
           cd $GITHUB_WORKSPACE
           curl -fsSL -o vendor/mediapipe/face_landmarker.task https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
           curl -fsSL -o vendor/mediapipe/hand_landmarker.task https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task
+          curl -fsSL -o vendor/mediapipe/hair_segmenter.tflite https://storage.googleapis.com/mediapipe-models/image_segmenter/hair_segmenter/float32/latest/hair_segmenter.tflite
           for f in portrait.jpg right_hands.jpg pointing_up.jpg thumb_up.jpg victory.jpg cats_and_dogs.jpg; do curl -fsSL -o tools/testdata/$f https://storage.googleapis.com/mediapipe-assets/$f || echo "skip $f"; done
           ls -la vendor/mediapipe vendor/mediapipe/wasm tools/testdata
       - name: Commit
