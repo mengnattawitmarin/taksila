@@ -1419,6 +1419,17 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .ln-t{display:flex;flex-direction:column;gap:2px}.ln-t b{font-size:15px;line-height:1.4}.ln-t span{font-size:12px;color:var(--muted)}
 .ln-art{display:flex;flex-direction:column;gap:12px}
 .ln-art p{margin:0;font-size:16px;line-height:1.8;color:var(--text-2)}
+.ph-age,.ph-mole,.ph-cp{gap:8px}
+.ph-age-h{font-family:var(--serif);font-size:18px}
+.ph-tl{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.ph-tl span{flex:none;display:flex;flex-direction:column;padding:6px 10px;border-radius:10px;border:1px solid var(--line);font-size:12px;color:var(--text-2)}
+.ph-tl span b{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.ph-tl span.on{border-color:#D4AF63;background:rgba(212,175,99,.1);color:var(--text)}.ph-tl span.on b{color:#F0D89A}
+.ph-ml{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.5}
+.ph-ml li span:last-child{display:block;color:var(--text-2);font-size:13px}
+.ph-cp-top{display:flex;align-items:center;justify-content:center;gap:18px}
+.ph-cp-sc{font-family:var(--serif);font-size:40px;color:#F0D89A}.ph-cp-sc i{font-style:normal;font-size:15px;color:var(--muted)}
+.ph-cp-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.55}
 
 </style>
 </head>
@@ -8290,7 +8301,14 @@ function palmTrace(resp, mask, W, H, lm) {
     let first = -1, last = -1, gaps = 0, run = 0;
     on.forEach((v, i) => { if (v) { if (first < 0) first = i; if (last >= 0 && run >= 4 && inRange[i]) gaps++; last = i; run = 0; } else if (first >= 0) run++; });
     const strength = on.some(Boolean) ? sm.filter((_, i) => on[i]).reduce((a, b) => a + b, 0) / on.filter(Boolean).length / p85 : 0;
-    out[id] = { path, on, cov, first: first >= 0 ? path[first] : null, last: last >= 0 ? path[last] : null, gaps, strength };
+    // ปลายเส้นแตกแฉก: จากปลายเส้น ลองไล่ 2 แนวที่แยกออก ±28° ถ้าเจอรอยเข้มทั้งสองแนว ถือว่าแตกแฉก
+    let fork = false;
+    if (last >= 3) {
+      const a = path[last - 3], b = path[last], dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy) || 1, L = palmW * 0.1;
+      const ray = (deg) => { const r = deg * Math.PI / 180, ux = (dx * Math.cos(r) - dy * Math.sin(r)) / l, uy = (dx * Math.sin(r) + dy * Math.cos(r)) / l; let hit = 0; for (let k = 1; k <= 8; k++) { const v = at(b.x + ux * L * k / 8, b.y + uy * L * k / 8); if (v > p85) hit++; } return hit / 8; };
+      fork = ray(28) >= 0.5 && ray(-28) >= 0.5;
+    }
+    out[id] = { path, on, cov, first: first >= 0 ? path[first] : null, last: last >= 0 ? path[last] : null, gaps, strength, fork };
   }
   // พิกัดแกนมือ: u = ตามแนวข้อมือ→โคนนิ้วกลาง (หารความยาวฝ่ามือ), v = ขวางมือไปทางนิ้วโป้ง (หารความกว้าง)
   const o = P(0), ax = { x: (P(9).x - o.x) / palmL, y: (P(9).y - o.y) / palmL };
@@ -8311,7 +8329,7 @@ function palmTrace(resp, mask, W, H, lm) {
   if (h.cov < 0.2) { sug.heart = null; conf.heart = 0; }
   else {
     const du = uv(h.last).u - gUV('heart', h.last.t).u;
-    sug.heart = h.gaps >= 2 && h.cov < 0.75 ? 'chain' : h.last.t < 0.62 ? 'short' : du > -0.03 ? 'curve' : 'straight';
+    sug.heart = h.fork && h.last.t > 0.6 ? 'fork' : h.gaps >= 2 && h.cov < 0.75 ? 'chain' : h.last.t < 0.62 ? 'short' : du > -0.03 ? 'curve' : 'straight';
     conf.heart = cf(h);
   }
   // เส้นสมอง: ปลายต่ำกว่าแนวมาตรฐาน = โค้งลง, ต้นติดเส้นชีวิต = ติด
@@ -8319,7 +8337,7 @@ function palmTrace(resp, mask, W, H, lm) {
   else {
     const du = uv(hd.last).u - gUV('head', hd.last.t).u;
     const gap0 = lf.first && hd.first ? Math.hypot(hd.first.x - lf.first.x, hd.first.y - lf.first.y) / palmW : 1;
-    sug.head = hd.last.t < 0.6 ? 'short' : du < -0.06 || sag(hd) > 0.16 ? 'curve' : gap0 < 0.06 ? 'joined' : gap0 > 0.14 ? 'apart' : 'straight';
+    sug.head = hd.last.t < 0.6 ? 'short' : hd.fork ? 'fork' : du < -0.06 || sag(hd) > 0.16 ? 'curve' : gap0 < 0.06 ? 'joined' : gap0 > 0.14 ? 'apart' : 'straight';
     conf.head = cf(hd);
   }
   // เส้นชีวิต: โค้งออกกว้างเทียบแนวมาตรฐาน
@@ -8333,6 +8351,137 @@ function palmTrace(resp, mask, W, H, lm) {
   if (ft.cov < 0.3 || ft.strength < 1.2) { sug.fate = 'none'; conf.fate = 0.35; }
   else { sug.fate = ft.gaps >= 1 || ft.cov < 0.55 ? 'broken' : ft.first.t > 0.38 ? 'late' : 'clear'; conf.fate = cf(ft); }
   return { lines: out, sug, conf, mean };
+}
+
+// ---------- โหงวเฮ้งตามอายุ (流年部位) ----------
+// ตำราจีนไล่ตำแหน่งบนหน้าตามอายุ: หน้าผาก (15–30) คิ้ว (31–34) ตา (35–40) จมูก (41–50) ปาก (51–60) คางและกราม (61–75)
+// ช่วง 1–14 อยู่ที่ใบหู ซึ่งกล้องหน้าตรงเห็นไม่ชัด จึงแสดงเป็นคำอธิบาย
+const AGE_ZONES = [
+  [1, 14, 'ใบหู', '金星 木星', [234, 454], null, 'ช่วงวัยเด็ก ตำราดูจากใบหู ใบหูหนาเต็ม ติดแนบศีรษะ ถือว่าเลี้ยงง่าย มีคนดูแล'],
+  [15, 24, 'หน้าผากส่วนบน', '天中 天庭', [10, 151], 'fore', 'ช่วงเรียนและเริ่มต้นชีวิต ดูหน้าผากส่วนบน ตำราว่าได้ผู้ใหญ่และครูอุปถัมภ์'],
+  [25, 27, 'กลางหน้าผาก', '中正', [151], 'fore', 'ช่วงตั้งหลักการงาน ดูกลางหน้าผาก'],
+  [28, 28, 'หว่างคิ้ว', '印堂', [9], 'browGap', 'อายุ 28 ดูที่หว่างคิ้ว ตำแหน่งชะตา หว่างคิ้วสว่างโล่งถือว่าปีนี้เปิดรับโอกาส'],
+  [29, 30, 'เหนือคิ้ว', '山林', [105, 334], 'browEye', 'ดูเหนือคิ้ว เกี่ยวกับบ้าน ที่ดิน และความมั่นคง'],
+  [31, 34, 'คิ้ว', '凌雲 紫氣', [105, 334, 70, 300], 'brow', 'ดูคิ้ว ช่วงนี้เพื่อนและพี่น้องมีผลต่อชีวิตมาก'],
+  [35, 40, 'ดวงตา', '太陽 太陰', [159, 386, 33, 263], 'eye', 'ดูดวงตา ช่วงนี้ความคิด การตัดสินใจ และความรักเด่น'],
+  [41, 43, 'โคนจมูก', '山根', [168, 6], 'nose', 'ดูโคนจมูก ช่วงเปลี่ยนผ่านของวัยกลางคน สุขภาพและครอบครัวสำคัญ'],
+  [44, 45, 'สันจมูก', '年上 壽上', [197, 195], 'nose', 'ดูสันจมูก เกี่ยวกับสุขภาพและพลังในการทำงาน'],
+  [46, 47, 'โหนกแก้ม', '顴骨', [425, 205], 'chin', 'ดูโหนกแก้ม เกี่ยวกับอำนาจ ลูกน้อง และการได้รับการยอมรับ'],
+  [48, 50, 'ปลายจมูกและปีกจมูก', '準頭 蘭台 廷尉', [4, 64, 294], 'nose', 'ดูปลายจมูก ช่วงเก็บเกี่ยวทรัพย์ ตำราว่าการเงินเด่นที่สุดในชีวิต'],
+  [51, 55, 'ร่องใต้จมูก', '人中', [164], 'phil', 'ดูร่องใต้จมูก เกี่ยวกับสุขภาพและลูกหลาน'],
+  [56, 59, 'ร่องแก้ม', '法令', [206, 426], 'mouth', 'ดูร่องข้างจมูกถึงมุมปาก ตำราว่าเป็นช่วงของอำนาจและคำพูดที่คนเชื่อถือ'],
+  [60, 60, 'ปาก', '水星', [13], 'mouth', 'อายุ 60 ดูที่ปาก การกินดีอยู่ดีและวาจา'],
+  [61, 70, 'ใต้ริมฝีปากและกราม', '承漿 地庫', [17, 172, 397], 'chin', 'ดูใต้ริมฝีปากถึงกราม เกี่ยวกับบ้าน บริวาร และความสุขช่วงเกษียณ'],
+  [71, 120, 'คาง', '地閣', [152], 'chin', 'ดูคาง ความมั่นคงในบั้นปลาย ลูกหลานและบ้าน']
+];
+function ageZone(age) {
+  const z = AGE_ZONES.find((r) => age >= r[0] && age <= r[1]) || AGE_ZONES[AGE_ZONES.length - 1];
+  return { from: z[0], to: z[1], th: z[2], cn: z[3], at: z[4], key: z[5], about: z[6] };
+}
+function ageTimeline(age, n = 4) {
+  const out = []; let a = age;
+  for (let k = 0; k < n; k++) { const z = ageZone(a); if (!out.length || out[out.length - 1].th !== z.th) out.push({ ...z, age: a }); a = z.to + 1; if (a > 100) break; }
+  return out;
+}
+
+// ---------- ตรวจจุดคล้ายไฝ ----------
+// หาจุดเข้มเล็ก ๆ บนผิวหน้า (ไม่นับตา คิ้ว ปาก รูจมูก) ด้วยการเทียบความสว่างกับผิวรอบ ๆ
+// img = { data (RGBA), W, H } ของภาพเดียวกับ lm (0–1)
+const PH_EYE_R = [33, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163, 7];
+const PH_EYE_L = [263, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390, 249];
+const PH_BROW_R = [70, 63, 105, 66, 107, 55, 65, 52, 53, 46];
+const PH_BROW_L = [300, 293, 334, 296, 336, 285, 295, 282, 283, 276];
+const PH_LIPS = [61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291, 375, 321, 405, 314, 17, 84, 181, 91, 146];
+const PH_NOSTR = [64, 98, 97, 2, 326, 327, 294, 278, 344, 440, 275, 4, 45, 220, 115, 48];
+const PH_OVAL_IDX = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109];
+function phInPoly(x, y, poly) { let c = false; for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) { const a = poly[i], b = poly[j]; if ((a.y > y) !== (b.y > y) && x < (b.x - a.x) * (y - a.y) / (b.y - a.y) + a.x) c = !c; } return c; }
+function moleDetect(img, lm) {
+  const { data, W, H } = img, P = (i) => ({ x: lm[i].x * W, y: lm[i].y * H });
+  const oval = PH_OVAL_IDX.map(P), excl = [PH_EYE_R, PH_EYE_L, PH_BROW_R, PH_BROW_L, PH_LIPS, PH_NOSTR].map((s) => s.map(P));
+  const grow = (poly, k) => { const cx = poly.reduce((a, p) => a + p.x, 0) / poly.length, cy = poly.reduce((a, p) => a + p.y, 0) / poly.length; return poly.map((p) => ({ x: cx + (p.x - cx) * k, y: cy + (p.y - cy) * k })); };
+  const ex = excl.map((p, i) => grow(p, i < 2 ? 2.0 : i < 4 ? 1.5 : 1.35));
+  // ร่องหัวตาข้างสันจมูกมักเป็นเงา จึงตัดออกด้วย
+  ex.push([133, 168, 362, 197].map(P));
+  const faceW = Math.hypot(P(234).x - P(454).x, P(234).y - P(454).y);
+  const top = Math.max(0, Math.min(...oval.map((p) => p.y))), bot = Math.min(H, Math.max(...oval.map((p) => p.y)));
+  const lef = Math.max(0, Math.min(...oval.map((p) => p.x))), rig = Math.min(W, Math.max(...oval.map((p) => p.x)));
+  const g = new Float32Array(W * H), m = new Uint8Array(W * H);
+  for (let i = 0; i < W * H; i++) g[i] = data[i * 4] * 0.3 + data[i * 4 + 1] * 0.59 + data[i * 4 + 2] * 0.11;
+  const shrink = grow(oval, 0.9);
+  for (let y = Math.floor(top); y < bot; y++) for (let x = Math.floor(lef); x < rig; x++) if (phInPoly(x, y, shrink) && !ex.some((p) => phInPoly(x, y, p))) m[y * W + x] = 1;
+  // ความสว่างเฉลี่ยรอบ ๆ (หน้าต่างกว้าง ~ faceW/14) เทียบกับจุดเล็ก (เฉลี่ย 3×3)
+  const r = Math.max(4, Math.round(faceW / 14)), I = new Float64Array((W + 1) * (H + 1));
+  for (let y = 0; y < H; y++) { let s = 0; for (let x = 0; x < W; x++) { s += g[y * W + x]; I[(y + 1) * (W + 1) + x + 1] = I[y * (W + 1) + x + 1] + s; } }
+  const box = (x0, y0, x1, y1) => { x0 = Math.max(0, x0); y0 = Math.max(0, y0); x1 = Math.min(W, x1); y1 = Math.min(H, y1); const n = (x1 - x0) * (y1 - y0) || 1; return (I[y1 * (W + 1) + x1] - I[y0 * (W + 1) + x1] - I[y1 * (W + 1) + x0] + I[y0 * (W + 1) + x0]) / n; };
+  const dark = new Uint8Array(W * H);
+  for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
+    const i = y * W + x; if (!m[i]) continue;
+    const loc = box(x - r, y - r, x + r + 1, y + r + 1), c = box(x - 1, y - 1, x + 2, y + 2);
+    if (c < loc * 0.66 && loc - c > 24) dark[i] = 1;
+  }
+  // รวมจุดติดกัน แล้วกรองขนาดและความกลม
+  const seen = new Uint8Array(W * H), out = [], minA = Math.max(3, (faceW / 120) ** 2), maxA = (faceW / 18) ** 2;
+  for (let i = 0; i < W * H; i++) {
+    if (!dark[i] || seen[i]) continue;
+    const st = [i]; seen[i] = 1; let n = 0, sx = 0, sy = 0, x0 = W, x1 = 0, y0 = H, y1 = 0;
+    while (st.length) { const j = st.pop(), x = j % W, y = (j / W) | 0; n++; sx += x; sy += y; x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+      for (const k of [j - 1, j + 1, j - W, j + W]) if (k >= 0 && k < W * H && dark[k] && !seen[k]) { seen[k] = 1; st.push(k); } }
+    const bw = x1 - x0 + 1, bh = y1 - y0 + 1, fill = n / (bw * bh), asp = Math.max(bw, bh) / Math.min(bw, bh);
+    if (n >= minA && n <= maxA && asp < 2.2 && fill > 0.45) out.push({ x: sx / n / W, y: sy / n / H, size: Math.sqrt(n) / faceW });
+  }
+  return out.sort((a, b) => b.size - a.size).slice(0, 8).map((p) => ({ ...p, ...moleMeaning(p, lm) }));
+}
+// ความหมายไฝตามตำแหน่ง (ตำราโหงวเฮ้งจีน แบบย่อ) เทียบกับจุดอ้างอิงที่ใกล้ที่สุด
+const MOLE_SPOTS = [
+  [151, 'กลางหน้าผาก', 1, 'ตำราว่ามีผู้ใหญ่สนับสนุน งานราชการหรือองค์กรใหญ่ไปได้ดี'],
+  [9, 'หว่างคิ้ว', -1, 'ตำราว่ามีอุปสรรคต้องฝ่าฟัน แต่เป็นคนมุ่งมั่น'],
+  [105, 'ในคิ้วขวา', 1, 'ไฝซ่อนในคิ้ว ตำราว่าฉลาด มีทรัพย์เก็บ'],
+  [334, 'ในคิ้วซ้าย', 1, 'ไฝซ่อนในคิ้ว ตำราว่าฉลาด มีทรัพย์เก็บ'],
+  [230, 'ใต้ตาขวา', 0, 'ตำราว่าอ่อนไหว ใจดี ห่วงลูกหลาน'],
+  [450, 'ใต้ตาซ้าย', 0, 'ตำราว่าอ่อนไหว ใจดี ห่วงลูกหลาน'],
+  [127, 'หางตาขวา', 0, 'ตำราว่ามีเสน่ห์ เรื่องรักมีสีสัน'],
+  [356, 'หางตาซ้าย', 0, 'ตำราว่ามีเสน่ห์ เรื่องรักมีสีสัน'],
+  [6, 'สันจมูก', -1, 'ตำราว่าช่วงวัยกลางคนต้องดูแลสุขภาพและการงานเป็นพิเศษ'],
+  [4, 'ปลายจมูก', 0, 'ตำราว่าหาเงินเก่ง แต่ใช้เงินคล่อง ควรมีระบบออม'],
+  [64, 'ปีกจมูกขวา', 0, 'ตำราว่าเงินเข้าแล้วออกเร็ว ระวังการให้ยืม'],
+  [294, 'ปีกจมูกซ้าย', 0, 'ตำราว่าเงินเข้าแล้วออกเร็ว ระวังการให้ยืม'],
+  [116, 'โหนกแก้มขวา', 0, 'ตำราว่ามีอำนาจ แต่ระวังคนอิจฉา'],
+  [345, 'โหนกแก้มซ้าย', 0, 'ตำราว่ามีอำนาจ แต่ระวังคนอิจฉา'],
+  [164, 'ร่องใต้จมูก', 0, 'ตำราว่าเกี่ยวกับลูกหลาน ควรใส่ใจสุขภาพ'],
+  [61, 'มุมปากขวา', 1, 'ตำราว่ามีโชคเรื่องอาหาร ช่างพูด มีเสน่ห์'],
+  [291, 'มุมปากซ้าย', 1, 'ตำราว่ามีโชคเรื่องอาหาร ช่างพูด มีเสน่ห์'],
+  [200, 'ใต้ริมฝีปาก', 1, 'ตำราว่ามีบ้าน มีที่ดิน ชอบเดินทาง'],
+  [152, 'คาง', 1, 'ตำราว่าบั้นปลายมั่นคง มีบ้านและบริวาร'],
+  [172, 'กรามขวา', 0, 'ตำราว่าดื้อ มุ่งมั่น ทำงานหนัก'],
+  [397, 'กรามซ้าย', 0, 'ตำราว่าดื้อ มุ่งมั่น ทำงานหนัก']
+];
+function moleMeaning(p, lm) {
+  let best = null, bd = 1e9;
+  for (const s of MOLE_SPOTS) { const q = lm[s[0]], d = Math.hypot(q.x - p.x, q.y - p.y); if (d < bd) { bd = d; best = s; } }
+  return { where: best[1], tone: best[2], read: best[3] };
+}
+
+// ---------- เทียบโหงวเฮ้งสองคน ----------
+function coupleRead(a, b) {
+  const ea = faceElement(a), eb = faceElement(b), out = [];
+  let score = 60;
+  if (ea.key === eb.key) { score += 10; out.push([1, `ธาตุใบหน้าเหมือนกัน (${ea.th}) คิดคล้ายกัน เข้าใจกันง่าย แต่ระวังติดนิสัยเดียวกัน`]); }
+  else if (GEN[ea.key] === eb.key || GEN[eb.key] === ea.key) { score += 18; const g = GEN[ea.key] === eb.key ? [ea, eb] : [eb, ea]; out.push([1, `ธาตุ${g[0].th}ให้กำเนิดธาตุ${g[1].th} คนหนึ่งคอยหนุน อีกคนเติบโต เป็นคู่ที่ส่งเสริมกัน`]); }
+  else if (CTRL[ea.key] === eb.key || CTRL[eb.key] === ea.key) { score -= 6; const c = CTRL[ea.key] === eb.key ? [ea, eb] : [eb, ea]; out.push([-1, `ธาตุ${c[0].th}ข่มธาตุ${c[1].th} คนหนึ่งมักเป็นฝ่ายนำ ควรเปิดพื้นที่ให้อีกฝ่ายตัดสินใจบ้าง`]); }
+  const mA = nb('mouthR', a.mouthR), mB = nb('mouthR', b.mouthR);
+  if (mA !== mB && (mA > 0 || mB > 0)) { score += 6; out.push([1, 'คนหนึ่งปากกว้างช่างพูด อีกคนเป็นผู้ฟัง คุยกันลงตัว']); }
+  else if (mA > 0 && mB > 0) out.push([0, 'ช่างพูดทั้งคู่ บ้านไม่เงียบ แต่ต้องผลัดกันฟัง']);
+  const bA = nb('browEye', a.browEye), bB = nb('browEye', b.browEye);
+  if (bA < 0 && bB < 0) { score -= 6; out.push([-1, 'คิ้วชิดตาทั้งคู่ ใจร้อนเหมือนกัน เวลาเถียงให้พักก่อนค่อยคุย']); }
+  else if (bA > 0 || bB > 0) { score += 4; out.push([1, 'มีคนหนึ่งใจเย็น ช่วยคุมอารมณ์ของบ้านได้']); }
+  const gA = nb('browGap', a.browGap), gB = nb('browGap', b.browGap);
+  if (gA > 0 && gB > 0) { score += 5; out.push([1, 'หว่างคิ้วกว้างทั้งคู่ ให้อภัยง่าย ไม่เก็บเรื่องเล็กมาคิด']); }
+  const nA = nb('noseWR', a.noseWR), nB = nb('noseWR', b.noseWR);
+  if (nA > 0 || nB > 0) { score += 4; out.push([1, 'มีคนจมูกปีกกว้าง ตำราว่าช่วยเก็บเงินให้ครอบครัว']); }
+  else if (nA < 0 && nB < 0) out.push([0, 'ใช้เงินคล่องทั้งคู่ ควรมีบัญชีออมร่วมกัน']);
+  const sim = 1 - (Math.abs(a.up - b.up) + Math.abs(a.md - b.md) + Math.abs(a.lo - b.lo)) * 4;
+  if (sim > 0.7) { score += 4; out.push([1, 'สัดส่วนหน้าคล้ายกัน ช่วงชีวิตที่ดีมาพร้อมกัน วางแผนอนาคตง่าย']); }
+  return { score: Math.max(35, Math.min(96, Math.round(score))), ea, eb, out };
 }
 
 // ---- js/qr.js ----
@@ -13671,7 +13820,7 @@ function phFinish(cv, lm, meas, warn, hair) {
   const cr = kind === 'face' ? phCrop(cv, pts, 0.55, 0.45) : phCrop(cv, pts, 0.3, 0.2);
   phSnap = cr.cv; phSnapLm = cr.lm.slice(0, lm.length); phSnapHair = hair ? cr.lm[lm.length] : null; phEnh = null;
   ph.status = 'result'; ph.warn = warn || [];
-  if (kind === 'face') { ph.face = meas; phSaveSaved({ face: meas, faceAt: Date.now() }); }
+  if (kind === 'face') { ph.face = meas; phSaveSaved({ face: meas, faceAt: Date.now() }); try { const c = phSnap.getContext('2d', { willReadFrequently: true }); ph.moles = moleDetect({ data: c.getImageData(0, 0, phSnap.width, phSnap.height).data, W: phSnap.width, H: phSnap.height }, phSnapLm); } catch (e) { ph.moles = []; } }
   else { ph.hand = meas; phSaveSaved({ hand: meas, handAt: Date.now(), side: ph.side }); phMap = null; if (ph.palmIn !== false) phAutoPalm(); else ph.auto = null; ph.lines = {}; phSaveSaved({ lines: {} }); }
   render();
 }
@@ -13894,7 +14043,17 @@ function mountPhysio() {
   if (sn && phSnap && ph.status === 'result') {
     sn.width = phSnap.width; sn.height = phSnap.height;
     const x = sn.getContext('2d'); x.drawImage(phSnap, 0, 0);
-    if (ph.tab === 'face') phDrawFace(x, phSnapLm, sn.width, sn.height, false, true, true);
+    if (ph.tab === 'face') {
+      phDrawFace(x, phSnapLm, sn.width, sn.height, false, true, true);
+      const sc = sn.width / 400, bi = phBirthInfo();
+      if (bi) { // วงตำแหน่งที่ดูตามอายุปีนี้
+        const z = ageZone(new Date().getFullYear() + 543 - bi.y);
+        x.strokeStyle = '#F0D89A'; x.lineWidth = 3 * sc; x.setLineDash([5 * sc, 4 * sc]);
+        for (const i of z.at) { const q = phSnapLm[i]; x.beginPath(); x.arc(q.x * sn.width, q.y * sn.height, 15 * sc, 0, 7); x.stroke(); }
+        x.setLineDash([]);
+      }
+      (ph.moles || []).forEach((m, k) => { const cx = m.x * sn.width, cy = m.y * sn.height; x.strokeStyle = '#8FB3E0'; x.lineWidth = 2 * sc; x.beginPath(); x.arc(cx, cy, Math.max(7 * sc, m.size * sn.width * 1.2), 0, 7); x.stroke(); phLabel(x, cx + 9 * sc, cy - 9 * sc, String(k + 1), '#8FB3E0', sc * 0.8); });
+    }
     else {
       if (ph.enh) { if (!phEnh) phEnh = phEnhance(phSnap, phSnapLm); x.fillStyle = 'rgba(0,0,0,.35)'; x.fillRect(0, 0, sn.width, sn.height); x.drawImage(phEnh, 0, 0, sn.width, sn.height); }
       phDrawHand(x, phSnapLm, sn.width, sn.height, false, true, true);
@@ -13949,6 +14108,28 @@ function phLoadingHTML() { return '<section class="card ph-start"><div class="ph
 function phReadCard(r) {
   return `<article class="ph-read ${fsTone(r.tone)}"><header><b>${r.title}</b>${r.cn ? `<span class="ph-cn">${r.cn}</span>` : ''}</header><span class="ph-val mono">${r.val}</span><p>${r.read}</p>${r.tip ? `<p class="ph-tip">✨ เสริม: ${r.tip}</p>` : ''}</article>`;
 }
+function phAgeHTML(reads) {
+  const bi = phBirthInfo(); if (!bi) return '';
+  const age = new Date().getFullYear() + 543 - bi.y, z = ageZone(age), r = reads.find((x) => x.key === z.key), tl = ageTimeline(age, 4);
+  return `<section class="card ph-age"><span class="eyebrow">โหงวเฮ้งตามอายุ · 流年</span><b class="ph-age-h">อายุ ${age} ปี ตำราดูที่${z.th} <span class="ph-cn">${z.cn}</span></b>
+<p class="body" style="margin:0">${z.about}</p>${r ? `<p class="small" style="margin:0">จากที่วัดได้: ${r.read}</p><p class="ph-tip">✨ ปีนี้ควรเสริม: ${r.tip}</p>` : ''}
+<div class="ph-tl">${tl.map((t, i) => `<span class="${i ? '' : 'on'}"><b>${t.age}${t.to > t.age ? `–${t.to}` : ''}</b>${t.th}</span>`).join('')}</div>
+<p class="small" style="margin:0;font-size:11px">วงประสีทองบนรูปคือตำแหน่งของปีนี้</p></section>`;
+}
+function phMoleHTML() {
+  const ms = state.ph.moles; if (!ms || !phSnap) return '';
+  return `<section class="card ph-mole"><span class="eyebrow">จุดคล้ายไฝบนใบหน้า</span>${ms.length ? `<p class="small" style="margin:0">AI พบ ${ms.length} จุด (วงสีฟ้าบนรูป) อาจเป็นไฝ ขี้แมลงวัน สิว หรือเงา ดูหน้าจริงประกอบ</p>
+<ol class="ph-ml">${ms.map((m) => `<li><b>${m.where}</b> <span class="${m.tone > 0 ? 'tpos' : m.tone < 0 ? 'tneg' : ''}">${m.tone > 0 ? 'ไฝดี' : m.tone < 0 ? 'ไฝต้องระวัง' : 'ไฝกลาง ๆ'}</span><span>${m.read}</span></li>`).join('')}</ol>` : '<p class="small" style="margin:0">ไม่พบจุดคล้ายไฝที่ชัดเจนในรูปนี้ ถ้ามีไฝเล็กมาก ลองถ่ายใกล้ขึ้นในที่แสงสว่าง</p>'}
+<p class="small" style="margin:0;font-size:11.5px">🩺 ไฝที่โตเร็ว ขอบไม่เรียบ สีไม่สม่ำเสมอ หรือมีเลือดออก ควรให้แพทย์ผิวหนังตรวจ ไม่ควรจี้หรือลบไฝเพราะคำทำนาย</p></section>`;
+}
+function phCoupleHTML() {
+  const ph = state.ph; if (!ph.pairA) return '';
+  if (ph.pairA.m === ph.face) return `<section class="card ph-cp"><span class="eyebrow">💞 เทียบโหงวเฮ้ง</span><p class="body" style="margin:0">บันทึกหน้าคนที่ 1 แล้ว กด "อ่านใหม่" แล้วส่องหน้าหรือเลือกรูปของอีกคน</p><button class="link-btn" data-act="phPairClear">ยกเลิกการเทียบ</button></section>`;
+  const c = coupleRead(ph.pairA.m, ph.face);
+  return `<section class="card ph-cp"><span class="eyebrow">💞 เทียบโหงวเฮ้งสองคน</span><div class="ph-cp-top"><span class="ph-el-ic ${c.ea.key}">${c.ea.th}</span><b class="ph-cp-sc">${c.score}<i>/100</i></b><span class="ph-el-ic ${c.eb.key}">${c.eb.th}</span></div>
+<ul class="ph-cp-l">${c.out.map(([t, x]) => `<li class="${t > 0 ? 'tpos' : t < 0 ? 'tneg' : ''}">${t > 0 ? '＋' : t < 0 ? '−' : '•'} ${x}</li>`).join('')}</ul>
+<p class="small" style="margin:0;font-size:11px">คนที่ 1 = รูปก่อนหน้า · คนที่ 2 = รูปนี้ · ความสัมพันธ์ขึ้นกับการเข้าใจกันมากกว่าหน้าตา</p><button class="link-btn" data-act="phPairClear">ล้างการเทียบ</button></section>`;
+}
 function phFaceResultHTML() {
   const ph = state.ph, m = ph.face, el = faceElement(m), reads = faceRead(m);
   const bi = phBirthInfo(), rel = bi ? elementRelation(el.key, bi.sy) : null;
@@ -13957,9 +14138,13 @@ ${ph.warn && ph.warn.length ? `<p class="ph-err">รูปนี้: ${ph.warn.j
 <section class="card ph-el"><span class="eyebrow">รูปหน้าห้าธาตุ · 五行面相</span><div class="ph-el-top"><span class="ph-el-ic ${el.key}">${el.th}</span><div><b>ใบหน้าธาตุ${el.th}${el.mixTh ? ` ผสม${el.mixTh}` : ''}</b><span>${el.shape} ${el.cn}</span></div></div>
 <p class="body" style="margin:0">${el.read}</p><p class="ph-tip">✨ เสริม: ${el.boost}</p>
 ${rel ? `<p class="small ${rel.tone > 0 ? 'tpos' : rel.tone < 0 ? 'tneg' : ''}" style="margin:0">เทียบปีเกิด${state.ph.who === 'other' ? ' (คนอื่น)' : ''} ปี${bi.animal} ธาตุ${bi.el}: ${rel.th}</p>` : ''}</section>
+${phCoupleHTML()}
 ${phBirthHTML()}
+${phAgeHTML(reads)}
 <section class="ph-list"><h2 class="label">อ่านทีละส่วน</h2>${reads.map(phReadCard).join('')}</section>
+${phMoleHTML()}
 <div class="ph-btns"><button class="btn" data-act="phAgain">อ่านใหม่</button><button class="btn btn-line" data-act="phShare">แชร์ผล ↗</button></div>
+${ph.pairA ? '' : '<button class="btn btn-line" data-act="phPair">💞 เทียบโหงวเฮ้งกับอีกคน (คู่รัก เพื่อน หุ้นส่วน)</button>'}
 <p class="small" style="font-size:11px">วัดจากจุดบนใบหน้า ${m.n ? `เฉลี่ย ${m.n} เฟรม` : 'จากรูปเดียว'} · มุมกล้อง แสง และสีหน้ามีผลต่อค่า ใช้เพื่อรู้จักตัวเองและความบันเทิง ไม่ใช่การตัดสินคนจากหน้าตา</p>`;
 }
 function phPalmResultHTML() {
@@ -14268,6 +14453,8 @@ document.addEventListener('click', (e) => {
     case 'copyApp': (navigator.clipboard ? navigator.clipboard.writeText(APP_URL) : Promise.reject()).then(() => toast('คัดลอกลิงก์แล้ว'), () => toast(APP_URL)); return;
     case 'phTab': if (state.ph.status === 'live') phStopCam(); state.ph.tab = el.dataset.v; state.ph.status = 'idle'; state.ph.err = ''; break;
     case 'phStart': phStart(); return;
+    case 'phPair': state.ph.pairA = { m: state.ph.face }; break;
+    case 'phPairClear': state.ph.pairA = null; break;
     case 'phStop': phStopCam(); state.ph.status = 'start'; break;
     case 'phSkip': phForce = true; el.hidden = true; return;
     case 'phAgain': phSnap = null; state.ph.status = 'start'; state.ph.err = ''; state.ph.warn = []; break;

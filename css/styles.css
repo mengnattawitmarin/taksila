@@ -1409,3 +1409,14 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .ln-t{display:flex;flex-direction:column;gap:2px}.ln-t b{font-size:15px;line-height:1.4}.ln-t span{font-size:12px;color:var(--muted)}
 .ln-art{display:flex;flex-direction:column;gap:12px}
 .ln-art p{margin:0;font-size:16px;line-height:1.8;color:var(--text-2)}
+.ph-age,.ph-mole,.ph-cp{gap:8px}
+.ph-age-h{font-family:var(--serif);font-size:18px}
+.ph-tl{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.ph-tl span{flex:none;display:flex;flex-direction:column;padding:6px 10px;border-radius:10px;border:1px solid var(--line);font-size:12px;color:var(--text-2)}
+.ph-tl span b{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.ph-tl span.on{border-color:#D4AF63;background:rgba(212,175,99,.1);color:var(--text)}.ph-tl span.on b{color:#F0D89A}
+.ph-ml{margin:0;padding-left:1.3rem;display:flex;flex-direction:column;gap:6px;font-size:13.5px;line-height:1.5}
+.ph-ml li span:last-child{display:block;color:var(--text-2);font-size:13px}
+.ph-cp-top{display:flex;align-items:center;justify-content:center;gap:18px}
+.ph-cp-sc{font-family:var(--serif);font-size:40px;color:#F0D89A}.ph-cp-sc i{font-style:normal;font-size:15px;color:var(--muted)}
+.ph-cp-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.55}

@@ -14,7 +14,7 @@ import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, t
 import { prayerTr } from './prayer-tr.js';
 import { qrSVG } from './qr.js';
 import { LEARN_CATS, LESSONS } from './learn.js';
-import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh } from './physio.js';
+import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh, ageZone, ageTimeline, moleDetect, coupleRead } from './physio.js';
 import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf, FS_PTYPES, ptypeOf } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
@@ -2958,7 +2958,7 @@ function phFinish(cv, lm, meas, warn, hair) {
   const cr = kind === 'face' ? phCrop(cv, pts, 0.55, 0.45) : phCrop(cv, pts, 0.3, 0.2);
   phSnap = cr.cv; phSnapLm = cr.lm.slice(0, lm.length); phSnapHair = hair ? cr.lm[lm.length] : null; phEnh = null;
   ph.status = 'result'; ph.warn = warn || [];
-  if (kind === 'face') { ph.face = meas; phSaveSaved({ face: meas, faceAt: Date.now() }); }
+  if (kind === 'face') { ph.face = meas; phSaveSaved({ face: meas, faceAt: Date.now() }); try { const c = phSnap.getContext('2d', { willReadFrequently: true }); ph.moles = moleDetect({ data: c.getImageData(0, 0, phSnap.width, phSnap.height).data, W: phSnap.width, H: phSnap.height }, phSnapLm); } catch (e) { ph.moles = []; } }
   else { ph.hand = meas; phSaveSaved({ hand: meas, handAt: Date.now(), side: ph.side }); phMap = null; if (ph.palmIn !== false) phAutoPalm(); else ph.auto = null; ph.lines = {}; phSaveSaved({ lines: {} }); }
   render();
 }
@@ -3181,7 +3181,17 @@ function mountPhysio() {
   if (sn && phSnap && ph.status === 'result') {
     sn.width = phSnap.width; sn.height = phSnap.height;
     const x = sn.getContext('2d'); x.drawImage(phSnap, 0, 0);
-    if (ph.tab === 'face') phDrawFace(x, phSnapLm, sn.width, sn.height, false, true, true);
+    if (ph.tab === 'face') {
+      phDrawFace(x, phSnapLm, sn.width, sn.height, false, true, true);
+      const sc = sn.width / 400, bi = phBirthInfo();
+      if (bi) { // วงตำแหน่งที่ดูตามอายุปีนี้
+        const z = ageZone(new Date().getFullYear() + 543 - bi.y);
+        x.strokeStyle = '#F0D89A'; x.lineWidth = 3 * sc; x.setLineDash([5 * sc, 4 * sc]);
+        for (const i of z.at) { const q = phSnapLm[i]; x.beginPath(); x.arc(q.x * sn.width, q.y * sn.height, 15 * sc, 0, 7); x.stroke(); }
+        x.setLineDash([]);
+      }
+      (ph.moles || []).forEach((m, k) => { const cx = m.x * sn.width, cy = m.y * sn.height; x.strokeStyle = '#8FB3E0'; x.lineWidth = 2 * sc; x.beginPath(); x.arc(cx, cy, Math.max(7 * sc, m.size * sn.width * 1.2), 0, 7); x.stroke(); phLabel(x, cx + 9 * sc, cy - 9 * sc, String(k + 1), '#8FB3E0', sc * 0.8); });
+    }
     else {
       if (ph.enh) { if (!phEnh) phEnh = phEnhance(phSnap, phSnapLm); x.fillStyle = 'rgba(0,0,0,.35)'; x.fillRect(0, 0, sn.width, sn.height); x.drawImage(phEnh, 0, 0, sn.width, sn.height); }
       phDrawHand(x, phSnapLm, sn.width, sn.height, false, true, true);
@@ -3236,6 +3246,28 @@ function phLoadingHTML() { return '<section class="card ph-start"><div class="ph
 function phReadCard(r) {
   return `<article class="ph-read ${fsTone(r.tone)}"><header><b>${r.title}</b>${r.cn ? `<span class="ph-cn">${r.cn}</span>` : ''}</header><span class="ph-val mono">${r.val}</span><p>${r.read}</p>${r.tip ? `<p class="ph-tip">✨ เสริม: ${r.tip}</p>` : ''}</article>`;
 }
+function phAgeHTML(reads) {
+  const bi = phBirthInfo(); if (!bi) return '';
+  const age = new Date().getFullYear() + 543 - bi.y, z = ageZone(age), r = reads.find((x) => x.key === z.key), tl = ageTimeline(age, 4);
+  return `<section class="card ph-age"><span class="eyebrow">โหงวเฮ้งตามอายุ · 流年</span><b class="ph-age-h">อายุ ${age} ปี ตำราดูที่${z.th} <span class="ph-cn">${z.cn}</span></b>
+<p class="body" style="margin:0">${z.about}</p>${r ? `<p class="small" style="margin:0">จากที่วัดได้: ${r.read}</p><p class="ph-tip">✨ ปีนี้ควรเสริม: ${r.tip}</p>` : ''}
+<div class="ph-tl">${tl.map((t, i) => `<span class="${i ? '' : 'on'}"><b>${t.age}${t.to > t.age ? `–${t.to}` : ''}</b>${t.th}</span>`).join('')}</div>
+<p class="small" style="margin:0;font-size:11px">วงประสีทองบนรูปคือตำแหน่งของปีนี้</p></section>`;
+}
+function phMoleHTML() {
+  const ms = state.ph.moles; if (!ms || !phSnap) return '';
+  return `<section class="card ph-mole"><span class="eyebrow">จุดคล้ายไฝบนใบหน้า</span>${ms.length ? `<p class="small" style="margin:0">AI พบ ${ms.length} จุด (วงสีฟ้าบนรูป) อาจเป็นไฝ ขี้แมลงวัน สิว หรือเงา ดูหน้าจริงประกอบ</p>
+<ol class="ph-ml">${ms.map((m) => `<li><b>${m.where}</b> <span class="${m.tone > 0 ? 'tpos' : m.tone < 0 ? 'tneg' : ''}">${m.tone > 0 ? 'ไฝดี' : m.tone < 0 ? 'ไฝต้องระวัง' : 'ไฝกลาง ๆ'}</span><span>${m.read}</span></li>`).join('')}</ol>` : '<p class="small" style="margin:0">ไม่พบจุดคล้ายไฝที่ชัดเจนในรูปนี้ ถ้ามีไฝเล็กมาก ลองถ่ายใกล้ขึ้นในที่แสงสว่าง</p>'}
+<p class="small" style="margin:0;font-size:11.5px">🩺 ไฝที่โตเร็ว ขอบไม่เรียบ สีไม่สม่ำเสมอ หรือมีเลือดออก ควรให้แพทย์ผิวหนังตรวจ ไม่ควรจี้หรือลบไฝเพราะคำทำนาย</p></section>`;
+}
+function phCoupleHTML() {
+  const ph = state.ph; if (!ph.pairA) return '';
+  if (ph.pairA.m === ph.face) return `<section class="card ph-cp"><span class="eyebrow">💞 เทียบโหงวเฮ้ง</span><p class="body" style="margin:0">บันทึกหน้าคนที่ 1 แล้ว กด "อ่านใหม่" แล้วส่องหน้าหรือเลือกรูปของอีกคน</p><button class="link-btn" data-act="phPairClear">ยกเลิกการเทียบ</button></section>`;
+  const c = coupleRead(ph.pairA.m, ph.face);
+  return `<section class="card ph-cp"><span class="eyebrow">💞 เทียบโหงวเฮ้งสองคน</span><div class="ph-cp-top"><span class="ph-el-ic ${c.ea.key}">${c.ea.th}</span><b class="ph-cp-sc">${c.score}<i>/100</i></b><span class="ph-el-ic ${c.eb.key}">${c.eb.th}</span></div>
+<ul class="ph-cp-l">${c.out.map(([t, x]) => `<li class="${t > 0 ? 'tpos' : t < 0 ? 'tneg' : ''}">${t > 0 ? '＋' : t < 0 ? '−' : '•'} ${x}</li>`).join('')}</ul>
+<p class="small" style="margin:0;font-size:11px">คนที่ 1 = รูปก่อนหน้า · คนที่ 2 = รูปนี้ · ความสัมพันธ์ขึ้นกับการเข้าใจกันมากกว่าหน้าตา</p><button class="link-btn" data-act="phPairClear">ล้างการเทียบ</button></section>`;
+}
 function phFaceResultHTML() {
   const ph = state.ph, m = ph.face, el = faceElement(m), reads = faceRead(m);
   const bi = phBirthInfo(), rel = bi ? elementRelation(el.key, bi.sy) : null;
@@ -3244,9 +3276,13 @@ ${ph.warn && ph.warn.length ? `<p class="ph-err">รูปนี้: ${ph.warn.j
 <section class="card ph-el"><span class="eyebrow">รูปหน้าห้าธาตุ · 五行面相</span><div class="ph-el-top"><span class="ph-el-ic ${el.key}">${el.th}</span><div><b>ใบหน้าธาตุ${el.th}${el.mixTh ? ` ผสม${el.mixTh}` : ''}</b><span>${el.shape} ${el.cn}</span></div></div>
 <p class="body" style="margin:0">${el.read}</p><p class="ph-tip">✨ เสริม: ${el.boost}</p>
 ${rel ? `<p class="small ${rel.tone > 0 ? 'tpos' : rel.tone < 0 ? 'tneg' : ''}" style="margin:0">เทียบปีเกิด${state.ph.who === 'other' ? ' (คนอื่น)' : ''} ปี${bi.animal} ธาตุ${bi.el}: ${rel.th}</p>` : ''}</section>
+${phCoupleHTML()}
 ${phBirthHTML()}
+${phAgeHTML(reads)}
 <section class="ph-list"><h2 class="label">อ่านทีละส่วน</h2>${reads.map(phReadCard).join('')}</section>
+${phMoleHTML()}
 <div class="ph-btns"><button class="btn" data-act="phAgain">อ่านใหม่</button><button class="btn btn-line" data-act="phShare">แชร์ผล ↗</button></div>
+${ph.pairA ? '' : '<button class="btn btn-line" data-act="phPair">💞 เทียบโหงวเฮ้งกับอีกคน (คู่รัก เพื่อน หุ้นส่วน)</button>'}
 <p class="small" style="font-size:11px">วัดจากจุดบนใบหน้า ${m.n ? `เฉลี่ย ${m.n} เฟรม` : 'จากรูปเดียว'} · มุมกล้อง แสง และสีหน้ามีผลต่อค่า ใช้เพื่อรู้จักตัวเองและความบันเทิง ไม่ใช่การตัดสินคนจากหน้าตา</p>`;
 }
 function phPalmResultHTML() {
@@ -3555,6 +3591,8 @@ document.addEventListener('click', (e) => {
     case 'copyApp': (navigator.clipboard ? navigator.clipboard.writeText(APP_URL) : Promise.reject()).then(() => toast('คัดลอกลิงก์แล้ว'), () => toast(APP_URL)); return;
     case 'phTab': if (state.ph.status === 'live') phStopCam(); state.ph.tab = el.dataset.v; state.ph.status = 'idle'; state.ph.err = ''; break;
     case 'phStart': phStart(); return;
+    case 'phPair': state.ph.pairA = { m: state.ph.face }; break;
+    case 'phPairClear': state.ph.pairA = null; break;
     case 'phStop': phStopCam(); state.ph.status = 'start'; break;
     case 'phSkip': phForce = true; el.hidden = true; return;
     case 'phAgain': phSnap = null; state.ph.status = 'start'; state.ph.err = ''; state.ph.warn = []; break;
