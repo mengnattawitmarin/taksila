@@ -14,6 +14,7 @@ import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, t
 import { prayerTr } from './prayer-tr.js';
 import { qrSVG } from './qr.js';
 import { LEARN_CATS, LESSONS } from './learn.js';
+import { DONATE_QR } from './donate.js';
 import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh, ageZone, ageTimeline, moleDetect, coupleRead } from './physio.js';
 import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf, FS_PTYPES, ptypeOf } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
@@ -2027,12 +2028,23 @@ function moreSheetHTML() {
 <div class="more-in"><span class="more-grip" aria-hidden="true"></span><div class="more-h"><b>ห้องทั้งหมดในตักศิลา</b><button class="ic-x" data-act="moreClose">ปิด</button></div>
 <nav class="more-grid">${ROOMS.map(([r, t, s, c]) => `<a href="#/${r}" class="more-t" style="--c:${c}"${route() === r ? ' aria-current="page"' : ''}><span class="sigil">${icon(r, 20)}</span><b>${t}</b><span>${s}</span></a>`).join('')}</nav>
 ${shareAppHTML()}
+${donateHTML()}
 ${otherAppsHTML()}</div></div>`;
 }
 // ชวนเพื่อน: QR และปุ่มแชร์ลิงก์ ใช้ได้ทั้ง Android และ iPhone
 function shareAppHTML() {
   return `<section class="sa"><div class="sa-qr">${qrSVG(APP_URL, 112)}</div><div class="sa-t"><b>ชวนเพื่อนมาดูดวง</b><span>ลิงก์เดียวใช้ได้ทั้ง Android และ iPhone ให้เพื่อนสแกน QR หรือส่งลิงก์</span>
 <div class="sa-btns"><button class="chip small-chip" data-act="shareApp">แชร์ลิงก์ ↗</button><button class="chip small-chip" data-act="copyApp">คัดลอกลิงก์</button></div></div></section>`;
+}
+// สนับสนุนผู้พัฒนา: สมัครใจ ไม่มีสิ่งตอบแทน ไม่ใช่การทำบุญหรือเรี่ยไรเพื่อการกุศล (เลี่ยงข่าย พ.ร.บ.ควบคุมการเรี่ยไร 2487)
+function donateHTML() {
+  return `<details class="dn"><summary><span class="dn-ic" aria-hidden="true">☕</span><span class="dn-t"><b>สนับสนุนผู้พัฒนา</b><span>เลี้ยงกาแฟคนทำแอป ช่วยค่าเซิร์ฟเวอร์และค่าพัฒนา</span></span><span class="dn-chev" aria-hidden="true">›</span></summary>
+<div class="dn-body"><img src="${DONATE_QR}" alt="QR พร้อมเพย์ ชื่อบัญชี นาย ณัฐวิทย์ แตงเขียว" class="dn-qr" width="260" loading="lazy">
+<a class="chip small-chip" href="${DONATE_QR}" download="taksila-promptpay.jpg">บันทึกรูป QR</a>
+<ul class="dn-note"><li>เป็นการสนับสนุน<b>ผู้พัฒนาแอปโดยตรง</b> เงินเข้าบัญชีส่วนตัวของผู้พัฒนา ชื่อบัญชีตามที่ขึ้นใน QR</li>
+<li>ใช้เป็นค่าเซิร์ฟเวอร์ ค่าโดเมน และเวลาพัฒนาฟีเจอร์ใหม่ <b>ไม่ใช่การทำบุญ</b> และไม่ได้นำไปบริจาควัดหรือการกุศล</li>
+<li>ทุกฟีเจอร์ในตักศิลา<b>ใช้ฟรีเหมือนเดิม</b> ไม่ว่าจะสนับสนุนหรือไม่ และการสนับสนุนไม่มีผลต่อคำทำนาย</li>
+<li>จำนวนเท่าไรก็ได้ตามสะดวก ไม่สามารถนำไปลดหย่อนภาษีได้</li></ul></div></details>`;
 }
 // แอปอื่นของผู้พัฒนา
 const OTHER_APPS = [

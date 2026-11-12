@@ -1420,3 +1420,13 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .ph-cp-top{display:flex;align-items:center;justify-content:center;gap:18px}
 .ph-cp-sc{font-family:var(--serif);font-size:40px;color:#F0D89A}.ph-cp-sc i{font-style:normal;font-size:15px;color:var(--muted)}
 .ph-cp-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.55}
+/* สนับสนุนผู้พัฒนา */
+.dn{margin-top:14px;border:1px solid rgba(224,164,88,.45);border-radius:14px;background:linear-gradient(120deg,rgba(224,164,88,.12),var(--surface))}
+.dn summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;padding:12px}
+.dn summary::-webkit-details-marker{display:none}
+.dn-ic{width:42px;height:42px;border-radius:21px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(224,164,88,.18)}
+.dn-t{display:flex;flex-direction:column;gap:2px}.dn-t b{font-size:15px}.dn-t span{font-size:12px;color:var(--text-2)}
+.dn-chev{color:var(--muted);transition:transform .2s}.dn[open] .dn-chev{transform:rotate(90deg)}
+.dn-body{display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 14px 14px}
+.dn-qr{width:min(260px,70vw);height:auto;border-radius:12px;background:#fff}
+.dn-note{margin:0;padding-left:1.1rem;font-size:12.5px;line-height:1.6;color:var(--text-2);align-self:stretch}
