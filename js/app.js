@@ -2028,8 +2028,8 @@ function moreSheetHTML() {
 <div class="more-in"><span class="more-grip" aria-hidden="true"></span><div class="more-h"><b>ห้องทั้งหมดในตักศิลา</b><button class="ic-x" data-act="moreClose">ปิด</button></div>
 <nav class="more-grid">${ROOMS.map(([r, t, s, c]) => `<a href="#/${r}" class="more-t" style="--c:${c}"${route() === r ? ' aria-current="page"' : ''}><span class="sigil">${icon(r, 20)}</span><b>${t}</b><span>${s}</span></a>`).join('')}</nav>
 ${shareAppHTML()}
-${donateHTML()}
-${otherAppsHTML()}</div></div>`;
+${otherAppsHTML()}
+${donateHTML()}</div></div>`;
 }
 // ชวนเพื่อน: QR และปุ่มแชร์ลิงก์ ใช้ได้ทั้ง Android และ iPhone
 function shareAppHTML() {
