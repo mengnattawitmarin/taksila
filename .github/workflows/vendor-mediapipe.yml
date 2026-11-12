@@ -3,7 +3,7 @@ name: vendor-mediapipe
 # so the app serves them from its own origin (works offline after first use, no third-party CDN at runtime).
 on:
   push:
-    branches: [main, accuracy]
+    branches: [main, accuracy, batch2]
     paths: [tools/vendor-mediapipe.txt]
 permissions:
   contents: write
@@ -21,6 +21,7 @@ jobs:
           cp package/vision_bundle.mjs $GITHUB_WORKSPACE/vendor/mediapipe/
           cp package/wasm/vision_wasm_internal.js package/wasm/vision_wasm_internal.wasm package/wasm/vision_wasm_nosimd_internal.js package/wasm/vision_wasm_nosimd_internal.wasm $GITHUB_WORKSPACE/vendor/mediapipe/wasm/
           cp package/LICENSE $GITHUB_WORKSPACE/vendor/mediapipe/LICENSE 2>/dev/null || true
+          cd /tmp && npm pack qrcode-generator@1.4.4 && mkdir -p q && tar xzf qrcode-generator-1.4.4.tgz -C q && mkdir -p $GITHUB_WORKSPACE/vendor/qrcode && cp q/package/qrcode.js $GITHUB_WORKSPACE/vendor/qrcode/ && (cp q/package/LICENSE* $GITHUB_WORKSPACE/vendor/qrcode/ 2>/dev/null || true)
           cd $GITHUB_WORKSPACE
           curl -fsSL -o vendor/mediapipe/face_landmarker.task https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task
           curl -fsSL -o vendor/mediapipe/hand_landmarker.task https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task

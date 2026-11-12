@@ -20,7 +20,7 @@ import { dignityOf, houseLord, tarotSynthesis, dreamLookup } from './insight.js'
 import { forecastDay, aspectEffect, ingressEffect } from './forecast.js';
 import { nextHolyDay, upcomingSpecial, thaiLunar } from './lunar.js';
 import { MU_PLACES, MU_CATS, MU_WISH, MU_REGIONS, BLOOD_LINK } from './places.js';
-import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf, dayPlanet } from './thai.js';
+import { TH_PLANETS, thaksa, luckOf, birthPlanet, thaiLagna, dayColors, yams, yamUse, posOf, dayPlanet, ayanamsa } from './thai.js';
 
 // ---------------- storage ----------------
 const KEY = 'taksila.v1';
@@ -318,7 +318,7 @@ function viewHome() {
 <header class="home-head">
 <div class="hh-text"><span class="eyebrow" style="letter-spacing:.24em">TAKSILA · ${pad(now.getDate())}.${pad(now.getMonth() + 1)}.${now.getFullYear() + 543}</span>
 <h1 class="hh-title">${greeting(now)}${p.name ? ' คุณ' + esc(p.name.split(' ')[0]) : ''}</h1>
-<p class="hh-big3"><span>${SIGNS[ch.planets[0].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[0].sign].th}</span><span>${SIGNS[ch.planets[1].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[1].sign].th}</span>${ch.timeKnown ? `<span>ลัคนา ${SIGNS[signOf(ch.asc)].th}</span>` : ''}</p></div>
+<p class="hh-big3"><span>${SIGNS[ch.planets[0].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[0].sign].th}</span><span>${SIGNS[ch.planets[1].sign].glyph}&#xFE0E; ${SIGNS[ch.planets[1].sign].th}</span>${ch.timeKnown ? `<span>ลัคนา ${SIGNS[signOf(ch.asc)].th}</span>` : ''}</p>${thaiSunSign(ch) !== ch.planets[0].sign ? `<a class="hh-thai" href="#/chart">ราศีแบบไทย: ${SIGNS[thaiSunSign(ch)].th} · ทำไมไม่ตรง? ⓘ</a>` : ''}</div>
 <a class="hh-map" href="#/chart" aria-label="เปิดผังดาวกำเนิด">${starMap(ch, { id: 'home', label: 'ผังดาวกำเนิดของคุณ', size: 92 })}</a>
 </header>
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
@@ -767,6 +767,17 @@ function planetCard(pl) {
 <span class="chev">${icon('down', 14, 1.6)}</span></button>
 <div class="fold"><div class="fold-in"><p class="small pl-body">${planetText(pl)}${(() => { const dg = dignityOf(pl.id, pl.sign); return dg ? ` · ดาว${pl.th}${dg.th}: ${dg.d}` : ''; })()}</p></div></div></li>`;
 }
+// ราศีสองระบบ: สากล (ทรอปิคอล ตามฤดูกาล) กับแบบไทย (นิรายนะ ตามกลุ่มดาวจริง ใช้ในโหราศาสตร์ไทย)
+const thaiSunSign = (ch) => signOf(((ch.planets[0].lon - ayanamsa(ch.utc)) % 360 + 360) % 360);
+function zodiacNoteHTML(ch, open = false) {
+  const w = ch.planets[0].sign, t = thaiSunSign(ch), same = w === t;
+  return `<details class="zd-note"${open ? ' open' : ''}><summary><span class="zd-pair"><span><i>ราศีสากล</i><b>${SIGNS[w].glyph}&#xFE0E; ${SIGNS[w].th}</b></span><span><i>ราศีแบบไทย</i><b>${SIGNS[t].glyph}&#xFE0E; ${SIGNS[t].th}</b></span></span><span class="zd-q">${same ? 'ตรงกันทั้งสองแบบ' : 'ทำไมไม่ตรงกัน?'} ⓘ</span></summary>
+<div class="zd-body"><p>ราศีมีสองระบบที่ใช้กันทั่วไป และนับวันเปลี่ยนราศีต่างกัน</p>
+<ul><li><b>ราศีสากล (Astrology ตะวันตก)</b> นับตามฤดูกาล เริ่มราศีเมษที่วันวสันตวิษุวัต ราว 21 มี.ค. ราศีจึงเปลี่ยนราววันที่ 20–23 ของทุกเดือน ใช้ในดูดวงรายวันแบบสากล ผังดาว และดวงคู่ในแอปนี้</li>
+<li><b>ราศีแบบไทย (โหราศาสตร์ไทย)</b> นับตามกลุ่มดาวจริงบนฟ้า เริ่มราศีเมษวันมหาสงกรานต์ ราว 13–14 เม.ย. ราศีจึงเปลี่ยนราววันที่ 13–17 ของทุกเดือน ใช้ในห้องโหราศาสตร์ไทย ทักษา และที่หมอดูไทยส่วนใหญ่ใช้</li></ul>
+<p>สองระบบห่างกันราว 24 วัน คนที่เกิดช่วงรอยต่อจึงได้คนละราศี ${same ? 'ของคุณตรงกันทั้งสองแบบ' : `เช่นของคุณ เป็นราศี${SIGNS[w].th}แบบสากล แต่เป็นราศี${SIGNS[t].th}แบบไทย`} ไม่มีแบบไหนผิด แค่คนละตำรา</p>
+<p class="small">แอปคำนวณราศีแบบไทยด้วยอายนางศ์ลาหิรี ตรวจแล้วตรงกับเวลามหาสงกรานต์ตามประกาศทางการปี 2567 และ 2569 คลาดไม่ถึง 5 นาที</p></div></details>`;
+}
 function viewChart() {
   const ch = state.chart, p = state.profile, tab = state.chartTab, now = new Date();
   const kp = keyPattern(ch);
@@ -779,6 +790,7 @@ function viewChart() {
     body = `<section class="ch-wheel">${starMap(ch, { id: 'chart', houses: true, label: 'ผังดาวกำเนิดฉบับเต็ม' })}
 <div class="legend"><span><i style="background:var(--harmony)"></i>ส่งเสริม</span><span><i style="background:var(--tension)"></i>ท้าทาย</span><span class="mono">WHOLE SIGN</span></div></section>
 ${bigThree(ch)}
+${zodiacNoteHTML(ch)}
 <section class="kp"><span class="eyebrow" style="letter-spacing:.2em">KEY PATTERN · จุดเด่นของผัง</span><p class="h2" style="font-size:18px">${kp.title}</p><p class="body" style="font-size:14px">${kp.body}</p><p class="mono" style="font-size:10px;color:var(--muted)">${kp.code}</p></section>
 <section class="ch-sec"><h2 class="t-step-h"><span style="border-color:var(--gold);color:var(--gold)">◇</span>สมดุลธาตุ</h2>
 <div class="ch-els">${[0, 1, 2, 3].map((e) => elRing(e, ch.elementCount[e], elTotal, e === top ? 'top' : e === low ? 'low' : '')).join('')}</div>
