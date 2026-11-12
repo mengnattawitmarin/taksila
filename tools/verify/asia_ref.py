@@ -5,8 +5,10 @@ import numpy as np
 from PIL import Image
 import mediapipe as mp
 from mediapipe.tasks.python import vision, BaseOptions
+import ssl
 UA = {'User-Agent': 'taksila-calibration/1.0'}
-def get(u, t=60): return urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=t).read()
+CTX = ssl.create_default_context(); CTX.options |= 0x4  # OP_LEGACY_SERVER_CONNECT: data.ly.gov.tw needs legacy renegotiation
+def get(u, t=60): return urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=t, context=CTX).read()
 for k, u in {'face': 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
              'hair': 'https://storage.googleapis.com/mediapipe-models/image_segmenter/hair_segmenter/float32/latest/hair_segmenter.tflite'}.items():
     open(k, 'wb').write(get(u))
@@ -20,13 +22,14 @@ def hairline(img, lm):
     return float(np.median(ys)) if len(ys) >= 4 else None
 pics = set()
 for term in range(5, 12):
-    for u in [f'https://data.ly.gov.tw/odw/ID16Action.action?term={term:02d}&fileType=json', f'https://ly.govapi.tw/legislator?term={term}&limit=300']:
+    for u in [f'https://data.ly.gov.tw/odw/ID16Action.action?term={term:02d}&fileType=json', f'https://data.ly.gov.tw/odw/ID16Action.action?name=&sex=&party=&partyGroup=&areaName=&term={term:02d}&fileType=json', f'https://ly.govapi.tw/v2/legislators?term={term}&limit=300', f'https://ly.govapi.tw/legislator/{term}']:
         try:
             d = json.loads(get(u))
-            rows = d.get('jsonList') or d.get('legislators') or d.get('dataList') or (d if isinstance(d, list) else [])
+            rows = d if isinstance(d, list) else (d.get('jsonList') or d.get('legislators') or d.get('dataList') or d.get('data') or [])
+            if not rows: print('keys', list(d)[:8] if isinstance(d, dict) else type(d))
             n0 = len(pics)
             for r in rows:
-                p = r.get('picUrl') or r.get('照片位址')
+                p = r.get('picUrl') or r.get('照片位址') or r.get('pic_url')
                 if p: pics.add(p)
             print(u, len(rows), len(pics) - n0)
             if len(pics) > n0: break
