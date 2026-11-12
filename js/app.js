@@ -12,6 +12,7 @@ import { mountGlobe, burnIncense, mountSiamsi, mountTree, askMotion, randomDigit
 import { SIAMSI } from './siamsi.js';
 import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
 import { prayerTr } from './prayer-tr.js';
+import { qrSVG } from './qr.js';
 import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh } from './physio.js';
 import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf, FS_PTYPES, ptypeOf } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
@@ -261,7 +262,7 @@ ${adviceHTML(o.advice)}
 ${sourcesHTML(o.fc)}
 <span class="ora-sub">มงคลประจำวัน</span>
 ${luckCells(o.luck)}
-<div class="ora-acts"><a class="ora-go" href="#/calendar">ปฏิทินวันพระ ›</a><button class="ora-go ora-sh" data-act="dailyShare">แชร์ดวงวันนี้ ↗</button></div>
+<div class="ora-acts"><a class="ora-go" href="#/calendar">${(() => { const t = meritToday(), n = (meritLoad().done[t.key] || []).length; return `ภารกิจบุญ ${n}/${t.list.length}${n === t.list.length ? ' ✓' : ''} ›`; })()}</a><button class="ora-go ora-sh" data-act="dailyShare">แชร์ดวงวันนี้ ↗</button></div>
 <button class="ora-more" data-act="oraMore">ดูดาวที่ส่งผลวันนี้ ↓</button>
 </section>`;
 }
@@ -2015,14 +2016,32 @@ const ROOMS = [
   ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
   ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
   ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
-  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'ปฏิทินวันพระ', 'วันพระ ฤกษ์ใหญ่', 'var(--gold-2)'], ['fengshui', 'ฮวงจุ้ย', 'เลขกัว ดาวเหิน', '#E5675A'], ['face', 'โหงวเฮ้ง', 'หน้า ลายมือ AR', '#E8A2B8'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
+  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'วันพระ · ทำบุญ', 'เตือน ภารกิจบุญ', 'var(--gold-2)'], ['fengshui', 'ฮวงจุ้ย', 'เลขกัว ดาวเหิน', '#E5675A'], ['face', 'โหงวเฮ้ง', 'หน้า ลายมือ AR', '#E8A2B8'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
   ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)'], ['about', 'เกี่ยวกับ', 'แหล่งอ้างอิง', 'var(--gold)']
 ];
 const NAV_ROUTES = ['home', 'chart', 'tarot', 'numbers', 'luck'];
 function moreSheetHTML() {
   return `<div class="more-sheet" id="more-sheet" role="dialog" aria-label="ห้องทั้งหมด"><button class="more-bg" data-act="moreClose" aria-label="ปิด"></button>
 <div class="more-in"><span class="more-grip" aria-hidden="true"></span><div class="more-h"><b>ห้องทั้งหมดในตักศิลา</b><button class="ic-x" data-act="moreClose">ปิด</button></div>
-<nav class="more-grid">${ROOMS.map(([r, t, s, c]) => `<a href="#/${r}" class="more-t" style="--c:${c}"${route() === r ? ' aria-current="page"' : ''}><span class="sigil">${icon(r, 20)}</span><b>${t}</b><span>${s}</span></a>`).join('')}</nav></div></div>`;
+<nav class="more-grid">${ROOMS.map(([r, t, s, c]) => `<a href="#/${r}" class="more-t" style="--c:${c}"${route() === r ? ' aria-current="page"' : ''}><span class="sigil">${icon(r, 20)}</span><b>${t}</b><span>${s}</span></a>`).join('')}</nav>
+${shareAppHTML()}
+${otherAppsHTML()}</div></div>`;
+}
+// ชวนเพื่อน: QR และปุ่มแชร์ลิงก์ ใช้ได้ทั้ง Android และ iPhone
+function shareAppHTML() {
+  return `<section class="sa"><div class="sa-qr">${qrSVG(APP_URL, 112)}</div><div class="sa-t"><b>ชวนเพื่อนมาดูดวง</b><span>ลิงก์เดียวใช้ได้ทั้ง Android และ iPhone ให้เพื่อนสแกน QR หรือส่งลิงก์</span>
+<div class="sa-btns"><button class="chip small-chip" data-act="shareApp">แชร์ลิงก์ ↗</button><button class="chip small-chip" data-act="copyApp">คัดลอกลิงก์</button></div></div></section>`;
+}
+// แอปอื่นของผู้พัฒนา
+const OTHER_APPS = [
+  { name: 'รอดรู้', en: 'RODRU', ic: '🛟', c: '#5BA4E6', desc: 'แอปเตรียมรับมือภัยพิบัติ เรดาร์ฝน ระดับน้ำ แผ่นดินไหว เบอร์ฉุกเฉิน และปุ่ม SOS',
+    links: [['Android', 'https://github.com/mengnattawitmarin/rodru/releases/latest', 'โหลด rodru.apk แล้วติดตั้งทับตัวเดิมได้เลย ข้อมูลที่บันทึกไว้ไม่หาย'], ['iPhone', 'https://mengnattawitmarin.github.io/rodru/', 'เปิดใน Safari แล้วกด แชร์ → เพิ่มไปยังหน้าจอโฮม']] },
+  { name: 'Finder Marin', en: 'FINDER', ic: '🐾', c: '#E8A2B8', desc: 'ชุมชนตามหาสัตว์เลี้ยงหาย ปักหมุดสัตว์จรให้ได้บ้านใหม่ และคุยกับคนรักสัตว์',
+    links: [['เปิดเว็บ', 'https://finder-marin.pages.dev', 'ใช้ได้ทั้ง Android และ iPhone']] }
+];
+function otherAppsHTML() {
+  return `<section class="oa"><h3 class="oa-h">แอปอื่นของผู้พัฒนา</h3>${OTHER_APPS.map((a) => `<article class="oa-c" style="--c:${a.c}"><div class="oa-top"><span class="oa-ic" aria-hidden="true">${a.ic}</span><div><b>${a.name}</b><span>${a.desc}</span></div></div>
+<div class="oa-links">${a.links.map(([t, u, h]) => `<a class="oa-btn" href="${u}" target="_blank" rel="noopener"><b>${t === 'Android' ? '🤖 ' : t === 'iPhone' ? '📱 ' : '🌐 '}${t}</b><span>${h}</span></a>`).join('')}</div></article>`).join('')}</section>`;
 }
 function closeMore() { const m = document.getElementById('more-sheet'); if (m) m.remove(); }
 
@@ -2198,6 +2217,100 @@ function muSelect(id, scroll) {
 
 // ---------------- ปฏิทินพระ: วันพระ วันโกน วันสำคัญ ----------------
 const HOLY_CHANTS = [['itipiso', 'อิติปิโส'], ['metta-all', 'แผ่เมตตา'], ['kruadnam', 'กรวดน้ำ']];
+// ---- เตือนวันพระ: สมัครปฏิทินในมือถือ (ทุกระบบ) + แจ้งเตือนในแอป ----
+const ICS_URL = 'mengnattawitmarin.github.io/taksila/calendar/wanphra.ics';
+const ymdIso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+function notifyDays(days = 45) {
+  const out = [], now = new Date();
+  for (let i = 0; i <= days; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i), l = thaiLunar(d);
+    if (!l) continue;
+    const ev = l.events.filter((e) => e.k === 'big' || e.k === 'luck' || e.k === 'merit' || e.k === 'sky');
+    if (!l.holy && !ev.length) continue;
+    out.push({ d: ymdIso(d), t: ev.length ? ev.map((e) => e.th).join(' · ') : 'วันพระ', b: `${l.full} · แตะเพื่อดูบทสวดและภารกิจทำบุญ` });
+  }
+  return out;
+}
+async function notifySync() {
+  if (!('caches' in window) || !navigator.serviceWorker) return;
+  try {
+    const c = await caches.open('taksila-notify'), key = new URL('__notify.json', document.baseURI).href;
+    const old = await c.match(key), prev = old ? await old.json() : {};
+    await c.put(key, new Response(JSON.stringify({ days: notifyDays(), sent: prev.sent || {} }), { headers: { 'Content-Type': 'application/json' } }));
+    const reg = await navigator.serviceWorker.ready;
+    if (reg.active) reg.active.postMessage('check-wanphra');
+  } catch (e) {}
+}
+async function notifyEnable() {
+  if (!('Notification' in window)) { toast('เครื่องนี้ยังไม่รองรับการแจ้งเตือนจากเว็บ ใช้ "เพิ่มลงปฏิทิน" แทนได้'); return; }
+  const r = await Notification.requestPermission();
+  if (r !== 'granted') { toast('ยังไม่ได้อนุญาตการแจ้งเตือน'); return; }
+  try { localStorage.setItem('taksila.notify', '1'); } catch (e) {}
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    if (reg.periodicSync) await reg.periodicSync.register('wanphra', { minInterval: 6 * 3600 * 1000 });
+  } catch (e) {}
+  await notifySync();
+  toast('เปิดเตือนวันพระแล้ว');
+  render();
+}
+const notifyOn = () => { try { return localStorage.getItem('taksila.notify') === '1' && 'Notification' in window && Notification.permission === 'granted'; } catch (e) { return false; } };
+function remindHTML() {
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent), standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  return `<section class="card rm"><span class="eyebrow">เตือนวันพระ · ฤกษ์ใหญ่</span>
+<p class="small" style="margin:0">เพิ่มวันพระทั้งปีลงปฏิทินในมือถือ จะเด้งเตือนตอนเย็นก่อนวันพระทุกครั้ง และอัปเดตเองเมื่อมีวันใหม่</p>
+<div class="rm-btns"><a class="btn" href="webcal://${ICS_URL}">📅 ปฏิทิน iPhone</a><a class="btn btn-line" href="https://calendar.google.com/calendar/r?cid=${encodeURIComponent('webcal://' + ICS_URL)}" target="_blank" rel="noopener">📅 Google ปฏิทิน (Android)</a></div>
+<button class="link-btn" data-act="notifyOn">${notifyOn() ? '🔔 แจ้งเตือนในแอปเปิดอยู่' : '🔔 หรือเปิดแจ้งเตือนจากแอป'}</button>
+<p class="small" style="margin:0;font-size:11.5px">${isIOS && !standalone ? 'iPhone: แจ้งเตือนจากแอปใช้ได้เมื่อเพิ่มตักศิลาลงหน้าจอโฮมแล้ว ถ้ายังไม่ได้เพิ่ม ใช้ปุ่มปฏิทินด้านบนจะชัวร์ที่สุด' : 'แจ้งเตือนจากแอปทำงานดีที่สุดบน Android ที่ติดตั้งแอปลงหน้าจอหลักแล้ว ปุ่มปฏิทินใช้ได้ทุกเครื่อง'}</p></section>`;
+}
+// ---- ภารกิจทำบุญ: วันละ 3 ข้อ เก็บสถิติในเครื่อง ----
+const MERIT = [
+  ['alms', '🍚', 'ใส่บาตรตอนเช้า', 'ข้าวสวย กับข้าว หรือน้ำดื่ม พร้อมกรวดน้ำอุทิศ', 'holy'],
+  ['chant', '📿', 'สวดอิติปิโส 9 จบ', 'ใช้ตัวนับในห้องบทสวดได้', 'prayer:itipiso'],
+  ['metta', '💗', 'แผ่เมตตาก่อนนอน', 'ให้ตัวเองและคนที่เราไม่ชอบด้วย', 'prayer:metta-all'],
+  ['kruad', '💧', 'กรวดน้ำอุทิศบุญ', 'ให้บรรพบุรุษและเจ้ากรรมนายเวร', 'prayer:kruadnam'],
+  ['sit', '🧘', 'นั่งสมาธิ 10 นาที', 'ตามลมหายใจ หายใจเข้า "พุท" ออก "โธ"', ''],
+  ['blood', '🩸', 'บริจาคโลหิต', 'ดูจุดรับบริจาคล่าสุดของสภากาชาดไทย', 'blood'],
+  ['feed', '🐾', 'ให้อาหารสัตว์จร', 'อาหารเม็ดหรือน้ำสะอาด วางในที่ที่ไม่เกะกะ', ''],
+  ['parents', '👵', 'โทรหาพ่อแม่หรือผู้ใหญ่', 'ถามไถ่สารทุกข์ ตำราว่าบุญกตัญญูหนุนดวงแรงที่สุด', ''],
+  ['give', '🎁', 'บริจาคของที่ไม่ใช้', 'เสื้อผ้า หนังสือ ของเล่น ให้มูลนิธิหรือคนที่ต้องการ', ''],
+  ['clean', '🧹', 'เก็บกวาดที่สาธารณะ', 'ศาลาวัด ป้ายรถเมล์ หน้าบ้าน ทำ 10 นาทีก็ได้บุญ', ''],
+  ['praise', '🌸', 'ชมคนอื่นจากใจ 1 คน', 'วาจาดีเป็นทานที่ไม่ต้องใช้เงิน', ''],
+  ['forgive', '🕊', 'ให้อภัย 1 เรื่อง', 'ปล่อยความโกรธที่ค้างใจ เป็นอภัยทาน', ''],
+  ['veg', '🥬', 'งดเนื้อสัตว์ 1 มื้อ', 'ถือว่าละเว้นการเบียดเบียน', ''],
+  ['precept', '🙏', 'ถือศีล 5 ทั้งวัน', 'ไม่ฆ่า ไม่ลัก ไม่ผิดลูกเมีย ไม่โกหก ไม่ดื่มของมึนเมา', 'holy'],
+  ['dhamma', '📖', 'ฟังธรรม 15 นาที', 'ฟังเทศน์ออนไลน์หรืออ่านหนังสือธรรมะ', 'holy'],
+  ['help', '🤝', 'ช่วยงานคนรอบตัว 1 อย่าง', 'ถือของ เปิดประตู ช่วยงานบ้าน', ''],
+  ['oil', '🪔', 'ถวายน้ำมันตะเกียง หรือค่าไฟวัด', 'ตำราว่าเสริมปัญญาและความสว่างในชีวิต', ''],
+  ['temple', '🏯', 'ไหว้พระที่วัดใกล้บ้าน', 'ดูวัดที่เหมาะกับคำขอในแผนที่มู', 'map'],
+  ['water', '🚰', 'ตั้งน้ำดื่มให้คนผ่านทาง', 'ทานน้ำ ตำราว่าช่วยให้ชีวิตชุ่มชื่น ไม่ขาดแคลน', ''],
+  ['book', '📚', 'สอนหรือแบ่งปันความรู้ให้ใคร 1 คน', 'ธรรมทาน ให้ความรู้ถือเป็นทานสูงสุด', '']
+];
+function meritLoad() { try { return JSON.parse(localStorage.getItem('taksila.merit')) || { done: {} }; } catch (e) { return { done: {} }; } }
+function meritSave(m) { try { localStorage.setItem('taksila.merit', JSON.stringify(m)); } catch (e) {} }
+function meritToday(d = new Date()) {
+  const l = thaiLunar(d), key = ymdIso(d), seed = [...key].reduce((a, c) => a * 31 + c.charCodeAt(0), 7) >>> 0;
+  const pool = MERIT.filter((m) => m[4] !== 'holy' || (l && l.holy));
+  const holyFirst = l && l.holy ? MERIT.filter((m) => m[4] === 'holy') : [];
+  const pick = [...holyFirst.slice(0, 1)];
+  for (let k = 0; pick.length < 3 && k < 50; k++) { const m = pool[(seed + k * 7) % pool.length]; if (!pick.includes(m)) pick.push(m); }
+  return { key, list: pick, holy: !!(l && l.holy) };
+}
+function meritStreak(m) {
+  let n = 0; const d = new Date();
+  if (!(m.done[ymdIso(d)] || []).length) d.setDate(d.getDate() - 1);
+  while ((m.done[ymdIso(d)] || []).length) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function meritHTML() {
+  const m = meritLoad(), t = meritToday(), done = m.done[t.key] || [], total = Object.values(m.done).reduce((a, x) => a + x.length, 0), st = meritStreak(m);
+  const week = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - 6 + i); return (m.done[ymdIso(d)] || []).length; });
+  const link = (x) => x.startsWith('prayer:') ? `<a href="#/prayer" data-act="openPrayer" data-v="${x.slice(7)}" class="mr-go">เปิดบทสวด ›</a>` : x === 'blood' ? `<a href="${BLOOD_LINK}" target="_blank" rel="noopener" class="mr-go">จุดรับบริจาค ›</a>` : x === 'map' ? '<a href="#/map" class="mr-go">แผนที่มู ›</a>' : '';
+  return `<section class="card mr"><div class="mr-top"><span class="eyebrow">ภารกิจทำบุญวันนี้${t.holy ? ' · วันพระ' : ''}</span><span class="mr-st">🔥 ${st} วันติด · บุญสะสม ${total}</span></div>
+<div class="mr-week" aria-label="7 วันล่าสุด">${week.map((n, i) => `<i class="${n ? 'on' : ''}${i === 6 ? ' today' : ''}" title="${n} ข้อ"></i>`).join('')}</div>
+<ul class="mr-list">${t.list.map(([id, ic, th, sub, x]) => `<li class="${done.includes(id) ? 'done' : ''}"><button class="mr-chk" data-act="meritDo" data-v="${id}" aria-pressed="${done.includes(id)}" aria-label="ทำแล้ว: ${th}">${done.includes(id) ? '✓' : ''}</button><span class="mr-ic">${ic}</span><span class="mr-t"><b>${th}</b><span>${sub}</span>${link(x)}</span></li>`).join('')}</ul>
+<p class="small" style="margin:0;font-size:11.5px">${done.length === t.list.length ? '🙏 ครบทั้ง 3 ข้อวันนี้แล้ว อนุโมทนาบุญ' : 'ทำแล้วติ๊ก ภารกิจเปลี่ยนทุกวัน วันพระจะมีภารกิจพิเศษ'} · เก็บสถิติในเครื่องนี้เท่านั้น</p></section>`;
+}
 function viewCalendar() {
   const now = new Date(), rows = [];
   for (let i = 0; i < 75; i++) {
@@ -2208,6 +2321,8 @@ function viewCalendar() {
   let lastMonth = -1;
   return `<main class="screen" style="--accent:var(--gold-2)">
 ${pageHead('12', 'HOLY DAYS', 'ปฏิทินวันพระ', 'var(--gold-2)', 'calendar')}
+${meritHTML()}
+${remindHTML()}
 <p class="small" style="margin:0">ตามปฏิทินจันทรคติไทย (ปฏิทินหลวง) 75 วันข้างหน้า วันโกนคือวันก่อนวันพระ เหมาะเตรียมของใส่บาตร</p>
 <ul class="cal-list">${rows.map(({ d, l, i }) => {
     const head = d.getMonth() !== lastMonth ? `<li class="cal-m">${MONTHS_TH[d.getMonth()]} ${d.getFullYear() + 543}</li>` : '';
@@ -3406,6 +3521,10 @@ document.addEventListener('click', (e) => {
     case 'muCat': Object.assign(state.map, { cat: el.dataset.v, wish: el.dataset.v === 'wish' ? state.map.wish : null, sel: null }); break;
     case 'muWish': state.map.wish = state.map.wish === el.dataset.v ? null : el.dataset.v; state.map.cat = 'wish'; state.map.sel = null; break;
     case 'fsTab': state.fs.tab = el.dataset.v; window.scrollTo(0, 0); break;
+    case 'notifyOn': notifyEnable(); return;
+    case 'meritDo': { const m = meritLoad(), k = ymdIso(new Date()), a = new Set(m.done[k] || []); a.has(el.dataset.v) ? a.delete(el.dataset.v) : a.add(el.dataset.v); m.done[k] = [...a]; meritSave(m); if (a.has(el.dataset.v)) toast('อนุโมทนาบุญ 🙏'); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
+    case 'shareApp': if (navigator.share) navigator.share({ title: 'ตักศิลา ดูดวงครบทุกศาสตร์', text: 'ดูดวงฟรี ผังดาว ไพ่ทาโรต์ ฮวงจุ้ย โหงวเฮ้ง บทสวด', url: APP_URL }).catch(() => {}); else { navigator.clipboard && navigator.clipboard.writeText(APP_URL); toast('คัดลอกลิงก์แล้ว'); } return;
+    case 'copyApp': (navigator.clipboard ? navigator.clipboard.writeText(APP_URL) : Promise.reject()).then(() => toast('คัดลอกลิงก์แล้ว'), () => toast(APP_URL)); return;
     case 'phTab': if (state.ph.status === 'live') phStopCam(); state.ph.tab = el.dataset.v; state.ph.status = 'idle'; state.ph.err = ''; break;
     case 'phStart': phStart(); return;
     case 'phStop': phStopCam(); state.ph.status = 'start'; break;
@@ -3588,7 +3707,7 @@ render();
 
 // Installable app (PWA): only on the real website, which links a manifest.
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost') && document.querySelector('link[rel="manifest"]')) {
-  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').then(() => { if (notifyOn()) notifySync(); }).catch(() => {}); });
 }
 
 window.addEventListener('beforeinstallprompt', (e) => {

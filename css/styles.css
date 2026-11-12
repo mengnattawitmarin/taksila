@@ -1365,3 +1365,38 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .zd-q{font-size:12.5px;color:var(--gold)}
 .zd-body{font-size:13.5px;line-height:1.65;color:var(--text-2);display:flex;flex-direction:column;gap:6px;margin-top:8px}
 .zd-body p,.zd-body ul{margin:0}.zd-body ul{padding-left:1.1rem}.zd-body li{margin:.2rem 0}
+/* แอปอื่นของผู้พัฒนา */
+.oa{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.oa-h{margin:0;font-family:var(--serif);font-size:18px}
+.oa-c{border:1px solid var(--line);border-radius:14px;padding:12px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 10%,var(--surface)),var(--surface));display:flex;flex-direction:column;gap:10px}
+.oa-top{display:flex;gap:12px;align-items:flex-start}
+.oa-ic{flex:none;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;background:color-mix(in srgb,var(--c) 20%,transparent);border:1px solid color-mix(in srgb,var(--c) 50%,transparent)}
+.oa-top b{display:block;font-size:16px}
+.oa-top span{font-size:12.5px;line-height:1.5;color:var(--text-2)}
+.oa-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.oa-btn{display:flex;flex-direction:column;gap:2px;padding:9px 11px;border-radius:10px;border:1px solid color-mix(in srgb,var(--c) 45%,var(--line));text-decoration:none;color:var(--text)}
+.oa-btn b{font-size:14px;color:var(--c)}
+.oa-btn span{font-size:11px;line-height:1.4;color:var(--muted)}
+.sa{margin-top:16px;display:flex;gap:12px;align-items:center;padding:12px;border-radius:14px;border:1px solid rgba(212,175,99,.4);background:linear-gradient(120deg,rgba(212,175,99,.12),rgba(124,96,200,.08))}
+.sa-qr{flex:none;background:#fff;border-radius:10px;padding:4px;line-height:0}
+.sa-t{display:flex;flex-direction:column;gap:4px;min-width:0}
+.sa-t b{font-size:15px}.sa-t>span{font-size:12px;line-height:1.5;color:var(--text-2)}
+.sa-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+/* เตือนวันพระ + ภารกิจทำบุญ */
+.rm{gap:8px}.rm-btns{display:flex;gap:8px;flex-wrap:wrap}.rm-btns .btn{flex:1;min-width:150px;min-height:46px;font-size:14px}
+.mr{gap:10px}
+.mr-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.mr-st{font-size:12.5px;color:var(--gold-2)}
+.mr-week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.mr-week i{height:7px;border-radius:4px;background:var(--line)}
+.mr-week i.on{background:linear-gradient(90deg,#E0A458,#F0D89A)}
+.mr-week i.today{outline:1px solid var(--gold);outline-offset:1px}
+.mr-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.mr-list li{display:grid;grid-template-columns:34px 30px 1fr;gap:8px;align-items:start;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--bg)}
+.mr-list li.done{border-color:rgba(111,195,178,.45);background:rgba(111,195,178,.06)}
+.mr-chk{width:30px;height:30px;border-radius:15px;border:1.5px solid var(--gold);background:none;color:#0D0B08;font-weight:700;cursor:pointer}
+.mr-list li.done .mr-chk{background:#6FC3B2;border-color:#6FC3B2}
+.mr-ic{font-size:22px;line-height:30px;text-align:center}
+.mr-t{display:flex;flex-direction:column;gap:2px;min-width:0}.mr-t b{font-size:14.5px}.mr-t span{font-size:12px;color:var(--text-2);line-height:1.45}
+.mr-list li.done .mr-t b{text-decoration:line-through;text-decoration-color:rgba(111,195,178,.7)}
+.mr-go{font-size:12px;color:var(--gold)}

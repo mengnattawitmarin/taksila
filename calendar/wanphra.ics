@@ -1,0 +1,4696 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Taksila//Wan Phra//TH
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:วันพระ · ตักศิลา
+X-WR-CALDESC:วันพระ วันพระใหญ่ และฤกษ์ใหญ่ตามปฏิทินจันทรคติไทย จากแอปตักศิลา
+X-WR-TIMEZONE:Asia/Bangkok
+REFRESH-INTERVAL;VALUE=DURATION:P7D
+BEGIN:VEVENT
+UID:taksila-20260103@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260103
+DTEND;VALUE=DATE:20260104
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือนยี่\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260111@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260111
+DTEND;VALUE=DATE:20260112
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือนยี่\nดูบท
+ สวดและที่ทำบุญในแอปตักศิ
+ ลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260118@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260118
+DTEND;VALUE=DATE:20260119
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือนยี่\nดูบท
+ สวดและที่ทำบุญในแอปตักศิ
+ ลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260126@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260126
+DTEND;VALUE=DATE:20260127
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 3\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260202@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260202
+DTEND;VALUE=DATE:20260203
+SUMMARY:🙏 จันทร์ซ้อนจันทร์ (วัน
+ พระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 3\nวันจั
+ นทร์ตรงกับจันทร์เพ็ญ นิยม
+ ไหว้พระจันทร์ ขอพรเรื่องเ
+ สน่ห์ เมตตา และความสงบใจ\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้จันทร์ซ้อนจั
+ นทร์ (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260210@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260210
+DTEND;VALUE=DATE:20260211
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 3\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260216@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260216
+DTEND;VALUE=DATE:20260217
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 3\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260224@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260224
+DTEND;VALUE=DATE:20260225
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 4\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260303@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260303
+DTEND;VALUE=DATE:20260304
+SUMMARY:🙏 วันมาฆบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 4\nปรากฏ
+ การณ์บนฟ้า คนไทยนิยมสวดมน
+ ต์ ทำบุญ และงดเริ่มเรื่อง
+ ใหญ่ในวันนี้\nดูบทสวดและท
+ ี่ทำบุญในแอปตักศิลา: https://mengna
+ ttawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันมาฆบูชา (วั
+ นพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260311@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260311
+DTEND;VALUE=DATE:20260312
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 4\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260318@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260318
+DTEND;VALUE=DATE:20260319
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 4\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260326@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260326
+DTEND;VALUE=DATE:20260327
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260402@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260402
+DTEND;VALUE=DATE:20260403
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 5\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260410@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260410
+DTEND;VALUE=DATE:20260411
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 5\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260413@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260413
+DTEND;VALUE=DATE:20260414
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:แรม 11 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260414@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260414
+DTEND;VALUE=DATE:20260415
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:แรม 12 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260415@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260415
+DTEND;VALUE=DATE:20260416
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:แรม 13 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260416@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260416
+DTEND;VALUE=DATE:20260417
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260424@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260424
+DTEND;VALUE=DATE:20260425
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260501@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260501
+DTEND;VALUE=DATE:20260502
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 6\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260509@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260509
+DTEND;VALUE=DATE:20260510
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 6\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260516@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260516
+DTEND;VALUE=DATE:20260517
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260524@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260524
+DTEND;VALUE=DATE:20260525
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 7\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260531@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260531
+DTEND;VALUE=DATE:20260601
+SUMMARY:🙏 วันวิสาขบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 7\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันวิสาขบูชา (
+ วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260608@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260608
+DTEND;VALUE=DATE:20260609
+SUMMARY:🙏 วันอัฏฐมีบูชา (วันพระ)
+DESCRIPTION:แรม 8 ค่ำ เดือน 7\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันอัฏฐมีบูช
+ า (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260614@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260614
+DTEND;VALUE=DATE:20260615
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 7\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260622@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260622
+DTEND;VALUE=DATE:20260623
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 8\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260629@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260629
+DTEND;VALUE=DATE:20260630
+SUMMARY:🙏 จันทร์ซ้อนจันทร์ (วัน
+ พระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 8\nวันจั
+ นทร์ตรงกับจันทร์เพ็ญ นิยม
+ ไหว้พระจันทร์ ขอพรเรื่องเ
+ สน่ห์ เมตตา และความสงบใจ\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้จันทร์ซ้อนจั
+ นทร์ (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260707@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260707
+DTEND;VALUE=DATE:20260708
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 8\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260714@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260714
+DTEND;VALUE=DATE:20260715
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 8\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260722@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260722
+DTEND;VALUE=DATE:20260723
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 8 หลัง\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260729@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260729
+DTEND;VALUE=DATE:20260730
+SUMMARY:🙏 วันอาสาฬหบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 8 หลัง\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันอาสาฬหบูช
+ า (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260730@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260730
+DTEND;VALUE=DATE:20260731
+SUMMARY:🙏 วันเข้าพรรษา
+DESCRIPTION:แรม 1 ค่ำ เดือน 8 หลัง\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันเข้าพรรษา
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260806@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260806
+DTEND;VALUE=DATE:20260807
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 8 หลัง\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260813@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260813
+DTEND;VALUE=DATE:20260814
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 8 หลัง\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260821@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260821
+DTEND;VALUE=DATE:20260822
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 9\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260828@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260828
+DTEND;VALUE=DATE:20260829
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 9\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260905@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260905
+DTEND;VALUE=DATE:20260906
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 9\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260911@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260911
+DTEND;VALUE=DATE:20260912
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 9\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260919@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260919
+DTEND;VALUE=DATE:20260920
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 10\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20260926@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20260926
+DTEND;VALUE=DATE:20260927
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 10\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261004@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261004
+DTEND;VALUE=DATE:20261005
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 10\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261011@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261011
+DTEND;VALUE=DATE:20261012
+SUMMARY:🙏 วันสารทไทย (วันพระ)
+DESCRIPTION:แรม 15 ค่ำ เดือน 10\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันสารทไทย (วั
+ นพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261019@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261019
+DTEND;VALUE=DATE:20261020
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 11\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261026@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261026
+DTEND;VALUE=DATE:20261027
+SUMMARY:🙏 วันออกพรรษา · จันทร์ซ้
+ อนจันทร์ (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 11\nวันจั
+ นทร์ตรงกับจันทร์เพ็ญ นิยม
+ ไหว้พระจันทร์ ขอพรเรื่องเ
+ สน่ห์ เมตตา และความสงบใจ\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันออกพรรษา · 
+ จันทร์ซ้อนจันทร์ (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261027@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261027
+DTEND;VALUE=DATE:20261028
+SUMMARY:🙏 ตักบาตรเทโว
+DESCRIPTION:แรม 1 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้ตักบาตรเทโว
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261103@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261103
+DTEND;VALUE=DATE:20261104
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261109@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261109
+DTEND;VALUE=DATE:20261110
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261117@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261117
+DTEND;VALUE=DATE:20261118
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 12\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261124@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261124
+DTEND;VALUE=DATE:20261125
+SUMMARY:🙏 วันลอยกระทง (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 12\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันลอยกระทง (ว
+ ันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261202@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261202
+DTEND;VALUE=DATE:20261203
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 12\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261209@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261209
+DTEND;VALUE=DATE:20261210
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 12\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261217@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261217
+DTEND;VALUE=DATE:20261218
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือนอ้าย\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20261224@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20261224
+DTEND;VALUE=DATE:20261225
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือนอ้าย\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270101@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270101
+DTEND;VALUE=DATE:20270102
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือนอ้าย\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270107@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270107
+DTEND;VALUE=DATE:20270108
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือนอ้าย\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270115@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270115
+DTEND;VALUE=DATE:20270116
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือนยี่\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270122@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270122
+DTEND;VALUE=DATE:20270123
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือนยี่\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270130@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270130
+DTEND;VALUE=DATE:20270131
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือนยี่\nดูบท
+ สวดและที่ทำบุญในแอปตักศิ
+ ลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270206@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270206
+DTEND;VALUE=DATE:20270207
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือนยี่\nดูบท
+ สวดและที่ทำบุญในแอปตักศิ
+ ลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270209@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270209
+DTEND;VALUE=DATE:20270210
+SUMMARY:🙏 อังคารซ้อนอังคาร
+DESCRIPTION:ขึ้น 3 ค่ำ เดือน 3\nวันอัง
+ คาร ขึ้น 3 ค่ำ เดือน 3 เลข 3 ปร
+ ะจำวันอังคารซ้อนกันสามชั
+ ้น ถือเป็นฤกษ์แรงด้านความ
+ กล้า พลัง และชัยชนะ นิยมไห
+ ว้พระ ขอพรเรื่องงานและการ
+ แข่งขัน\nดูบทสวดและที่ทำบ
+ ุญในแอปตักศิลา: https://mengnattawitmarin.git
+ hub.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้อังคารซ้อนอั
+ งคาร
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270214@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270214
+DTEND;VALUE=DATE:20270215
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 3\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270221@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270221
+DTEND;VALUE=DATE:20270222
+SUMMARY:🙏 วันมาฆบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 3\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันมาฆบูชา (วั
+ นพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270301@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270301
+DTEND;VALUE=DATE:20270302
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 3\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270307@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270307
+DTEND;VALUE=DATE:20270308
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 3\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270315@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270315
+DTEND;VALUE=DATE:20270316
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 4\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270322@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270322
+DTEND;VALUE=DATE:20270323
+SUMMARY:🙏 จันทร์ซ้อนจันทร์ (วัน
+ พระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 4\nวันจั
+ นทร์ตรงกับจันทร์เพ็ญ นิยม
+ ไหว้พระจันทร์ ขอพรเรื่องเ
+ สน่ห์ เมตตา และความสงบใจ\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้จันทร์ซ้อนจั
+ นทร์ (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270330@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270330
+DTEND;VALUE=DATE:20270331
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 4\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270406@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270406
+DTEND;VALUE=DATE:20270407
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 4\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270413@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270413
+DTEND;VALUE=DATE:20270414
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:ขึ้น 7 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270414@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270414
+DTEND;VALUE=DATE:20270415
+SUMMARY:🙏 สงกรานต์ (วันพระ)
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์ (วันพ
+ ระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270415@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270415
+DTEND;VALUE=DATE:20270416
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:ขึ้น 9 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270421@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270421
+DTEND;VALUE=DATE:20270422
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 5\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270429@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270429
+DTEND;VALUE=DATE:20270430
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 5\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270505@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270505
+DTEND;VALUE=DATE:20270506
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270513@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270513
+DTEND;VALUE=DATE:20270514
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270520@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270520
+DTEND;VALUE=DATE:20270521
+SUMMARY:🙏 วันวิสาขบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 6\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันวิสาขบูชา (
+ วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270528@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270528
+DTEND;VALUE=DATE:20270529
+SUMMARY:🙏 วันอัฏฐมีบูชา (วันพระ)
+DESCRIPTION:แรม 8 ค่ำ เดือน 6\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันอัฏฐมีบูช
+ า (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270604@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270604
+DTEND;VALUE=DATE:20270605
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270612@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270612
+DTEND;VALUE=DATE:20270613
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 7\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270619@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270619
+DTEND;VALUE=DATE:20270620
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 7\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270627@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270627
+DTEND;VALUE=DATE:20270628
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 7\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270703@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270703
+DTEND;VALUE=DATE:20270704
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 7\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270711@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270711
+DTEND;VALUE=DATE:20270712
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 8\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270718@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270718
+DTEND;VALUE=DATE:20270719
+SUMMARY:🙏 วันอาสาฬหบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 8\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันอาสาฬหบูช
+ า (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270719@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270719
+DTEND;VALUE=DATE:20270720
+SUMMARY:🙏 วันเข้าพรรษา
+DESCRIPTION:แรม 1 ค่ำ เดือน 8\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันเข้าพรรษา
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270726@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270726
+DTEND;VALUE=DATE:20270727
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 8\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270802@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270802
+DTEND;VALUE=DATE:20270803
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 8\nปรากฏก
+ ารณ์บนฟ้า คนไทยนิยมสวดมนต
+ ์ ทำบุญ และงดเริ่มเรื่องใ
+ หญ่ในวันนี้\nดูบทสวดและที
+ ่ทำบุญในแอปตักศิลา: https://mengnatta
+ witmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270810@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270810
+DTEND;VALUE=DATE:20270811
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 9\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270817@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270817
+DTEND;VALUE=DATE:20270818
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 9\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270825@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270825
+DTEND;VALUE=DATE:20270826
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 9\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270831@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270831
+DTEND;VALUE=DATE:20270901
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 9\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270908@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270908
+DTEND;VALUE=DATE:20270909
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 10\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270915@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270915
+DTEND;VALUE=DATE:20270916
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 10\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270923@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270923
+DTEND;VALUE=DATE:20270924
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 10\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20270930@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20270930
+DTEND;VALUE=DATE:20271001
+SUMMARY:🙏 วันสารทไทย (วันพระ)
+DESCRIPTION:แรม 15 ค่ำ เดือน 10\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันสารทไทย (วั
+ นพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271008@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271008
+DTEND;VALUE=DATE:20271009
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 11\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271015@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271015
+DTEND;VALUE=DATE:20271016
+SUMMARY:🙏 วันออกพรรษา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 11\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันออกพรรษา (ว
+ ันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271016@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271016
+DTEND;VALUE=DATE:20271017
+SUMMARY:🙏 ตักบาตรเทโว
+DESCRIPTION:แรม 1 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้ตักบาตรเทโว
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271023@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271023
+DTEND;VALUE=DATE:20271024
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271029@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271029
+DTEND;VALUE=DATE:20271030
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271106@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271106
+DTEND;VALUE=DATE:20271107
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 12\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271113@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271113
+DTEND;VALUE=DATE:20271114
+SUMMARY:🙏 วันลอยกระทง (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 12\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันลอยกระทง (ว
+ ันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271121@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271121
+DTEND;VALUE=DATE:20271122
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 12\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271128@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271128
+DTEND;VALUE=DATE:20271129
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 12\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271206@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271206
+DTEND;VALUE=DATE:20271207
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือนอ้าย\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271213@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271213
+DTEND;VALUE=DATE:20271214
+SUMMARY:🙏 จันทร์ซ้อนจันทร์ (วัน
+ พระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือนอ้าย\nวั
+ นจันทร์ตรงกับจันทร์เพ็ญ น
+ ิยมไหว้พระจันทร์ ขอพรเรื่
+ องเสน่ห์ เมตตา และความสงบ
+ ใจ\nดูบทสวดและที่ทำบุญในแ
+ อปตักศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้จันทร์ซ้อนจั
+ นทร์ (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271221@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271221
+DTEND;VALUE=DATE:20271222
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือนอ้าย\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20271227@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20271227
+DTEND;VALUE=DATE:20271228
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือนอ้าย\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280104@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280104
+DTEND;VALUE=DATE:20280105
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือนยี่\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280111@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280111
+DTEND;VALUE=DATE:20280112
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือนยี่\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280119@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280119
+DTEND;VALUE=DATE:20280120
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือนยี่\nดูบท
+ สวดและที่ทำบุญในแอปตักศิ
+ ลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280126@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280126
+DTEND;VALUE=DATE:20280127
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือนยี่\nดูบท
+ สวดและที่ทำบุญในแอปตักศิ
+ ลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280203@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280203
+DTEND;VALUE=DATE:20280204
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 3\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280210@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280210
+DTEND;VALUE=DATE:20280211
+SUMMARY:🙏 วันมาฆบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 3\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันมาฆบูชา (วั
+ นพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280218@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280218
+DTEND;VALUE=DATE:20280219
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 3\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280224@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280224
+DTEND;VALUE=DATE:20280225
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 3\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280303@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280303
+DTEND;VALUE=DATE:20280304
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 4\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280310@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280310
+DTEND;VALUE=DATE:20280311
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 4\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280318@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280318
+DTEND;VALUE=DATE:20280319
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 4\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280325@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280325
+DTEND;VALUE=DATE:20280326
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 4\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280402@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280402
+DTEND;VALUE=DATE:20280403
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280409@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280409
+DTEND;VALUE=DATE:20280410
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 5\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280413@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280413
+DTEND;VALUE=DATE:20280414
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:แรม 4 ค่ำ เดือน 5\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280414@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280414
+DTEND;VALUE=DATE:20280415
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:แรม 5 ค่ำ เดือน 5\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280415@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280415
+DTEND;VALUE=DATE:20280416
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:แรม 6 ค่ำ เดือน 5\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280417@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280417
+DTEND;VALUE=DATE:20280418
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 5\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280423@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280423
+DTEND;VALUE=DATE:20280424
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280501@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280501
+DTEND;VALUE=DATE:20280502
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280508@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280508
+DTEND;VALUE=DATE:20280509
+SUMMARY:🙏 วันวิสาขบูชา · จันทร์ซ
+ ้อนจันทร์ (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 6\nวันจั
+ นทร์ตรงกับจันทร์เพ็ญ นิยม
+ ไหว้พระจันทร์ ขอพรเรื่องเ
+ สน่ห์ เมตตา และความสงบใจ\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันวิสาขบูชา 
+ · จันทร์ซ้อนจันทร์ (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280516@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280516
+DTEND;VALUE=DATE:20280517
+SUMMARY:🙏 วันอัฏฐมีบูชา (วันพระ)
+DESCRIPTION:แรม 8 ค่ำ เดือน 6\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันอัฏฐมีบูช
+ า (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280523@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280523
+DTEND;VALUE=DATE:20280524
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280531@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280531
+DTEND;VALUE=DATE:20280601
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 7\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280607@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280607
+DTEND;VALUE=DATE:20280608
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 7\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280615@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280615
+DTEND;VALUE=DATE:20280616
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 7\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280621@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280621
+DTEND;VALUE=DATE:20280622
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 7\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280629@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280629
+DTEND;VALUE=DATE:20280630
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 8\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280706@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280706
+DTEND;VALUE=DATE:20280707
+SUMMARY:🙏 วันอาสาฬหบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 8\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันอาสาฬหบูช
+ า (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280707@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280707
+DTEND;VALUE=DATE:20280708
+SUMMARY:🙏 วันเข้าพรรษา
+DESCRIPTION:แรม 1 ค่ำ เดือน 8\nปรากฏกา
+ รณ์บนฟ้า คนไทยนิยมสวดมนต์
+  ทำบุญ และงดเริ่มเรื่องให
+ ญ่ในวันนี้\nดูบทสวดและที่
+ ทำบุญในแอปตักศิลา: https://mengnattawit
+ marin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันเข้าพรรษา
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280714@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280714
+DTEND;VALUE=DATE:20280715
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 8\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280721@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280721
+DTEND;VALUE=DATE:20280722
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 8\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280729@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280729
+DTEND;VALUE=DATE:20280730
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 9\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280805@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280805
+DTEND;VALUE=DATE:20280806
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 9\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280813@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280813
+DTEND;VALUE=DATE:20280814
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 9\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280819@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280819
+DTEND;VALUE=DATE:20280820
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 9\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280827@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280827
+DTEND;VALUE=DATE:20280828
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 10\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280903@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280903
+DTEND;VALUE=DATE:20280904
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 10\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280911@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280911
+DTEND;VALUE=DATE:20280912
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 10\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280918@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280918
+DTEND;VALUE=DATE:20280919
+SUMMARY:🙏 วันสารทไทย (วันพระ)
+DESCRIPTION:แรม 15 ค่ำ เดือน 10\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันสารทไทย (วั
+ นพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20280926@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20280926
+DTEND;VALUE=DATE:20280927
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 11\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281003@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281003
+DTEND;VALUE=DATE:20281004
+SUMMARY:🙏 วันออกพรรษา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 11\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันออกพรรษา (ว
+ ันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281004@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281004
+DTEND;VALUE=DATE:20281005
+SUMMARY:🙏 ตักบาตรเทโว
+DESCRIPTION:แรม 1 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้ตักบาตรเทโว
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281011@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281011
+DTEND;VALUE=DATE:20281012
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281017@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281017
+DTEND;VALUE=DATE:20281018
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281025@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281025
+DTEND;VALUE=DATE:20281026
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 12\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281101@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281101
+DTEND;VALUE=DATE:20281102
+SUMMARY:🙏 วันลอยกระทง (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 12\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันลอยกระทง (ว
+ ันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281109@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281109
+DTEND;VALUE=DATE:20281110
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 12\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281116@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281116
+DTEND;VALUE=DATE:20281117
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 12\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281124@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281124
+DTEND;VALUE=DATE:20281125
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือนอ้าย\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281201@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281201
+DTEND;VALUE=DATE:20281202
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือนอ้าย\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281209@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281209
+DTEND;VALUE=DATE:20281210
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือนอ้าย\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281215@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281215
+DTEND;VALUE=DATE:20281216
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือนอ้าย\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281223@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281223
+DTEND;VALUE=DATE:20281224
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือนยี่\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20281230@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20281230
+DTEND;VALUE=DATE:20281231
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือนยี่\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290107@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290107
+DTEND;VALUE=DATE:20290108
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือนยี่\nดูบท
+ สวดและที่ทำบุญในแอปตักศิ
+ ลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290114@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290114
+DTEND;VALUE=DATE:20290115
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือนยี่\nดูบท
+ สวดและที่ทำบุญในแอปตักศิ
+ ลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290122@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290122
+DTEND;VALUE=DATE:20290123
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 3\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290129@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290129
+DTEND;VALUE=DATE:20290130
+SUMMARY:🙏 จันทร์ซ้อนจันทร์ (วัน
+ พระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 3\nวันจั
+ นทร์ตรงกับจันทร์เพ็ญ นิยม
+ ไหว้พระจันทร์ ขอพรเรื่องเ
+ สน่ห์ เมตตา และความสงบใจ\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้จันทร์ซ้อนจั
+ นทร์ (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290206@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290206
+DTEND;VALUE=DATE:20290207
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 3\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290212@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290212
+DTEND;VALUE=DATE:20290213
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 3\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290220@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290220
+DTEND;VALUE=DATE:20290221
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 4\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290227@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290227
+DTEND;VALUE=DATE:20290228
+SUMMARY:🙏 วันมาฆบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 4\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันมาฆบูชา (วั
+ นพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290307@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290307
+DTEND;VALUE=DATE:20290308
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 4\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290314@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290314
+DTEND;VALUE=DATE:20290315
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 4\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290322@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290322
+DTEND;VALUE=DATE:20290323
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290329@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290329
+DTEND;VALUE=DATE:20290330
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 5\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290406@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290406
+DTEND;VALUE=DATE:20290407
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 5\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290412@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290412
+DTEND;VALUE=DATE:20290413
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290413@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290413
+DTEND;VALUE=DATE:20290414
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:ขึ้น 1 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290414@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290414
+DTEND;VALUE=DATE:20290415
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:ขึ้น 2 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290415@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290415
+DTEND;VALUE=DATE:20290416
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:ขึ้น 3 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290420@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290420
+DTEND;VALUE=DATE:20290421
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290427@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290427
+DTEND;VALUE=DATE:20290428
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 6\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290505@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290505
+DTEND;VALUE=DATE:20290506
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 6\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290512@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290512
+DTEND;VALUE=DATE:20290513
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290520@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290520
+DTEND;VALUE=DATE:20290521
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 7\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290527@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290527
+DTEND;VALUE=DATE:20290528
+SUMMARY:🙏 วันวิสาขบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 7\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันวิสาขบูชา (
+ วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290604@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290604
+DTEND;VALUE=DATE:20290605
+SUMMARY:🙏 วันอัฏฐมีบูชา (วันพระ)
+DESCRIPTION:แรม 8 ค่ำ เดือน 7\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันอัฏฐมีบูช
+ า (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290610@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290610
+DTEND;VALUE=DATE:20290611
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 7\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290618@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290618
+DTEND;VALUE=DATE:20290619
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 8\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290625@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290625
+DTEND;VALUE=DATE:20290626
+SUMMARY:🙏 จันทร์ซ้อนจันทร์ (วัน
+ พระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 8\nวันจั
+ นทร์ตรงกับจันทร์เพ็ญ นิยม
+ ไหว้พระจันทร์ ขอพรเรื่องเ
+ สน่ห์ เมตตา และความสงบใจ\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้จันทร์ซ้อนจั
+ นทร์ (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290703@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290703
+DTEND;VALUE=DATE:20290704
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 8\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290710@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290710
+DTEND;VALUE=DATE:20290711
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 8\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290718@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290718
+DTEND;VALUE=DATE:20290719
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 8 หลัง\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290725@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290725
+DTEND;VALUE=DATE:20290726
+SUMMARY:🙏 วันอาสาฬหบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 8 หลัง\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันอาสาฬหบูช
+ า (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290726@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290726
+DTEND;VALUE=DATE:20290727
+SUMMARY:🙏 วันเข้าพรรษา
+DESCRIPTION:แรม 1 ค่ำ เดือน 8 หลัง\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันเข้าพรรษา
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290802@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290802
+DTEND;VALUE=DATE:20290803
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 8 หลัง\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290809@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290809
+DTEND;VALUE=DATE:20290810
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 8 หลัง\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290817@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290817
+DTEND;VALUE=DATE:20290818
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 9\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290824@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290824
+DTEND;VALUE=DATE:20290825
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 9\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290901@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290901
+DTEND;VALUE=DATE:20290902
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 9\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290907@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290907
+DTEND;VALUE=DATE:20290908
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 9\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290915@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290915
+DTEND;VALUE=DATE:20290916
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 10\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290922@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290922
+DTEND;VALUE=DATE:20290923
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 10\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20290930@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20290930
+DTEND;VALUE=DATE:20291001
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 10\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291007@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291007
+DTEND;VALUE=DATE:20291008
+SUMMARY:🙏 วันสารทไทย (วันพระ)
+DESCRIPTION:แรม 15 ค่ำ เดือน 10\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันสารทไทย (วั
+ นพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291015@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291015
+DTEND;VALUE=DATE:20291016
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 11\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291022@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291022
+DTEND;VALUE=DATE:20291023
+SUMMARY:🙏 วันออกพรรษา · จันทร์ซ้
+ อนจันทร์ (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 11\nวันจั
+ นทร์ตรงกับจันทร์เพ็ญ นิยม
+ ไหว้พระจันทร์ ขอพรเรื่องเ
+ สน่ห์ เมตตา และความสงบใจ\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันออกพรรษา · 
+ จันทร์ซ้อนจันทร์ (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291023@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291023
+DTEND;VALUE=DATE:20291024
+SUMMARY:🙏 ตักบาตรเทโว
+DESCRIPTION:แรม 1 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้ตักบาตรเทโว
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291030@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291030
+DTEND;VALUE=DATE:20291031
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291105@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291105
+DTEND;VALUE=DATE:20291106
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291113@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291113
+DTEND;VALUE=DATE:20291114
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 12\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291120@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291120
+DTEND;VALUE=DATE:20291121
+SUMMARY:🙏 วันลอยกระทง (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 12\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันลอยกระทง (ว
+ ันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291128@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291128
+DTEND;VALUE=DATE:20291129
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 12\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291205@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291205
+DTEND;VALUE=DATE:20291206
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 12\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291213@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291213
+DTEND;VALUE=DATE:20291214
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือนอ้าย\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291220@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291220
+DTEND;VALUE=DATE:20291221
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือนอ้าย\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20291228@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20291228
+DTEND;VALUE=DATE:20291229
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือนอ้าย\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300103@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300103
+DTEND;VALUE=DATE:20300104
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือนอ้าย\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300111@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300111
+DTEND;VALUE=DATE:20300112
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือนยี่\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300118@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300118
+DTEND;VALUE=DATE:20300119
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือนยี่\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300126@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300126
+DTEND;VALUE=DATE:20300127
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือนยี่\nดูบท
+ สวดและที่ทำบุญในแอปตักศิ
+ ลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300202@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300202
+DTEND;VALUE=DATE:20300203
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือนยี่\nดูบท
+ สวดและที่ทำบุญในแอปตักศิ
+ ลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300205@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300205
+DTEND;VALUE=DATE:20300206
+SUMMARY:🙏 อังคารซ้อนอังคาร
+DESCRIPTION:ขึ้น 3 ค่ำ เดือน 3\nวันอัง
+ คาร ขึ้น 3 ค่ำ เดือน 3 เลข 3 ปร
+ ะจำวันอังคารซ้อนกันสามชั
+ ้น ถือเป็นฤกษ์แรงด้านความ
+ กล้า พลัง และชัยชนะ นิยมไห
+ ว้พระ ขอพรเรื่องงานและการ
+ แข่งขัน\nดูบทสวดและที่ทำบ
+ ุญในแอปตักศิลา: https://mengnattawitmarin.git
+ hub.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้อังคารซ้อนอั
+ งคาร
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300210@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300210
+DTEND;VALUE=DATE:20300211
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 3\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300217@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300217
+DTEND;VALUE=DATE:20300218
+SUMMARY:🙏 วันมาฆบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 3\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันมาฆบูชา (วั
+ นพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300225@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300225
+DTEND;VALUE=DATE:20300226
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 3\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300303@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300303
+DTEND;VALUE=DATE:20300304
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 3\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300311@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300311
+DTEND;VALUE=DATE:20300312
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 4\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300318@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300318
+DTEND;VALUE=DATE:20300319
+SUMMARY:🙏 จันทร์ซ้อนจันทร์ (วัน
+ พระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 4\nวันจั
+ นทร์ตรงกับจันทร์เพ็ญ นิยม
+ ไหว้พระจันทร์ ขอพรเรื่องเ
+ สน่ห์ เมตตา และความสงบใจ\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้จันทร์ซ้อนจั
+ นทร์ (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300326@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300326
+DTEND;VALUE=DATE:20300327
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 4\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300402@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300402
+DTEND;VALUE=DATE:20300403
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 4\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300410@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300410
+DTEND;VALUE=DATE:20300411
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300413@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300413
+DTEND;VALUE=DATE:20300414
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:ขึ้น 11 ค่ำ เดือน 5\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300414@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300414
+DTEND;VALUE=DATE:20300415
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:ขึ้น 12 ค่ำ เดือน 5\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300415@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300415
+DTEND;VALUE=DATE:20300416
+SUMMARY:🙏 สงกรานต์
+DESCRIPTION:ขึ้น 13 ค่ำ เดือน 5\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้สงกรานต์
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300417@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300417
+DTEND;VALUE=DATE:20300418
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 5\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300425@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300425
+DTEND;VALUE=DATE:20300426
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 5\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300501@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300501
+DTEND;VALUE=DATE:20300502
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 5\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300509@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300509
+DTEND;VALUE=DATE:20300510
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300516@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300516
+DTEND;VALUE=DATE:20300517
+SUMMARY:🙏 วันวิสาขบูชา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 6\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันวิสาขบูชา (
+ วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300524@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300524
+DTEND;VALUE=DATE:20300525
+SUMMARY:🙏 วันอัฏฐมีบูชา (วันพระ)
+DESCRIPTION:แรม 8 ค่ำ เดือน 6\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันอัฏฐมีบูช
+ า (วันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300531@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300531
+DTEND;VALUE=DATE:20300601
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 6\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300608@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300608
+DTEND;VALUE=DATE:20300609
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 7\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300615@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300615
+DTEND;VALUE=DATE:20300616
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 7\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300623@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300623
+DTEND;VALUE=DATE:20300624
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 7\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300630@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300630
+DTEND;VALUE=DATE:20300701
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 7\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300708@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300708
+DTEND;VALUE=DATE:20300709
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 8\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300715@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300715
+DTEND;VALUE=DATE:20300716
+SUMMARY:🙏 วันอาสาฬหบูชา · จันทร์
+ ซ้อนจันทร์ (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 8\nวันจั
+ นทร์ตรงกับจันทร์เพ็ญ นิยม
+ ไหว้พระจันทร์ ขอพรเรื่องเ
+ สน่ห์ เมตตา และความสงบใจ\nด
+ ูบทสวดและที่ทำบุญในแอปตั
+ กศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันอาสาฬหบูช
+ า · จันทร์ซ้อนจันทร์ (วันพร
+ ะ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300716@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300716
+DTEND;VALUE=DATE:20300717
+SUMMARY:🙏 วันเข้าพรรษา
+DESCRIPTION:แรม 1 ค่ำ เดือน 8\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันเข้าพรรษา
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300723@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300723
+DTEND;VALUE=DATE:20300724
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 8\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300730@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300730
+DTEND;VALUE=DATE:20300731
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 8\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300807@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300807
+DTEND;VALUE=DATE:20300808
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 9\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300814@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300814
+DTEND;VALUE=DATE:20300815
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 9\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300822@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300822
+DTEND;VALUE=DATE:20300823
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 9\nดูบทสวด
+ และที่ทำบุญในแอปตักศิลา: ht
+ tps://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300828@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300828
+DTEND;VALUE=DATE:20300829
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 9\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300905@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300905
+DTEND;VALUE=DATE:20300906
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 10\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300912@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300912
+DTEND;VALUE=DATE:20300913
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 10\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300920@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300920
+DTEND;VALUE=DATE:20300921
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 10\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20300927@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20300927
+DTEND;VALUE=DATE:20300928
+SUMMARY:🙏 วันสารทไทย (วันพระ)
+DESCRIPTION:แรม 15 ค่ำ เดือน 10\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันสารทไทย (วั
+ นพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301005@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301005
+DTEND;VALUE=DATE:20301006
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 11\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301012@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301012
+DTEND;VALUE=DATE:20301013
+SUMMARY:🙏 วันออกพรรษา (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 11\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันออกพรรษา (ว
+ ันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301013@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301013
+DTEND;VALUE=DATE:20301014
+SUMMARY:🙏 ตักบาตรเทโว
+DESCRIPTION:แรม 1 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้ตักบาตรเทโว
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301020@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301020
+DTEND;VALUE=DATE:20301021
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301026@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301026
+DTEND;VALUE=DATE:20301027
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือน 11\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301103@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301103
+DTEND;VALUE=DATE:20301104
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือน 12\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301110@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301110
+DTEND;VALUE=DATE:20301111
+SUMMARY:🙏 วันลอยกระทง (วันพระ)
+DESCRIPTION:ขึ้น 15 ค่ำ เดือน 12\nดูบทส
+ วดและที่ทำบุญในแอปตักศิล
+ า: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันลอยกระทง (ว
+ ันพระ)
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301118@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301118
+DTEND;VALUE=DATE:20301119
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือน 12\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301125@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301125
+DTEND;VALUE=DATE:20301126
+SUMMARY:🙏 วันพระ แรม 15 ค่ำ
+DESCRIPTION:แรม 15 ค่ำ เดือน 12\nดูบทสว
+ ดและที่ทำบุญในแอปตักศิลา:
+  https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 15 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301203@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301203
+DTEND;VALUE=DATE:20301204
+SUMMARY:🙏 วันพระ ขึ้น 8 ค่ำ
+DESCRIPTION:ขึ้น 8 ค่ำ เดือนอ้าย\nดู
+ บทสวดและที่ทำบุญในแอปตัก
+ ศิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 8 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301210@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301210
+DTEND;VALUE=DATE:20301211
+SUMMARY:🙏 วันพระ ขึ้น 15 ค่ำ
+DESCRIPTION:ขึ้น 15 ค่ำ เดือนอ้าย\nปร
+ ากฏการณ์บนฟ้า คนไทยนิยมสว
+ ดมนต์ ทำบุญ และงดเริ่มเรื
+ ่องใหญ่ในวันนี้\nดูบทสวดแ
+ ละที่ทำบุญในแอปตักศิลา: https
+ ://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ ขึ้น 15 ค
+ ่ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301218@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301218
+DTEND;VALUE=DATE:20301219
+SUMMARY:🙏 วันพระ แรม 8 ค่ำ
+DESCRIPTION:แรม 8 ค่ำ เดือนอ้าย\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 8 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:taksila-20301224@mengnattawitmarin.github.io
+DTSTAMP:20261112T000000Z
+DTSTART;VALUE=DATE:20301224
+DTEND;VALUE=DATE:20301225
+SUMMARY:🙏 วันพระ แรม 14 ค่ำ
+DESCRIPTION:แรม 14 ค่ำ เดือนอ้าย\nดูบ
+ ทสวดและที่ทำบุญในแอปตักศ
+ ิลา: https://mengnattawitmarin.github.io/taksila/
+TRANSP:TRANSPARENT
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:พรุ่งนี้วันพระ แรม 14 ค่
+ ำ
+TRIGGER:-PT6H
+END:VALARM
+END:VEVENT
+END:VCALENDAR
