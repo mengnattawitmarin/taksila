@@ -1,0 +1,18 @@
+name: verify-asia
+on:
+  push:
+    branches: [verify-asia]
+    paths: [tools/verify/asia_ref.py]
+permissions:
+  contents: write
+jobs:
+  ref:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install mediapipe==0.10.14 numpy pillow && python tools/verify/asia_ref.py
+      - run: |
+          git config user.name "github-actions[bot]"; git config user.email "41898388+github-actions[bot]@users.noreply.github.com"
+          git add tools/verify/asia.json && git commit -m "Asian face reference" && git push
