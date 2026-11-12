@@ -13,6 +13,7 @@ import { SIAMSI } from './siamsi.js';
 import { PURPOSES, purposeById, PRAYERS, PRAYER_CATS, prayerById, dailyRemedy, tarotRemedy, siamsiRemedy, birthChant, devaOfDay, EVENT_CHANT } from './prayer.js';
 import { prayerTr } from './prayer-tr.js';
 import { qrSVG } from './qr.js';
+import { LEARN_CATS, LESSONS } from './learn.js';
 import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh } from './physio.js';
 import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf, FS_PTYPES, ptypeOf } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
@@ -85,6 +86,7 @@ const IC = {
   dream: '<path d="M14.5 4.5a7 7 0 1 0 5 11.4A7.5 7.5 0 0 1 14.5 4.5z"/><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6z"/>',
   privacy: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><rect x="9.5" y="10.5" width="5" height="4.5" rx="1"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/>',
   setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  learn: '<path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/>',
   face: '<path d="M12 3c-4 0-6.5 3-6.5 7.5 0 5 3 9.5 6.5 10.5 3.5-1 6.5-5.5 6.5-10.5C18.5 6 16 3 12 3z"/><path d="M9 10.5h.01M15 10.5h.01M10 15.5q2 1.2 4 0M12 11v2.5"/>',
   fengshui: '<path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7z"/><path d="M12 7.5a4.5 4.5 0 0 1 0 9 2.25 2.25 0 0 1 0-4.5 2.25 2.25 0 0 0 0-4.5z"/><circle cx="12" cy="14.25" r=".6"/><circle cx="12" cy="9.75" r=".6"/>',
   calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/><circle cx="12" cy="14.5" r="2.2"/>',
@@ -2016,7 +2018,7 @@ const ROOMS = [
   ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
   ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
   ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
-  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'วันพระ · ทำบุญ', 'เตือน ภารกิจบุญ', 'var(--gold-2)'], ['fengshui', 'ฮวงจุ้ย', 'เลขกัว ดาวเหิน', '#E5675A'], ['face', 'โหงวเฮ้ง', 'หน้า ลายมือ AR', '#E8A2B8'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
+  ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'วันพระ · ทำบุญ', 'เตือน ภารกิจบุญ', 'var(--gold-2)'], ['fengshui', 'ฮวงจุ้ย', 'เลขกัว ดาวเหิน', '#E5675A'], ['face', 'โหงวเฮ้ง', 'หน้า ลายมือ AR', '#E8A2B8'], ['learn', 'ศึกษาตำรา', 'บทเรียนสั้น', '#D4AF63'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
   ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)'], ['about', 'เกี่ยวกับ', 'แหล่งอ้างอิง', 'var(--gold)']
 ];
 const NAV_ROUTES = ['home', 'chart', 'tarot', 'numbers', 'luck'];
@@ -2047,11 +2049,11 @@ function closeMore() { const m = document.getElementById('more-sheet'); if (m) m
 
 // ---------------- ทำนายฝัน ----------------
 const DREAM_GROUPS = [
-  ['สัตว์', ['งูรัดหรือพันตัว', 'งูกัด', 'งูเข้าบ้าน', 'งูไล่', 'งูเหลือม', 'งูเห่า', 'งูจงอาง', 'เห็นงู', 'พญานาค', 'ช้าง', 'จระเข้', 'เต่า', 'เสือ', 'แมว', 'ปลา', 'หมา']],
-  ['คน', ['เด็ก', 'ตั้งท้อง', 'คลอดลูก', 'อุ้มเด็ก', 'แฟนเก่า', 'พระ', 'ผี', 'คนตาย']],
-  ['ร่างกาย', ['ฟันหลุด', 'ฟันบนหลุด', 'ฟันล่างหลุด', 'ฟันหลุดทั้งปาก', 'ตัดผม', 'เลือด', 'เปลือยกาย']],
-  ['เงินทอง สิ่งของ', ['ทอง', 'เงิน', 'ถูกหวย', 'ปืน', 'เครื่องบิน', 'อุจจาระ']],
-  ['เหตุการณ์', ['ไฟไหม้', 'จมน้ำ', 'น้ำท่วม', 'น้ำท่วมบ้าน', 'ตกจากที่สูง', 'ถูกไล่ล่า', 'ฆ่างู']]
+  ['สัตว์', ['งูรัดหรือพันตัว', 'งูกัด', 'งูเข้าบ้าน', 'งูไล่', 'งูเหลือม', 'งูเห่า', 'งูจงอาง', 'เห็นงู', 'พญานาค', 'ช้าง', 'จระเข้', 'เต่า', 'เสือ', 'แมว', 'ปลา', 'หมา', 'ปู', 'ไก่', 'ม้า', 'กระต่าย', 'กบ', 'ฉลาม', 'หนอน', 'จิ้งจก', 'ตุ๊กแก', 'กิ้งก่า', 'หนู', 'นก', 'ลิง', 'มด', 'ปลิง', 'ไส้เดือน', 'ตะกวด', 'ผึ้งต่อย', 'หมาหอน']],
+  ['คน', ['เด็ก', 'ตั้งท้อง', 'คลอดลูก', 'อุ้มเด็ก', 'แฟนเก่า', 'พระ', 'ผี', 'คนตาย', 'มีคนที่สาม', 'คู่รัก', 'ภรรยา', 'เพื่อน', 'หมอดู', 'พ่อแม่', 'แม่', 'เจ้านาย ผู้ใหญ่', 'ยักษ์', 'ตำรวจ ถูกจับ', 'ขโมย', 'ญาติพี่น้อง', 'ยมทูต']],
+  ['ร่างกาย', ['ฟันหลุด', 'ฟันบนหลุด', 'ฟันล่างหลุด', 'ฟันหลุดทั้งปาก', 'ตัดผม', 'เลือด', 'เปลือยกาย', 'ผมร่วง', 'สระผม', 'เล็บ', 'ร้องไห้', 'โกนหัว', 'อาบน้ำ']],
+  ['เงินทอง สิ่งของ', ['ทอง', 'เงิน', 'ถูกหวย', 'ปืน', 'เครื่องบิน', 'อุจจาระ', 'แหวน', 'นาฬิกา', 'กุญแจ', 'เกลือ', 'โกศ', 'สร้อยคอ', 'ต่างหู', 'หนังสือ', 'รถ', 'จักรยาน', 'นั่งเรือ', 'ไข่', 'ดอกไม้', 'ศาลพระภูมิ', 'โลงศพ', 'รูปถ่าย']],
+  ['เหตุการณ์', ['ไฟไหม้', 'จมน้ำ', 'น้ำท่วม', 'น้ำท่วมบ้าน', 'ตกจากที่สูง', 'ถูกไล่ล่า', 'ฆ่างู', 'งานศพ', 'เผาศพ', 'แต่งงาน', 'ทะเลาะ', 'ถูกยิง', 'รถชน', 'ย้ายบ้าน', 'ปลูกต้นไม้', 'ขับรถ', 'ว่ายน้ำ', 'ตกปลา', 'ทะเล ชายหาด', 'ขึ้นบันได', 'ฟ้าผ่า', 'พระอาทิตย์', 'พระจันทร์', 'ภูเขา ป่า', 'แม่น้ำ', 'จอมปลวก', 'กระทง']]
 ];
 // Folk belief on when the dream came (Shopee Blog: ทำนายฝัน). Shown as belief only.
 const DREAM_TIMES = [
@@ -3327,7 +3329,30 @@ async function phImage() {
   return new Promise((res) => cv.toBlob(res, 'image/png'));
 }
 
-const VIEWS = { face: viewFace, fengshui: viewFengshui, calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- ห้องศึกษาตำรา ----------------
+function learnRead() { try { return new Set(JSON.parse(localStorage.getItem('taksila.learn')) || []); } catch (e) { return new Set(); } }
+function viewLearn() {
+  const st = state.learn || (state.learn = { cat: 'all', open: null }), read = learnRead(), cat = (k) => LEARN_CATS.find((c) => c[0] === k);
+  if (st.open) {
+    const i = LESSONS.findIndex((l) => l.id === st.open), L = LESSONS[i], c = cat(L.cat), nx = LESSONS[i + 1];
+    return `<main class="screen" style="--accent:${c[2]}">
+<button class="link-btn" data-act="learnBack">‹ กลับห้องศึกษาตำรา</button>
+<article class="ln-art"><span class="eyebrow" style="color:${c[2]}">${c[1]} · อ่าน ${L.m} นาที</span><h1 class="h1">${L.t}</h1>
+${L.b.map((x) => `<p>${x}</p>`).join('')}</article>
+<a class="btn" href="#/${L.go[0]}">${L.go[1]} ›</a>
+${nx ? `<button class="btn btn-line" data-act="learnOpen" data-v="${nx.id}">บทถัดไป: ${nx.t}</button>` : ''}
+</main>`;
+  }
+  const list = LESSONS.filter((l) => st.cat === 'all' || l.cat === st.cat), n = LESSONS.filter((l) => read.has(l.id)).length;
+  return `<main class="screen" style="--accent:#D4AF63">
+${pageHead('16', 'STUDY', 'ห้องศึกษาตำรา', '#D4AF63', 'learn')}
+<p class="small" style="margin:0">บทเรียนสั้น อ่านจบในไม่กี่นาที อธิบายหลักที่แอปใช้คำนวณ เรียบเรียงใหม่ด้วยภาษาง่าย · อ่านแล้ว ${n}/${LESSONS.length} บท</p>
+<div class="ln-bar"><i style="width:${Math.round(n / LESSONS.length * 100)}%"></i></div>
+<div class="chips">${[['all', 'ทั้งหมด', '#D4AF63'], ...LEARN_CATS].map(([k, t, c]) => `<button class="chip" style="--accent:${c}" data-act="learnCat" data-v="${k}" aria-pressed="${st.cat === k}">${t}</button>`).join('')}</div>
+<ul class="ln-list">${list.map((l) => { const c = cat(l.cat); return `<li><button class="ln-it${read.has(l.id) ? ' read' : ''}" style="--c:${c[2]}" data-act="learnOpen" data-v="${l.id}"><span class="ln-dot">${read.has(l.id) ? '✓' : ''}</span><span class="ln-t"><b>${l.t}</b><span>${c[1]} · ${l.m} นาที</span></span><span aria-hidden="true">›</span></button></li>`; }).join('')}</ul>
+</main>`;
+}
+const VIEWS = { learn: viewLearn, face: viewFace, fengshui: viewFengshui, calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -3345,7 +3370,7 @@ function render() {
   if (r === 'fengshui' && state.fs.tab === 'map') mountFsMap();
   { const row = document.querySelector('.fs-tabs'); const on = row && row.querySelector('[aria-pressed="true"]'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; }
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', face: 'โหงวเฮ้ง ลายมือ', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', face: 'โหงวเฮ้ง ลายมือ', learn: 'ห้องศึกษาตำรา', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -3521,6 +3546,9 @@ document.addEventListener('click', (e) => {
     case 'muCat': Object.assign(state.map, { cat: el.dataset.v, wish: el.dataset.v === 'wish' ? state.map.wish : null, sel: null }); break;
     case 'muWish': state.map.wish = state.map.wish === el.dataset.v ? null : el.dataset.v; state.map.cat = 'wish'; state.map.sel = null; break;
     case 'fsTab': state.fs.tab = el.dataset.v; window.scrollTo(0, 0); break;
+    case 'learnCat': state.learn.cat = el.dataset.v; break;
+    case 'learnOpen': { state.learn.open = el.dataset.v; const r = learnRead(); r.add(el.dataset.v); try { localStorage.setItem('taksila.learn', JSON.stringify([...r])); } catch (e) {} render(); window.scrollTo(0, 0); return; }
+    case 'learnBack': state.learn.open = null; break;
     case 'notifyOn': notifyEnable(); return;
     case 'meritDo': { const m = meritLoad(), k = ymdIso(new Date()), a = new Set(m.done[k] || []); a.has(el.dataset.v) ? a.delete(el.dataset.v) : a.add(el.dataset.v); m.done[k] = [...a]; meritSave(m); if (a.has(el.dataset.v)) toast('อนุโมทนาบุญ 🙏'); const y = window.scrollY; render(); window.scrollTo(0, y); return; }
     case 'shareApp': if (navigator.share) navigator.share({ title: 'ตักศิลา ดูดวงครบทุกศาสตร์', text: 'ดูดวงฟรี ผังดาว ไพ่ทาโรต์ ฮวงจุ้ย โหงวเฮ้ง บทสวด', url: APP_URL }).catch(() => {}); else { navigator.clipboard && navigator.clipboard.writeText(APP_URL); toast('คัดลอกลิงก์แล้ว'); } return;

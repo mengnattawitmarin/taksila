@@ -1400,3 +1400,12 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .mr-t{display:flex;flex-direction:column;gap:2px;min-width:0}.mr-t b{font-size:14.5px}.mr-t span{font-size:12px;color:var(--text-2);line-height:1.45}
 .mr-list li.done .mr-t b{text-decoration:line-through;text-decoration-color:rgba(111,195,178,.7)}
 .mr-go{font-size:12px;color:var(--gold)}
+/* ห้องศึกษาตำรา */
+.ln-bar{height:5px;border-radius:3px;background:var(--line);overflow:hidden}.ln-bar i{display:block;height:100%;background:linear-gradient(90deg,#C9A24E,#F0D89A)}
+.ln-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.ln-it{width:100%;display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:12px;border-radius:12px;border:1px solid var(--line);background:linear-gradient(90deg,color-mix(in srgb,var(--c) 9%,var(--surface)),var(--surface));color:var(--text);font:inherit;text-align:left;cursor:pointer}
+.ln-dot{width:26px;height:26px;border-radius:13px;border:1.5px solid var(--c);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#0D0B08}
+.ln-it.read .ln-dot{background:var(--c)}
+.ln-t{display:flex;flex-direction:column;gap:2px}.ln-t b{font-size:15px;line-height:1.4}.ln-t span{font-size:12px;color:var(--muted)}
+.ln-art{display:flex;flex-direction:column;gap:12px}
+.ln-art p{margin:0;font-size:16px;line-height:1.8;color:var(--text-2)}
