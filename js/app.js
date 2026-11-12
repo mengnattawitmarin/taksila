@@ -2057,7 +2057,7 @@ function otherAppsHTML() {
   return `<section class="oa"><h3 class="oa-h">แอปอื่นของผู้พัฒนา</h3>${OTHER_APPS.map((a) => `<article class="oa-c" style="--c:${a.c}"><div class="oa-top"><span class="oa-ic" aria-hidden="true">${a.ic}</span><div><b>${a.name}</b><span>${a.desc}</span></div></div>
 <div class="oa-links">${a.links.map(([t, u, h]) => `<a class="oa-btn" href="${u}" target="_blank" rel="noopener"><b>${t === 'Android' ? '🤖 ' : t === 'iPhone' ? '📱 ' : '🌐 '}${t}</b><span>${h}</span></a>`).join('')}</div></article>`).join('')}</section>`;
 }
-function closeMore() { const m = document.getElementById('more-sheet'); if (m) m.remove(); }
+function closeMore() { const m = document.getElementById('more-sheet'); if (m) m.remove(); document.documentElement.style.overflow = ''; }
 
 // ---------------- ทำนายฝัน ----------------
 const DREAM_GROUPS = [
@@ -3665,7 +3665,7 @@ document.addEventListener('click', (e) => {
     }
     case 'dailyShare': dailyImage().then((b) => shareBlob(b, `taksila-today-${Date.now()}.png`, 'ดวงวันนี้จากตักศิลา')); return;
     case 'inviteShare': shareInvite(); return;
-    case 'moreOpen': { if (!document.getElementById('more-sheet')) document.body.insertAdjacentHTML('beforeend', moreSheetHTML()); return; }
+    case 'moreOpen': { if (!document.getElementById('more-sheet')) { document.body.insertAdjacentHTML('beforeend', moreSheetHTML()); const mi = document.querySelector('#more-sheet .more-in'); if (mi) mi.scrollTop = 0; document.documentElement.style.overflow = 'hidden'; } return; }
     case 'moreClose': closeMore(); return;
     case 'dreamPick': state.dream.sel = el.dataset.v; state.dream.saved = false; break;
     case 'dreamTime': state.dream.time = el.dataset.v; break;
