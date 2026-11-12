@@ -7946,8 +7946,11 @@ function frontalize(P) {
 // หมายเหตุ: กลุ่มตัวอย่างส่วนใหญ่เป็นชาวตะวันตก ค่าจมูกและระยะตาของคนเอเชียอาจต่างไปเล็กน้อย
 const PH_NORM = {"ratio":[1.139,1.172,1.205,1.244,1.282],"fore":[0.816,0.828,0.842,0.856,0.869],"jaw":[0.793,0.805,0.818,0.828,0.838],"chinW":[0.174,0.179,0.184,0.189,0.195],"up":[0.223,0.269,0.298,0.322,0.342],"md":[0.306,0.319,0.335,0.356,0.38],"lo":[0.341,0.353,0.368,0.384,0.404],"eyeGapR":[1.189,1.239,1.306,1.384,1.441],"eyeOpen":[0.251,0.278,0.298,0.321,0.342],"tilt":[0.481,1.81,2.972,4.225,5.499],"browLenR":[1.564,1.604,1.662,1.712,1.762],"browEye":[0.535,0.581,0.642,0.71,0.773],"browGap":[1.007,1.041,1.085,1.131,1.18],"noseWR":[1.108,1.164,1.215,1.269,1.317],"noseLR":[0.224,0.234,0.246,0.258,0.273],"mouthR":[1.263,1.328,1.393,1.43,1.467],"lipBal":[0.519,0.564,0.65,0.704,0.764],"lipThick":[0.145,0.177,0.217,0.255,0.289],"corner":[-0.015,0.003,0.017,0.033,0.055],"philR":[0.227,0.24,0.253,0.272,0.29],"chinLR":[0.513,0.535,0.563,0.596,0.614],"sym":[0.852,0.89,0.92,0.94,0.953]};
 // กลุ่มเทียบที่ใช้อยู่ (สลับได้ระหว่างเอเชียกับสากล)
-const PH_NORMS = { west: PH_NORM };
-let PH_N = PH_NORM;
+// กลุ่มเอเชีย: วัดด้วยโค้ดเดียวกันจากรูปทางการสมาชิกสภานิติบัญญัติไต้หวัน 1,014 ภาพ
+// (สัญญาอนุญาตข้อมูลเปิดภาครัฐไต้หวัน OGDL 1.0 · ที่มา 立法院) ค่าปาก ตา คาง ใช้เฉพาะ 328 ภาพที่ไม่ยิ้ม
+const PH_NORM_ASIA = {"ratio":[1.029,1.096,1.151,1.19,1.228],"fore":[0.814,0.825,0.838,0.851,0.864],"jaw":[0.777,0.79,0.803,0.814,0.823],"chinW":[0.166,0.169,0.174,0.178,0.182],"up":[0.206,0.244,0.276,0.296,0.32],"md":[0.339,0.352,0.368,0.387,0.408],"lo":[0.332,0.344,0.36,0.377,0.395],"eyeGapR":[1.31,1.382,1.45,1.519,1.575],"eyeOpen":[0.239,0.264,0.291,0.325,0.35],"tilt":[2.021,3.094,4.412,5.691,6.885],"browLenR":[1.641,1.685,1.744,1.793,1.837],"browEye":[0.679,0.726,0.777,0.846,0.912],"browGap":[1.089,1.126,1.17,1.212,1.251],"noseWR":[1.01,1.048,1.103,1.156,1.195],"noseLR":[0.24,0.251,0.261,0.273,0.287],"mouthR":[1.261,1.31,1.348,1.41,1.454],"lipBal":[0.612,0.665,0.718,0.76,0.809],"lipThick":[0.227,0.256,0.289,0.325,0.358],"corner":[-0.017,-0.003,0.014,0.028,0.046],"philR":[0.201,0.224,0.24,0.256,0.278],"chinLR":[0.469,0.488,0.514,0.537,0.556],"sym":[0.888,0.911,0.935,0.951,0.961]};
+const PH_NORMS = { west: PH_NORM, asia: PH_NORM_ASIA };
+let PH_N = PH_NORM_ASIA;
 function phSetNorm(k) { PH_N = PH_NORMS[k] || PH_NORM; return PH_NORMS[k] ? k : 'west'; }
 // หน้าผากที่วัดได้จริง ÷ ระยะคิ้วถึงจุด 10 (มัธยฐานจาก 611 ภาพที่ตรวจพบแนวไรผม)
 const PH_HAIRK = 1.77;
@@ -10928,7 +10931,7 @@ const state = {
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
   map: { cat: 'all', wish: null, reg: 'all', sel: null, me: null },
-  ph: { tab: 'face', status: 'idle', side: 'R', facing: 'environment', mirror: false, enh: false, hide: {}, err: '', warn: [], ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.physio')) || {}; return { face: j.face || null, hand: j.hand || null, side: j.side || 'R', lines: j.lines || {}, who: j.who || 'me', birth: j.birth || null }; } catch (e) { return {}; } })() },
+  ph: { tab: 'face', status: 'idle', side: 'R', facing: 'environment', mirror: false, enh: false, hide: {}, err: '', warn: [], ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.physio')) || {}; return { norm: j.norm || 'asia', face: j.face || null, hand: j.hand || null, side: j.side || 'R', lines: j.lines || {}, who: j.who || 'me', birth: j.birth || null }; } catch (e) { return {}; } })() },
   fs: { tab: 'kua', gender: '', facing: 180, period: 9, repl: false, rooms: {}, members: [], home: null, radius: 40, cell: null, roomPick: null, newMember: null, heading: null, sensor: false, cam: false, ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.fs')) || {}; const o = {}; for (const k of ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius', 'ptype', 'chk']) if (j[k] != null) o[k] = j[k]; return o; } catch (e) { return {}; } })() },
   pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
@@ -13322,7 +13325,7 @@ function viewAbout() {
     ['ทำนายฝัน', 'สรุปจากบทความความเชื่อไทย ระบุที่มาทุกข้อ'],
     ['แผนที่มู', 'ข้อมูลเขียนเอง แผนที่ © OpenStreetMap นำทางด้วย Google Maps'],
     ['บริจาคโลหิต', 'ศูนย์บริการโลหิตแห่งชาติ สภากาชาดไทย'],
-    ['โหงวเฮ้ง ลายมือ', 'จุดบนใบหน้าและมือจาก MediaPipe ของ Google (สัญญาอนุญาต Apache 2.0) ประมวลผลในเครื่อง · หลักอ่านจากตำราโหงวเฮ้งจีน (สามส่วน 12 ตำแหน่ง ห้าธาตุ) และตำราลายมือสากล']
+    ['โหงวเฮ้ง ลายมือ', 'จุดบนใบหน้าและมือจาก MediaPipe ของ Google (สัญญาอนุญาต Apache 2.0) ประมวลผลในเครื่อง · หลักอ่านจากตำราโหงวเฮ้งจีน (สามส่วน 12 ตำแหน่ง ห้าธาตุ) และตำราลายมือสากล · ค่าเปรียบเทียบใบหน้า: รูปทางการสมาชิกสภานิติบัญญัติไต้หวัน (立法院, สัญญาอนุญาต OGDL 1.0) และรูปสาธารณสมบัติสมาชิกรัฐสภาสหรัฐฯ (github.com/unitedstates/images)']
   ];
   return `<main class="screen" style="--accent:var(--gold)">
 ${pageHead('13', 'ABOUT', 'เกี่ยวกับตักศิลา', 'var(--gold)', 'about')}
@@ -14161,6 +14164,7 @@ function phCoupleHTML() {
 <p class="small" style="margin:0;font-size:11px">คนที่ 1 = รูปก่อนหน้า · คนที่ 2 = รูปนี้ · ความสัมพันธ์ขึ้นกับการเข้าใจกันมากกว่าหน้าตา</p><button class="link-btn" data-act="phPairClear">ล้างการเทียบ</button></section>`;
 }
 function phFaceResultHTML() {
+  phSetNorm(state.ph.norm || 'asia');
   const ph = state.ph, m = ph.face, el = faceElement(m), reads = faceRead(m);
   const bi = phBirthInfo(), rel = bi ? elementRelation(el.key, bi.sy) : null;
   return `${phSnap ? `<section class="ph-snapw"><canvas id="ph-snap" aria-label="ภาพใบหน้าพร้อมจุดโหงวเฮ้ง"></canvas></section>` : ''}
@@ -14171,7 +14175,7 @@ ${rel ? `<p class="small ${rel.tone > 0 ? 'tpos' : rel.tone < 0 ? 'tneg' : ''}" 
 ${phCoupleHTML()}
 ${phBirthHTML()}
 ${phAgeHTML(reads)}
-<section class="ph-list"><h2 class="label">อ่านทีละส่วน</h2>${reads.map(phReadCard).join('')}</section>
+<section class="ph-list"><h2 class="label">อ่านทีละส่วน</h2><div class="seg ph-norm" role="group" aria-label="เทียบกับ">${[['asia', 'เทียบกับคนเอเชีย'], ['west', 'เทียบกับคนตะวันตก']].map(([k, t]) => `<button aria-pressed="${(ph.norm || 'asia') === k}" data-act="phNorm" data-v="${k}">${t}</button>`).join('')}</div>${reads.map(phReadCard).join('')}</section>
 ${phMoleHTML()}
 <div class="ph-btns"><button class="btn" data-act="phAgain">อ่านใหม่</button><button class="btn btn-line" data-act="phShare">แชร์ผล ↗</button></div>
 ${ph.pairA ? '' : '<button class="btn btn-line" data-act="phPair">💞 เทียบโหงวเฮ้งกับอีกคน (คู่รัก เพื่อน หุ้นส่วน)</button>'}
@@ -14483,6 +14487,7 @@ document.addEventListener('click', (e) => {
     case 'copyApp': (navigator.clipboard ? navigator.clipboard.writeText(APP_URL) : Promise.reject()).then(() => toast('คัดลอกลิงก์แล้ว'), () => toast(APP_URL)); return;
     case 'phTab': if (state.ph.status === 'live') phStopCam(); state.ph.tab = el.dataset.v; state.ph.status = 'idle'; state.ph.err = ''; break;
     case 'phStart': phStart(); return;
+    case 'phNorm': state.ph.norm = el.dataset.v; phSaveSaved({ norm: el.dataset.v }); { const y = window.scrollY; render(); window.scrollTo(0, y); } return;
     case 'phPair': state.ph.pairA = { m: state.ph.face }; break;
     case 'phPairClear': state.ph.pairA = null; break;
     case 'phStop': phStopCam(); state.ph.status = 'start'; break;

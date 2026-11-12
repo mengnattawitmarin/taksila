@@ -1,7 +1,7 @@
 // ตักศิลา service worker: lets the app open offline and install to the home screen.
 // Strategy: network first for the app's own files (so updates arrive right away),
 // falling back to the cached copy when offline. Fonts are cache first.
-const CACHE = 'taksila-v48';
+const CACHE = 'taksila-v49';
 const NOTIFY = 'taksila-notify'; // รายการวันพระล่วงหน้าที่แอปเขียนไว้ ใช้แจ้งเตือนเบื้องหลัง
 const VENDOR = 'taksila-vendor-1'; // MediaPipe models (~30 MB) are cached separately so app updates do not re-download them
 // Paths are relative to wherever the app is hosted (site root on Netlify, /taksila/ on GitHub Pages).

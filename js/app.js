@@ -15,7 +15,7 @@ import { prayerTr } from './prayer-tr.js';
 import { qrSVG } from './qr.js';
 import { LEARN_CATS, LESSONS } from './learn.js';
 import { DONATE_QR } from './donate.js';
-import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh, ageZone, ageTimeline, moleDetect, coupleRead } from './physio.js';
+import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh, phSetNorm, ageZone, ageTimeline, moleDetect, coupleRead } from './physio.js';
 import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf, FS_PTYPES, ptypeOf } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
 import { DAY_MERIT, PLANET_NO, RITES, templesFor, NAKSHAT, PAGODA, nakshatOf, chongOf, CHONG_FIX, luckWindows, windowRange, remedyPlan } from './remedy.js';
@@ -48,7 +48,7 @@ const state = {
   prayer: { cat: 'all', purpose: null, open: null, counts: {} },
   dream: { q: '', sel: null, time: 'dawn', saved: false },
   map: { cat: 'all', wish: null, reg: 'all', sel: null, me: null },
-  ph: { tab: 'face', status: 'idle', side: 'R', facing: 'environment', mirror: false, enh: false, hide: {}, err: '', warn: [], ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.physio')) || {}; return { face: j.face || null, hand: j.hand || null, side: j.side || 'R', lines: j.lines || {}, who: j.who || 'me', birth: j.birth || null }; } catch (e) { return {}; } })() },
+  ph: { tab: 'face', status: 'idle', side: 'R', facing: 'environment', mirror: false, enh: false, hide: {}, err: '', warn: [], ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.physio')) || {}; return { norm: j.norm || 'asia', face: j.face || null, hand: j.hand || null, side: j.side || 'R', lines: j.lines || {}, who: j.who || 'me', birth: j.birth || null }; } catch (e) { return {}; } })() },
   fs: { tab: 'kua', gender: '', facing: 180, period: 9, repl: false, rooms: {}, members: [], home: null, radius: 40, cell: null, roomPick: null, newMember: null, heading: null, sensor: false, cam: false, ...(() => { try { const j = JSON.parse(localStorage.getItem('taksila.fs')) || {}; const o = {}; for (const k of ['gender', 'facing', 'period', 'repl', 'rooms', 'members', 'home', 'radius', 'ptype', 'chk']) if (j[k] != null) o[k] = j[k]; return o; } catch (e) { return {}; } })() },
   pvConfirm: false,
   num: { mode: 'name', values: {}, first: '', last: '', gender: '', day: 0 },
@@ -2442,7 +2442,7 @@ function viewAbout() {
     ['ทำนายฝัน', 'สรุปจากบทความความเชื่อไทย ระบุที่มาทุกข้อ'],
     ['แผนที่มู', 'ข้อมูลเขียนเอง แผนที่ © OpenStreetMap นำทางด้วย Google Maps'],
     ['บริจาคโลหิต', 'ศูนย์บริการโลหิตแห่งชาติ สภากาชาดไทย'],
-    ['โหงวเฮ้ง ลายมือ', 'จุดบนใบหน้าและมือจาก MediaPipe ของ Google (สัญญาอนุญาต Apache 2.0) ประมวลผลในเครื่อง · หลักอ่านจากตำราโหงวเฮ้งจีน (สามส่วน 12 ตำแหน่ง ห้าธาตุ) และตำราลายมือสากล']
+    ['โหงวเฮ้ง ลายมือ', 'จุดบนใบหน้าและมือจาก MediaPipe ของ Google (สัญญาอนุญาต Apache 2.0) ประมวลผลในเครื่อง · หลักอ่านจากตำราโหงวเฮ้งจีน (สามส่วน 12 ตำแหน่ง ห้าธาตุ) และตำราลายมือสากล · ค่าเปรียบเทียบใบหน้า: รูปทางการสมาชิกสภานิติบัญญัติไต้หวัน (立法院, สัญญาอนุญาต OGDL 1.0) และรูปสาธารณสมบัติสมาชิกรัฐสภาสหรัฐฯ (github.com/unitedstates/images)']
   ];
   return `<main class="screen" style="--accent:var(--gold)">
 ${pageHead('13', 'ABOUT', 'เกี่ยวกับตักศิลา', 'var(--gold)', 'about')}
@@ -3281,6 +3281,7 @@ function phCoupleHTML() {
 <p class="small" style="margin:0;font-size:11px">คนที่ 1 = รูปก่อนหน้า · คนที่ 2 = รูปนี้ · ความสัมพันธ์ขึ้นกับการเข้าใจกันมากกว่าหน้าตา</p><button class="link-btn" data-act="phPairClear">ล้างการเทียบ</button></section>`;
 }
 function phFaceResultHTML() {
+  phSetNorm(state.ph.norm || 'asia');
   const ph = state.ph, m = ph.face, el = faceElement(m), reads = faceRead(m);
   const bi = phBirthInfo(), rel = bi ? elementRelation(el.key, bi.sy) : null;
   return `${phSnap ? `<section class="ph-snapw"><canvas id="ph-snap" aria-label="ภาพใบหน้าพร้อมจุดโหงวเฮ้ง"></canvas></section>` : ''}
@@ -3291,7 +3292,7 @@ ${rel ? `<p class="small ${rel.tone > 0 ? 'tpos' : rel.tone < 0 ? 'tneg' : ''}" 
 ${phCoupleHTML()}
 ${phBirthHTML()}
 ${phAgeHTML(reads)}
-<section class="ph-list"><h2 class="label">อ่านทีละส่วน</h2>${reads.map(phReadCard).join('')}</section>
+<section class="ph-list"><h2 class="label">อ่านทีละส่วน</h2><div class="seg ph-norm" role="group" aria-label="เทียบกับ">${[['asia', 'เทียบกับคนเอเชีย'], ['west', 'เทียบกับคนตะวันตก']].map(([k, t]) => `<button aria-pressed="${(ph.norm || 'asia') === k}" data-act="phNorm" data-v="${k}">${t}</button>`).join('')}</div>${reads.map(phReadCard).join('')}</section>
 ${phMoleHTML()}
 <div class="ph-btns"><button class="btn" data-act="phAgain">อ่านใหม่</button><button class="btn btn-line" data-act="phShare">แชร์ผล ↗</button></div>
 ${ph.pairA ? '' : '<button class="btn btn-line" data-act="phPair">💞 เทียบโหงวเฮ้งกับอีกคน (คู่รัก เพื่อน หุ้นส่วน)</button>'}
@@ -3603,6 +3604,7 @@ document.addEventListener('click', (e) => {
     case 'copyApp': (navigator.clipboard ? navigator.clipboard.writeText(APP_URL) : Promise.reject()).then(() => toast('คัดลอกลิงก์แล้ว'), () => toast(APP_URL)); return;
     case 'phTab': if (state.ph.status === 'live') phStopCam(); state.ph.tab = el.dataset.v; state.ph.status = 'idle'; state.ph.err = ''; break;
     case 'phStart': phStart(); return;
+    case 'phNorm': state.ph.norm = el.dataset.v; phSaveSaved({ norm: el.dataset.v }); { const y = window.scrollY; render(); window.scrollTo(0, y); } return;
     case 'phPair': state.ph.pairA = { m: state.ph.face }; break;
     case 'phPairClear': state.ph.pairA = null; break;
     case 'phStop': phStopCam(); state.ph.status = 'start'; break;
