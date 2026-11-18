@@ -1500,3 +1500,9 @@ details.dn{margin-top:14px;border:1px solid rgba(224,164,88,.45);border-radius:1
 .mv-opt.on { border-color: rgba(185,154,240,.7); }
 .mv-seg { align-self: flex-start; }
 .mv-mode > .small { font-size: 12px; }
+.zd-note > details { margin-top: 8px; }
+.zd-note > details > summary { list-style: none; cursor: pointer; }
+.zd-note > details > summary::-webkit-details-marker { display: none; }
+.zd-use { font-size: 11px; color: var(--muted); align-self: center; }
+.zd-btn { justify-self: start; min-height: 32px; padding: 4px 12px; border-radius: 999px; border: 1px solid rgba(212,175,99,.45); background: transparent; color: var(--gold); font: inherit; font-size: 12px; cursor: pointer; }
+.zd-btn[aria-pressed="true"] { background: rgba(212,175,99,.16); color: var(--text); font-weight: 600; }

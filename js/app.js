@@ -784,13 +784,16 @@ function zodiacNoteHTML(ch, open = false) {
   if (ch.timeKnown && ch.asc != null) rows.push(['ลัคนา', signOf(ch.asc), sid(ch.asc)]);
   const diff = rows.filter((r) => r[1] !== r[2]), same = !diff.length;
   const cell = (i) => `<b>${SIGNS[i].glyph}&#xFE0E; ${SIGNS[i].th}</b>`;
-  return `<details class="zd-note"${open ? ' open' : ''}><summary><span class="zd-tab"><i></i><i>สากล</i><i>แบบไทย</i>${rows.map(([n, a, b]) => `<span>${n}</span>${cell(a)}${cell(b)}`).join('')}</span><span class="zd-q">${same ? 'ตรงกันทั้งสองแบบ' : 'ทำไมไม่ตรงกัน?'} ⓘ</span></summary>
+  const m = trMode();
+  return `<div class="zd-note"><div class="zd-tab"><i></i><i>สากล</i><i>แบบไทย</i>${rows.map(([n, a, b]) => `<span>${n}</span>${cell(a)}${cell(b)}`).join('')}
+<span class="zd-use">ห้องดาวย้าย</span>${['intl', 'thai'].map((k) => `<button class="zd-btn" data-act="mvMode" data-v="${k}" aria-pressed="${mvChosen && m === k}">${mvChosen && m === k ? '✓ ใช้อยู่' : 'ใช้ระบบนี้'}</button>`).join('')}</div>
+<details${open ? ' open' : ''}><summary><span class="zd-q">${same ? 'ตรงกันทั้งสองแบบ' : 'ทำไมไม่ตรงกัน?'} ⓘ</span></summary>
 <div class="zd-body"><p>ราศีมีสองระบบที่ใช้กันทั่วไป และนับจุดเริ่มต้นต่างกัน</p>
 <ul><li><b>ระบบสากล (Astrology ตะวันตก)</b> นับตามฤดูกาล เริ่มราศีเมษที่วันวสันตวิษุวัต ราว 21 มี.ค. ใช้ในดูดวงรายวันแบบสากล ผังดาว และดวงคู่ในแอปนี้</li>
 <li><b>ระบบไทย (โหราศาสตร์ไทย)</b> นับตามกลุ่มดาวจริงบนฟ้า เริ่มราศีเมษวันมหาสงกรานต์ ราว 13–14 เม.ย. ใช้ในทักษา และที่หมอดูไทยในทีวีส่วนใหญ่ใช้ (ห้องดาวย้ายเลือกได้ทั้งสองแบบ)</li></ul>
 <p>สองระบบห่างกันราว 24 องศา (ราว 24 วันสำหรับราศีเกิด) ดาวหรือลัคนาที่อยู่ช่วงต้นราศีแบบสากลจึงถอยไปอยู่ราศีก่อนหน้าในแบบไทย ${same ? 'ของคุณตรงกันทั้งสองแบบ' : `ของคุณต่างกันที่${diff.map(([n, a, b]) => `${n} (สากล${SIGNS[a].th} · ไทย${SIGNS[b].th})`).join(' และ')}`} ไม่มีแบบไหนผิด แค่คนละตำรา</p>
 <p>ถ้าจะอ่านดวงแบบที่หมอดูไทยพูด เช่น "ราหูย้ายเข้ามังกร กระทบลัคนาไหน" ให้ใช้ค่าแบบไทย ในห้องดาวย้ายเลือกได้ว่าจะใช้ระบบสากลหรือไทย <a href="#/move">เปิดห้องดาวย้าย ›</a></p>
-<p class="small">แอปคำนวณแบบไทยด้วยอายนางศ์ลาหิรี ตรวจแล้วตรงกับเวลามหาสงกรานต์ตามประกาศทางการปี 2567 และ 2569 คลาดไม่ถึง 5 นาที</p></div></details>`;
+<p class="small">แอปคำนวณแบบไทยด้วยอายนางศ์ลาหิรี ตรวจแล้วตรงกับเวลามหาสงกรานต์ตามประกาศทางการปี 2567 และ 2569 คลาดไม่ถึง 5 นาที</p></div></details></div>`;
 }
 function viewChart() {
   const ch = state.chart, p = state.profile, tab = state.chartTab, now = new Date();
