@@ -1497,6 +1497,10 @@ details.dn{margin-top:14px;border:1px solid rgba(224,164,88,.45);border-radius:1
 .day { position: relative; gap: 4px; padding: 7px 0 7px; }
 .wk-holy { position: absolute; top: 3px; right: 3px; font-size: 8px; padding: 1px 3px; border-radius: 5px; }
 .mv-note .chip { margin-top: 6px; display: inline-flex; }
+.zd-tab { display: grid; grid-template-columns: auto 1fr 1fr; gap: 4px 12px; align-items: baseline; }
+.zd-tab > i { font-style: normal; font-size: 11px; color: var(--muted); }
+.zd-tab > span { font-size: 12.5px; color: var(--muted); }
+.zd-tab > b { font-family: var(--serif); font-size: 16px; color: var(--gold-2); }
 
 </style>
 </head>
@@ -11987,13 +11991,19 @@ function planetCard(pl) {
 // ราศีสองระบบ: สากล (ทรอปิคอล ตามฤดูกาล) กับแบบไทย (นิรายนะ ตามกลุ่มดาวจริง ใช้ในโหราศาสตร์ไทย)
 const thaiSunSign = (ch) => signOf(((ch.planets[0].lon - ayanamsa(ch.utc)) % 360 + 360) % 360);
 function zodiacNoteHTML(ch, open = false) {
-  const w = ch.planets[0].sign, t = thaiSunSign(ch), same = w === t;
-  return `<details class="zd-note"${open ? ' open' : ''}><summary><span class="zd-pair"><span><i>ราศีสากล</i><b>${SIGNS[w].glyph}&#xFE0E; ${SIGNS[w].th}</b></span><span><i>ราศีแบบไทย</i><b>${SIGNS[t].glyph}&#xFE0E; ${SIGNS[t].th}</b></span></span><span class="zd-q">${same ? 'ตรงกันทั้งสองแบบ' : 'ทำไมไม่ตรงกัน?'} ⓘ</span></summary>
-<div class="zd-body"><p>ราศีมีสองระบบที่ใช้กันทั่วไป และนับวันเปลี่ยนราศีต่างกัน</p>
-<ul><li><b>ราศีสากล (Astrology ตะวันตก)</b> นับตามฤดูกาล เริ่มราศีเมษที่วันวสันตวิษุวัต ราว 21 มี.ค. ราศีจึงเปลี่ยนราววันที่ 20–23 ของทุกเดือน ใช้ในดูดวงรายวันแบบสากล ผังดาว และดวงคู่ในแอปนี้</li>
-<li><b>ราศีแบบไทย (โหราศาสตร์ไทย)</b> นับตามกลุ่มดาวจริงบนฟ้า เริ่มราศีเมษวันมหาสงกรานต์ ราว 13–14 เม.ย. ราศีจึงเปลี่ยนราววันที่ 13–17 ของทุกเดือน ใช้ในห้องโหราศาสตร์ไทย ทักษา และที่หมอดูไทยส่วนใหญ่ใช้</li></ul>
-<p>สองระบบห่างกันราว 24 วัน คนที่เกิดช่วงรอยต่อจึงได้คนละราศี ${same ? 'ของคุณตรงกันทั้งสองแบบ' : `เช่นของคุณ เป็นราศี${SIGNS[w].th}แบบสากล แต่เป็นราศี${SIGNS[t].th}แบบไทย`} ไม่มีแบบไหนผิด แค่คนละตำรา</p>
-<p class="small">แอปคำนวณราศีแบบไทยด้วยอายนางศ์ลาหิรี ตรวจแล้วตรงกับเวลามหาสงกรานต์ตามประกาศทางการปี 2567 และ 2569 คลาดไม่ถึง 5 นาที</p></div></details>`;
+  const sid = (lon) => signOf(((lon - ayanamsa(ch.utc)) % 360 + 360) % 360);
+  const w = ch.planets[0].sign, t = thaiSunSign(ch);
+  const rows = [['ราศีเกิด', w, t], ['จันทร์', ch.planets[1].sign, sid(ch.planets[1].lon)]];
+  if (ch.timeKnown && ch.asc != null) rows.push(['ลัคนา', signOf(ch.asc), sid(ch.asc)]);
+  const diff = rows.filter((r) => r[1] !== r[2]), same = !diff.length;
+  const cell = (i) => `<b>${SIGNS[i].glyph}&#xFE0E; ${SIGNS[i].th}</b>`;
+  return `<details class="zd-note"${open ? ' open' : ''}><summary><span class="zd-tab"><i></i><i>สากล</i><i>แบบไทย</i>${rows.map(([n, a, b]) => `<span>${n}</span>${cell(a)}${cell(b)}`).join('')}</span><span class="zd-q">${same ? 'ตรงกันทั้งสองแบบ' : 'ทำไมไม่ตรงกัน?'} ⓘ</span></summary>
+<div class="zd-body"><p>ราศีมีสองระบบที่ใช้กันทั่วไป และนับจุดเริ่มต้นต่างกัน</p>
+<ul><li><b>ระบบสากล (Astrology ตะวันตก)</b> นับตามฤดูกาล เริ่มราศีเมษที่วันวสันตวิษุวัต ราว 21 มี.ค. ใช้ในดูดวงรายวันแบบสากล ผังดาว และดวงคู่ในแอปนี้</li>
+<li><b>ระบบไทย (โหราศาสตร์ไทย)</b> นับตามกลุ่มดาวจริงบนฟ้า เริ่มราศีเมษวันมหาสงกรานต์ ราว 13–14 เม.ย. ใช้ในห้องดาวย้าย ทักษา และที่หมอดูไทยในทีวีส่วนใหญ่ใช้</li></ul>
+<p>สองระบบห่างกันราว 24 องศา (ราว 24 วันสำหรับราศีเกิด) ดาวหรือลัคนาที่อยู่ช่วงต้นราศีแบบสากลจึงถอยไปอยู่ราศีก่อนหน้าในแบบไทย ${same ? 'ของคุณตรงกันทั้งสองแบบ' : `ของคุณต่างกันที่${diff.map(([n, a, b]) => `${n} (สากล${SIGNS[a].th} · ไทย${SIGNS[b].th})`).join(' และ')}`} ไม่มีแบบไหนผิด แค่คนละตำรา</p>
+<p>ถ้าจะอ่านดวงแบบที่หมอดูไทยพูด เช่น "ราหูย้ายเข้ามังกร กระทบลัคนาไหน" ให้ใช้ค่าแบบไทย <a href="#/move">เปิดห้องดาวย้าย ›</a></p>
+<p class="small">แอปคำนวณแบบไทยด้วยอายนางศ์ลาหิรี ตรวจแล้วตรงกับเวลามหาสงกรานต์ตามประกาศทางการปี 2567 และ 2569 คลาดไม่ถึง 5 นาที</p></div></details>`;
 }
 function viewChart() {
   const ch = state.chart, p = state.profile, tab = state.chartTab, now = new Date();
