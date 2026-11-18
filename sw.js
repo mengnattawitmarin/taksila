@@ -1,19 +1,20 @@
 // ตักศิลา service worker: lets the app open offline and install to the home screen.
 // Strategy: network first for the app's own files (so updates arrive right away),
 // falling back to the cached copy when offline. Fonts are cache first.
-const CACHE = 'taksila-v50';
+const CACHE = 'taksila-v51';
 const NOTIFY = 'taksila-notify'; // รายการวันพระล่วงหน้าที่แอปเขียนไว้ ใช้แจ้งเตือนเบื้องหลัง
-const VENDOR = 'taksila-vendor-1'; // MediaPipe models (~30 MB) are cached separately so app updates do not re-download them
+const VENDOR = 'taksila-vendor-1';
+const DHARMA = 'taksila-dharma'; // รายการธรรมะจาก DoT app (~4 MB) เปิดจากแคชทันที แล้วอัปเดตเบื้องหลัง // MediaPipe models (~30 MB) are cached separately so app updates do not re-download them
 // Paths are relative to wherever the app is hosted (site root on Netlify, /taksila/ on GitHub Pages).
 const BASE = self.registration.scope;
-const CORE = ['', 'index.html', 'css/styles.css', 'js/app.js', 'js/astro.js', 'js/data.js', 'js/starmap.js', 'js/thai.js', 'js/auspice.js', 'js/profile.js', 'js/tarot.js', 'js/luck.js', 'js/siamsi.js', 'js/numerology.js', 'js/prayer.js', 'js/remedy.js', 'js/insight.js', 'js/lunar.js', 'js/forecast.js', 'js/places.js', 'js/prayer-tr.js', 'js/fengshui.js', 'js/physio.js', 'js/qr.js', 'js/learn.js', 'js/donate.js', 'manifest.webmanifest', 'icons/icon-192.png'].map((p) => BASE + p);
+const CORE = ['', 'index.html', 'css/styles.css', 'js/app.js', 'js/astro.js', 'js/data.js', 'js/starmap.js', 'js/thai.js', 'js/auspice.js', 'js/profile.js', 'js/tarot.js', 'js/luck.js', 'js/siamsi.js', 'js/numerology.js', 'js/prayer.js', 'js/remedy.js', 'js/insight.js', 'js/lunar.js', 'js/forecast.js', 'js/places.js', 'js/prayer-tr.js', 'js/fengshui.js', 'js/physio.js', 'js/qr.js', 'js/learn.js', 'js/donate.js', 'js/dharma.js', 'manifest.webmanifest', 'icons/icon-192.png'].map((p) => BASE + p);
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== VENDOR && k !== NOTIFY).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== CACHE && k !== VENDOR && k !== NOTIFY && k !== DHARMA).map((k) => caches.delete(k)))).then(() => self.clients.claim()));
 });
 
 self.addEventListener('fetch', (e) => {
@@ -27,6 +28,14 @@ self.addEventListener('fetch', (e) => {
     return;
   }
   if (url.origin !== location.origin) return;
+  if (url.pathname.endsWith('/dot-app/dharma.json')) {
+    e.respondWith(caches.open(DHARMA).then((c) => c.match(req).then((hit) => {
+      const net = fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; });
+      if (hit) { e.waitUntil(net.catch(() => {})); return hit; }
+      return net;
+    })));
+    return;
+  }
   if (url.pathname.includes('/vendor/')) {
     e.respondWith(caches.open(VENDOR).then((c) => c.match(req).then((hit) => hit || fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; }))));
     return;

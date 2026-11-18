@@ -15,6 +15,7 @@ import { prayerTr } from './prayer-tr.js';
 import { qrSVG } from './qr.js';
 import { LEARN_CATS, LESSONS } from './learn.js';
 import { DONATE_QR } from './donate.js';
+import { DH_APP, DH_SRC, dh, dhEsc, dhLoad, dhReload, dhTeacher, dhTopicLabel, dhMark, dhDur, dhClock, dhStore, dhListenedToday, dhP, dhPlay, dhToggle, dhSeek, dhSeekTo, dhStep, dhCycleRate, dhSleep, dhStop, dhPlaying } from './dharma.js';
 import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh, phSetNorm, ageZone, ageTimeline, moleDetect, coupleRead } from './physio.js';
 import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf, FS_PTYPES, ptypeOf } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
@@ -34,6 +35,7 @@ function save() { try { localStorage.setItem(KEY, JSON.stringify({ profile: stat
 const saved = load();
 let installEvt = null; // saved install prompt (Android/desktop Chrome)
 const state = {
+  dh: { t: null, a: null, topic: 'all', q: '', more: 0 }, dhMenu: false,
   profile: saved.profile || null,
   chart: null,
   draft: null,
@@ -87,6 +89,7 @@ const IC = {
   dream: '<path d="M14.5 4.5a7 7 0 1 0 5 11.4A7.5 7.5 0 0 1 14.5 4.5z"/><path d="M17 4l.6 1.4L19 6l-1.4.6L17 8l-.6-1.4L15 6l1.4-.6z"/>',
   privacy: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><rect x="9.5" y="10.5" width="5" height="4.5" rx="1"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/>',
   setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  dharma: '<circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="2.3"/><path d="M12 3.8v5.9M12 14.3v5.9M3.8 12h5.9M14.3 12h5.9M6.2 6.2l4.2 4.2M13.6 13.6l4.2 4.2M17.8 6.2l-4.2 4.2M10.4 13.6l-4.2 4.2"/>',
   learn: '<path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/>',
   face: '<path d="M12 3c-4 0-6.5 3-6.5 7.5 0 5 3 9.5 6.5 10.5 3.5-1 6.5-5.5 6.5-10.5C18.5 6 16 3 12 3z"/><path d="M9 10.5h.01M15 10.5h.01M10 15.5q2 1.2 4 0M12 11v2.5"/>',
   fengshui: '<path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7z"/><path d="M12 7.5a4.5 4.5 0 0 1 0 9 2.25 2.25 0 0 1 0-4.5 2.25 2.25 0 0 0 0-4.5z"/><circle cx="12" cy="14.25" r=".6"/><circle cx="12" cy="9.75" r=".6"/>',
@@ -2018,7 +2021,7 @@ const ROOMS = [
   ['chart', 'ผังดาว', 'ดวงกำเนิด', 'var(--gold)'], ['match', 'คู่ดวง', 'เทียบสองคน', 'var(--rose)'],
   ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
   ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
-  ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
+  ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['dharma', 'ฟังธรรม', 'เทศน์ครูบาอาจารย์', '#E9A23B'], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
   ['dream', 'ทำนายฝัน', 'ตำรา เลขเด็ด', 'var(--violet)'], ['map', 'แผนที่มู', 'วัด เกจิ มูลนิธิ', 'var(--amber)'], ['calendar', 'วันพระ · ทำบุญ', 'เตือน ภารกิจบุญ', 'var(--gold-2)'], ['fengshui', 'ฮวงจุ้ย', 'เลขกัว ดาวเหิน', '#E5675A'], ['face', 'โหงวเฮ้ง', 'หน้า ลายมือ AR', '#E8A2B8'], ['learn', 'ศึกษาตำรา', 'บทเรียนสั้น', '#D4AF63'], ['setup', 'ข้อมูลเกิด', 'แก้วันเวลาเกิด', 'var(--muted)'],
   ['privacy', 'ความเป็นส่วนตัว', 'PDPA ลบข้อมูล', 'var(--teal)'], ['about', 'เกี่ยวกับ', 'แหล่งอ้างอิง', 'var(--gold)']
 ];
@@ -2319,10 +2322,10 @@ function meritStreak(m) {
 function meritHTML() {
   const m = meritLoad(), t = meritToday(), done = m.done[t.key] || [], total = Object.values(m.done).reduce((a, x) => a + x.length, 0), st = meritStreak(m);
   const week = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - 6 + i); return (m.done[ymdIso(d)] || []).length; });
-  const link = (x) => x.startsWith('prayer:') ? `<a href="#/prayer" data-act="openPrayer" data-v="${x.slice(7)}" class="mr-go">เปิดบทสวด ›</a>` : x === 'blood' ? `<a href="${BLOOD_LINK}" target="_blank" rel="noopener" class="mr-go">จุดรับบริจาค ›</a>` : x === 'map' ? '<a href="#/map" class="mr-go">แผนที่มู ›</a>' : '';
+  const link = (x, id) => id === 'dhamma' ? '<a href="#/dharma" class="mr-go">เปิดห้องฟังธรรม ›</a>' : x.startsWith('prayer:') ? `<a href="#/prayer" data-act="openPrayer" data-v="${x.slice(7)}" class="mr-go">เปิดบทสวด ›</a>` : x === 'blood' ? `<a href="${BLOOD_LINK}" target="_blank" rel="noopener" class="mr-go">จุดรับบริจาค ›</a>` : x === 'map' ? '<a href="#/map" class="mr-go">แผนที่มู ›</a>' : '';
   return `<section class="card mr"><div class="mr-top"><span class="eyebrow">ภารกิจทำบุญวันนี้${t.holy ? ' · วันพระ' : ''}</span><span class="mr-st">🔥 ${st} วันติด · บุญสะสม ${total}</span></div>
 <div class="mr-week" aria-label="7 วันล่าสุด">${week.map((n, i) => `<i class="${n ? 'on' : ''}${i === 6 ? ' today' : ''}" title="${n} ข้อ"></i>`).join('')}</div>
-<ul class="mr-list">${t.list.map(([id, ic, th, sub, x]) => `<li class="${done.includes(id) ? 'done' : ''}"><button class="mr-chk" data-act="meritDo" data-v="${id}" aria-pressed="${done.includes(id)}" aria-label="ทำแล้ว: ${th}">${done.includes(id) ? '✓' : ''}</button><span class="mr-ic">${ic}</span><span class="mr-t"><b>${th}</b><span>${sub}</span>${link(x)}</span></li>`).join('')}</ul>
+<ul class="mr-list">${t.list.map(([id, ic, th, sub, x]) => `<li class="${done.includes(id) ? 'done' : ''}"><button class="mr-chk" data-act="meritDo" data-v="${id}" aria-pressed="${done.includes(id)}" aria-label="ทำแล้ว: ${th}">${done.includes(id) ? '✓' : ''}</button><span class="mr-ic">${ic}</span><span class="mr-t"><b>${th}</b><span>${sub}</span>${link(x, id)}</span></li>`).join('')}</ul>
 <p class="small" style="margin:0;font-size:11.5px">${done.length === t.list.length ? '🙏 ครบทั้ง 3 ข้อวันนี้แล้ว อนุโมทนาบุญ' : 'ทำแล้วติ๊ก ภารกิจเปลี่ยนทุกวัน วันพระจะมีภารกิจพิเศษ'} · เก็บสถิติในเครื่องนี้เท่านั้น</p></section>`;
 }
 function viewCalendar() {
@@ -2442,6 +2445,7 @@ function viewAbout() {
     ['ทำนายฝัน', 'สรุปจากบทความความเชื่อไทย ระบุที่มาทุกข้อ'],
     ['แผนที่มู', 'ข้อมูลเขียนเอง แผนที่ © OpenStreetMap นำทางด้วย Google Maps'],
     ['บริจาคโลหิต', 'ศูนย์บริการโลหิตแห่งชาติ สภากาชาดไทย'],
+    ['ฟังธรรม', 'รายการจาก DoT app ของผู้พัฒนาเดียวกัน เสียงเปิดตรงจากแหล่งเผยแพร่ธรรมทาน (archive.org, tumma.info, พอดแคสต์สาธารณะ) ลิขสิทธิ์เป็นของวัดและผู้เผยแพร่เดิม'],
     ['โหงวเฮ้ง ลายมือ', 'จุดบนใบหน้าและมือจาก MediaPipe ของ Google (สัญญาอนุญาต Apache 2.0) ประมวลผลในเครื่อง · หลักอ่านจากตำราโหงวเฮ้งจีน (สามส่วน 12 ตำแหน่ง ห้าธาตุ) และตำราลายมือสากล · ค่าเปรียบเทียบใบหน้า: รูปทางการสมาชิกสภานิติบัญญัติไต้หวัน (立法院, สัญญาอนุญาต OGDL 1.0) และรูปสาธารณสมบัติสมาชิกรัฐสภาสหรัฐฯ (github.com/unitedstates/images)']
   ];
   return `<main class="screen" style="--accent:var(--gold)">
@@ -3401,7 +3405,123 @@ ${pageHead('16', 'STUDY', 'ห้องศึกษาตำรา', '#D4AF63', 
 <ul class="ln-list">${list.map((l) => { const c = cat(l.cat); return `<li><button class="ln-it${read.has(l.id) ? ' read' : ''}" style="--c:${c[2]}" data-act="learnOpen" data-v="${l.id}"><span class="ln-dot">${read.has(l.id) ? '✓' : ''}</span><span class="ln-t"><b>${l.t}</b><span>${c[1]} · ${l.m} นาที</span></span><span aria-hidden="true">›</span></button></li>`; }).join('')}</ul>
 </main>`;
 }
-const VIEWS = { learn: viewLearn, face: viewFace, fengshui: viewFengshui, calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- ห้องฟังธรรม ----------------
+const DH_COLOR = '#E9A23B', DH_PAGE = 150;
+function dhBoot() { if (dh.status === 'idle') dhLoad(() => { if (route() === 'dharma') render(); }); }
+function viewDharma() {
+  const st = state.dh;
+  dhBoot();
+  if (dh.status !== 'ready') {
+    return `<main class="screen" style="--accent:${DH_COLOR}">${pageHead('17', 'DHAMMA', 'ฟังธรรม', DH_COLOR, 'dharma')}
+${dh.status === 'error' ? `<section class="card dh-msg"><b>โหลดรายการธรรมะไม่สำเร็จ</b><p class="small" style="margin:0">ตรวจสอบอินเทอร์เน็ตแล้วลองใหม่ หรือเปิดฟังในแอป DoT ซึ่งใช้รายการชุดเดียวกัน</p><div class="dh-btns"><button class="btn" data-act="dhRetry">ลองใหม่</button><a class="btn btn-line" href="${DH_APP}" target="_blank" rel="noopener">เปิดใน DoT ↗</a></div></section>`
+    : '<section class="dh-load" aria-busy="true"><span class="dh-spin" aria-hidden="true"></span><p class="small" style="margin:0">กำลังโหลดรายการธรรมเทศนา…</p></section>'}
+</main>`;
+  }
+  if (st.a && dh.albums.get(st.a)) return dhAlbumView(dh.albums.get(st.a), st);
+  if (st.t && dhTeacher(st.t)) return dhTeacherView(dhTeacher(st.t), st);
+  const s = dhStore(), last = s.last && dh.albums.get(s.last.a), lt = last && dhTeacher(last.teacherId);
+  const min = Math.floor(dhListenedToday() / 60), total = dh.teachers.reduce((x, t) => x + t.tracks, 0), hours = dh.teachers.reduce((x, t) => x + t.hours, 0);
+  return `<main class="screen" style="--accent:${DH_COLOR}">
+${pageHead('17', 'DHAMMA', 'ฟังธรรม', DH_COLOR, 'dharma')}
+<p class="small" style="margin:0">ธรรมเทศนาจากครูบาอาจารย์ ${dh.teachers.length} รูป รวม ${total.toLocaleString('th-TH')} ตอน กว่า ${hours.toLocaleString('th-TH')} ชั่วโมง เปิดฟังฟรี เล่นต่อได้แม้ปิดหน้าจอ</p>
+<section class="dh-today"><div class="dh-today-t"><span>🪷 ฟังธรรมวันนี้</span><b>${min} / 15 นาที</b></div><div class="ln-bar"><i style="width:${Math.min(100, Math.round(min / 15 * 100))}%"></i></div><span class="small" style="font-size:11.5px">${min >= 15 ? 'ครบ 15 นาทีแล้ววันนี้ อนุโมทนาบุญ 🙏' : 'ฟังครบ 15 นาที ติ๊กภารกิจบุญ "ฟังธรรม" ให้อัตโนมัติในวันที่มีภารกิจนี้'}</span></section>
+${last ? `<button class="dh-resume" data-act="dhResume"><span class="dh-pic" aria-hidden="true">▶</span><span class="dh-t"><span class="eyebrow" style="color:${DH_COLOR}">ฟังต่อ${s.last.t ? ' · ' + dhClock(s.last.t) : ''}</span><b>${dhEsc(s.last.title)}</b><span>${dhEsc(lt ? lt.name : '')} · ${dhEsc(last.title)}</span></span></button>` : ''}
+<h2 class="h2 dh-h">ครูบาอาจารย์</h2>
+<ul class="dh-list">${dh.teachers.map((t) => `<li><button class="dh-tc" data-act="dhTeacher" data-v="${dhEsc(t.id)}"><span class="dh-mark">${dhEsc(dhMark(t.name))}</span><span class="dh-t"><b>${dhEsc(t.name)}</b><span>${dhEsc(t.place)}</span><span class="dh-meta">${t.albums.length} ชุด · ${t.tracks.toLocaleString('th-TH')} ตอน · ${t.hours.toLocaleString('th-TH')} ชม.</span></span><span class="dh-chev" aria-hidden="true">›</span></button></li>`).join('')}</ul>
+<p class="small dh-credit">รายการจาก <a href="${DH_APP}" target="_blank" rel="noopener">DoT app</a> ของผู้พัฒนาเดียวกัน อัปเดตทุกวัน · เสียงเปิดตรงจากแหล่งเผยแพร่ธรรมทาน เช่น archive.org, tumma.info และพอดแคสต์สาธารณะ ลิขสิทธิ์เป็นของวัดและผู้เผยแพร่เดิม ตักศิลาไม่ได้เก็บไฟล์เสียงไว้เอง</p>
+</main>`;
+}
+function dhTeacherView(t, st) {
+  const topics = dh.topics.filter((x) => t.albums.some((a) => a.topic === x.id));
+  return `<main class="screen" style="--accent:${DH_COLOR}">
+<button class="link-btn" data-act="dhBack">‹ ครูบาอาจารย์ทั้งหมด</button>
+<header class="dh-th"><span class="dh-mark big">${dhEsc(dhMark(t.name))}</span><div class="dh-t"><h1 class="h1" style="font-size:22px">${dhEsc(t.name)}</h1><span class="small">${dhEsc(t.full !== t.name ? t.full + ' · ' : '')}${dhEsc(t.place)}</span></div></header>
+<p class="small" style="margin:0">${dhEsc(t.blurb)}</p>
+<label class="field">ค้นหาเรื่องที่อยากฟัง<input class="input" data-in="dhQ" value="${dhEsc(st.q)}" placeholder="เช่น กรรม สมาธิ ความตาย ความโกรธ" autocomplete="off" maxlength="40" enterkeyhint="search"></label>
+${topics.length > 1 ? `<div class="chips">${[{ id: 'all', label: 'ทั้งหมด' }, ...topics].map((x) => `<button class="chip" style="--accent:${DH_COLOR}" data-act="dhTopic" data-v="${dhEsc(x.id)}" aria-pressed="${st.topic === x.id}">${dhEsc(x.label)}</button>`).join('')}</div>` : ''}
+<div id="dh-list">${dhAlbumListHTML(t, st)}</div>
+</main>`;
+}
+function dhAlbumRow(a) {
+  return `<li><button class="dh-al" data-act="dhAlbum" data-v="${dhEsc(a.id)}"><span class="dh-t"><b>${dhEsc(a.title)}</b><span>${a.group ? dhEsc(a.group) + ' · ' : ''}${dhEsc(dhTopicLabel(a.topic))} · ${a.tracks.length} ตอน${a.dur ? ' · ' + dhDur(a.dur) : ''}</span></span><span class="dh-chev" aria-hidden="true">›</span></button></li>`;
+}
+function dhAlbumListHTML(t, st) {
+  const list = t.albums.filter((a) => st.topic === 'all' || a.topic === st.topic), q = (st.q || '').trim();
+  if (!q) return `<ul class="dh-list">${list.map(dhAlbumRow).join('')}</ul>`;
+  const al = list.filter((a) => (a.title + ' ' + a.group).includes(q)), tr = [];
+  for (const a of list) { if (a.src === 'theme') continue; a.tracks.forEach((x, i) => { if (tr.length < 50 && x.t.includes(q)) tr.push([a, i]); }); }
+  if (!al.length && !tr.length) return `<p class="small">ยังไม่พบเรื่อง "${dhEsc(q)}" ลองคำสั้นลง หรือเลือกหมวดด้านบน</p>`;
+  return `${al.length ? `<h3 class="dh-sub">ชุดที่ตรงกัน ${al.length} ชุด</h3><ul class="dh-list">${al.slice(0, 30).map(dhAlbumRow).join('')}</ul>` : ''}
+${tr.length ? `<h3 class="dh-sub">ตอนที่ตรงกัน${tr.length >= 50 ? ' 50 ตอนแรก' : ' ' + tr.length + ' ตอน'}</h3><ul class="dh-list">${tr.map(([a, i]) => dhTrackRow(a, i, true)).join('')}</ul>` : ''}`;
+}
+function dhTrackRow(a, i, withAlbum) {
+  const x = a.tracks[i], pos = (dhStore().pos || {})[a.id + '|' + i] || 0, on = dhP.album && dhP.album.id === a.id && dhP.i === i, play = on && dhPlaying();
+  const no = play ? '<span class="dh-eq" aria-label="กำลังเล่น"><i></i><i></i><i></i></span>' : pos === -1 ? '✓' : i + 1;
+  return `<li><button class="dh-tr${on ? ' on' : ''}${pos === -1 ? ' done' : ''}" data-act="dhPlayT" data-a="${dhEsc(a.id)}" data-i="${i}"><span class="dh-no">${no}</span><span class="dh-t"><b>${dhEsc(x.t)}</b><span>${withAlbum ? dhEsc(a.title) + ' · ' : ''}${x.d ? dhDur(x.d) : ''}${pos > 0 ? ' · ฟังค้างที่ ' + dhClock(pos) : ''}</span></span></button></li>`;
+}
+function dhAlbumView(a, st) {
+  const t = dhTeacher(a.teacherId), pos = dhStore().pos || {}, n = a.tracks.length, show = Math.min(n, DH_PAGE * ((st.more || 0) + 1));
+  let next = 0; for (let i = 0; i < n; i++) { if (pos[a.id + '|' + i] !== -1) { next = i; break; } if (i === n - 1) next = 0; }
+  const cur = dhP.album && dhP.album.id === a.id;
+  const desc = a.desc.length > 280 ? a.desc.slice(0, 280) + '…' : a.desc;
+  return `<main class="screen" style="--accent:${DH_COLOR}">
+<button class="link-btn" data-act="dhBack">‹ ${dhEsc(t ? t.name : 'กลับ')}</button>
+<header class="dh-ah"><span class="eyebrow" style="color:${DH_COLOR}">${dhEsc(dhTopicLabel(a.topic))}${a.year ? ' · ' + (a.year + 543) : ''}</span><h1 class="h1" style="font-size:22px">${dhEsc(a.title)}</h1><span class="small">${a.group ? dhEsc(a.group) + ' · ' : ''}${n} ตอน${a.dur ? ' · ' + dhDur(a.dur) : ''}</span></header>
+${desc ? `<p class="small" style="margin:0">${dhEsc(desc)}</p>` : ''}
+<div class="dh-btns">${cur ? `<button class="btn" data-act="dhToggle">${dhPlaying() ? '❚❚ หยุดชั่วคราว' : '▶ เล่นต่อ'}</button>` : `<button class="btn" data-act="dhPlayT" data-a="${dhEsc(a.id)}" data-i="${next}">▶ ${next ? 'ฟังต่อตอนที่ ' + (next + 1) : 'เริ่มฟังตอนแรก'}</button>`}
+${a.link ? `<a class="btn btn-line" href="${dhEsc(a.link)}" target="_blank" rel="noopener">ต้นฉบับ ${dhEsc(DH_SRC[a.src] || '')} ↗</a>` : ''}</div>
+<ul class="dh-list dh-tracks">${Array.from({ length: show }, (_, i) => dhTrackRow(a, i)).join('')}</ul>
+${show < n ? `<button class="btn btn-line" data-act="dhMore">แสดงเพิ่ม (${n - show} ตอน)</button>` : ''}
+</main>`;
+}
+// เครื่องเล่นแบบย่อ อยู่เหนือเมนูล่าง ใช้ได้ทุกหน้า
+function dhMiniHTML() {
+  const a = dhP.album, x = a.tracks[dhP.i], t = dhTeacher(a.teacherId), play = dhPlaying();
+  const sl = dhP.sleepEnd ? 'จบตอน' : dhP.sleepAt ? Math.max(1, Math.ceil((dhP.sleepAt - Date.now()) / 60000)) + ' น.' : '';
+  return `<div class="dh-prog" data-act="dhSeekBar" role="slider" aria-label="ตำแหน่งที่ฟัง"><i id="dh-bar"></i></div>
+<div class="dh-mrow"><button class="dh-mt" data-act="dhOpenNow"><b>${dhEsc(x.t)}</b><span><span id="dh-time">0:00</span> · ${dhEsc(t ? t.name : '')}${sl ? ` · <span id="dh-sl">⏾ ${sl}</span>` : ''}</span></button>
+<button class="dh-mb" data-act="dhBack15" aria-label="ย้อน 15 วินาที">↺<small>15</small></button>
+<button class="dh-mb dh-pp" data-act="dhToggle" aria-label="${play ? 'หยุดชั่วคราว' : 'เล่น'}">${play ? '❚❚' : '▶'}</button>
+<button class="dh-mb" data-act="dhFwd30" aria-label="ข้าม 30 วินาที">↻<small>30</small></button>
+<button class="dh-mb" data-act="dhMenu" aria-label="ตัวเลือก" aria-expanded="${!!state.dhMenu}">⋯</button></div>
+${state.dhMenu ? `<div class="dh-menu">
+<div class="dh-mline"><button class="chip small-chip" data-act="dhPrev"${dhP.i ? '' : ' disabled'}>‹ ตอนก่อน</button><button class="chip small-chip" data-act="dhRate">ความเร็ว ${dhP.rate}×</button><button class="chip small-chip" data-act="dhNext"${dhP.i + 1 < a.tracks.length ? '' : ' disabled'}>ตอนถัดไป ›</button></div>
+<div class="dh-mline"><span class="small">ตั้งเวลาปิด</span>${[[15, '15 น.'], [30, '30 น.'], [60, '1 ชม.'], [-1, 'จบตอนนี้'], [0, 'ไม่ตั้ง']].map(([v, l]) => `<button class="chip small-chip" data-act="dhSleep" data-v="${v}" aria-pressed="${v === 0 ? !dhP.sleepAt && !dhP.sleepEnd : (v === -1 ? dhP.sleepEnd : !!dhP.sleepAt && dhP.sleepMin === v)}">${l}</button>`).join('')}</div>
+<div class="dh-mline"><button class="chip small-chip" data-act="dhClose">ปิดเครื่องเล่น ✕</button></div></div>` : ''}`;
+}
+function dhMiniSync() {
+  let el = document.getElementById('dh-mini');
+  const show = !!dhP.album && !['welcome', 'setup'].includes(route());
+  document.body.classList.toggle('dh-on', show);
+  if (!show) { if (el) el.remove(); return; }
+  if (!el) { el = document.createElement('div'); el.id = 'dh-mini'; el.className = 'dh-mini'; el.setAttribute('role', 'region'); el.setAttribute('aria-label', 'เครื่องเล่นธรรมะ'); document.body.appendChild(el); }
+  el.innerHTML = dhMiniHTML();
+  dhMiniTick();
+}
+function dhMiniTick() {
+  const a = dhP.audio, bar = document.getElementById('dh-bar'), tm = document.getElementById('dh-time');
+  if (!a || !bar) return;
+  const d = a.duration || (dhP.album && dhP.album.tracks[dhP.i].d) || 0;
+  bar.style.width = d ? Math.min(100, a.currentTime / d * 100) + '%' : '0%';
+  if (tm) tm.textContent = dhClock(a.currentTime) + (d ? ' / ' + dhClock(d) : '');
+  const sl = document.getElementById('dh-sl');
+  if (sl && dhP.sleepAt) sl.textContent = '⏾ ' + Math.max(1, Math.ceil((dhP.sleepAt - Date.now()) / 60000)) + ' น.';
+}
+dhP.onTick = dhMiniTick;
+dhP.onChange = (why) => {
+  if (why === 'error') toast('ไฟล์เสียงตอนนี้เปิดไม่ได้ ข้ามไปตอนถัดไป');
+  dhMiniSync();
+  if (route() === 'dharma' && state.dh.a) {
+    const y = window.scrollY; root.innerHTML = viewDharma() + nav('dharma'); window.scrollTo(0, y);
+  }
+};
+dhP.onMinute = (sec, before) => {
+  if (sec < 900 || before >= 900) return;
+  const t = meritToday(), m = meritLoad();
+  if (t.list.some((x) => x[0] === 'dhamma')) { const d = m.done[t.key] || []; if (!d.includes('dhamma')) { m.done[t.key] = [...d, 'dhamma']; meritSave(m); } toast('ฟังธรรมครบ 15 นาที ติ๊กภารกิจบุญให้แล้ว 🙏'); }
+  else toast('ฟังธรรมครบ 15 นาทีวันนี้ อนุโมทนาบุญ 🙏');
+};
+const VIEWS = { dharma: viewDharma, learn: viewLearn, face: viewFace, fengshui: viewFengshui, calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -3418,8 +3538,9 @@ function render() {
   mountPhysio();
   if (r === 'fengshui' && state.fs.tab === 'map') mountFsMap();
   { const row = document.querySelector('.fs-tabs'); const on = row && row.querySelector('[aria-pressed="true"]'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; }
-  if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', face: 'โหงวเฮ้ง ลายมือ', learn: 'ห้องศึกษาตำรา', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
+  if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; state.dhMenu = false; }
+  dhMiniSync();
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', face: 'โหงวเฮ้ง ลายมือ', learn: 'ห้องศึกษาตำรา', dharma: 'ฟังธรรม', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -3685,6 +3806,25 @@ document.addEventListener('click', (e) => {
     case 'oraClose': { ORA_SHEET = false; const sh = document.getElementById('ora-sheet'); if (sh) { sh.classList.add('out'); setTimeout(() => sh.remove(), 400); } return; }
     case 'oraMore': { e.preventDefault && e.preventDefault(); const t = document.getElementById('live-daily'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     case 'askPersona': state.ask.persona = el.dataset.v; break;
+    case 'dhRetry': dhReload(() => { if (route() === 'dharma') render(); }); break;
+    case 'dhTeacher': Object.assign(state.dh, { t: el.dataset.v, a: null, topic: 'all', q: '', more: 0 }); render(); window.scrollTo(0, 0); return;
+    case 'dhAlbum': Object.assign(state.dh, { a: el.dataset.v, more: 0 }); render(); window.scrollTo(0, 0); return;
+    case 'dhBack': if (state.dh.a) state.dh.a = null; else state.dh.t = null; render(); window.scrollTo(0, 0); return;
+    case 'dhTopic': state.dh.topic = el.dataset.v; break;
+    case 'dhMore': state.dh.more = (state.dh.more || 0) + 1; break;
+    case 'dhPlayT': dhPlay(el.dataset.a, +el.dataset.i); return;
+    case 'dhResume': { const l = dhStore().last; if (l && dh.albums.get(l.a)) { Object.assign(state.dh, { t: dh.albums.get(l.a).teacherId, a: l.a, more: 0 }); dhPlay(l.a, l.i); render(); window.scrollTo(0, 0); } return; }
+    case 'dhToggle': dhToggle(); return;
+    case 'dhBack15': dhSeek(-15); return;
+    case 'dhFwd30': dhSeek(30); return;
+    case 'dhPrev': dhStep(-1); return;
+    case 'dhNext': dhStep(1); return;
+    case 'dhMenu': state.dhMenu = !state.dhMenu; dhMiniSync(); return;
+    case 'dhRate': dhCycleRate(); return;
+    case 'dhSleep': { const v = +el.dataset.v; dhSleep(v); state.dhMenu = false; dhMiniSync(); toast(v > 0 ? `ปิดเสียงอัตโนมัติใน ${v} นาที` : v === -1 ? 'จะหยุดเมื่อจบตอนนี้' : 'ยกเลิกตั้งเวลาปิด'); return; }
+    case 'dhClose': state.dhMenu = false; dhStop(); if (route() === 'dharma') render(); return;
+    case 'dhOpenNow': { if (!dhP.album) return; state.dhMenu = false; Object.assign(state.dh, { t: dhP.album.teacherId, a: dhP.album.id, more: Math.floor(dhP.i / DH_PAGE) }); if (route() === 'dharma') { render(); window.scrollTo(0, 0); } else go('dharma'); setTimeout(() => { const on = document.querySelector('.dh-tr.on'); if (on) on.scrollIntoView({ block: 'center' }); }, 60); return; }
+    case 'dhSeekBar': { const r = el.getBoundingClientRect(); dhSeekTo((e.clientX - r.left) / r.width); return; }
     case 'askClear': state.ask.messages = []; state.ask.ctx = null; break;
     case 'askMic': startMic(el); return;
     default: return;
@@ -3722,6 +3862,7 @@ document.addEventListener('input', (e) => {
   const v = e.target.value;
   if (key === 'm.name') { state.match.name = v.trim(); const sb = document.querySelector('[data-act=matchSave]'); if (sb) sb.disabled = !state.match.name; return; }
   if (key === 'tarotQ') { state.tarot.q = v; return; }
+  if (key === 'dhQ') { state.dh.q = v; const box = document.getElementById('dh-list'), t = dhTeacher(state.dh.t); if (box && t) box.innerHTML = dhAlbumListHTML(t, state.dh); return; }
   if (key && key.startsWith('fsNew.')) { state.fs.newMember = { ...(state.fs.newMember || { name: '', gender: 'f', day: 1, month: 1, yearBE: 2540 }), [key.slice(6)]: v }; return; }
   if (key === 'fsRadius') { state.fs.radius = +v; const lb = e.target.closest('label'); if (lb && lb.firstChild) lb.firstChild.textContent = `รัศมีผัง ${v} เมตร`; fsMapDraw(); return; }
   if (key === 'fsFacing') {
