@@ -1002,7 +1002,7 @@ a:hover { color: var(--gold-2); }
 .ora-sheet .ora-lun { justify-content: center; }
 .ora-sheet .ora-adv { width: 100%; }
 .wk-holy { font-size: 9px; line-height: 1; padding: 2px 4px; border-radius: 6px; color: var(--gold-2); background: rgba(212,175,99,.14); }
-.wk-holy.ev { color: #F6E3B0; background: rgba(212,175,99,.3); }
+.wk-holy.wk-ev { color: #F6E3B0; background: rgba(212,175,99,.3); }
 .fx-b { display: inline-block; vertical-align: 1px; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 99px; margin-left: 4px; font-family: var(--sans, inherit); }
 .fx-b.pos { color: var(--harmony); background: rgba(111,195,178,.15); }
 .fx-b.neg { color: var(--tension); background: rgba(240,160,140,.15); }
@@ -1433,7 +1433,7 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .ph-cp-sc{font-family:var(--serif);font-size:40px;color:#F0D89A}.ph-cp-sc i{font-style:normal;font-size:15px;color:var(--muted)}
 .ph-cp-l{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.55}
 /* สนับสนุนผู้พัฒนา */
-.dn{margin-top:14px;border:1px solid rgba(224,164,88,.45);border-radius:14px;background:linear-gradient(120deg,rgba(224,164,88,.12),var(--surface))}
+details.dn{margin-top:14px;border:1px solid rgba(224,164,88,.45);border-radius:14px;background:linear-gradient(120deg,rgba(224,164,88,.12),var(--surface))}
 .dn summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:42px 1fr auto;gap:12px;align-items:center;padding:12px}
 .dn summary::-webkit-details-marker{display:none}
 .dn-ic{width:42px;height:42px;border-radius:21px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(224,164,88,.18)}
@@ -1492,6 +1492,10 @@ button.ask-link { background: none; font: inherit; font-size: 12px; cursor: poin
 .mv-disc { font-size: 11.5px; margin: 0; }
 @media (max-width: 360px) { .mv-dx { grid-template-columns: 1fr; } }
 .mv-card .eyebrow, .mv-next .eyebrow { letter-spacing: .02em; font-size: 12px; }
+
+/* ช่อง 7 วัน: เตี้ยลง ป้ายวันพระ/วันสำคัญไปมุมบนขวา */
+.day { position: relative; gap: 4px; padding: 7px 0 7px; }
+.wk-holy { position: absolute; top: 3px; right: 3px; font-size: 8px; padding: 1px 3px; border-radius: 5px; }
 
 </style>
 </head>
@@ -11810,7 +11814,7 @@ function weekData() {
 function weekHTML() {
   const days = weekData(), sel = state.weekSel;
   const strip = days.map((d, i) => `<button class="day${sel === i ? ' sel' : ''}" data-act="weekDay" data-i="${i}" aria-pressed="${sel === i}" aria-label="${WEEKDAY[d.date.getDay()]} ${d.date.getDate()} ${RATING_TH[d.rating]}">
-<span class="wd">${i === 0 ? 'วันนี้' : WEEKDAY_SHORT[d.date.getDay()]}</span><span class="dn">${d.date.getDate()}</span>${moonIcon(d.phase)}${d.fc.lunar && (d.fc.lunar.holy || d.fc.lunar.events.length) ? `<span class="wk-holy${d.fc.lunar.events.length ? ' ev' : ''}">${d.fc.lunar.events.length ? '★' : 'พระ'}</span>` : ''}
+<span class="wd">${i === 0 ? 'วันนี้' : WEEKDAY_SHORT[d.date.getDay()]}</span><span class="dn">${d.date.getDate()}</span>${moonIcon(d.phase)}${d.fc.lunar && (d.fc.lunar.holy || d.fc.lunar.events.length) ? `<span class="wk-holy${d.fc.lunar.events.length ? ' wk-ev' : ''}">${d.fc.lunar.events.length ? '★' : 'พระ'}</span>` : ''}
 <span class="dots" aria-hidden="true">${[1, 2, 3, 4, 5].map((n) => `<i style="background:${n <= d.rating ? ratingColor(d.rating) : 'var(--line)'}"></i>`).join('')}</span></button>`).join('');
   let detail = '';
   if (sel != null) {

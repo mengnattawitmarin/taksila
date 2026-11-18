@@ -606,7 +606,7 @@ function weekData() {
 function weekHTML() {
   const days = weekData(), sel = state.weekSel;
   const strip = days.map((d, i) => `<button class="day${sel === i ? ' sel' : ''}" data-act="weekDay" data-i="${i}" aria-pressed="${sel === i}" aria-label="${WEEKDAY[d.date.getDay()]} ${d.date.getDate()} ${RATING_TH[d.rating]}">
-<span class="wd">${i === 0 ? 'วันนี้' : WEEKDAY_SHORT[d.date.getDay()]}</span><span class="dn">${d.date.getDate()}</span>${moonIcon(d.phase)}${d.fc.lunar && (d.fc.lunar.holy || d.fc.lunar.events.length) ? `<span class="wk-holy${d.fc.lunar.events.length ? ' ev' : ''}">${d.fc.lunar.events.length ? '★' : 'พระ'}</span>` : ''}
+<span class="wd">${i === 0 ? 'วันนี้' : WEEKDAY_SHORT[d.date.getDay()]}</span><span class="dn">${d.date.getDate()}</span>${moonIcon(d.phase)}${d.fc.lunar && (d.fc.lunar.holy || d.fc.lunar.events.length) ? `<span class="wk-holy${d.fc.lunar.events.length ? ' wk-ev' : ''}">${d.fc.lunar.events.length ? '★' : 'พระ'}</span>` : ''}
 <span class="dots" aria-hidden="true">${[1, 2, 3, 4, 5].map((n) => `<i style="background:${n <= d.rating ? ratingColor(d.rating) : 'var(--line)'}"></i>`).join('')}</span></button>`).join('');
   let detail = '';
   if (sel != null) {
