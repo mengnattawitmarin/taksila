@@ -1486,3 +1486,4 @@ details.dn{margin-top:14px;border:1px solid rgba(224,164,88,.45);border-radius:1
 /* ช่อง 7 วัน: เตี้ยลง ป้ายวันพระ/วันสำคัญไปมุมบนขวา */
 .day { position: relative; gap: 4px; padding: 7px 0 7px; }
 .wk-holy { position: absolute; top: 3px; right: 3px; font-size: 8px; padding: 1px 3px; border-radius: 5px; }
+.mv-note .chip { margin-top: 6px; display: inline-flex; }

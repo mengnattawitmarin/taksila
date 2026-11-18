@@ -3424,7 +3424,7 @@ const mvBhava = (h) => `ภพ${BHAVA[h - 1].th}`;
 // ราศีที่ใช้เป็นภพที่ 1: ลัคนาไทย (มีเวลาเกิด) หรือราศีเกิดแบบไทย
 function mvRef(ch) {
   const lg = thaiLagna(ch);
-  if (lg) return { sign: lg.sign, kind: 'ลัคนา', natal: { sun: thaiSunSign(ch), moon: signOf(((ch.planets[1].lon - ayanamsa(ch.utc)) % 360 + 360) % 360) } };
+  if (lg) return { sign: lg.sign, kind: 'ลัคนา', deg: lg.deg, sun: thaiSunSign(ch), natal: { sun: thaiSunSign(ch), moon: signOf(((ch.planets[1].lon - ayanamsa(ch.utc)) % 360 + 360) % 360) } };
   return { sign: thaiSunSign(ch), kind: 'ราศีเกิด', natal: { moon: signOf(((ch.planets[1].lon - ayanamsa(ch.utc)) % 360 + 360) % 360) } };
 }
 function moveCardHTML() {
@@ -3457,14 +3457,22 @@ ${nt ? `<div class="mv-next"><span class="eyebrow" style="color:${P.c}">${mvCoun
 }
 function viewMove() {
   const ch = state.chart, now = new Date(), mine = mvRef(ch);
-  const pick = state.mvRef != null ? state.mvRef : null, refSign = pick != null ? pick : mine.sign, isMine = pick == null || pick === mine.sign;
-  const rd = readTransits(refSign, isMine ? mine.natal : {}, now);
+  const sunPick = state.mvRef === 'sun' && mine.kind === 'ลัคนา';
+  const pick = sunPick ? null : (typeof state.mvRef === 'number' ? state.mvRef : null);
+  const refSign = sunPick ? mine.sun : pick != null ? pick : mine.sign, isMine = sunPick || pick == null || pick === mine.sign;
+  const natal = sunPick ? { lagna: mine.sign, moon: mine.natal.moon } : isMine ? mine.natal : {};
+  const rd = readTransits(refSign, natal, now);
+  const kindNow = sunPick ? 'ราศีเกิด' : mine.kind;
+  // ลัคนาใกล้รอยต่อราศี: ถ้าเวลาเกิดคลาดไม่กี่นาที ลัคนาอาจเป็นราศีข้างเคียง (ลัคนาเดินราว 1 องศาต่อ 4 นาที)
+  const edge = mine.kind === 'ลัคนา' && (mine.deg < 5 || mine.deg > 25) ? { nb: mine.deg < 5 ? (mine.sign + 11) % 12 : (mine.sign + 1) % 12, end: mine.deg < 5 ? 'ต้น' : 'ท้าย', min: Math.max(1, Math.round(Math.min(mine.deg, 30 - mine.deg) * 4)) } : null;
   const all = upcomingMoves(refSign, now, 400), up = all.filter((e) => !TR_FAST.includes(e.id) || all.filter((x) => x.id === e.id).indexOf(e) < (e.id === 'mars' ? 2 : 1)).slice(0, 9);
   return `<main class="screen" style="--accent:${MV_COLOR}">
 ${pageHead('18', 'TRANSITS', 'ดาวย้าย กระทบดวง', MV_COLOR, 'move')}
-<p class="small" style="margin:0">ดาวย้ายราศีทีไร ชีวิตก็ขยับตาม ดูว่าดาวทั้ง 8 ดวง ราหู เสาร์ พฤหัส มฤตยู อังคาร อาทิตย์ พุธ ศุกร์ ตอนนี้อยู่ภพไหนของ${isMine ? mine.kind + 'คุณ' : 'ลัคนา' + signTh(refSign)} ส่งผลเรื่องอะไร และควรรับมืออย่างไร</p>
+<p class="small" style="margin:0">ดาวย้ายราศีทีไร ชีวิตก็ขยับตาม ดูว่าดาวทั้ง 8 ดวง ราหู เสาร์ พฤหัส มฤตยู อังคาร อาทิตย์ พุธ ศุกร์ ตอนนี้อยู่ภพไหนของ${isMine ? kindNow + 'คุณ' : 'ลัคนา' + signTh(refSign)} ส่งผลเรื่องอะไร และควรรับมืออย่างไร</p>
 ${isMine && mine.kind === 'ราศีเกิด' ? `<p class="mv-note">ยังไม่มีเวลาเกิด จึงนับภพจากราศีเกิดแบบไทย (ราศี${signTh(mine.sign)}) ใส่เวลาเกิดที่ <a href="#/setup">ข้อมูลเกิด</a> แล้วแอปจะนับจากลัคนา ซึ่งแม่นกว่า</p>` : ''}
-<div class="mv-ref"><span class="small">ดูของ</span><div class="chips">${`<button class="chip" data-act="mvRef" data-v="" aria-pressed="${isMine}">${mine.kind}ฉัน (${signTh(mine.sign)})</button>`}${SIGNS.map((s, i) => i === mine.sign ? '' : `<button class="chip" data-act="mvRef" data-v="${i}" aria-pressed="${pick === i}">${s.th}</button>`).join('')}</div></div>
+${edge && !sunPick && pick == null ? `<p class="mv-note">ลัคนาคุณอยู่${edge.end}ราศี${signTh(mine.sign)} (${Math.floor(mine.deg)}°) ถ้าเวลาเกิดคลาดไปราว ${edge.min} นาที ลัคนาจะเป็น${signTh(edge.nb)} ลองอ่านลัคนา${signTh(edge.nb)}ประกอบ ข้อที่ตรงกับชีวิตจริงมากกว่ามักเป็นลัคนาที่ถูก <button class="chip small-chip" data-act="mvRef" data-v="${edge.nb}">ดูลัคนา${signTh(edge.nb)} ›</button></p>` : ''}
+${sunPick ? `<p class="mv-note">กำลังดูจากราศีเกิดแบบไทย (ราศีที่ดวงอาทิตย์อยู่ตอนเกิด) ซึ่งคนเกิดเดือนเดียวกันได้เหมือนกัน ใช้อ่านประกอบลัคนา เรื่องที่สองแบบพูดตรงกันคือเรื่องที่น่าจะเกิดชัดที่สุด</p>` : ''}
+<div class="mv-ref"><span class="small">ดูของ</span><div class="chips"><button class="chip" data-act="mvRef" data-v="" aria-pressed="${!sunPick && (pick == null || pick === mine.sign)}">${mine.kind}ฉัน (${signTh(mine.sign)})</button>${mine.kind === 'ลัคนา' && mine.sun !== mine.sign ? `<button class="chip" data-act="mvRef" data-v="sun" aria-pressed="${sunPick}">ราศีเกิดฉัน (${signTh(mine.sun)})</button>` : ''}${SIGNS.map((s, i) => i === mine.sign || (mine.kind === 'ลัคนา' && i === mine.sun) ? '' : `<button class="chip" data-act="mvRef" data-v="${i}" aria-pressed="${pick === i}">${s.th}</button>`).join('')}</div></div>
 <section class="mv-up"><h2 class="h2">ดาวที่กำลังจะย้าย</h2>
 <ol class="mv-tl">${up.map((e) => { const T = TR_TEXT[e.id][e.house - 1], P = TR_PLANETS[e.id]; return `<li style="--pc:${P.c}"><span class="mv-num sm">${P.n}</span><div><span class="mv-when">${mvCount(e.at)} · ${mvDate(e.at, e.id, true)}</span><b>${P.th}${e.retro ? 'ถอยกลับ' : 'ย้าย'}เข้า${signTh(e.sign)} → ${mvBhava(e.house)}</b><span class="small">${T.h}</span></div></li>`; }).join('')}</ol></section>
 <section class="mv-now"><h2 class="h2">ตอนนี้ดาวจรอยู่ตรงไหนในดวง</h2>
@@ -3765,7 +3773,7 @@ document.addEventListener('click', (e) => {
     case 'oraClose': { ORA_SHEET = false; const sh = document.getElementById('ora-sheet'); if (sh) { sh.classList.add('out'); setTimeout(() => sh.remove(), 400); } return; }
     case 'oraMore': { e.preventDefault && e.preventDefault(); const t = document.getElementById('live-daily'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     case 'askPersona': state.ask.persona = el.dataset.v; break;
-    case 'mvRef': state.mvRef = el.dataset.v === '' ? null : +el.dataset.v; break;
+    case 'mvRef': state.mvRef = el.dataset.v === '' ? null : el.dataset.v === 'sun' ? 'sun' : +el.dataset.v; break;
     case 'askClear': state.ask.messages = []; state.ask.ctx = null; break;
     case 'askMic': startMic(el); return;
     default: return;
