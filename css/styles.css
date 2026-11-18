@@ -1491,3 +1491,12 @@ details.dn{margin-top:14px;border:1px solid rgba(224,164,88,.45);border-radius:1
 .zd-tab > i { font-style: normal; font-size: 11px; color: var(--muted); }
 .zd-tab > span { font-size: 12.5px; color: var(--muted); }
 .zd-tab > b { font-family: var(--serif); font-size: 16px; color: var(--gold-2); }
+.mv-mode { display: flex; flex-direction: column; gap: 8px; }
+.mv-mode.big { padding: 14px; border-radius: 14px; border: 1px solid rgba(185,154,240,.5); background: radial-gradient(120% 90% at 100% 0%, rgba(185,154,240,.14), transparent 60%), var(--surface); }
+.mv-mode.big > b { font-size: 15.5px; }
+.mv-opt { display: flex; flex-direction: column; gap: 3px; text-align: left; padding: 12px; border-radius: 12px; border: 1px solid var(--line); background: rgba(255,255,255,.02); color: var(--text); font: inherit; cursor: pointer; }
+.mv-opt b { font-size: 14px; color: #CDB8F5; }
+.mv-opt span { font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+.mv-opt.on { border-color: rgba(185,154,240,.7); }
+.mv-seg { align-self: flex-start; }
+.mv-mode > .small { font-size: 12px; }

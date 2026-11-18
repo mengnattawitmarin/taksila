@@ -15,7 +15,7 @@ import { prayerTr } from './prayer-tr.js';
 import { qrSVG } from './qr.js';
 import { LEARN_CATS, LESSONS } from './learn.js';
 import { DONATE_QR } from './donate.js';
-import { readTransits, upcomingMoves, TR_TEXT, TR_PLANETS, TR_FAST, BHAVA, signTh, sureDate } from './transit.js';
+import { readTransits, upcomingMoves, TR_TEXT, TR_PLANETS, TR_FAST, BHAVA, signTh, sureDate, trMode, setTrMode } from './transit.js';
 import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh, phSetNorm, ageZone, ageTimeline, moleDetect, coupleRead } from './physio.js';
 import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf, FS_PTYPES, ptypeOf } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
@@ -787,9 +787,9 @@ function zodiacNoteHTML(ch, open = false) {
   return `<details class="zd-note"${open ? ' open' : ''}><summary><span class="zd-tab"><i></i><i>สากล</i><i>แบบไทย</i>${rows.map(([n, a, b]) => `<span>${n}</span>${cell(a)}${cell(b)}`).join('')}</span><span class="zd-q">${same ? 'ตรงกันทั้งสองแบบ' : 'ทำไมไม่ตรงกัน?'} ⓘ</span></summary>
 <div class="zd-body"><p>ราศีมีสองระบบที่ใช้กันทั่วไป และนับจุดเริ่มต้นต่างกัน</p>
 <ul><li><b>ระบบสากล (Astrology ตะวันตก)</b> นับตามฤดูกาล เริ่มราศีเมษที่วันวสันตวิษุวัต ราว 21 มี.ค. ใช้ในดูดวงรายวันแบบสากล ผังดาว และดวงคู่ในแอปนี้</li>
-<li><b>ระบบไทย (โหราศาสตร์ไทย)</b> นับตามกลุ่มดาวจริงบนฟ้า เริ่มราศีเมษวันมหาสงกรานต์ ราว 13–14 เม.ย. ใช้ในห้องดาวย้าย ทักษา และที่หมอดูไทยในทีวีส่วนใหญ่ใช้</li></ul>
+<li><b>ระบบไทย (โหราศาสตร์ไทย)</b> นับตามกลุ่มดาวจริงบนฟ้า เริ่มราศีเมษวันมหาสงกรานต์ ราว 13–14 เม.ย. ใช้ในทักษา และที่หมอดูไทยในทีวีส่วนใหญ่ใช้ (ห้องดาวย้ายเลือกได้ทั้งสองแบบ)</li></ul>
 <p>สองระบบห่างกันราว 24 องศา (ราว 24 วันสำหรับราศีเกิด) ดาวหรือลัคนาที่อยู่ช่วงต้นราศีแบบสากลจึงถอยไปอยู่ราศีก่อนหน้าในแบบไทย ${same ? 'ของคุณตรงกันทั้งสองแบบ' : `ของคุณต่างกันที่${diff.map(([n, a, b]) => `${n} (สากล${SIGNS[a].th} · ไทย${SIGNS[b].th})`).join(' และ')}`} ไม่มีแบบไหนผิด แค่คนละตำรา</p>
-<p>ถ้าจะอ่านดวงแบบที่หมอดูไทยพูด เช่น "ราหูย้ายเข้ามังกร กระทบลัคนาไหน" ให้ใช้ค่าแบบไทย <a href="#/move">เปิดห้องดาวย้าย ›</a></p>
+<p>ถ้าจะอ่านดวงแบบที่หมอดูไทยพูด เช่น "ราหูย้ายเข้ามังกร กระทบลัคนาไหน" ให้ใช้ค่าแบบไทย ในห้องดาวย้ายเลือกได้ว่าจะใช้ระบบสากลหรือไทย <a href="#/move">เปิดห้องดาวย้าย ›</a></p>
 <p class="small">แอปคำนวณแบบไทยด้วยอายนางศ์ลาหิรี ตรวจแล้วตรงกับเวลามหาสงกรานต์ตามประกาศทางการปี 2567 และ 2569 คลาดไม่ถึง 5 นาที</p></div></details>`;
 }
 function viewChart() {
@@ -3428,10 +3428,31 @@ const mvDays = (d, now = new Date()) => Math.round((new Date(d.getFullYear(), d.
 const mvCount = (d) => { const n = mvDays(d); return n <= 0 ? 'วันนี้' : n === 1 ? 'พรุ่งนี้' : `อีก ${n} วัน`; };
 const mvBhava = (h) => `ภพ${BHAVA[h - 1].th}`;
 // ราศีที่ใช้เป็นภพที่ 1: ลัคนาไทย (มีเวลาเกิด) หรือราศีเกิดแบบไทย
+// ระบบดาว: ผู้ใช้เลือกเองในป้ายด้านบนห้องดาวย้าย (ค่าเริ่มต้นสากล) จำไว้ในเครื่อง
+const MV_KEY = 'taksila.trMode';
+let mvChosen = false;
+try { const v = localStorage.getItem(MV_KEY); if (v) { setTrMode(v); mvChosen = true; } } catch (e) {}
+const mvSysTh = () => trMode() === 'thai' ? 'ระบบไทย' : 'ระบบสากล';
 function mvRef(ch) {
+  if (trMode() === 'intl') {
+    const sun = ch.planets[0].sign, moon = ch.planets[1].sign;
+    if (ch.timeKnown && ch.asc != null) return { sign: signOf(ch.asc), kind: 'ลัคนา', deg: ch.asc % 30, sun, natal: { sun, moon } };
+    return { sign: sun, kind: 'ราศีเกิด', natal: { moon } };
+  }
   const lg = thaiLagna(ch);
   if (lg) return { sign: lg.sign, kind: 'ลัคนา', deg: lg.deg, sun: thaiSunSign(ch), natal: { sun: thaiSunSign(ch), moon: signOf(((ch.planets[1].lon - ayanamsa(ch.utc)) % 360 + 360) % 360) } };
   return { sign: thaiSunSign(ch), kind: 'ราศีเกิด', natal: { moon: signOf(((ch.planets[1].lon - ayanamsa(ch.utc)) % 360 + 360) % 360) } };
+}
+// ป้ายเลือกระบบ: ยังไม่เคยเลือก = การ์ดใหญ่สองตัวเลือกพร้อมคำอธิบาย · เลือกแล้ว = แถบสลับเล็ก
+function mvModeHTML() {
+  const m = trMode(), ex = {
+    intl: ['สากล', 'ตำแหน่งดาวตามดาราศาสตร์จริง', 'ดาวแม่นตามฟ้าจริง อ่านคำทำนายแบบโหราศาสตร์ไทย แต่วันย้ายราศีอาจไม่ตรงกับที่หมอดูไทยประกาศ'],
+    thai: ['ไทย', 'ตรงปฏิทินโหราศาสตร์ไทย', 'วันย้ายตรงกับที่หมอดูไทยและสื่อประกาศ เช่น ราหูย้ายเข้ามังกร 22 พ.ย. 69 ลัคนาและราศีนับแบบไทย']
+  };
+  if (!mvChosen) return `<section class="mv-mode big"><b>เลือกระบบดาวที่ใช้ทำนาย</b><span class="small">ภพและคำทำนายส่วนใหญ่ออกมาใกล้กัน ต่างกันที่ชื่อราศีและวันย้าย เปลี่ยนทีหลังได้เสมอ</span>
+${['intl', 'thai'].map((k) => `<button class="mv-opt${m === k ? ' on' : ''}" data-act="mvMode" data-v="${k}"><b>${ex[k][0]} · ${ex[k][1]}</b><span>${ex[k][2]}</span></button>`).join('')}</section>`;
+  return `<section class="mv-mode"><div class="seg mv-seg" role="group" aria-label="ระบบดาว">${['intl', 'thai'].map((k) => `<button data-act="mvMode" data-v="${k}" aria-pressed="${m === k}">${ex[k][0]}</button>`).join('')}</div>
+<span class="small">${m === 'intl' ? 'ใช้ตำแหน่งดาวสากลที่คำนวณจากดาราศาสตร์จริง อ่านคำทำนายแบบไทย วันย้ายอาจต่างจากที่หมอดูไทยประกาศ' : 'ใช้ปฏิทินโหราศาสตร์ไทย วันย้ายตรงกับที่หมอดูไทยประกาศ ลัคนาและราศีนับแบบไทย'}</span></section>`;
 }
 function moveCardHTML() {
   try {
@@ -3440,7 +3461,7 @@ function moveCardHTML() {
     const head = ev ? `<span class="mv-count"><b>${mvCount(ev.at)}</b> ${TR_PLANETS[ev.id].th}${ev.retro ? 'ถอยกลับ' : 'ย้าย'}เข้า${signTh(ev.sign)} · ${mvDate(ev.at, ev.id, true)}</span>
 <b class="mv-h">เข้า${mvBhava(ev.house)}ของคุณ: ${TR_TEXT[ev.id][ev.house - 1].h}</b>` : `<b class="mv-h">${TR_PLANETS.rahu.th}อยู่${mvBhava(rd.rows[0].house)}: ${rd.rows[0].text.h}</b>`;
     return `<a class="mv-card" href="#/move" style="--c:${MV_COLOR}">
-<span class="eyebrow" style="color:${MV_COLOR}">ดาวย้าย กระทบดวงคุณ · ${ref.kind}${signTh(ref.sign)}</span>
+<span class="eyebrow" style="color:${MV_COLOR}">ดาวย้าย กระทบดวงคุณ · ${ref.kind}${signTh(ref.sign)} · ${mvSysTh()}</span>
 ${head}
 <span class="mv-chips">${rd.rows.map((r) => `<span class="mv-chip" style="--pc:${TR_PLANETS[r.id].c}"><i>${TR_PLANETS[r.id].n}</i>${TR_PLANETS[r.id].th} ภพ ${r.house}</span>`).join('')}</span>
 <span class="mv-more">อ่านคำทำนายทั้งหมด ›</span></a>`;
@@ -3474,6 +3495,7 @@ function viewMove() {
   const all = upcomingMoves(refSign, now, 400), up = all.filter((e) => !TR_FAST.includes(e.id) || all.filter((x) => x.id === e.id).indexOf(e) < (e.id === 'mars' ? 2 : 1)).slice(0, 9);
   return `<main class="screen" style="--accent:${MV_COLOR}">
 ${pageHead('18', 'TRANSITS', 'ดาวย้าย กระทบดวง', MV_COLOR, 'move')}
+${mvModeHTML()}
 <p class="small" style="margin:0">ดาวย้ายราศีทีไร ชีวิตก็ขยับตาม ดูว่าดาวทั้ง 8 ดวง ราหู เสาร์ พฤหัส มฤตยู อังคาร อาทิตย์ พุธ ศุกร์ ตอนนี้อยู่ภพไหนของ${isMine ? kindNow + 'คุณ' : 'ลัคนา' + signTh(refSign)} ส่งผลเรื่องอะไร และควรรับมืออย่างไร</p>
 ${isMine && mine.kind === 'ราศีเกิด' ? `<p class="mv-note">ยังไม่มีเวลาเกิด จึงนับภพจากราศีเกิดแบบไทย (ราศี${signTh(mine.sign)}) ใส่เวลาเกิดที่ <a href="#/setup">ข้อมูลเกิด</a> แล้วแอปจะนับจากลัคนา ซึ่งแม่นกว่า</p>` : ''}
 ${edge && !sunPick && pick == null ? `<p class="mv-note">ลัคนาคุณอยู่${edge.end}ราศี${signTh(mine.sign)} (${Math.floor(mine.deg)}°) ถ้าเวลาเกิดคลาดไปราว ${edge.min} นาที ลัคนาจะเป็น${signTh(edge.nb)} ลองอ่านลัคนา${signTh(edge.nb)}ประกอบ ข้อที่ตรงกับชีวิตจริงมากกว่ามักเป็นลัคนาที่ถูก <button class="chip small-chip" data-act="mvRef" data-v="${edge.nb}">ดูลัคนา${signTh(edge.nb)} ›</button></p>` : ''}
@@ -3779,6 +3801,7 @@ document.addEventListener('click', (e) => {
     case 'oraClose': { ORA_SHEET = false; const sh = document.getElementById('ora-sheet'); if (sh) { sh.classList.add('out'); setTimeout(() => sh.remove(), 400); } return; }
     case 'oraMore': { e.preventDefault && e.preventDefault(); const t = document.getElementById('live-daily'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     case 'askPersona': state.ask.persona = el.dataset.v; break;
+    case 'mvMode': { setTrMode(el.dataset.v); mvChosen = true; try { localStorage.setItem(MV_KEY, trMode()); } catch (e) {} state.mvRef = null; notifySync(); render(); toast(trMode() === 'thai' ? 'เปลี่ยนเป็นระบบไทยแล้ว' : 'เปลี่ยนเป็นระบบสากลแล้ว'); return; }
     case 'mvRef': state.mvRef = el.dataset.v === '' ? null : el.dataset.v === 'sun' ? 'sun' : +el.dataset.v; break;
     case 'askClear': state.ask.messages = []; state.ask.ctx = null; break;
     case 'askMic': startMic(el); return;

@@ -23,7 +23,11 @@ const TR_CAL = {
 };
 // ช่วงที่วันย้ายตรงปฏิทินไทย (นอกช่วงนี้บอกว่า "โดยประมาณ")
 const TR_SURE = { rahu: [Date.UTC(2025, 0, 1), Date.UTC(2029, 0, 1)], saturn: [Date.UTC(2026, 0, 1), Date.UTC(2028, 5, 1)], jupiter: [Date.UTC(2026, 4, 1), Date.UTC(2026, 10, 30)], mars: [Date.UTC(2026, 4, 1), Date.UTC(2026, 11, 15)], sun: [Date.UTC(2020, 0, 1), Date.UTC(2035, 0, 1)], mercury: [Date.UTC(2026, 3, 15), Date.UTC(2026, 4, 20)], venus: [Date.UTC(2026, 3, 15), Date.UTC(2026, 7, 15)] };
-export const sureDate = (id, d) => { const r = TR_SURE[id]; return !!r && +d >= r[0] && +d <= r[1]; };
+// ระบบที่ใช้: 'intl' = ตำแหน่งดาวสากล (จักรราศีตามฤดูกาล คำนวณจากดาราศาสตร์จริง) · 'thai' = ตรงปฏิทินโหราศาสตร์ไทย
+let TR_MODE = 'intl';
+export const trMode = () => TR_MODE;
+export function setTrMode(m) { TR_MODE = m === 'thai' ? 'thai' : 'intl'; }
+export const sureDate = (id, d) => { if (TR_MODE === 'intl') return true; const r = TR_SURE[id]; return !!r && +d >= r[0] && +d <= r[1]; };
 function trOff(id, t) {
   const c = TR_CAL[id]; if (!c) return 0;
   if (t <= c[0][0]) return c[0][1];
@@ -33,7 +37,7 @@ function trOff(id, t) {
 const trRev = (x) => ((x % 360) + 360) % 360;
 export function thaiLon(id, date) {
   const raw = id === 'rahu' ? meanNode(date) : lonOf(id, date);
-  return trRev(raw - ayanamsa(date) - trOff(id, +date));
+  return TR_MODE === 'intl' ? trRev(raw) : trRev(raw - ayanamsa(date) - trOff(id, +date));
 }
 export const thaiSign = (id, date) => Math.floor(thaiLon(id, date) / 30);
 
@@ -43,7 +47,7 @@ const TR_KNOWN = [['sun', 1, Date.UTC(2026, 4, 15, 1, 19)], ['mercury', 0, Date.
 const TR_STEP = { sun: 6 * 3600e3, mercury: 6 * 3600e3, venus: 6 * 3600e3, uranus: 86400e3, moon: 3600e3, mars: 6 * 3600e3, jupiter: 86400e3, saturn: 86400e3, rahu: 86400e3 };
 const trMemo = new Map();
 export function ingresses(id, from, to) {
-  const key = id + '|' + Math.floor(from / 864e5) + '|' + Math.floor(to / 864e5);
+  const key = TR_MODE + '|' + id + '|' + Math.floor(from / 864e5) + '|' + Math.floor(to / 864e5);
   if (trMemo.has(key)) return trMemo.get(key);
   const step = TR_STEP[id] || 86400e3, out = [];
   let t = from, s = thaiSign(id, new Date(t));
@@ -52,7 +56,7 @@ export function ingresses(id, from, to) {
     if (s2 !== s) {
       let a = t, b = t2;
       while (b - a > 60e3) { const m = (a + b) / 2; if (thaiSign(id, new Date(m)) === s) a = m; else b = m; }
-      const k = TR_KNOWN.find(([kid, ks, kt]) => kid === id && ks === s2 && Math.abs(kt - b) < 864e5);
+      const k = TR_MODE === 'thai' && TR_KNOWN.find(([kid, ks, kt]) => kid === id && ks === s2 && Math.abs(kt - b) < 864e5);
       out.push({ id, at: new Date(k ? k[2] : b), from: s, sign: s2 });
       s = s2;
     }
