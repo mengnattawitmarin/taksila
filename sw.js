@@ -1,12 +1,12 @@
 // ตักศิลา service worker: lets the app open offline and install to the home screen.
 // Strategy: network first for the app's own files (so updates arrive right away),
 // falling back to the cached copy when offline. Fonts are cache first.
-const CACHE = 'taksila-v51';
+const CACHE = 'taksila-v52';
 const NOTIFY = 'taksila-notify'; // รายการวันพระล่วงหน้าที่แอปเขียนไว้ ใช้แจ้งเตือนเบื้องหลัง
 const VENDOR = 'taksila-vendor-1'; // MediaPipe models (~30 MB) are cached separately so app updates do not re-download them
 // Paths are relative to wherever the app is hosted (site root on Netlify, /taksila/ on GitHub Pages).
 const BASE = self.registration.scope;
-const CORE = ['', 'index.html', 'css/styles.css', 'js/app.js', 'js/astro.js', 'js/data.js', 'js/starmap.js', 'js/thai.js', 'js/auspice.js', 'js/profile.js', 'js/tarot.js', 'js/luck.js', 'js/siamsi.js', 'js/numerology.js', 'js/prayer.js', 'js/remedy.js', 'js/insight.js', 'js/lunar.js', 'js/forecast.js', 'js/places.js', 'js/prayer-tr.js', 'js/fengshui.js', 'js/physio.js', 'js/qr.js', 'js/learn.js', 'js/donate.js', 'manifest.webmanifest', 'icons/icon-192.png'].map((p) => BASE + p);
+const CORE = ['', 'index.html', 'css/styles.css', 'js/app.js', 'js/astro.js', 'js/data.js', 'js/starmap.js', 'js/thai.js', 'js/auspice.js', 'js/profile.js', 'js/tarot.js', 'js/luck.js', 'js/siamsi.js', 'js/numerology.js', 'js/prayer.js', 'js/remedy.js', 'js/insight.js', 'js/lunar.js', 'js/forecast.js', 'js/places.js', 'js/prayer-tr.js', 'js/fengshui.js', 'js/physio.js', 'js/qr.js', 'js/learn.js', 'js/donate.js', 'js/transit.js', 'manifest.webmanifest', 'icons/icon-192.png'].map((p) => BASE + p);
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
@@ -53,7 +53,7 @@ async function checkWanPhra() {
   for (const [when, day] of targets) {
     const ev = (data.days || []).find((x) => x.d === day);
     if (!ev || sent[when + day]) continue;
-    await self.registration.showNotification(`${when}${ev.t}`, { body: ev.b, icon: BASE + 'icons/icon-192.png', badge: BASE + 'icons/icon-192.png', tag: 'wanphra-' + day, data: { url: BASE + '#/calendar' } });
+    await self.registration.showNotification(`${when}${ev.t}`, { body: ev.b, icon: BASE + 'icons/icon-192.png', badge: BASE + 'icons/icon-192.png', tag: 'wanphra-' + day, data: { url: BASE + (ev.u || '#/calendar') } });
     sent[when + day] = 1;
   }
   data.sent = sent;

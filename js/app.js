@@ -15,6 +15,7 @@ import { prayerTr } from './prayer-tr.js';
 import { qrSVG } from './qr.js';
 import { LEARN_CATS, LESSONS } from './learn.js';
 import { DONATE_QR } from './donate.js';
+import { readTransits, upcomingMoves, TR_TEXT, TR_PLANETS, BHAVA, signTh, sureDate } from './transit.js';
 import { PH_HAIRK, faceMeasure, facePoseOK, averageMeasures, faceElement, elementRelation, faceRead, FACE_ZONES, handMeasure, handPoseOK, handElement, handRead, PALM_LINES, palmGuides, palmTrace, yearElementTh, phSetNorm, ageZone, ageTimeline, moleDetect, coupleRead } from './physio.js';
 import { FS_DIRS, FS_DIR_TH, FS_DIR_SHORT, FS_DIR_DEG, mountainOf, flyingStars, solarYear, yearAfflictions, kuaOf, EL_COLOR, STAR, sectorRead, FS_PERIODS, monthInfo, ROOM_TYPES, roomRead, starTone, starGood, guideOf, comboOf, FS_PTYPES, ptypeOf } from './fengshui.js';
 import { NUM_TOOLS, analyzeNumber, analyzeAngel, gradeOf, birthHexColor, reduceTo9, analyzeName, LEVEL_TH, NUM_PLANET, taksaOf } from './numerology.js';
@@ -88,6 +89,7 @@ const IC = {
   privacy: '<path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><rect x="9.5" y="10.5" width="5" height="4.5" rx="1"/><path d="M10.5 10.5V9a1.5 1.5 0 0 1 3 0v1.5"/>',
   setup: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
   dharma: '<circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="2.3"/><path d="M12 3.8v5.9M12 14.3v5.9M3.8 12h5.9M14.3 12h5.9M6.2 6.2l4.2 4.2M13.6 13.6l4.2 4.2M17.8 6.2l-4.2 4.2M10.4 13.6l-4.2 4.2"/>',
+  move: '<circle cx="12" cy="12" r="2.6"/><path d="M4.2 12a7.8 7.8 0 0 1 13.9-4.9M19.8 12a7.8 7.8 0 0 1-13.9 4.9"/><path d="M18.6 3.6v3.9h-3.9M5.4 20.4v-3.9h3.9"/>',
   learn: '<path d="M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z"/><path d="M12 6v13.5"/>',
   face: '<path d="M12 3c-4 0-6.5 3-6.5 7.5 0 5 3 9.5 6.5 10.5 3.5-1 6.5-5.5 6.5-10.5C18.5 6 16 3 12 3z"/><path d="M9 10.5h.01M15 10.5h.01M10 15.5q2 1.2 4 0M12 11v2.5"/>',
   fengshui: '<path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7z"/><path d="M12 7.5a4.5 4.5 0 0 1 0 9 2.25 2.25 0 0 1 0-4.5 2.25 2.25 0 0 0 0-4.5z"/><circle cx="12" cy="14.25" r=".6"/><circle cx="12" cy="9.75" r=".6"/>',
@@ -327,6 +329,7 @@ function viewHome() {
 <a class="hh-map" href="#/chart" aria-label="เปิดผังดาวกำเนิด">${starMap(ch, { id: 'home', label: 'ผังดาวกำเนิดของคุณ', size: 92 })}</a>
 </header>
 <section id="week" style="display:flex;flex-direction:column;gap:10px" aria-label="ดวง 7 วันข้างหน้า">${weekHTML()}</section>
+${moveCardHTML()}
 <div id="oracle-card">${oracleHeroA()}</div>
 <nav class="oracle-grid" aria-label="ศาสตร์การทำนาย">${tools.map(([r, t, s, c]) => `<a class="oracle" href="#/${r}" style="--c:${c}"><span class="sigil">${icon(r, 20)}</span><span class="n">${t}</span><span class="small">${s}</span></a>`).join('')}</nav>
 <div id="install-slot">${installHTML()}</div>
@@ -2018,7 +2021,7 @@ function counterHTML(pr) {
 // ฟังธรรม: เปิดแท็บธรรมะในแอป Do.T ของผู้พัฒนาเดียวกัน (ช่วยโปรโมทแอป)
 const DOT_DHARMA = 'https://mengnattawitmarin.github.io/dot-app/?tab=dharma';
 const ROOMS = [
-  ['chart', 'ผังดาว', 'ดวงกำเนิด', 'var(--gold)'], ['match', 'คู่ดวง', 'เทียบสองคน', 'var(--rose)'],
+  ['chart', 'ผังดาว', 'ดวงกำเนิด', 'var(--gold)'], ['move', 'ดาวย้าย', 'ราหู เสาร์ พฤหัส', '#B99AF0'], ['match', 'คู่ดวง', 'เทียบสองคน', 'var(--rose)'],
   ['tarot', 'ไพ่ทาโรต์', '78 ใบ 12 ภพ', 'var(--violet)'], ['numbers', 'ตัวเลข', 'เบอร์ ทะเบียน ชื่อ', 'var(--teal)'],
   ['luck', 'โชคลาภ', 'ปิงปอง ธูป ต้นไม้', 'var(--amber)'], ['auspice', 'ฤกษ์ยาม', 'แต่ง บวช ขึ้นบ้าน', 'var(--amber)'],
   ['prayer', 'บทสวด', 'คาถา เกจิ เทพ', 'var(--gold-2)'], ['dharma', 'ฟังธรรม', 'เทศน์ในแอป Do.T ↗', '#E9A23B', DOT_DHARMA], ['ask', 'ปรึกษา', 'ถามเรื่องเฉพาะ', 'var(--rose)'],
@@ -2248,7 +2251,12 @@ function notifyDays(days = 45) {
     if (!l.holy && !ev.length) continue;
     out.push({ d: ymdIso(d), t: ev.length ? ev.map((e) => e.th).join(' · ') : 'วันพระ', b: `${l.full} · แตะเพื่อดูบทสวดและภารกิจทำบุญ` });
   }
-  return out;
+  // ดาวใหญ่ย้ายราศี: รวมกับวันพระถ้าตรงวันเดียวกัน
+  for (const m of moveNotifyDays(days)) {
+    const same = out.find((x) => x.d === m.d);
+    if (same) { same.t = m.t + ' · ' + same.t; same.b = m.b; same.u = m.u; } else out.push(m);
+  }
+  return out.sort((a, b) => (a.d < b.d ? -1 : 1));
 }
 async function notifySync() {
   if (!('caches' in window) || !navigator.serviceWorker) return;
@@ -3406,7 +3414,74 @@ ${pageHead('16', 'STUDY', 'ห้องศึกษาตำรา', '#D4AF63', 
 <ul class="ln-list">${list.map((l) => { const c = cat(l.cat); return `<li><button class="ln-it${read.has(l.id) ? ' read' : ''}" style="--c:${c[2]}" data-act="learnOpen" data-v="${l.id}"><span class="ln-dot">${read.has(l.id) ? '✓' : ''}</span><span class="ln-t"><b>${l.t}</b><span>${c[1]} · ${l.m} นาที</span></span><span aria-hidden="true">›</span></button></li>`; }).join('')}</ul>
 </main>`;
 }
-const VIEWS = { learn: viewLearn, face: viewFace, fengshui: viewFengshui, calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
+// ---------------- ดาวย้าย กระทบดวง (โหราศาสตร์ไทย) ----------------
+const MV_COLOR = '#B99AF0';
+const mvTone = (t) => `<span class="fx-b ${t > 0 ? 'pos' : t < 0 ? 'neg' : 'mid'}">${t > 0 ? 'ส่งผลดี' : t < 0 ? 'ต้องระวัง' : 'ดีร้ายผสม'}</span>`;
+const mvDate = (d, id, withTime) => `${d.getDate()} ${MONTHS_SHORT[d.getMonth()]} ${String(d.getFullYear() + 543).slice(2)}${withTime && sureDate(id, d) && (id === 'rahu' || id === 'mars') ? ` ${pad(d.getHours())}:${pad(d.getMinutes())} น.` : ''}${sureDate(id, d) ? '' : ' (โดยประมาณ)'}`;
+const mvDays = (d, now = new Date()) => Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 864e5);
+const mvCount = (d) => { const n = mvDays(d); return n <= 0 ? 'วันนี้' : n === 1 ? 'พรุ่งนี้' : `อีก ${n} วัน`; };
+const mvBhava = (h) => `ภพ${BHAVA[h - 1].th}`;
+// ราศีที่ใช้เป็นภพที่ 1: ลัคนาไทย (มีเวลาเกิด) หรือราศีเกิดแบบไทย
+function mvRef(ch) {
+  const lg = thaiLagna(ch);
+  if (lg) return { sign: lg.sign, kind: 'ลัคนา', natal: { sun: thaiSunSign(ch), moon: signOf(((ch.planets[1].lon - ayanamsa(ch.utc)) % 360 + 360) % 360) } };
+  return { sign: thaiSunSign(ch), kind: 'ราศีเกิด', natal: { moon: signOf(((ch.planets[1].lon - ayanamsa(ch.utc)) % 360 + 360) % 360) } };
+}
+function moveCardHTML() {
+  try {
+    const ch = state.chart, now = new Date(), ref = mvRef(ch), rd = readTransits(ref.sign, ref.natal, now);
+    const up = upcomingMoves(ref.sign, now, 45), big = up.find((e) => e.id !== 'mars'), ev = big || up[0];
+    const head = ev ? `<span class="mv-count"><b>${mvCount(ev.at)}</b> ${TR_PLANETS[ev.id].th}${ev.retro ? 'ถอยกลับ' : 'ย้าย'}เข้า${signTh(ev.sign)} · ${mvDate(ev.at, ev.id, true)}</span>
+<b class="mv-h">เข้า${mvBhava(ev.house)}ของคุณ: ${TR_TEXT[ev.id][ev.house - 1].h}</b>` : `<b class="mv-h">${TR_PLANETS.rahu.th}อยู่${mvBhava(rd.rows[0].house)}: ${rd.rows[0].text.h}</b>`;
+    return `<a class="mv-card" href="#/move" style="--c:${MV_COLOR}">
+<span class="eyebrow" style="color:${MV_COLOR}">ดาวย้าย กระทบดวงคุณ · ${ref.kind}${signTh(ref.sign)}</span>
+${head}
+<span class="mv-chips">${rd.rows.map((r) => `<span class="mv-chip" style="--pc:${TR_PLANETS[r.id].c}"><i>${TR_PLANETS[r.id].n}</i>${TR_PLANETS[r.id].th} ภพ ${r.house}</span>`).join('')}</span>
+<span class="mv-more">อ่านคำทำนายทั้งหมด ›</span></a>`;
+  } catch (e) { return ''; }
+}
+function mvPlanetHTML(r, now, mine) {
+  const P = TR_PLANETS[r.id], T = r.text, soon = r.next && mvDays(r.next.at, now) <= 45;
+  const nt = soon ? TR_TEXT[r.id][r.nextHouse - 1] : null;
+  return `<article class="mv-p" style="--pc:${P.c}">
+<header class="mv-ph"><span class="mv-num">${P.n}</span><div class="mv-pt"><b>${P.th}อยู่ราศี${signTh(r.sign)} · ${mvBhava(r.house)}</b><span>${BHAVA[r.house - 1].d}</span>
+<span class="mv-when">${r.since ? 'ตั้งแต่ ' + mvDate(r.since, r.id) : ''}${r.until ? ' ถึง ' + mvDate(r.until, r.id, true) : ''}</span></div></header>
+<h3 class="mv-h3">${T.h} ${mvTone(T.t)}</h3>
+<p class="mv-s">${T.s}</p>
+<p class="mv-w"><b>ใครได้ประโยชน์</b> ${T.w}</p>
+<div class="mv-dx"><div><b>ควรทำ</b><ul>${T.d.map((x) => `<li>${x}</li>`).join('')}</ul></div><div><b>ระวัง</b><p>${T.x}</p></div></div>
+${mine && r.aspects.length ? `<ul class="mv-asp">${r.aspects.map((a) => `<li>${mvTone(a.t)} ${a.text}</li>`).join('')}</ul>` : ''}
+<details class="mv-fix"><summary>เสริมดวงช่วง${P.th}จร</summary><p class="small" style="margin:0">${P.fix.t}</p>${chipsOf(P.fix.pr)}</details>
+${nt ? `<div class="mv-next"><span class="eyebrow" style="color:${P.c}">${mvCount(r.next.at)} ${P.th}${r.next.sign === (r.sign + 11) % 12 && r.id !== 'rahu' ? 'ถอยกลับ' : 'ย้าย'}เข้า${signTh(r.next.sign)} · ${mvBhava(r.nextHouse)}</span><b>${nt.h} ${mvTone(nt.t)}</b><p class="small" style="margin:0">${nt.s}</p></div>` : ''}
+</article>`;
+}
+function viewMove() {
+  const ch = state.chart, now = new Date(), mine = mvRef(ch);
+  const pick = state.mvRef != null ? state.mvRef : null, refSign = pick != null ? pick : mine.sign, isMine = pick == null || pick === mine.sign;
+  const rd = readTransits(refSign, isMine ? mine.natal : {}, now);
+  const up = upcomingMoves(refSign, now, 400).filter((e, i, a) => e.id !== 'mars' || a.filter((x) => x.id === 'mars').indexOf(e) < 3).slice(0, 8);
+  return `<main class="screen" style="--accent:${MV_COLOR}">
+${pageHead('18', 'TRANSITS', 'ดาวย้าย กระทบดวง', MV_COLOR, 'move')}
+<p class="small" style="margin:0">ดาวใหญ่ย้ายราศีทีไร ชีวิตก็ขยับตาม ดูว่าราหู เสาร์ พฤหัส และอังคาร ตอนนี้อยู่ภพไหนของ${isMine ? mine.kind + 'คุณ' : 'ลัคนา' + signTh(refSign)} ส่งผลเรื่องอะไร และควรรับมืออย่างไร</p>
+${isMine && mine.kind === 'ราศีเกิด' ? `<p class="mv-note">ยังไม่มีเวลาเกิด จึงนับภพจากราศีเกิดแบบไทย (ราศี${signTh(mine.sign)}) ใส่เวลาเกิดที่ <a href="#/setup">ข้อมูลเกิด</a> แล้วแอปจะนับจากลัคนา ซึ่งแม่นกว่า</p>` : ''}
+<div class="mv-ref"><span class="small">ดูของ</span><div class="chips">${`<button class="chip" data-act="mvRef" data-v="" aria-pressed="${isMine}">${mine.kind}ฉัน (${signTh(mine.sign)})</button>`}${SIGNS.map((s, i) => i === mine.sign ? '' : `<button class="chip" data-act="mvRef" data-v="${i}" aria-pressed="${pick === i}">${s.th}</button>`).join('')}</div></div>
+<section class="mv-up"><h2 class="h2">ดาวที่กำลังจะย้าย</h2>
+<ol class="mv-tl">${up.map((e) => { const T = TR_TEXT[e.id][e.house - 1], P = TR_PLANETS[e.id]; return `<li style="--pc:${P.c}"><span class="mv-num sm">${P.n}</span><div><span class="mv-when">${mvCount(e.at)} · ${mvDate(e.at, e.id, true)}</span><b>${P.th}${e.retro ? 'ถอยกลับ' : 'ย้าย'}เข้า${signTh(e.sign)} → ${mvBhava(e.house)}</b><span class="small">${T.h}</span></div></li>`; }).join('')}</ol></section>
+<section class="mv-now"><h2 class="h2">ตอนนี้ดาวจรอยู่ตรงไหนในดวง</h2>
+${rd.rows.map((r) => mvPlanetHTML(r, now, isMine)).join('')}
+<div class="mv-moon"><span class="mv-num sm" style="--pc:#CFD6E4">๒</span><div><b>จันทร์จรวันนี้ อยู่ราศี${signTh(rd.moon.sign)} · ${mvBhava(rd.moon.house)}</b><span class="small">${rd.moon.text}${rd.moon.until ? ` · ย้ายราศี${mvDays(rd.moon.until, now) === 0 ? 'วันนี้' : mvDays(rd.moon.until, now) === 1 ? 'พรุ่งนี้' : 'วันที่ ' + rd.moon.until.getDate()} ${pad(rd.moon.until.getHours())}:${pad(rd.moon.until.getMinutes())} น.` : ''}</span></div></div>
+</section>
+<section class="mv-bell"><b>เตือนก่อนดาวย้าย</b><span class="small">เปิดแจ้งเตือนแล้ว แอปจะเตือนคืนก่อนดาวใหญ่ย้าย พร้อมวันพระ (Android ที่ติดตั้งแอป) ส่วน iPhone ใช้ปฏิทินวันพระแทนได้</span><button class="btn btn-line" data-act="notifyOn">เปิดแจ้งเตือน</button></section>
+<p class="small mv-disc">คำทำนายนี้เป็นความเชื่อตามหลักโหราศาสตร์ไทย ใช้ประกอบการตัดสินใจ โปรดใช้วิจารณญาณ · วันย้ายราศีเทียบกับปฏิทินโหราศาสตร์ไทย (ระบบสุริยยาตร์) ที่สื่อใช้ ช่วงที่เขียนว่า "โดยประมาณ" อาจคลาด 1–5 วัน</p>
+</main>`;
+}
+function moveNotifyDays(days = 45) {
+  try {
+    const ch = state.chart, ref = mvRef(ch);
+    return upcomingMoves(ref.sign, new Date(), days).map((e) => ({ d: ymdIso(e.at), t: `${TR_PLANETS[e.id].th}${e.retro ? 'ถอยกลับ' : 'ย้าย'}เข้า${signTh(e.sign)}`, b: `เข้า${mvBhava(e.house)}ของ${ref.kind}คุณ: ${TR_TEXT[e.id][e.house - 1].h} · แตะเพื่ออ่านคำทำนาย`, u: '#/move' }));
+  } catch (e) { return []; }
+}
+const VIEWS = { move: viewMove, learn: viewLearn, face: viewFace, fengshui: viewFengshui, calendar: viewCalendar, about: viewAbout, map: viewMap, dream: viewDream, privacy: viewPrivacy,  prayer: viewPrayer, auspice: viewAuspice, welcome: viewWelcome, setup: viewSetup, home: viewHome, chart: viewChart, match: viewMatch, tarot: viewTarot, numbers: viewNumbers, luck: viewLuck, ask: viewAsk };
 const root = document.getElementById('app');
 let lastRoute = null;
 
@@ -3424,7 +3499,7 @@ function render() {
   if (r === 'fengshui' && state.fs.tab === 'map') mountFsMap();
   { const row = document.querySelector('.fs-tabs'); const on = row && row.querySelector('[aria-pressed="true"]'); if (on) row.scrollLeft = on.offsetLeft - (row.clientWidth - on.offsetWidth) / 2; }
   if (r !== lastRoute) { window.scrollTo(0, 0); lastRoute = r; }
-  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', face: 'โหงวเฮ้ง ลายมือ', learn: 'ห้องศึกษาตำรา', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
+  document.title = 'ตักศิลา · ' + ({ prayer: 'บทสวดมนต์', home: 'หน้าหลัก', chart: 'ผังดาว', match: 'คู่ดวง', tarot: 'ไพ่ทาโรต์', numbers: 'ศาสตร์ตัวเลข', luck: 'โชคลาภ', ask: 'ปรึกษา', setup: 'ข้อมูลกำเนิด', dream: 'ทำนายฝัน', map: 'แผนที่มู', calendar: 'ปฏิทินวันพระ', fengshui: 'ฮวงจุ้ย', face: 'โหงวเฮ้ง ลายมือ', learn: 'ห้องศึกษาตำรา', move: 'ดาวย้าย กระทบดวง', about: 'เกี่ยวกับ', privacy: 'ความเป็นส่วนตัว', auspice: 'ฤกษ์ยาม' }[r] || 'อ่านดวงจากดาวจริง');
 }
 function toast(msg) {
   const el = document.createElement('div');
@@ -3690,6 +3765,7 @@ document.addEventListener('click', (e) => {
     case 'oraClose': { ORA_SHEET = false; const sh = document.getElementById('ora-sheet'); if (sh) { sh.classList.add('out'); setTimeout(() => sh.remove(), 400); } return; }
     case 'oraMore': { e.preventDefault && e.preventDefault(); const t = document.getElementById('live-daily'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
     case 'askPersona': state.ask.persona = el.dataset.v; break;
+    case 'mvRef': state.mvRef = el.dataset.v === '' ? null : +el.dataset.v; break;
     case 'askClear': state.ask.messages = []; state.ask.ctx = null; break;
     case 'askMic': startMic(el); return;
     default: return;
